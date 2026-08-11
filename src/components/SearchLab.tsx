@@ -58,36 +58,30 @@ export function SearchLab({
 }) {
   const [workflow, setWorkflow] = useState<'reconcile' | 'trade'>('reconcile');
   const [tradeTrait, setTradeTrait] = useState<TradeRequestTrait>('normal');
-  const [generation, setGeneration] = useState('all');
   const [region, setRegion] = useState('all');
   const [copied, setCopied] = useState<string | null>(null);
   const [copyFailure, setCopyFailure] = useState(false);
 
   const filteredCatalog = useMemo(
-    () =>
-      catalog.filter(
-        (item) =>
-          (generation === 'all' || item.generation === Number(generation)) &&
-          (region === 'all' || item.region === region),
-      ),
-    [catalog, generation, region],
+    () => catalog.filter((item) => region === 'all' || item.region === region),
+    [catalog, region],
   );
   const missingCategory = isMissingSearchSupported(activeCategory) ? activeCategory : 'normal';
   const generated = useMemo(
     () =>
       workflow === 'trade'
         ? generateWantedTradeSearchStrings(filteredCatalog, wantedEntries, tradeTrait, {
-            maxLength: 240,
+            maxLength: 4500,
           })
         : generateMissingSearchStrings(filteredCatalog, entries, missingCategory, {
-            maxLength: 240,
+            maxLength: 4500,
           }),
     [entries, filteredCatalog, missingCategory, tradeTrait, wantedEntries, workflow],
   );
   const personalXXL = useMemo(
     () =>
       generatePersonalSizeCatchSearchStrings(catalog, entries, 'xxl', {
-        maxLength: 240,
+        maxLength: 4500,
         evolutionFamilies: evolutionFamilyData.families,
       }),
     [catalog, entries],
@@ -95,7 +89,7 @@ export function SearchLab({
   const personalXXS = useMemo(
     () =>
       generatePersonalSizeCatchSearchStrings(catalog, entries, 'xxs', {
-        maxLength: 240,
+        maxLength: 4500,
         evolutionFamilies: evolutionFamilyData.families,
       }),
     [catalog, entries],
@@ -104,7 +98,6 @@ export function SearchLab({
     isMissingSearchSupported(category.id),
   );
   const regions = [...new Set(catalog.map((item) => item.region))];
-  const generations = [...new Set(catalog.map((item) => item.generation))].sort((a, b) => a - b);
   const recommendations = [
     {
       name: 'Recent shinies',
@@ -211,23 +204,12 @@ export function SearchLab({
             )}
           </label>
           <label>
-            Generation
-            <select value={generation} onChange={(event) => setGeneration(event.target.value)}>
-              <option value="all">All generations</option>
-              {generations.map((value) => (
-                <option value={value} key={value}>
-                  Generation {value}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
             Region
             <select value={region} onChange={(event) => setRegion(event.target.value)}>
               <option value="all">All regions</option>
               {regions.map((value) => (
                 <option value={value} key={value}>
-                  {value}
+                  {value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()}
                 </option>
               ))}
             </select>
@@ -241,7 +223,8 @@ export function SearchLab({
               {generated.dexNumbers.length === 1 ? 'entry' : 'entries'}
             </span>
             <span>
-              {generated.strings.length || 1} {generated.strings.length === 1 ? 'string' : 'chunks'}
+              {generated.strings.length || 1}{' '}
+              {generated.strings.length === 1 ? 'search string' : 'search strings'}
             </span>
           </div>
           {generated.strings.length ? (

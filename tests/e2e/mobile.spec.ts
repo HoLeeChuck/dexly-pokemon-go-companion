@@ -137,10 +137,9 @@ test.describe('mobile collection experience', () => {
     await results.evaluate((element) => element.scrollTo(0, element.scrollHeight));
     await expect.poll(() => results.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
 
-    const controls = await page.locator('.dex-primary-controls').evaluate((element) => {
-      const topRect = element.getBoundingClientRect();
-      const filterRect = document.querySelector('.dex-controls')!.getBoundingClientRect();
-      return { top: topRect.top, bottom: filterRect.bottom, viewportHeight: innerHeight };
+    const controls = await page.locator('.dex-controls').evaluate((element) => {
+      const rect = element.getBoundingClientRect();
+      return { top: rect.top, bottom: rect.bottom, viewportHeight: innerHeight };
     });
     expect(controls.top).toBeGreaterThanOrEqual(68);
     expect(controls.bottom).toBeLessThan(controls.viewportHeight);
@@ -157,6 +156,30 @@ test.describe('mobile collection experience', () => {
     expect(stacking.headingZIndex).toBeGreaterThanOrEqual(20);
     expect(stacking.headingBackground).toBe('rgb(246, 249, 242)');
     expect(stacking.cardIsolation).toBe('isolate');
+
+    const stateFilter = page.getByRole('group', { name: 'Collection state' });
+    await expect(stateFilter.getByRole('button', { name: 'Available' })).toHaveCount(0);
+
+    const searchTrigger = page.getByRole('button', { name: 'Open Pokémon search' });
+    await searchTrigger.click();
+    await expect(page.getByLabel('Search Pokémon')).toBeVisible();
+    await expect(page.locator('.dex-compact-bar')).toHaveClass(/is-searching/);
+    await page.getByRole('button', { name: 'Close search' }).click();
+    await expect(searchTrigger).toBeVisible();
+
+    const regionPicker = page.locator('.region-picker__toggle');
+    await regionPicker.click();
+    const regionOptions = page.getByRole('listbox', { name: 'Region' });
+    await expect(regionOptions).toBeVisible();
+    const kantoOption = regionOptions.getByRole('option', { name: /Kanto/ });
+    await expect(kantoOption).toContainText(/\d+\/151/);
+    await expect(kantoOption.locator('.region-medal')).toHaveCSS(
+      '--region-medal-icon',
+      /Badge_2\.png/,
+    );
+    await kantoOption.click();
+    await expect(regionPicker).toContainText('Kanto');
+    await expect(regionPicker).toContainText(/\d+\/151 Normal/);
 
     const categoryPicker = page.locator('.category-picker__toggle');
     await categoryPicker.click();
@@ -285,7 +308,8 @@ test.describe('mobile collection experience', () => {
       'Matches the released normal Pokedex entries currently marked missing.',
     );
 
-    await page.getByLabel('Generation').selectOption('1');
+    await expect(page.getByLabel('Generation')).toHaveCount(0);
+    await page.getByLabel('Region').selectOption('Kanto');
     await expect(output).toContainText('3 missing entries');
     await expect(output.locator('.search-string code')).toHaveText('!traded&4,7,133');
 

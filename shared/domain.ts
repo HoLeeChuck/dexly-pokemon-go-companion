@@ -237,7 +237,7 @@ export function generateWantedTradeSearchStrings(
   traitId: TradeRequestTrait,
   options: MissingSearchOptions = {},
 ): GeneratedSearchStrings {
-  const maxLength = options.maxLength ?? 250;
+  const maxLength = options.maxLength ?? 4500;
   if (!Number.isSafeInteger(maxLength) || maxLength <= 0) {
     throw new RangeError('maxLength must be a positive integer');
   }
@@ -275,7 +275,7 @@ export function generateMissingSearchStrings(
   categoryId: CategoryId,
   options: MissingSearchOptions = {},
 ): GeneratedSearchStrings {
-  const maxLength = options.maxLength ?? 250;
+  const maxLength = options.maxLength ?? 4500;
   if (!Number.isSafeInteger(maxLength) || maxLength <= 0) {
     throw new RangeError('maxLength must be a positive integer');
   }
@@ -390,7 +390,7 @@ export function generatePersonalSizeCatchSearchStrings(
   );
   const quality: SearchQuality =
     base.quality === 'candidate' || includesFamilyCatchCandidates ? 'candidate' : 'exact';
-  const maxLength = options.maxLength ?? 250;
+  const maxLength = options.maxLength ?? 4500;
   const strings = chunkDexNumbers(dexNumbers, categoryId, maxLength);
   const explanation = includesFamilyCatchCandidates
     ? `Includes earlier evolution-family catches that can evolve into a later stage still missing in ${categoryId.toUpperCase()}.`

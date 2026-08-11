@@ -352,26 +352,26 @@ export function DetailSheet({
                     <button
                       type="button"
                       key={category.id}
-                      className={`category-tile category-tile--${state}`}
+                      className={`category-tile category-tile--collection category-tile--${state}`}
                       aria-pressed={rule === 'released' ? isCollected : undefined}
                       disabled={rule !== 'released' || pending}
                       onClick={() => onCollectionChange(item, category.id, !isCollected)}
                     >
-                      <span className="category-tile__mark">
-                        <Icon
-                          name={isCollected ? 'check' : rule === 'released' ? 'plus' : 'lock'}
-                        />
+                      <span className="category-tile__copy">
+                        <strong>{category.label}</strong>
+                        <small>
+                          {state === 'collected'
+                            ? 'Collected'
+                            : state === 'missing'
+                              ? 'Not yet'
+                              : state === 'unknown'
+                                ? 'Not cataloged'
+                                : state}
+                        </small>
                       </span>
-                      <strong>{category.label}</strong>
-                      <small>
-                        {state === 'collected'
-                          ? 'Collected'
-                          : state === 'missing'
-                            ? 'Not yet'
-                            : state === 'unknown'
-                              ? 'Not cataloged'
-                              : state}
-                      </small>
+                      <span className="category-toggle-switch" aria-hidden="true">
+                        {rule === 'released' ? <i /> : <Icon name="lock" />}
+                      </span>
                     </button>
                   );
                 })}
@@ -484,7 +484,7 @@ export function DetailSheet({
                     Note
                     <input
                       type="text"
-                      maxLength={1000}
+                      maxLength={4500}
                       placeholder="Event, costume, meetup…"
                       value={notes}
                       onChange={(event) => setNotes(event.target.value)}

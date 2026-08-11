@@ -33,7 +33,39 @@ import {
 } from './lib/api';
 
 type RouteId = 'home' | 'dex' | 'trade' | 'search' | 'profile';
-type CollectionFilter = 'all' | 'missing' | 'collected' | 'available';
+type CollectionFilter = 'all' | 'missing' | 'collected';
+type MedalTier = 'none' | 'bronze' | 'silver' | 'gold' | 'platinum';
+
+const REGION_MEDAL_REQUIREMENTS: Record<
+  string,
+  { bronze: number; silver: number; gold: number; platinum: number; mark: string }
+> = {
+  Kanto: { bronze: 20, silver: 50, gold: 100, platinum: 151, mark: 'K' },
+  Johto: { bronze: 5, silver: 30, gold: 70, platinum: 100, mark: 'J' },
+  Hoenn: { bronze: 5, silver: 40, gold: 90, platinum: 135, mark: 'H' },
+  Sinnoh: { bronze: 5, silver: 30, gold: 80, platinum: 107, mark: 'S' },
+  Unova: { bronze: 5, silver: 50, gold: 100, platinum: 156, mark: 'U' },
+  Kalos: { bronze: 5, silver: 20, gold: 50, platinum: 72, mark: 'K' },
+  Alola: { bronze: 5, silver: 25, gold: 50, platinum: 86, mark: 'A' },
+  Galar: { bronze: 5, silver: 25, gold: 50, platinum: 89, mark: 'G' },
+  Hisui: { bronze: 1, silver: 3, gold: 5, platinum: 7, mark: 'H' },
+  Paldea: { bronze: 5, silver: 30, gold: 80, platinum: 104, mark: 'P' },
+};
+
+const REGION_MEDAL_ASSET_IDS: Record<string, number> = {
+  Kanto: 2,
+  Johto: 39,
+  Hoenn: 45,
+  Sinnoh: 51,
+  Unova: 56,
+  Kalos: 61,
+  Alola: 62,
+  Galar: 63,
+  Hisui: 79,
+  Paldea: 82,
+};
+const REGION_MEDAL_ASSET_ROOT =
+  'https://raw.githubusercontent.com/PokeMiners/pogo_assets/1a4ad1fc6c39f361ea85d53fc3040ce482ee9d90/Images/Badges/Achievements/';
 
 const routes: Array<{ id: RouteId; label: string; icon: IconName }> = [
   { id: 'home', label: 'Home', icon: 'home' },
@@ -61,6 +93,35 @@ function routeFromHash(): RouteId {
 
 function collectionKey(formId: string, categoryId: CategoryId): string {
   return `${formId}:${categoryId}`;
+}
+
+function titleCase(value: string): string {
+  return value.toLowerCase().replace(/(^|[\s-])\p{L}/gu, (letter) => letter.toUpperCase());
+}
+
+function medalTier(
+  count: number,
+  requirements: (typeof REGION_MEDAL_REQUIREMENTS)[string],
+): MedalTier {
+  if (count >= requirements.platinum) return 'platinum';
+  if (count >= requirements.gold) return 'gold';
+  if (count >= requirements.silver) return 'silver';
+  if (count >= requirements.bronze) return 'bronze';
+  return 'none';
+}
+
+function RegionMedal({ region, tier }: { region?: string; tier: MedalTier | 'all' }) {
+  const assetId = region ? REGION_MEDAL_ASSET_IDS[region] : undefined;
+  const style = assetId
+    ? ({
+        '--region-medal-icon': `url("${REGION_MEDAL_ASSET_ROOT}Badge_${assetId}.png")`,
+      } as CSSProperties)
+    : undefined;
+  return (
+    <span className={`region-medal region-medal--${tier}`} style={style} aria-hidden="true">
+      {assetId ? <i /> : '◎'}
+    </span>
+  );
 }
 
 function setEntryLocally(
@@ -317,6 +378,8 @@ export default function App() {
   const [region, setRegion] = useState('all');
   const [collectionFilter, setCollectionFilter] = useState<CollectionFilter>('all');
   const [categoryPickerOpen, setCategoryPickerOpen] = useState(false);
+  const [regionPickerOpen, setRegionPickerOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [quickCheck, setQuickCheck] = useState(false);
   const [selected, setSelected] = useState<CatalogItem | null>(null);
   const [collectionEntries, setCollectionEntries] = useState<CollectionEntry[]>([]);
@@ -329,6 +392,7 @@ export default function App() {
   const wantedRef = useRef<WantedEntry[]>([]);
   const mutationQueue = useRef<Promise<void>>(Promise.resolve());
   const wantedMutationQueue = useRef<Promise<void>>(Promise.resolve());
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const scrollPositions = useRef<Record<RouteId, number>>({
     home: 0,
     dex: 0,
@@ -395,10 +459,19 @@ export default function App() {
     return () => window.cancelAnimationFrame(frame);
   }, [route]);
 
+  useEffect(() => {
+    if (searchOpen) searchInputRef.current?.focus();
+  }, [searchOpen]);
+
   function changeCategory(value: CategoryId) {
     setActiveCategory(value);
     setCategoryPickerOpen(false);
     localStorage.setItem('dexly:active-category', value);
+  }
+
+  function changeRegion(value: string) {
+    setRegion(value);
+    setRegionPickerOpen(false);
   }
 
   function updateLocalCollection(formId: string, categoryId: CategoryId, collected: boolean) {
@@ -641,7 +714,27 @@ export default function App() {
 
   const progress = progressForCategory(bootstrap.catalog, collectionEntries, activeCategory);
   const defaultCatalog = bootstrap.catalog.filter((item) => item.isDefault);
-  const regions = [...new Set(defaultCatalog.map((item) => item.region))];
+  const regions = [...new Set(defaultCatalog.map((item) => titleCase(item.region)))];
+  const regionMedals = new Map(
+    regions.map((regionName) => {
+      const requirements = REGION_MEDAL_REQUIREMENTS[regionName];
+      const regionItems = defaultCatalog.filter((item) => titleCase(item.region) === regionName);
+      const collected = new Set(
+        regionItems
+          .filter((item) => collectedKeys.has(collectionKey(item.id, activeCategory)))
+          .map((item) => item.dexNumber),
+      ).size;
+      return [
+        regionName,
+        {
+          collected,
+          total: requirements?.platinum ?? regionItems.length,
+          tier: requirements ? medalTier(collected, requirements) : ('none' as MedalTier),
+          mark: requirements?.mark ?? regionName.slice(0, 1),
+        },
+      ] as const;
+    }),
+  );
   const filtered = defaultCatalog.filter((item) => {
     const normalizedQuery = query.trim().toLowerCase();
     if (
@@ -650,19 +743,19 @@ export default function App() {
       !String(item.dexNumber).includes(normalizedQuery)
     )
       return false;
-    if (region !== 'all' && item.region !== region) return false;
+    if (region !== 'all' && titleCase(item.region) !== region) return false;
     const state = deriveCollectionState(
       item.rules[activeCategory] ?? 'unknown',
       collectedKeys.has(collectionKey(item.id, activeCategory)),
     );
     if (collectionFilter === 'missing' && state !== 'missing') return false;
     if (collectionFilter === 'collected' && state !== 'collected') return false;
-    if (collectionFilter === 'available' && !['missing', 'collected'].includes(state)) return false;
     return true;
   });
   const activeCategoryLabel =
     bootstrap.categories.find((category) => category.id === activeCategory)?.label ??
     activeCategory;
+  const selectedRegionMedal = region === 'all' ? null : regionMedals.get(region);
 
   return (
     <div className="app-shell">
@@ -754,74 +847,126 @@ export default function App() {
               </section>
 
               <section className="dex-browser" aria-label="Collection browser">
-                <div className="dex-primary-controls">
-                  <label className="search-field">
-                    <Icon name="search" />
-                    <input
-                      type="search"
-                      value={query}
-                      onChange={(event) => setQuery(event.target.value)}
-                      placeholder="Name or Pokédex number"
-                      aria-label="Search Pokémon"
-                    />
-                    {query && (
-                      <button type="button" onClick={() => setQuery('')} aria-label="Clear search">
-                        <Icon name="close" />
-                      </button>
-                    )}
-                  </label>
-                </div>
-
-                {quickCheck && (
-                  <div className="quick-banner" role="status">
-                    <span>
-                      <Icon name="check" />
-                    </span>
-                    <div>
-                      <strong>Quick Check is on</strong>
-                      <p>
-                        Card taps now change {activeCategoryLabel} state. Every saved tap can be
-                        undone.
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      className="icon-button"
-                      onClick={() => setQuickCheck(false)}
-                      aria-label="Turn off Quick Check"
-                    >
-                      <Icon name="close" />
-                    </button>
-                  </div>
-                )}
-
                 <section className="dex-controls" aria-label="Pokédex filters">
-                  <div className="filter-row">
-                    <label className="region-filter">
-                      <Icon name="filter" />
-                      <select
-                        aria-label="Region"
-                        value={region}
-                        onChange={(event) => setRegion(event.target.value)}
+                  <div className={`dex-compact-bar${searchOpen || query ? ' is-searching' : ''}`}>
+                    <div className={`collapsible-search${searchOpen || query ? ' is-open' : ''}`}>
+                      <button
+                        type="button"
+                        className="collapsible-search__trigger"
+                        aria-label="Open Pokémon search"
+                        onClick={() => {
+                          setCategoryPickerOpen(false);
+                          setRegionPickerOpen(false);
+                          setSearchOpen(true);
+                        }}
                       >
-                        <option value="all">All regions</option>
-                        {regions.map((value) => (
-                          <option value={value} key={value}>
-                            {value}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
+                        <Icon name="search" />
+                      </button>
+                      <label className="search-field">
+                        <Icon name="search" />
+                        <input
+                          ref={searchInputRef}
+                          type="search"
+                          value={query}
+                          onChange={(event) => setQuery(event.target.value)}
+                          placeholder="Name or Pokédex number"
+                          aria-label="Search Pokémon"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setQuery('');
+                            setSearchOpen(false);
+                          }}
+                          aria-label="Close search"
+                        >
+                          <Icon name="close" />
+                        </button>
+                      </label>
+                    </div>
+
+                    <div className={`region-picker${regionPickerOpen ? ' is-open' : ''}`}>
+                      <button
+                        type="button"
+                        className="region-picker__toggle"
+                        aria-expanded={regionPickerOpen}
+                        aria-controls="region-options"
+                        onClick={() => {
+                          setCategoryPickerOpen(false);
+                          setRegionPickerOpen((value) => !value);
+                        }}
+                      >
+                        <RegionMedal
+                          region={region === 'all' ? undefined : region}
+                          tier={selectedRegionMedal?.tier ?? 'all'}
+                        />
+                        <span className="picker-copy">
+                          <strong>{region === 'all' ? 'All regions' : titleCase(region)}</strong>
+                          <small>
+                            {selectedRegionMedal
+                              ? `${selectedRegionMedal.collected}/${selectedRegionMedal.total} ${activeCategoryLabel}`
+                              : 'Regional medals'}
+                          </small>
+                        </span>
+                        <Icon name="chevron-right" />
+                      </button>
+                      <div
+                        id="region-options"
+                        className="region-options"
+                        role="listbox"
+                        aria-label="Region"
+                      >
+                        <button
+                          type="button"
+                          role="option"
+                          aria-selected={region === 'all'}
+                          onClick={() => changeRegion('all')}
+                        >
+                          <RegionMedal tier="all" />
+                          <span>
+                            <strong>All regions</strong>
+                            <small>Show the complete Pokédex</small>
+                          </span>
+                        </button>
+                        {regions.map((regionName) => {
+                          const medal = regionMedals.get(regionName)!;
+                          return (
+                            <button
+                              type="button"
+                              role="option"
+                              aria-selected={region === regionName}
+                              key={regionName}
+                              onClick={() => changeRegion(regionName)}
+                            >
+                              <RegionMedal region={regionName} tier={medal.tier} />
+                              <span>
+                                <strong>{titleCase(regionName)}</strong>
+                                <small>
+                                  {medal.collected}/{medal.total} · {titleCase(medal.tier)}
+                                </small>
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
                     <div className={`category-picker${categoryPickerOpen ? ' is-open' : ''}`}>
                       <button
                         type="button"
                         className="category-picker__toggle"
                         aria-expanded={categoryPickerOpen}
                         aria-controls="collection-category-options"
-                        onClick={() => setCategoryPickerOpen((value) => !value)}
+                        onClick={() => {
+                          setRegionPickerOpen(false);
+                          setCategoryPickerOpen((value) => !value);
+                        }}
                       >
                         <span>{categoryGlyphs[activeCategory]}</span>
-                        <strong>{activeCategoryLabel}</strong>
+                        <span className="picker-copy">
+                          <strong>{activeCategoryLabel}</strong>
+                          <small>Collection form</small>
+                        </span>
                         <Icon name="chevron-right" />
                       </button>
                       <div
@@ -845,8 +990,8 @@ export default function App() {
                       </div>
                     </div>
                   </div>
-                  <div className="state-filter" aria-label="Collection state">
-                    {(['all', 'missing', 'collected', 'available'] as const).map((value) => (
+                  <div className="state-filter" role="group" aria-label="Collection state">
+                    {(['all', 'missing', 'collected'] as const).map((value) => (
                       <button
                         type="button"
                         key={value}
@@ -858,6 +1003,29 @@ export default function App() {
                     ))}
                   </div>
                 </section>
+
+                {quickCheck && (
+                  <div className="quick-banner" role="status">
+                    <span>
+                      <Icon name="check" />
+                    </span>
+                    <div>
+                      <strong>Quick Check is on</strong>
+                      <p>
+                        Card taps now change {activeCategoryLabel} state. Every saved tap can be
+                        undone.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      className="icon-button"
+                      onClick={() => setQuickCheck(false)}
+                      aria-label="Turn off Quick Check"
+                    >
+                      <Icon name="close" />
+                    </button>
+                  </div>
+                )}
 
                 <div className="dex-results">
                   <div className="grid-heading">

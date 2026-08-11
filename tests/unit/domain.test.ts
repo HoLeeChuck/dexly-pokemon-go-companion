@@ -159,6 +159,18 @@ describe('generateMissingSearchStrings', () => {
     expect(result.strings.every((value) => value.startsWith('!traded&shiny&'))).toBe(true);
   });
 
+  it('keeps an ordinary large missing Dex in one default search string', () => {
+    const catalog = Array.from({ length: 500 }, (_, index) =>
+      catalogItem(String(index), index * 2 + 1, { shiny: 'released' }),
+    );
+
+    const result = generateMissingSearchStrings(catalog, [], 'shiny');
+
+    expect(result.strings).toHaveLength(1);
+    expect(result.strings[0]?.length).toBeGreaterThan(250);
+    expect(result.strings[0]?.length).toBeLessThanOrEqual(4500);
+  });
+
   it('labels form-limited and duplicate-dex searches as candidates', () => {
     const catalog = [
       catalogItem('standard', 25, { shiny: 'released' }),

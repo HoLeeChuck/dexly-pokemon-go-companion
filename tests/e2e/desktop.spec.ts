@@ -124,6 +124,8 @@ test('completing every released category activates the animated rainbow hook', a
     const tile = page.getByRole('button', { name: new RegExp(`^${category}`) });
     await tile.click();
     await expect(tile).toHaveAttribute('aria-pressed', 'true');
+    await expect(tile.locator('.category-toggle-switch')).toBeVisible();
+    await expect(tile).toHaveClass(/category-tile--collected/);
   }
 
   await expect(sheet).toHaveAttribute('data-collection-complete', 'true');
