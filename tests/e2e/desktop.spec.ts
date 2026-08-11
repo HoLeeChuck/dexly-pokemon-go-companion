@@ -1,40 +1,20 @@
 import { expect, test } from '@playwright/test';
 import { installFakeApi } from './support/fake-api';
 
-test('public SMNA home introduces the community and opens the private Dex tab', async ({
+test('first launch opens the Dex without exposing unfinished Home or Trade pages', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1920, height: 1000 });
   const api = await installFakeApi(page);
   await page.goto('/');
 
-  await expect(
-    page.getByRole('heading', { name: 'Play local. Meet neighbors. Catch together.' }),
-  ).toBeVisible();
-  await expect(page.getByText('12,600+', { exact: true })).toBeVisible();
-  await expect(page.getByText('3,500+', { exact: true })).toBeVisible();
-  await expect(page.getByRole('link', { name: /Join our Discord/ })).toHaveAttribute(
-    'href',
-    'https://discord.gg/9ZBN3EePRq',
-  );
-  await expect(page.getByRole('link', { name: /Find us on Campfire/ })).toHaveAttribute(
-    'href',
-    'https://cmpf.re/QXGp7L',
-  );
-  const wideLayout = await page.locator('.smna-hero').evaluate((hero) => {
-    const heroRect = hero.getBoundingClientRect();
-    const sidebarRect = document.querySelector('.desktop-sidebar')!.getBoundingClientRect();
-    return {
-      heroLeft: heroRect.left,
-      heroRight: heroRect.right,
-      sidebarRight: sidebarRect.right,
-      viewportWidth: innerWidth,
-    };
-  });
-  expect(wideLayout.heroLeft).toBeLessThanOrEqual(wideLayout.sidebarRight + 1);
-  expect(wideLayout.heroRight).toBeGreaterThanOrEqual(wideLayout.viewportWidth - 1);
-  await page.getByRole('button', { name: /Open Dex tracker/ }).click();
-  await expect(page).toHaveURL(/#\/dex$/);
+  await expect(page.getByRole('heading', { name: 'Pokédex' })).toBeVisible();
+  const navigation = page.getByRole('navigation', { name: 'Primary navigation' });
+  await expect(navigation.getByRole('button')).toHaveCount(3);
+  await expect(navigation.getByRole('button', { name: 'Home' })).toHaveCount(0);
+  await expect(navigation.getByRole('button', { name: 'Trade' })).toHaveCount(0);
+
+  await page.goto('/#/trade');
   await expect(page.getByRole('heading', { name: 'Pokédex' })).toBeVisible();
   expect(api.unexpectedWriteCount).toBe(0);
 });
@@ -53,7 +33,7 @@ test('desktop shell shows its sidebar and navigates without the mobile bar', asy
   await expect(page.locator('.bottom-nav')).toHaveCount(0);
 
   const navigation = sidebar.getByRole('navigation', { name: 'Primary navigation' });
-  await expect(navigation.getByRole('button')).toHaveCount(5);
+  await expect(navigation.getByRole('button')).toHaveCount(3);
   const searchLab = navigation.getByRole('button', { name: 'Search Lab' });
   await searchLab.click();
 

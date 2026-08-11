@@ -13,7 +13,7 @@ async function openDex(page: import('@playwright/test').Page) {
 
 async function openMobileRoute(
   page: import('@playwright/test').Page,
-  route: 'Home' | 'Dex' | 'Trade' | 'Search Lab' | 'Profile',
+  route: 'Dex' | 'Search Lab' | 'Profile',
 ) {
   await page.getByRole('button', { name: 'Open navigation menu' }).click();
   const menu = page.locator('.mobile-nav-panel');
@@ -202,9 +202,11 @@ test.describe('mobile collection experience', () => {
 
     const menu = page.locator('.mobile-nav-panel');
     await expect(menu).toBeVisible();
-    for (const route of ['Home', 'Dex', 'Trade', 'Search Lab', 'Profile']) {
+    for (const route of ['Dex', 'Search Lab', 'Profile']) {
       await expect(menu.getByRole('button', { name: route, exact: true })).toBeVisible();
     }
+    await expect(menu.getByRole('button', { name: 'Home', exact: true })).toHaveCount(0);
+    await expect(menu.getByRole('button', { name: 'Trade', exact: true })).toHaveCount(0);
     await expect(menu.getByRole('button', { name: 'Dex', exact: true })).toHaveAttribute(
       'aria-current',
       'page',
@@ -330,30 +332,6 @@ test.describe('mobile collection experience', () => {
     await page.getByLabel('Request').selectOption('xxl');
     await expect(output).toContainText('1 requested entry');
     await expect(output.locator('.search-string code')).toHaveText('!traded&xxl&7');
-  });
-
-  test('Trade lets an owned size satisfy and remove an active size request', async ({ page }) => {
-    const api = await installFakeApi(page);
-    await openDex(page);
-
-    await openMobileRoute(page, 'Trade');
-    await expect(page).toHaveURL(/#\/trade$/);
-    await expect(page.getByRole('heading', { name: 'Wanted' })).toBeVisible();
-    const supportedRequests = page.locator('.trade-trait-strip');
-    for (const request of ['Normal', 'Shiny', 'XXL', 'XXS', 'Costume']) {
-      await expect(supportedRequests.getByText(request, { exact: true })).toBeVisible();
-    }
-
-    const requestCard = page.locator('.trade-wanted-card').filter({ hasText: 'Squirtle' });
-    await expect(requestCard).toContainText('XXL');
-    await requestCard.getByRole('button', { name: 'I have this' }).click();
-
-    await expect(page.getByText('No active requests')).toBeVisible();
-    await expect.poll(() => api.collectionMutationCount).toBe(1);
-    expect(api.wantedMutationCount).toBe(0);
-    expect(api.isCollected('form-0007-standard', 'xxl')).toBe(true);
-    expect(api.isWanted('form-0007-standard', 'xxl')).toBe(false);
-    expect(api.unexpectedWriteCount).toBe(0);
   });
 
   test('CSV fixture produces a client-side preview without applying changes', async ({ page }) => {

@@ -21,9 +21,7 @@ import { DataPage } from './components/DataPage';
 import { DetailSheet } from './components/DetailSheet';
 import { Icon, type IconName } from './components/Icon';
 import { PokemonGrid } from './components/PokemonGrid';
-import { CommunityHome } from './components/CommunityHome';
 import { SearchLab } from './components/SearchLab';
-import { TradePage } from './components/TradePage';
 import {
   ApiClientError,
   api,
@@ -32,7 +30,7 @@ import {
   type BootstrapResponse,
 } from './lib/api';
 
-type RouteId = 'home' | 'dex' | 'trade' | 'search' | 'profile';
+type RouteId = 'dex' | 'search' | 'profile';
 type CollectionFilter = 'all' | 'missing' | 'collected';
 type MedalTier = 'none' | 'bronze' | 'silver' | 'gold' | 'platinum';
 
@@ -68,9 +66,7 @@ const REGION_MEDAL_ASSET_ROOT =
   'https://raw.githubusercontent.com/PokeMiners/pogo_assets/1a4ad1fc6c39f361ea85d53fc3040ce482ee9d90/Images/Badges/Achievements/';
 
 const routes: Array<{ id: RouteId; label: string; icon: IconName }> = [
-  { id: 'home', label: 'Home', icon: 'home' },
   { id: 'dex', label: 'Dex', icon: 'grid' },
-  { id: 'trade', label: 'Trade', icon: 'swap' },
   { id: 'search', label: 'Search Lab', icon: 'flask' },
   { id: 'profile', label: 'Profile', icon: 'user' },
 ];
@@ -88,7 +84,7 @@ const categoryGlyphs: Record<CategoryId, string> = {
 
 function routeFromHash(): RouteId {
   const value = window.location.hash.replace(/^#\/?/, '');
-  return routes.some((route) => route.id === value) ? (value as RouteId) : 'home';
+  return routes.some((route) => route.id === value) ? (value as RouteId) : 'dex';
 }
 
 function collectionKey(formId: string, categoryId: CategoryId): string {
@@ -394,9 +390,7 @@ export default function App() {
   const wantedMutationQueue = useRef<Promise<void>>(Promise.resolve());
   const searchInputRef = useRef<HTMLInputElement>(null);
   const scrollPositions = useRef<Record<RouteId, number>>({
-    home: 0,
     dex: 0,
-    trade: 0,
     search: 0,
     profile: 0,
   });
@@ -660,43 +654,6 @@ export default function App() {
     () => new Set(wantedEntries.filter((entry) => entry.wanted).map((entry) => entry.formId)),
     [wantedEntries],
   );
-
-  if (route === 'home') {
-    return (
-      <div className="app-shell app-shell--community">
-        <aside className="desktop-sidebar desktop-sidebar--community">
-          <AppBrand />
-          <nav aria-label="Primary navigation">
-            {routes.map((item) => (
-              <button
-                type="button"
-                key={item.id}
-                className={item.id === 'home' ? 'is-active' : ''}
-                onClick={() => navigate(item.id)}
-              >
-                <Icon name={item.icon} />
-                <span>{item.label}</span>
-                {item.id === 'home' && <i />}
-              </button>
-            ))}
-          </nav>
-          <div className="sidebar-card sidebar-card--smna">
-            <span>SM</span>
-            <strong>South Minneapolis</strong>
-            <p>Nokomis Area Pokémon GO</p>
-          </div>
-          <p className="sidebar-foot">Community-powered since 2017</p>
-        </aside>
-
-        <div className="app-stage">
-          <MobileNavigationHeader route={route} onNavigate={navigate} />
-          <main>
-            <CommunityHome onOpenDex={() => navigate('dex')} />
-          </main>
-        </div>
-      </div>
-    );
-  }
 
   if (status === 'loading') return <LoadingScreen />;
   if (status === 'locked')
@@ -1061,19 +1018,6 @@ export default function App() {
                 </div>
               </section>
             </section>
-          )}
-          {route === 'trade' && (
-            <TradePage
-              catalog={bootstrap.catalog}
-              collectionEntries={collectionEntries}
-              wantedEntries={wantedEntries}
-              tradeSpecimens={tradeSpecimens}
-              onOpen={setSelected}
-              onCollectionChange={(item, categoryId, value) =>
-                changeCollection(item, categoryId, value)
-              }
-              onWantedChange={changeWanted}
-            />
           )}
           {route === 'search' && (
             <SearchLab
