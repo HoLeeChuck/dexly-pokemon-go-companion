@@ -201,6 +201,11 @@ describe('Worker bootstrap and authentication boundary', () => {
       shinySpriteUrl: expect.stringContaining('pm791.s.icon.png'),
     });
     expect(solgaleo?.rules.shiny).toBe('released');
+
+    const regieleki = payload.catalog.find((item) => item.id === 'form-0894-standard');
+    const wyrdeer = payload.catalog.find((item) => item.id === 'form-0899-standard');
+    expect(regieleki?.region).toBe('galar');
+    expect(wyrdeer?.region).toBe('hisui');
   });
 
   it('fails closed on a production hostname when no access token is configured', async () => {

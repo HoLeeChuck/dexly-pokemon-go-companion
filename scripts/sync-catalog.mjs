@@ -69,6 +69,15 @@ const regions = [
   'Galar',
   'Paldea',
 ];
+const regionOverrides = new Map([
+  [899, 'Hisui'], // Wyrdeer
+  [900, 'Hisui'], // Kleavor
+  [901, 'Hisui'], // Ursaluna
+  [902, 'Hisui'], // Basculegion (applies when the standard form enters the feed)
+  [903, 'Hisui'], // Sneasler
+  [904, 'Hisui'], // Overqwil
+  [905, 'Hisui'], // Enamorus
+]);
 const normalize = (value) =>
   value
     .normalize('NFKD')
@@ -173,7 +182,7 @@ const forms = Object.values(released)
       name,
       normalizedName: normalize(name),
       generation: gen,
-      region: regions[gen],
+      region: regionOverrides.get(dex) ?? regions[gen],
       types: pokemonTypes,
       release: { normal: true, shiny: isShiny, shadow: isShadow, purified: isShadow },
       eligibility: {

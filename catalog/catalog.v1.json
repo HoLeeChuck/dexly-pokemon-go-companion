@@ -23310,7 +23310,7 @@
       "name": "Wyrdeer",
       "normalizedName": "wyrdeer",
       "generation": 8,
-      "region": "Galar",
+      "region": "Hisui",
       "types": ["normal", "psychic"],
       "release": { "normal": true, "shiny": true, "shadow": false, "purified": false },
       "eligibility": {
@@ -23337,7 +23337,7 @@
       "name": "Kleavor",
       "normalizedName": "kleavor",
       "generation": 8,
-      "region": "Galar",
+      "region": "Hisui",
       "types": ["bug", "rock"],
       "release": { "normal": true, "shiny": true, "shadow": false, "purified": false },
       "eligibility": {
@@ -23364,7 +23364,7 @@
       "name": "Ursaluna",
       "normalizedName": "ursaluna",
       "generation": 8,
-      "region": "Galar",
+      "region": "Hisui",
       "types": ["ground", "normal"],
       "release": { "normal": true, "shiny": false, "shadow": false, "purified": false },
       "eligibility": {
@@ -23388,7 +23388,7 @@
       "name": "Sneasler",
       "normalizedName": "sneasler",
       "generation": 8,
-      "region": "Galar",
+      "region": "Hisui",
       "types": ["fighting", "poison"],
       "release": { "normal": true, "shiny": true, "shadow": false, "purified": false },
       "eligibility": {
@@ -23415,7 +23415,7 @@
       "name": "Overqwil",
       "normalizedName": "overqwil",
       "generation": 8,
-      "region": "Galar",
+      "region": "Hisui",
       "types": ["dark", "poison"],
       "release": { "normal": true, "shiny": true, "shadow": false, "purified": false },
       "eligibility": {
@@ -23442,7 +23442,7 @@
       "name": "Enamorus",
       "normalizedName": "enamorus",
       "generation": 8,
-      "region": "Galar",
+      "region": "Hisui",
       "types": ["fairy", "flying"],
       "release": { "normal": true, "shiny": false, "shadow": false, "purified": false },
       "eligibility": {
