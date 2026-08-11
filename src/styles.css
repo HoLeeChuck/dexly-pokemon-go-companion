@@ -590,6 +590,54 @@ p {
   background: var(--lime);
 }
 
+.dex-browser {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  height: calc(100dvh - 138px - var(--safe-bottom));
+  min-height: 470px;
+  margin-top: 1rem;
+  padding: 0.65rem;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 22px 22px 0 0;
+  flex-direction: column;
+  background: rgb(246 249 242 / 96%);
+  box-shadow: 0 12px 32px rgb(18 57 48 / 10%);
+  backdrop-filter: blur(16px);
+}
+
+.dex-browser .category-scroller {
+  flex: 0 0 auto;
+  margin: -0.1rem -0.65rem 0.45rem;
+  padding: 0.1rem 0.65rem 0.4rem;
+}
+
+.dex-browser .quick-banner {
+  flex: 0 0 auto;
+  margin-bottom: 0.55rem;
+}
+
+.dex-results {
+  min-height: 0;
+  margin-top: 0.45rem;
+  padding: 0 0.15rem 1rem;
+  overflow-y: auto;
+  border-top: 1px solid var(--line);
+  flex: 1 1 auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.dex-results .grid-heading {
+  position: sticky;
+  z-index: 4;
+  top: 0;
+  margin: 0;
+  padding: 0.7rem 0 0.55rem;
+  background: linear-gradient(rgb(246 249 242) 82%, rgb(246 249 242 / 0%));
+}
+
 .quick-banner {
   display: flex;
   align-items: center;
@@ -634,7 +682,7 @@ p {
 }
 
 .dex-controls {
-  margin-bottom: 1rem;
+  flex: 0 0 auto;
 }
 
 .search-field {
@@ -683,7 +731,7 @@ p {
 
 .filter-row {
   display: grid;
-  grid-template-columns: 1.25fr 1fr 1fr;
+  grid-template-columns: 1.15fr 1fr;
   gap: 0.45rem;
   margin-top: 0.55rem;
 }
@@ -868,126 +916,6 @@ p {
   border: 1px dashed rgb(24 99 85 / 12%);
   border-radius: 50%;
   content: '';
-}
-
-.pokemon-card__shadow-aura {
-  position: absolute;
-  z-index: 1;
-  width: 94px;
-  height: 94px;
-  pointer-events: none;
-  background: #7d32c8;
-  filter: drop-shadow(0 0 4px rgb(112 40 191 / 82%)) drop-shadow(0 3px 8px rgb(72 17 125 / 48%));
-  mask-image: url('https://raw.githubusercontent.com/PokeMiners/pogo_assets/1a4ad1fc6c39f361ea85d53fc3040ce482ee9d90/Images/Effects/ShadowFlame4x4.png');
-  mask-repeat: no-repeat;
-  mask-size: 400% 400%;
-  opacity: 0.88;
-  transform: translateY(-3px) scale(1.08);
-  animation: shadow-flame-frames 1.45s steps(1, end) infinite alternate;
-}
-
-.pokemon-card--shadow {
-  background: linear-gradient(
-    145deg,
-    color-mix(in srgb, var(--type-primary) 9%, #fff4fb),
-    color-mix(in srgb, #a76bd4 17%, #f7f0ff)
-  );
-}
-
-.pokemon-card--shadow .pokemon-card__halo {
-  background: radial-gradient(
-    circle,
-    rgb(209 175 242 / 52%) 0,
-    rgb(190 135 229 / 20%) 48%,
-    transparent 72%
-  );
-}
-
-.pokemon-card--shadow .pokemon-card__halo::after {
-  border-color: transparent;
-}
-
-.pokemon-card--shadow .pokemon-card__sprite {
-  z-index: 2;
-  filter: drop-shadow(0 2px 2px rgb(49 8 78 / 68%)) drop-shadow(0 0 3px rgb(156 65 223 / 46%));
-}
-
-.pokemon-card--shadow.pokemon-card--missing .pokemon-card__sprite {
-  opacity: 0.68;
-  filter: grayscale(0.35) saturate(0.82) drop-shadow(0 2px 3px rgb(70 18 110 / 48%));
-}
-
-.pokemon-card--shadow.pokemon-card--unreleased .pokemon-card__shadow-aura,
-.pokemon-card--shadow.pokemon-card--ineligible .pokemon-card__shadow-aura,
-.pokemon-card--shadow.pokemon-card--unknown .pokemon-card__shadow-aura {
-  opacity: 0.2;
-  animation: none;
-}
-
-@keyframes shadow-flame-frames {
-  0% {
-    mask-position: 0% 0%;
-  }
-
-  6.66% {
-    mask-position: 33.333% 0%;
-  }
-
-  13.33% {
-    mask-position: 66.667% 0%;
-  }
-
-  20% {
-    mask-position: 100% 0%;
-  }
-
-  26.66% {
-    mask-position: 0% 33.333%;
-  }
-
-  33.33% {
-    mask-position: 33.333% 33.333%;
-  }
-
-  40% {
-    mask-position: 66.667% 33.333%;
-  }
-
-  46.66% {
-    mask-position: 100% 33.333%;
-  }
-
-  53.33% {
-    mask-position: 0% 66.667%;
-  }
-
-  60% {
-    mask-position: 33.333% 66.667%;
-  }
-
-  66.66% {
-    mask-position: 66.667% 66.667%;
-  }
-
-  73.33% {
-    mask-position: 100% 66.667%;
-  }
-
-  80% {
-    mask-position: 0% 100%;
-  }
-
-  86.66% {
-    mask-position: 33.333% 100%;
-  }
-
-  93.33% {
-    mask-position: 66.667% 100%;
-  }
-
-  100% {
-    mask-position: 100% 100%;
-  }
 }
 
 .pokemon-card__sprite,
@@ -3165,6 +3093,18 @@ p {
     padding-left: 0;
   }
 
+  .dex-browser {
+    height: calc(100vh - 2rem);
+    min-height: 620px;
+    padding: 0.9rem;
+    border-radius: 24px;
+  }
+
+  .dex-browser .category-scroller {
+    margin: 0 0 0.6rem;
+    padding: 0 0 0.35rem;
+  }
+
   .dex-controls {
     display: grid;
     grid-template-columns: minmax(260px, 1fr) 1.2fr auto;
@@ -3356,23 +3296,9 @@ p {
     width: 57px;
     height: 57px;
   }
-
-  .filter-row {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .filter-row label:last-child {
-    grid-column: 1 / -1;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pokemon-card__shadow-aura,
-  .pokemon-card__shadow-aura::before,
-  .pokemon-card__shadow-aura::after {
-    animation: none;
-  }
-
   *,
   *::before,
   *::after {

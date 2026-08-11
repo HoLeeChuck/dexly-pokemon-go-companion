@@ -98,6 +98,34 @@ test.describe('mobile collection experience', () => {
     expect(layout.gridRight).toBeLessThanOrEqual(layout.viewportWidth + 1);
   });
 
+  test('keeps search and essential filters above a boxed collection scroller', async ({ page }) => {
+    await installFakeApi(page);
+    await openDex(page);
+
+    await expect(page.getByLabel('Type')).toHaveCount(0);
+    const browser = page.locator('.dex-browser');
+    await browser.evaluate((element) => window.scrollTo(0, element.offsetTop - 68));
+
+    const results = page.locator('.dex-results');
+    const before = await results.evaluate((element) => ({
+      clientHeight: element.clientHeight,
+      scrollHeight: element.scrollHeight,
+      overflowY: getComputedStyle(element).overflowY,
+    }));
+    expect(before.overflowY).toBe('auto');
+    expect(before.scrollHeight).toBeGreaterThan(before.clientHeight);
+
+    await results.evaluate((element) => element.scrollTo(0, element.scrollHeight));
+    await expect.poll(() => results.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
+
+    const controls = await page.locator('.search-field input').evaluate((element) => {
+      const rect = element.closest('.dex-controls')!.getBoundingClientRect();
+      return { top: rect.top, bottom: rect.bottom, viewportHeight: innerHeight };
+    });
+    expect(controls.top).toBeGreaterThanOrEqual(68);
+    expect(controls.bottom).toBeLessThan(controls.viewportHeight - 70);
+  });
+
   test('a normal browse tap opens details without mutating collection state', async ({ page }) => {
     const api = await installFakeApi(page);
     await openDex(page);

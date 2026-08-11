@@ -101,28 +101,15 @@ test('completing every released category activates the animated rainbow hook', a
   expect(api.unexpectedWriteCount).toBe(0);
 });
 
-test('Shadow collection cards render an animated aura only on the Shadow page', async ({
-  page,
-}) => {
+test('Shadow collection uses the standard card treatment without an aura', async ({ page }) => {
   const api = await installFakeApi(page);
   await page.goto('/#/dex');
 
   await page.getByRole('button', { name: 'Shadow' }).click();
   const shadowCard = page.getByTestId('pokemon-card-1');
   await expect(shadowCard).toHaveAttribute('data-category', 'shadow');
-  await expect(shadowCard).toHaveClass(/pokemon-card--shadow/);
-  await expect(shadowCard.locator('.pokemon-card__shadow-aura')).toBeVisible();
-  await expect
-    .poll(() =>
-      shadowCard
-        .locator('.pokemon-card__shadow-aura')
-        .evaluate((element) => getComputedStyle(element).animationName),
-    )
-    .toContain('shadow-flame-frames');
-  await page.getByRole('button', { name: 'Normal' }).click();
-  const normalCard = page.getByTestId('pokemon-card-1');
-  await expect(normalCard).toHaveAttribute('data-category', 'normal');
-  await expect(normalCard.locator('.pokemon-card__shadow-aura')).toHaveCount(0);
+  await expect(shadowCard).not.toHaveClass(/pokemon-card--shadow/);
+  await expect(shadowCard.locator('.pokemon-card__shadow-aura')).toHaveCount(0);
   expect(api.collectionMutationCount).toBe(0);
   expect(api.unexpectedWriteCount).toBe(0);
 });

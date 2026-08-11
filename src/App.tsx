@@ -226,7 +226,6 @@ export default function App() {
   const [query, setQuery] = useState('');
   const [generation, setGeneration] = useState('all');
   const [region, setRegion] = useState('all');
-  const [type, setType] = useState('all');
   const [collectionFilter, setCollectionFilter] = useState<CollectionFilter>('all');
   const [quickCheck, setQuickCheck] = useState(false);
   const [selected, setSelected] = useState<CatalogItem | null>(null);
@@ -517,7 +516,6 @@ export default function App() {
   const generations = [...new Set(defaultCatalog.map((item) => item.generation))].sort(
     (a, b) => a - b,
   );
-  const types = [...new Set(defaultCatalog.flatMap((item) => item.types))].sort();
   const filtered = defaultCatalog.filter((item) => {
     const normalizedQuery = query.trim().toLowerCase();
     if (
@@ -528,7 +526,6 @@ export default function App() {
       return false;
     if (generation !== 'all' && item.generation !== Number(generation)) return false;
     if (region !== 'all' && item.region !== region) return false;
-    if (type !== 'all' && !item.types.includes(type)) return false;
     const state = deriveCollectionState(
       item.rules[activeCategory] ?? 'unknown',
       collectedKeys.has(collectionKey(item.id, activeCategory)),
@@ -642,149 +639,139 @@ export default function App() {
                 </button>
               </section>
 
-              <div className="category-scroller" role="toolbar" aria-label="Collection category">
-                {bootstrap.categories.map((category) => (
-                  <button
-                    type="button"
-                    key={category.id}
-                    className={activeCategory === category.id ? 'is-active' : ''}
-                    aria-pressed={activeCategory === category.id}
-                    onClick={() => changeCategory(category.id)}
-                  >
-                    <span>{categoryGlyphs[category.id]}</span>
-                    {category.shortLabel ?? category.label}
-                  </button>
-                ))}
-              </div>
-
-              {quickCheck && (
-                <div className="quick-banner" role="status">
-                  <span>
-                    <Icon name="check" />
-                  </span>
-                  <div>
-                    <strong>Quick Check is on</strong>
-                    <p>
-                      Card taps now change {activeCategoryLabel} state. Every saved tap can be
-                      undone.
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    className="icon-button"
-                    onClick={() => setQuickCheck(false)}
-                    aria-label="Turn off Quick Check"
-                  >
-                    <Icon name="close" />
-                  </button>
-                </div>
-              )}
-
-              <section className="dex-controls" aria-label="Pokédex filters">
-                <label className="search-field">
-                  <Icon name="search" />
-                  <input
-                    type="search"
-                    value={query}
-                    onChange={(event) => setQuery(event.target.value)}
-                    placeholder="Name or Pokédex number"
-                    aria-label="Search Pokémon"
-                  />
-                  {query && (
-                    <button type="button" onClick={() => setQuery('')} aria-label="Clear search">
-                      <Icon name="close" />
-                    </button>
-                  )}
-                </label>
-                <div className="filter-row">
-                  <label>
-                    <Icon name="filter" />
-                    <select
-                      aria-label="Generation"
-                      value={generation}
-                      onChange={(event) => setGeneration(event.target.value)}
-                    >
-                      <option value="all">All generations</option>
-                      {generations.map((value) => (
-                        <option value={value} key={value}>
-                          Gen {value}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <label>
-                    <select
-                      aria-label="Region"
-                      value={region}
-                      onChange={(event) => setRegion(event.target.value)}
-                    >
-                      <option value="all">All regions</option>
-                      {regions.map((value) => (
-                        <option value={value} key={value}>
-                          {value}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <label>
-                    <select
-                      aria-label="Type"
-                      value={type}
-                      onChange={(event) => setType(event.target.value)}
-                    >
-                      <option value="all">All types</option>
-                      {types.map((value) => (
-                        <option value={value} key={value}>
-                          {value}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                </div>
-                <div className="state-filter" aria-label="Collection state">
-                  {(['all', 'missing', 'collected', 'available'] as const).map((value) => (
+              <section className="dex-browser" aria-label="Collection browser">
+                <div className="category-scroller" role="toolbar" aria-label="Collection category">
+                  {bootstrap.categories.map((category) => (
                     <button
                       type="button"
-                      key={value}
-                      aria-pressed={collectionFilter === value}
-                      onClick={() => setCollectionFilter(value)}
+                      key={category.id}
+                      className={activeCategory === category.id ? 'is-active' : ''}
+                      aria-pressed={activeCategory === category.id}
+                      onClick={() => changeCategory(category.id)}
                     >
-                      {value === 'all' ? 'All' : value[0]?.toUpperCase() + value.slice(1)}
+                      <span>{categoryGlyphs[category.id]}</span>
+                      {category.shortLabel ?? category.label}
                     </button>
                   ))}
                 </div>
-              </section>
 
-              <div className="grid-heading">
-                <div>
-                  <h2>{activeCategoryLabel} collection</h2>
-                  <span>{filtered.length} shown</span>
+                {quickCheck && (
+                  <div className="quick-banner" role="status">
+                    <span>
+                      <Icon name="check" />
+                    </span>
+                    <div>
+                      <strong>Quick Check is on</strong>
+                      <p>
+                        Card taps now change {activeCategoryLabel} state. Every saved tap can be
+                        undone.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      className="icon-button"
+                      onClick={() => setQuickCheck(false)}
+                      aria-label="Turn off Quick Check"
+                    >
+                      <Icon name="close" />
+                    </button>
+                  </div>
+                )}
+
+                <section className="dex-controls" aria-label="Pokédex filters">
+                  <label className="search-field">
+                    <Icon name="search" />
+                    <input
+                      type="search"
+                      value={query}
+                      onChange={(event) => setQuery(event.target.value)}
+                      placeholder="Name or Pokédex number"
+                      aria-label="Search Pokémon"
+                    />
+                    {query && (
+                      <button type="button" onClick={() => setQuery('')} aria-label="Clear search">
+                        <Icon name="close" />
+                      </button>
+                    )}
+                  </label>
+                  <div className="filter-row">
+                    <label>
+                      <Icon name="filter" />
+                      <select
+                        aria-label="Generation"
+                        value={generation}
+                        onChange={(event) => setGeneration(event.target.value)}
+                      >
+                        <option value="all">All generations</option>
+                        {generations.map((value) => (
+                          <option value={value} key={value}>
+                            Gen {value}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <label>
+                      <select
+                        aria-label="Region"
+                        value={region}
+                        onChange={(event) => setRegion(event.target.value)}
+                      >
+                        <option value="all">All regions</option>
+                        {regions.map((value) => (
+                          <option value={value} key={value}>
+                            {value}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
+                  <div className="state-filter" aria-label="Collection state">
+                    {(['all', 'missing', 'collected', 'available'] as const).map((value) => (
+                      <button
+                        type="button"
+                        key={value}
+                        aria-pressed={collectionFilter === value}
+                        onClick={() => setCollectionFilter(value)}
+                      >
+                        {value === 'all' ? 'All' : value[0]?.toUpperCase() + value.slice(1)}
+                      </button>
+                    ))}
+                  </div>
+                </section>
+
+                <div className="dex-results">
+                  <div className="grid-heading">
+                    <div>
+                      <h2>{activeCategoryLabel} collection</h2>
+                      <span>{filtered.length} shown</span>
+                    </div>
+                    <div className="state-legend">
+                      <span>
+                        <i className="is-collected" />
+                        Collected
+                      </span>
+                      <span>
+                        <i className="is-missing" />
+                        Missing
+                      </span>
+                      <span>
+                        <i className="is-unavailable" />
+                        Unavailable
+                      </span>
+                    </div>
+                  </div>
+                  <PokemonGrid
+                    items={filtered}
+                    categoryId={activeCategory}
+                    quickCheck={quickCheck}
+                    collectedKeys={collectedKeys}
+                    wantedFormIds={wantedFormIds}
+                    pendingKeys={pendingKeys}
+                    onOpen={setSelected}
+                    onToggle={(item, value) => changeCollection(item, activeCategory, value)}
+                  />
                 </div>
-                <div className="state-legend">
-                  <span>
-                    <i className="is-collected" />
-                    Collected
-                  </span>
-                  <span>
-                    <i className="is-missing" />
-                    Missing
-                  </span>
-                  <span>
-                    <i className="is-unavailable" />
-                    Unavailable
-                  </span>
-                </div>
-              </div>
-              <PokemonGrid
-                items={filtered}
-                categoryId={activeCategory}
-                quickCheck={quickCheck}
-                collectedKeys={collectedKeys}
-                wantedFormIds={wantedFormIds}
-                pendingKeys={pendingKeys}
-                onOpen={setSelected}
-                onToggle={(item, value) => changeCollection(item, activeCategory, value)}
-              />
+              </section>
             </section>
           )}
           {route === 'trade' && (
