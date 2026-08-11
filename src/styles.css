@@ -1128,9 +1128,7 @@ p {
 .dex-primary-controls {
   position: relative;
   z-index: 24;
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 0.5rem;
+  display: block;
 }
 
 .category-picker {
@@ -1139,7 +1137,7 @@ p {
 
 .category-picker__toggle {
   display: flex;
-  min-width: 108px;
+  width: 100%;
   min-height: 46px;
   align-items: center;
   gap: 0.38rem;
@@ -1203,7 +1201,7 @@ p {
 .dex-browser .category-scroller {
   position: absolute;
   top: calc(100% + 0.4rem);
-  left: 0;
+  right: 0;
   display: none;
   width: min(82vw, 330px);
   max-height: min(58vh, 390px);
@@ -1292,18 +1290,14 @@ p {
 }
 
 .dex-controls {
+  position: relative;
+  z-index: 24;
   display: flex;
-  align-items: center;
-  gap: 0.35rem;
+  gap: 0.45rem;
   margin: 0.45rem -0.15rem 0;
   padding: 0 0.15rem 0.15rem;
-  overflow-x: auto;
   flex: 0 0 auto;
-  scrollbar-width: none;
-}
-
-.dex-controls::-webkit-scrollbar {
-  display: none;
+  flex-direction: column;
 }
 
 .search-field {
@@ -1351,9 +1345,10 @@ p {
 }
 
 .filter-row {
-  display: flex;
-  flex: 0 0 auto;
-  gap: 0.35rem;
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
   margin-top: 0;
 }
 
@@ -1361,8 +1356,8 @@ p {
   position: relative;
   display: flex;
   min-width: 0;
-  width: 126px;
-  min-height: 36px;
+  width: 100%;
+  min-height: 44px;
   align-items: center;
   padding-left: 0.45rem;
   border: 1px solid var(--line);
@@ -1379,7 +1374,7 @@ p {
 .filter-row select {
   width: 100%;
   min-width: 0;
-  min-height: 34px;
+  min-height: 42px;
   padding: 0 1.3rem 0 0.25rem;
   overflow: hidden;
   border: 0;
@@ -1393,15 +1388,15 @@ p {
 
 .state-filter {
   display: flex;
-  flex: 0 0 auto;
+  width: 100%;
   gap: 0.35rem;
   margin-top: 0;
 }
 
 .state-filter button {
-  min-width: 70px;
+  min-width: 0;
   min-height: 36px;
-  flex: 0 0 auto;
+  flex: 1;
   padding: 0.3rem 0.55rem;
   border: 0;
   border-radius: 12px;
@@ -3823,22 +3818,6 @@ p {
     font-size: 2rem;
   }
 
-  .category-scroller {
-    margin-right: 0;
-    margin-left: 0;
-    padding-right: 0;
-    padding-left: 0;
-  }
-
-  .dex-primary-controls,
-  .category-picker {
-    display: contents;
-  }
-
-  .category-picker__toggle {
-    display: none;
-  }
-
   .dex-browser {
     height: calc(100vh - 2rem);
     min-height: 620px;
@@ -3846,43 +3825,16 @@ p {
     border-radius: 24px;
   }
 
-  .dex-browser .category-scroller {
-    position: static;
-    display: flex;
-    width: auto;
-    max-height: none;
-    margin: 0 0 0.6rem;
-    padding: 0 0 0.35rem;
-    overflow-x: auto;
-    border: 0;
-    border-radius: 0;
-    flex-wrap: nowrap;
-    background: transparent;
-    box-shadow: none;
-    backdrop-filter: none;
-  }
-
   .dex-controls {
-    display: grid;
-    grid-template-columns: 1.2fr auto;
-    align-items: center;
     gap: 0.7rem;
-    margin: 0;
+    margin: 0.7rem 0 0;
     padding: 0;
     overflow: visible;
-  }
-
-  .dex-primary-controls > .search-field {
-    margin-bottom: 0.7rem;
   }
 
   .filter-row,
   .state-filter {
     margin-top: 0;
-  }
-
-  .filter-row label {
-    width: auto;
   }
 
   .state-filter button {

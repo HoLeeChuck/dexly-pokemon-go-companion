@@ -314,7 +314,6 @@ export default function App() {
       : 'normal';
   });
   const [query, setQuery] = useState('');
-  const [generation, setGeneration] = useState('all');
   const [region, setRegion] = useState('all');
   const [collectionFilter, setCollectionFilter] = useState<CollectionFilter>('all');
   const [categoryPickerOpen, setCategoryPickerOpen] = useState(false);
@@ -643,9 +642,6 @@ export default function App() {
   const progress = progressForCategory(bootstrap.catalog, collectionEntries, activeCategory);
   const defaultCatalog = bootstrap.catalog.filter((item) => item.isDefault);
   const regions = [...new Set(defaultCatalog.map((item) => item.region))];
-  const generations = [...new Set(defaultCatalog.map((item) => item.generation))].sort(
-    (a, b) => a - b,
-  );
   const filtered = defaultCatalog.filter((item) => {
     const normalizedQuery = query.trim().toLowerCase();
     if (
@@ -654,7 +650,6 @@ export default function App() {
       !String(item.dexNumber).includes(normalizedQuery)
     )
       return false;
-    if (generation !== 'all' && item.generation !== Number(generation)) return false;
     if (region !== 'all' && item.region !== region) return false;
     const state = deriveCollectionState(
       item.rules[activeCategory] ?? 'unknown',
@@ -760,39 +755,6 @@ export default function App() {
 
               <section className="dex-browser" aria-label="Collection browser">
                 <div className="dex-primary-controls">
-                  <div className={`category-picker${categoryPickerOpen ? ' is-open' : ''}`}>
-                    <button
-                      type="button"
-                      className="category-picker__toggle"
-                      aria-expanded={categoryPickerOpen}
-                      aria-controls="collection-category-options"
-                      onClick={() => setCategoryPickerOpen((value) => !value)}
-                    >
-                      <span>{categoryGlyphs[activeCategory]}</span>
-                      <strong>{activeCategoryLabel}</strong>
-                      <Icon name="chevron-right" />
-                    </button>
-                    <div
-                      id="collection-category-options"
-                      className="category-scroller"
-                      role="toolbar"
-                      aria-label="Collection category"
-                    >
-                      {bootstrap.categories.map((category) => (
-                        <button
-                          type="button"
-                          key={category.id}
-                          className={activeCategory === category.id ? 'is-active' : ''}
-                          aria-pressed={activeCategory === category.id}
-                          onClick={() => changeCategory(category.id)}
-                        >
-                          <span>{categoryGlyphs[category.id]}</span>
-                          {category.shortLabel ?? category.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
                   <label className="search-field">
                     <Icon name="search" />
                     <input
@@ -835,22 +797,8 @@ export default function App() {
 
                 <section className="dex-controls" aria-label="Pokédex filters">
                   <div className="filter-row">
-                    <label>
+                    <label className="region-filter">
                       <Icon name="filter" />
-                      <select
-                        aria-label="Generation"
-                        value={generation}
-                        onChange={(event) => setGeneration(event.target.value)}
-                      >
-                        <option value="all">All generations</option>
-                        {generations.map((value) => (
-                          <option value={value} key={value}>
-                            Gen {value}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-                    <label>
                       <select
                         aria-label="Region"
                         value={region}
@@ -864,6 +812,38 @@ export default function App() {
                         ))}
                       </select>
                     </label>
+                    <div className={`category-picker${categoryPickerOpen ? ' is-open' : ''}`}>
+                      <button
+                        type="button"
+                        className="category-picker__toggle"
+                        aria-expanded={categoryPickerOpen}
+                        aria-controls="collection-category-options"
+                        onClick={() => setCategoryPickerOpen((value) => !value)}
+                      >
+                        <span>{categoryGlyphs[activeCategory]}</span>
+                        <strong>{activeCategoryLabel}</strong>
+                        <Icon name="chevron-right" />
+                      </button>
+                      <div
+                        id="collection-category-options"
+                        className="category-scroller"
+                        role="toolbar"
+                        aria-label="Collection category"
+                      >
+                        {bootstrap.categories.map((category) => (
+                          <button
+                            type="button"
+                            key={category.id}
+                            className={activeCategory === category.id ? 'is-active' : ''}
+                            aria-pressed={activeCategory === category.id}
+                            onClick={() => changeCategory(category.id)}
+                          >
+                            <span>{categoryGlyphs[category.id]}</span>
+                            {category.shortLabel ?? category.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                   <div className="state-filter" aria-label="Collection state">
                     {(['all', 'missing', 'collected', 'available'] as const).map((value) => (

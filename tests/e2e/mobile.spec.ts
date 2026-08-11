@@ -114,6 +114,7 @@ test.describe('mobile collection experience', () => {
     await openDex(page);
 
     await expect(page.getByLabel('Type')).toHaveCount(0);
+    await expect(page.locator('.dex-controls').getByLabel('Generation')).toHaveCount(0);
     const mobileControlSizes = await page
       .locator('.search-field input, .filter-row select')
       .evaluateAll((elements) =>

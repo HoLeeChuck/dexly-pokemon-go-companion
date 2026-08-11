@@ -143,7 +143,11 @@ test('Shadow collection uses the standard card treatment without an aura', async
   const api = await installFakeApi(page);
   await page.goto('/#/dex');
 
-  await page.getByRole('button', { name: 'Shadow' }).click();
+  await page.locator('.category-picker__toggle').click();
+  await page
+    .getByRole('toolbar', { name: 'Collection category' })
+    .getByRole('button', { name: 'Shadow' })
+    .click();
   const shadowCard = page.getByTestId('pokemon-card-1');
   await expect(shadowCard).toHaveAttribute('data-category', 'shadow');
   await expect(shadowCard).not.toHaveClass(/pokemon-card--shadow/);
