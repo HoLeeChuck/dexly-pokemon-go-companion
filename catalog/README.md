@@ -1,6 +1,6 @@
 # Versioned Pokémon catalog
 
-`catalog.v1.json` is a deliberately small seed catalog for the first collection vertical slice. It contains 23 standard forms spanning Kanto through Alola. All app-facing IDs are owned by this project; PokeMiners filenames are isolated inside each form's `assets` mapping.
+`catalog.v1.json` contains the 949 National Pokédex species released in Pokémon GO as of 2026-08-11, represented by one stable standard collection form per species. All app-facing IDs are owned by this project; PokeMiners filenames are isolated inside each form's `assets` mapping.
 
 ## Data contract
 
@@ -13,7 +13,9 @@
 - `tradeable` describes the form itself. A trade specimen can still be blocked by traits or game rules; for example, Shadow Pokémon cannot be traded.
 - `assets.*.upstreamPath` is a relative PokeMiners path. The commit-pinned `source.rawBaseUrl` turns it into a deterministic URL.
 
-The current seed conservatively marks Normal and Shiny release for species whose releases are long established. It asserts common Normal, Shiny, Lucky, Hundo, XXL, and XXS eligibility. The three Kanto starters also carry audited Shadow and Purified release state so the vertical slice can exercise those categories; other Shadow and Purified values remain `null` until a separate, versioned gameplay-rules source is added. A mined sprite is evidence that an asset exists, not proof that a form or Shiny is released in Pokémon GO.
+Normal releases, Shiny releases, Shadow eligibility, types, and names are generated from a hash-pinned PoGoAPI snapshot. Twelve recent 2026 debuts that its release file currently omits are maintained as an explicit reviewed delta based on the dated Pokémon GO availability chronology. Purified eligibility follows Shadow eligibility. Normal, Lucky, Hundo, XXL, and XXS are enabled for every released species. A mined sprite is evidence that an asset exists, not proof that a form or Shiny is released in Pokémon GO.
+
+This version intentionally models the main National Dex checklist, not every costume, regional appearance, battle transformation, or letter/pattern form. Those variants require separate stable form IDs and release audits and can be added without changing these species IDs.
 
 ## Sprite source and URL convention
 
@@ -43,12 +45,12 @@ An alternate manifest can be checked with `--manifest path/to/catalog.json`. Off
 
 ## Catalog synchronization
 
-Treat an upstream refresh as a reviewed data migration:
+Run `pnpm catalog:sync` to refresh the generated manifest and additive migration, then treat the result as a reviewed data migration:
 
 1. Resolve a specific PokeMiners commit and enumerate `Images/Pokemon - 256x256/Addressable Assets` through GitHub's tree API.
 2. Diff the upstream filenames against the previous manifest. Never infer or rename `speciesId`, `formId`, or `formKey` automatically.
 3. Map new or changed files to stable internal forms explicitly. Preserve retired mappings when collection history may reference them.
-4. Audit release, eligibility, and trade rules from an appropriate gameplay-data source. Do not derive those facts from sprite presence.
+4. Audit the explicit recent-release delta and release, eligibility, and trade rules from an appropriate gameplay-data source. Do not derive those facts from sprite presence.
 5. Update `source.commit`, `source.rawBaseUrl`, `catalogVersion`, and `releaseMetadataAsOf` together.
 6. Run both verifier modes and review the manifest diff before merging.
 

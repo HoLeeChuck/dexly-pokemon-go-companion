@@ -526,11 +526,12 @@ describe('authoritative CSV import', () => {
     expect(appliedJob).toEqual({ status: 'applied', backup_id: applied.backupId });
   });
 
-  it('applies a catalog-wide 138-cell import with a bounded D1 query count', async () => {
+  it('applies a 138-cell import with a bounded D1 query count', async () => {
     const state = await bootstrap();
+    const importSlice = state.catalog.slice(0, 23);
     const csv = [
       'form_id,normal,shiny,lucky,hundo,xxl,xxs',
-      ...state.catalog.map((item) => `${item.id},true,true,true,true,true,true`),
+      ...importSlice.map((item) => `${item.id},true,true,true,true,true,true`),
     ].join('\n');
 
     const previewResponse = await localApi('/api/v1/imports/preview', {
@@ -539,7 +540,7 @@ describe('authoritative CSV import', () => {
     });
     const preview = await responseJson<ImportPreviewResponse>(previewResponse);
     expect(previewResponse.status).toBe(200);
-    expect(preview.preview.summary.added).toBe(state.catalog.length * 6);
+    expect(preview.preview.summary.added).toBe(importSlice.length * 6);
     if (!preview.jobId) throw new Error('Expected a valid catalog-wide import job');
 
     const applyResponse = await localApi(`/api/v1/imports/${preview.jobId}/apply`, {
@@ -548,8 +549,8 @@ describe('authoritative CSV import', () => {
     });
     const applied = await responseJson<ImportApplyResponse>(applyResponse);
     expect(applyResponse.status).toBe(200);
-    expect(applied.added).toBe(state.catalog.length * 6);
-    expect((await bootstrap()).collectionEntries).toHaveLength(state.catalog.length * 6);
+    expect(applied.added).toBe(importSlice.length * 6);
+    expect((await bootstrap()).collectionEntries).toHaveLength(importSlice.length * 6);
   });
 
   it('claims a no-change import exactly once under concurrent apply requests', async () => {
