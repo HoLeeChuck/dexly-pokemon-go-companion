@@ -11,7 +11,7 @@
     {
       "binding": "DB",
       "database_name": "dexly-db",
-      "database_id": "00000000-0000-0000-0000-000000000001",
+      "database_id": "154ac34c-cdfc-4a98-a0c4-f159153a6e2e",
       "migrations_dir": "migrations",
     },
   ],
