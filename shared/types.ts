@@ -11,6 +11,12 @@ export const CATEGORY_IDS = [
 
 export type CategoryId = (typeof CATEGORY_IDS)[number];
 
+export const TRADE_REQUEST_TRAIT_IDS = ['normal', 'shiny', 'xxl', 'xxs', 'costume'] as const;
+export type TradeRequestTrait = (typeof TRADE_REQUEST_TRAIT_IDS)[number];
+
+export const TRADE_OFFER_TRAIT_IDS = ['shiny', 'xxl', 'xxs', 'costume'] as const;
+export type TradeOfferTrait = (typeof TRADE_OFFER_TRAIT_IDS)[number];
+
 export const RULE_STATES = ['released', 'unreleased', 'ineligible', 'unknown'] as const;
 
 export type RuleState = (typeof RULE_STATES)[number];
@@ -57,7 +63,7 @@ export interface WantedEntry {
   id?: string;
   profileId?: string;
   formId: string;
-  categoryId?: CategoryId;
+  categoryId?: TradeRequestTrait;
   wanted: boolean;
   notes?: string;
   updatedAt?: string;
@@ -67,7 +73,7 @@ export interface TradeSpecimen {
   id: string;
   profileId?: string;
   formId: string;
-  traits: readonly CategoryId[];
+  traits: readonly TradeOfferTrait[];
   quantity: number;
   notes?: string;
   verifiedAt?: string;

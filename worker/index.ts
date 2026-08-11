@@ -1,4 +1,11 @@
-import { CATEGORY_IDS, type CategoryId } from '../shared/types';
+import {
+  CATEGORY_IDS,
+  TRADE_OFFER_TRAIT_IDS,
+  TRADE_REQUEST_TRAIT_IDS,
+  type CategoryId,
+  type TradeOfferTrait,
+  type TradeRequestTrait,
+} from '../shared/types';
 import { type AppEnv, resolveActor } from './auth';
 import {
   ApiError,
@@ -37,6 +44,14 @@ function categoryField(body: Record<string, unknown>): CategoryId {
     );
   }
   return value as CategoryId;
+}
+
+function tradeRequestTraitField(body: Record<string, unknown>): TradeRequestTrait {
+  const value = body.traitId;
+  if (typeof value !== 'string' || !TRADE_REQUEST_TRAIT_IDS.includes(value as TradeRequestTrait)) {
+    throw new ApiError(400, 'INVALID_TRADE_TRAIT', 'traitId is not a supported trade request.');
+  }
+  return value as TradeRequestTrait;
 }
 
 function expectedRevisionField(body: Record<string, unknown>): number | undefined {
@@ -112,7 +127,7 @@ async function handleApi(request: Request, env: AppEnv): Promise<Response> {
         env.DB,
         actor.profileId,
         stringField(body, 'formId', { min: 8, max: 90, pattern: FORM_ID_PATTERN }),
-        categoryField(body),
+        tradeRequestTraitField(body),
         booleanField(body, 'wanted'),
       ),
     );
@@ -146,18 +161,19 @@ async function handleApi(request: Request, env: AppEnv): Promise<Response> {
     const traitsValue = body.traits;
     if (
       !Array.isArray(traitsValue) ||
-      traitsValue.length > CATEGORY_IDS.length ||
+      traitsValue.length > TRADE_OFFER_TRAIT_IDS.length ||
       traitsValue.some(
-        (trait) => typeof trait !== 'string' || !CATEGORY_IDS.includes(trait as CategoryId),
+        (trait) =>
+          typeof trait !== 'string' || !TRADE_OFFER_TRAIT_IDS.includes(trait as TradeOfferTrait),
       )
     ) {
       throw new ApiError(
         400,
         'INVALID_TRAITS',
-        'traits must be a list of supported category identifiers.',
+        'traits may contain only shiny, XXL, XXS, or costume.',
       );
     }
-    const traits = [...new Set(traitsValue as CategoryId[])];
+    const traits = [...new Set(traitsValue as TradeOfferTrait[])];
     const notesValue = body.notes ?? '';
     if (typeof notesValue !== 'string' || notesValue.length > 1000) {
       throw new ApiError(400, 'INVALID_FIELD', 'notes must be 1,000 characters or fewer.');

@@ -1,5 +1,10 @@
 import type { Page, Route } from '@playwright/test';
-import type { CategoryId, CollectionEntry } from '../../../shared/types';
+import type {
+  CategoryId,
+  CollectionEntry,
+  TradeRequestTrait,
+  WantedEntry,
+} from '../../../shared/types';
 import { createBootstrapFixture } from '../../fixtures/bootstrap';
 
 interface CollectionMutationInput {
@@ -15,11 +20,19 @@ interface MutationBatch {
   previous: boolean;
 }
 
+interface WantedMutationInput {
+  formId: string;
+  traitId: TradeRequestTrait;
+  wanted: boolean;
+}
+
 export interface ApiHarness {
   readonly collectionMutationCount: number;
+  readonly wantedMutationCount: number;
   readonly undoCount: number;
   readonly unexpectedWriteCount: number;
   isCollected(formId: string, categoryId: CategoryId): boolean;
+  isWanted(formId: string, traitId: TradeRequestTrait): boolean;
 }
 
 async function fulfillJson(route: Route, value: unknown, status = 200): Promise<void> {
@@ -39,6 +52,7 @@ export async function installFakeApi(page: Page): Promise<ApiHarness> {
   const batches = new Map<string, MutationBatch>();
   let revision = state.revision;
   let collectionMutationCount = 0;
+  let wantedMutationCount = 0;
   let undoCount = 0;
   let unexpectedWriteCount = 0;
 
@@ -63,6 +77,31 @@ export async function installFakeApi(page: Page): Promise<ApiHarness> {
           } satisfies CollectionEntry,
         ]
       : entries;
+    if (collected && (categoryId === 'xxl' || categoryId === 'xxs')) {
+      state.wantedEntries = state.wantedEntries.filter(
+        (entry) => !(entry.formId === formId && entry.categoryId === categoryId),
+      );
+    }
+  };
+
+  const isWanted = (formId: string, traitId: TradeRequestTrait): boolean =>
+    state.wantedEntries.some(
+      (entry) => entry.formId === formId && entry.categoryId === traitId && entry.wanted === true,
+    );
+
+  const setWanted = (formId: string, traitId: TradeRequestTrait, wanted: boolean): WantedEntry => {
+    const entries = state.wantedEntries.filter(
+      (entry) => !(entry.formId === formId && entry.categoryId === traitId),
+    );
+    const entry: WantedEntry = {
+      id: `wanted:e2e-${formId}-${traitId}`,
+      profileId: state.profileId,
+      formId,
+      categoryId: traitId,
+      wanted,
+    };
+    state.wantedEntries = wanted ? [...entries, entry] : entries;
+    return entry;
   };
 
   await page.addInitScript(() => {
@@ -112,6 +151,13 @@ export async function installFakeApi(page: Page): Promise<ApiHarness> {
       return;
     }
 
+    if (path === '/api/v1/wanted' && request.method() === 'PUT') {
+      wantedMutationCount += 1;
+      const input = request.postDataJSON() as WantedMutationInput;
+      await fulfillJson(route, setWanted(input.formId, input.traitId, input.wanted));
+      return;
+    }
+
     const undoMatch = path.match(/^\/api\/v1\/mutations\/([^/]+)\/undo$/);
     if (undoMatch && request.method() === 'POST') {
       undoCount += 1;
@@ -155,6 +201,9 @@ export async function installFakeApi(page: Page): Promise<ApiHarness> {
     get collectionMutationCount() {
       return collectionMutationCount;
     },
+    get wantedMutationCount() {
+      return wantedMutationCount;
+    },
     get undoCount() {
       return undoCount;
     },
@@ -162,5 +211,6 @@ export async function installFakeApi(page: Page): Promise<ApiHarness> {
       return unexpectedWriteCount;
     },
     isCollected,
+    isWanted,
   };
 }

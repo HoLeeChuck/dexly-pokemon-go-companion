@@ -1,17 +1,27 @@
 import { useMemo, useState } from 'react';
-import { generateMissingSearchStrings, isTradeSearchSupported } from '../../shared/domain';
-import type { CatalogItem, Category, CategoryId, CollectionEntry } from '../../shared/types';
+import evolutionFamilyData from '../../catalog/evolution-families.v1.json';
+import {
+  generateMissingSearchStrings,
+  generatePersonalSizeCatchSearchStrings,
+  generateWantedTradeSearchStrings,
+  isMissingSearchSupported,
+} from '../../shared/domain';
+import type {
+  CatalogItem,
+  Category,
+  CategoryId,
+  CollectionEntry,
+  TradeRequestTrait,
+  WantedEntry,
+} from '../../shared/types';
 import { Icon } from './Icon';
 
-const recommended = [
-  {
-    name: 'Recent shinies',
-    value: 'shiny&age0-7',
-    note: 'Shiny Pokémon caught in the last seven days.',
-  },
-  { name: 'Showcase sizes', value: 'xxl,xxs', note: 'Candidate XXL or XXS Pokémon for review.' },
-  { name: 'Hundos', value: '4*', note: 'Exact appraisal filter for perfect IV Pokémon.' },
-  { name: 'Untagged review', value: '!#', note: 'Pokémon without any tags. Review before acting.' },
+const tradeTraits: ReadonlyArray<{ id: TradeRequestTrait; label: string }> = [
+  { id: 'normal', label: 'Normal' },
+  { id: 'shiny', label: 'Shiny' },
+  { id: 'xxl', label: 'XXL' },
+  { id: 'xxs', label: 'XXS' },
+  { id: 'costume', label: 'Costume' },
 ];
 
 async function copyText(value: string): Promise<boolean> {
@@ -34,17 +44,20 @@ async function copyText(value: string): Promise<boolean> {
 export function SearchLab({
   catalog,
   entries,
+  wantedEntries,
   categories,
   activeCategory,
   onCategoryChange,
 }: {
   catalog: readonly CatalogItem[];
   entries: readonly CollectionEntry[];
+  wantedEntries: readonly WantedEntry[];
   categories: readonly Category[];
   activeCategory: CategoryId;
   onCategoryChange: (value: CategoryId) => void;
 }) {
   const [workflow, setWorkflow] = useState<'reconcile' | 'trade'>('reconcile');
+  const [tradeTrait, setTradeTrait] = useState<TradeRequestTrait>('normal');
   const [generation, setGeneration] = useState('all');
   const [region, setRegion] = useState('all');
   const [copied, setCopied] = useState<string | null>(null);
@@ -59,14 +72,61 @@ export function SearchLab({
       ),
     [catalog, generation, region],
   );
+  const missingCategory = isMissingSearchSupported(activeCategory) ? activeCategory : 'normal';
   const generated = useMemo(
     () =>
-      generateMissingSearchStrings(filteredCatalog, entries, activeCategory, { maxLength: 240 }),
-    [filteredCatalog, entries, activeCategory],
+      workflow === 'trade'
+        ? generateWantedTradeSearchStrings(filteredCatalog, wantedEntries, tradeTrait, {
+            maxLength: 240,
+          })
+        : generateMissingSearchStrings(filteredCatalog, entries, missingCategory, {
+            maxLength: 240,
+          }),
+    [entries, filteredCatalog, missingCategory, tradeTrait, wantedEntries, workflow],
+  );
+  const personalXXL = useMemo(
+    () =>
+      generatePersonalSizeCatchSearchStrings(catalog, entries, 'xxl', {
+        maxLength: 240,
+        evolutionFamilies: evolutionFamilyData.families,
+      }),
+    [catalog, entries],
+  );
+  const personalXXS = useMemo(
+    () =>
+      generatePersonalSizeCatchSearchStrings(catalog, entries, 'xxs', {
+        maxLength: 240,
+        evolutionFamilies: evolutionFamilyData.families,
+      }),
+    [catalog, entries],
+  );
+  const collectionSearchCategories = categories.filter((category) =>
+    isMissingSearchSupported(category.id),
   );
   const regions = [...new Set(catalog.map((item) => item.region))];
   const generations = [...new Set(catalog.map((item) => item.generation))].sort((a, b) => a - b);
-  const tradeSupported = isTradeSearchSupported(activeCategory);
+  const recommendations = [
+    {
+      name: 'Recent shinies',
+      value: '!traded&shiny&age0-7',
+      note: 'Untraded Shiny Pokémon caught in the last seven days.',
+    },
+    ...personalXXL.strings.map((value, index) => ({
+      name: `My missing XXL families${personalXXL.strings.length > 1 ? ` ${index + 1}/${personalXXL.strings.length}` : ''}`,
+      value,
+      note: `${personalXXL.missingDexNumbers.length} XXL gaps; includes catchable family stages you can evolve.`,
+    })),
+    ...personalXXS.strings.map((value, index) => ({
+      name: `My missing XXS families${personalXXS.strings.length > 1 ? ` ${index + 1}/${personalXXS.strings.length}` : ''}`,
+      value,
+      note: `${personalXXS.missingDexNumbers.length} XXS gaps; includes catchable family stages you can evolve.`,
+    })),
+    {
+      name: 'Untagged review',
+      value: '!traded&!#',
+      note: 'Untraded Pokémon without any tags. Review before acting.',
+    },
+  ];
 
   async function handleCopy(value: string, id: string) {
     if (await copyText(value)) {
@@ -86,9 +146,7 @@ export function SearchLab({
             <Icon name="flask" /> Search Lab
           </span>
           <h1>Turn gaps into useful searches.</h1>
-          <p>
-            Build in-game reconciliation and trade-planning strings from your actual collection.
-          </p>
+          <p>Build untraded catch and trade searches from your actual collection.</p>
         </div>
         <div className="lab-hero__orb" aria-hidden="true">
           <Icon name="search" />
@@ -102,22 +160,22 @@ export function SearchLab({
           aria-pressed={workflow === 'reconcile'}
           onClick={() => setWorkflow('reconcile')}
         >
-          <Icon name="refresh" /> Reconcile my Dex
+          <Icon name="refresh" /> My missing collection
         </button>
         <button
           type="button"
           aria-pressed={workflow === 'trade'}
           onClick={() => setWorkflow('trade')}
         >
-          <Icon name="swap" /> Trade planning
+          <Icon name="swap" /> My wanted trades
         </button>
       </div>
 
       <section className="panel generator-panel">
         <div className="panel-heading">
           <div>
-            <span className="eyebrow">My missing</span>
-            <h2>Missing-Dex generator</h2>
+            <span className="eyebrow">{workflow === 'trade' ? 'My requests' : 'My missing'}</span>
+            <h2>{workflow === 'trade' ? 'Wanted-trade generator' : 'Missing-Dex generator'}</h2>
           </div>
           <span className={`quality-badge quality-badge--${generated.quality}`}>
             {generated.quality === 'exact' ? <Icon name="check" /> : <Icon name="filter" />}
@@ -127,17 +185,30 @@ export function SearchLab({
 
         <div className="lab-fields">
           <label>
-            Category
-            <select
-              value={activeCategory}
-              onChange={(event) => onCategoryChange(event.target.value as CategoryId)}
-            >
-              {categories.map((category) => (
-                <option value={category.id} key={category.id}>
-                  {category.label}
-                </option>
-              ))}
-            </select>
+            {workflow === 'trade' ? 'Request' : 'Category'}
+            {workflow === 'trade' ? (
+              <select
+                value={tradeTrait}
+                onChange={(event) => setTradeTrait(event.target.value as TradeRequestTrait)}
+              >
+                {tradeTraits.map((trait) => (
+                  <option value={trait.id} key={trait.id}>
+                    {trait.label}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <select
+                value={missingCategory}
+                onChange={(event) => onCategoryChange(event.target.value as CategoryId)}
+              >
+                {collectionSearchCategories.map((category) => (
+                  <option value={category.id} key={category.id}>
+                    {category.label}
+                  </option>
+                ))}
+              </select>
+            )}
           </label>
           <label>
             Generation
@@ -163,24 +234,10 @@ export function SearchLab({
           </label>
         </div>
 
-        {workflow === 'trade' && !tradeSupported && (
-          <div className="notice notice--warning">
-            <Icon name="shield" />
-            <div>
-              <strong>
-                {activeCategory === 'shadow'
-                  ? 'Shadow Pokémon cannot be traded.'
-                  : `${activeCategory === 'hundo' ? 'IVs reroll' : 'Lucky status does not transfer'}.`}
-              </strong>
-              <p>Choose Shiny, XXL, XXS, Purified, or Normal for a useful trade-planning result.</p>
-            </div>
-          </div>
-        )}
-
         <div className="search-output">
           <div className="search-output__meta">
             <span>
-              {generated.dexNumbers.length} missing{' '}
+              {generated.dexNumbers.length} {workflow === 'trade' ? 'requested' : 'missing'}{' '}
               {generated.dexNumbers.length === 1 ? 'entry' : 'entries'}
             </span>
             <span>
@@ -204,16 +261,15 @@ export function SearchLab({
           ) : (
             <div className="search-empty">
               <Icon name="sparkles" />
-              <strong>Nothing missing here</strong>
-              <span>Try another category or filter.</span>
+              <strong>
+                {workflow === 'trade' ? 'No active requests here' : 'Nothing missing here'}
+              </strong>
+              <span>Try another request, category, or filter.</span>
             </div>
           )}
           <p className="search-explanation">
             <Icon name="shield" />
-            {generated.explanation}{' '}
-            {workflow === 'reconcile'
-              ? 'Use this to find entries in storage that may need checking off here.'
-              : 'Review the other trainer’s results visually before arranging a trade.'}
+            {generated.explanation} Every string begins with <code>!traded</code>.
           </p>
           {copyFailure && (
             <p className="copy-failure" role="alert">
@@ -226,13 +282,13 @@ export function SearchLab({
       <section className="panel recommended-panel">
         <div className="panel-heading">
           <div>
-            <span className="eyebrow">Ready to use</span>
+            <span className="eyebrow">Personal catch helpers</span>
             <h2>Recommended strings</h2>
           </div>
           <Icon name="sparkles" />
         </div>
         <div className="recommended-list">
-          {recommended.map((item) => (
+          {recommendations.map((item) => (
             <article key={item.name}>
               <div>
                 <strong>{item.name}</strong>
@@ -253,8 +309,8 @@ export function SearchLab({
         <p className="safety-note">
           <Icon name="shield" />
           <span>
-            <strong>Review before transferring.</strong> Dexly never labels a general cleanup string
-            universally safe.
+            <strong>Evolution-aware size hunting.</strong> If an evolved family member is still
+            missing, its earlier stages remain in your XXL or XXS catch string.
           </span>
         </p>
       </section>

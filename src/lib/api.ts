@@ -1,4 +1,11 @@
-import type { BootstrapPayload, CategoryId, TradeSpecimen, WantedEntry } from '../../shared/types';
+import type {
+  BootstrapPayload,
+  CategoryId,
+  TradeOfferTrait,
+  TradeRequestTrait,
+  TradeSpecimen,
+  WantedEntry,
+} from '../../shared/types';
 import type { CsvImportPolicy, CsvImportPreview } from '../../shared/csv';
 
 export interface BootstrapResponse extends BootstrapPayload {
@@ -132,7 +139,7 @@ export const api = {
 
   setWanted(input: {
     formId: string;
-    categoryId: CategoryId;
+    traitId: TradeRequestTrait;
     wanted: boolean;
   }): Promise<WantedEntry> {
     return requestJson('/api/v1/wanted', { method: 'PUT', body: JSON.stringify(input) });
@@ -140,7 +147,7 @@ export const api = {
 
   addTrade(input: {
     formId: string;
-    traits: CategoryId[];
+    traits: TradeOfferTrait[];
     quantity: number;
     notes: string;
   }): Promise<TradeSpecimen> {

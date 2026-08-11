@@ -1,12 +1,14 @@
 # Dexly
 
 Dexly is a visual Pokémon GO collection companion built with React, TypeScript, Vite,
-Cloudflare Workers, and D1. It tracks collection categories, wanted entries, trade
-specimens, CSV imports, undoable changes, and Pokémon GO search-string candidates.
+Cloudflare Workers, and D1. It tracks collection categories, realistic wanted entries,
+actual trade specimens, CSV imports, undoable changes, and Pokémon GO search strings.
 
-> **Status:** the local MVP is implemented, but it is not deployed. The checked-in D1
-> identifier is a placeholder. Deployment still requires the owner's Cloudflare account,
-> repository, Worker/database naming, access-secret, and optional domain decisions.
+> **Production:** [Open Dexly](https://dexly-companion.codyleejohnson26.workers.dev/)
+> or view the public source at
+> [HoLeeChuck/dexly-pokemon-go-companion](https://github.com/HoLeeChuck/dexly-pokemon-go-companion).
+> The app shell is public, while private collection data requires the configured
+> `APP_ACCESS_TOKEN` outside localhost.
 
 Dexly is an unofficial fan project. It is not affiliated with or endorsed by Niantic,
 The Pokémon Company, or Nintendo. It never asks for Pokémon GO account credentials.
@@ -30,7 +32,7 @@ pnpm dev
 
 Open the loopback URL printed by Vite. Localhost intentionally uses the seeded `Local
 Trainer` profile and does not require an access key. Local D1 state lives under
-`.wrangler/state` and is separate from every remote D1 database.
+`.wrangler/state` and is separate from the remote production database.
 
 `.dev.vars` is ignored by Git. Never commit a real `APP_ACCESS_TOKEN`, `.dev.vars`, or
 Cloudflare API token.
@@ -49,26 +51,34 @@ Cloudflare API token.
 | `pnpm format`                               | Check formatting without rewriting files.                                 |
 | `pnpm build`                                | Generate Wrangler binding types, type-check, and build the app/Worker.    |
 | `pnpm check`                                | Run lint, formatting, both Vitest suites, and a production build.         |
+| `pnpm catalog:sync:evolutions`              | Refresh the reviewed evolution-family search data.                        |
 | `node scripts/verify-sprites.mjs`           | Validate the versioned catalog and sprite manifest offline.               |
 | `node scripts/verify-sprites.mjs --network` | Also send opt-in checks to pinned sprite URLs.                            |
 | `pnpm db:migrate:production`                | Apply migrations to the configured remote D1 database.                    |
 | `pnpm deploy:production`                    | Build, migrate remote D1, then deploy. This changes production.           |
 
-The last two commands are intentionally explicit. Do not run them until
-`wrangler.jsonc` contains the real production D1 UUID and the target Cloudflare account
-has been confirmed.
+The last two commands mutate the configured production resources. `wrangler.jsonc`
+binds `DB` to `dexly-db` with UUID `154ac34c-cdfc-4a98-a0c4-f159153a6e2e`. Always
+confirm `wrangler whoami`, pending migrations, and the exact Git revision first.
 
 ## Current scope and limitations
 
-- The catalog is a representative seed: 23 standard forms, not a complete Pokémon GO
-  Pokédex. Its gameplay metadata is a dated snapshot and can become stale.
+- Catalog version `2026-08-11.2` represents 949 released National Pokédex species as
+  one standard form each, based on the reviewed 2026-08-11 snapshot. It is not a catalog
+  of every regional, costume, gender, Mega, Dynamax, Gigantamax, or alternate form.
 - Sprite paths are explicit and pinned to a PokeMiners commit. A sprite's existence is
   not proof that a form, Shiny, Shadow, or other category is released or eligible.
-- Pokémon GO search syntax cannot represent every form, costume, or trait exactly.
-  Dexly labels generated output as exact or as a candidate list.
-- Production access currently uses one shared bearer secret and one seeded profile. This
-  is suitable for a private MVP, not multi-user authentication or public sharing.
-- Imports create a bounded D1 backup before applying, but the MVP does not yet expose a
+- Trade requests are limited to Normal, Shiny, XXL, XXS, and generic Costume. Recorded
+  offers may combine Shiny, XXL, XXS, and Costume; an empty trait set means Normal.
+  Hundo, Lucky, Shadow, and Purified are excluded from trade matching.
+- Generic Costume is a species-level candidate request, not a cataloged costume form.
+  Pokémon GO cannot distinguish every costume exactly, so visual review is required.
+- Generated missing, wanted, and recommended strings begin with `!traded&`. Personal
+  XXL/XXS strings include eligible earlier evolution stages when evolving them could
+  fill a later size-Dex gap.
+- Production uses one shared bearer secret and one seeded profile. This is suitable for
+  a private personal collection, not multi-user authentication or public profile sharing.
+- Imports create a bounded D1 backup before applying, but the app does not yet expose a
   backup-restore screen or endpoint.
 - The browser never receives a D1 binding; collection data is read and changed only
   through the same-origin Worker API.

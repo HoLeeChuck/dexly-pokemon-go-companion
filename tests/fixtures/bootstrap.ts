@@ -104,6 +104,8 @@ function catalogItem(
 
 const catalog: CatalogItem[] = [
   catalogItem(1, 'Bulbasaur', 1, 'kanto', ['grass', 'poison']),
+  catalogItem(2, 'Ivysaur', 1, 'kanto', ['grass', 'poison']),
+  catalogItem(3, 'Venusaur', 1, 'kanto', ['grass', 'poison']),
   catalogItem(4, 'Charmander', 1, 'kanto', ['fire']),
   catalogItem(7, 'Squirtle', 1, 'kanto', ['water']),
   catalogItem(25, 'Pikachu', 1, 'kanto', ['electric']),
@@ -140,8 +142,46 @@ const baseline: BootstrapResponse = {
       categoryId: 'shiny',
       collected: true,
     },
+    {
+      profileId: 'profile:e2e-ephemeral',
+      formId: 'form-0002-standard',
+      categoryId: 'normal',
+      collected: true,
+    },
+    {
+      profileId: 'profile:e2e-ephemeral',
+      formId: 'form-0002-standard',
+      categoryId: 'shiny',
+      collected: true,
+    },
+    {
+      profileId: 'profile:e2e-ephemeral',
+      formId: 'form-0003-standard',
+      categoryId: 'normal',
+      collected: true,
+    },
+    {
+      profileId: 'profile:e2e-ephemeral',
+      formId: 'form-0003-standard',
+      categoryId: 'shiny',
+      collected: true,
+    },
+    {
+      profileId: 'profile:e2e-ephemeral',
+      formId: 'form-0001-standard',
+      categoryId: 'xxl',
+      collected: true,
+    },
   ],
-  wantedEntries: [],
+  wantedEntries: [
+    {
+      id: 'wanted:e2e-squirtle-xxl',
+      profileId: 'profile:e2e-ephemeral',
+      formId: 'form-0007-standard',
+      categoryId: 'xxl',
+      wanted: true,
+    },
+  ],
   tradeSpecimens: [],
 };
 

@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import type { Locator } from '@playwright/test';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { installFakeApi } from './support/fake-api';
@@ -8,6 +9,56 @@ const fixtureDirectory = resolve(dirname(fileURLToPath(import.meta.url)), '..', 
 async function openDex(page: import('@playwright/test').Page) {
   await page.goto('/#/dex');
   await expect(page.getByRole('heading', { name: 'Pokédex' })).toBeVisible();
+}
+
+async function swipeHorizontally(target: Locator, direction: 'left' | 'right') {
+  await target.evaluate((element, swipeDirection) => {
+    const rect = element.getBoundingClientRect();
+    const startX = swipeDirection === 'left' ? rect.right - 28 : rect.left + 28;
+    const endX = swipeDirection === 'left' ? rect.left + 28 : rect.right - 28;
+    const y = rect.top + rect.height / 2;
+    const touch = (clientX: number) =>
+      new Touch({
+        identifier: 1,
+        target: element,
+        clientX,
+        clientY: y,
+        pageX: clientX,
+        pageY: y,
+        screenX: clientX,
+        screenY: y,
+      });
+    const start = touch(startX);
+    const end = touch(endX);
+
+    element.dispatchEvent(
+      new TouchEvent('touchstart', {
+        bubbles: true,
+        cancelable: true,
+        touches: [start],
+        targetTouches: [start],
+        changedTouches: [start],
+      }),
+    );
+    element.dispatchEvent(
+      new TouchEvent('touchmove', {
+        bubbles: true,
+        cancelable: true,
+        touches: [end],
+        targetTouches: [end],
+        changedTouches: [end],
+      }),
+    );
+    element.dispatchEvent(
+      new TouchEvent('touchend', {
+        bubbles: true,
+        cancelable: true,
+        touches: [],
+        targetTouches: [],
+        changedTouches: [end],
+      }),
+    );
+  }, direction);
 }
 
 test.describe('mobile collection experience', () => {
@@ -66,6 +117,26 @@ test.describe('mobile collection experience', () => {
     await expect(card).toHaveAttribute('data-state', baselineState ?? '');
   });
 
+  test('swiping a detail sheet moves through catalog order without toggling a category', async ({
+    page,
+  }) => {
+    const api = await installFakeApi(page);
+    await openDex(page);
+    await page.getByTestId('pokemon-card-1').click();
+
+    const hero = page.locator('.detail-hero');
+    await expect(page.getByRole('dialog', { name: 'Bulbasaur' })).toBeVisible();
+    await expect(page.locator('.detail-nav').first()).toBeHidden();
+    await expect(page.locator('.detail-nav').last()).toBeHidden();
+    await swipeHorizontally(hero, 'left');
+    await expect(page.getByRole('dialog', { name: 'Ivysaur' })).toBeVisible();
+
+    await swipeHorizontally(hero, 'right');
+    await expect(page.getByRole('dialog', { name: 'Bulbasaur' })).toBeVisible();
+    expect(api.collectionMutationCount).toBe(0);
+    expect(api.unexpectedWriteCount).toBe(0);
+  });
+
   test('Quick Check toggles one entry and Undo restores its observed baseline', async ({
     page,
   }) => {
@@ -113,17 +184,58 @@ test.describe('mobile collection experience', () => {
 
     const output = page.locator('.search-output');
     await expect(output).toContainText('7 missing entries');
-    await expect(output.locator('code')).toHaveText('4,7,133,152,155,158,252');
+    await expect(output.locator('.search-string code')).toHaveText(
+      '!traded&4,7,133,152,155,158,252',
+    );
     await expect(output).toContainText(
       'Matches the released normal Pokedex entries currently marked missing.',
     );
 
     await page.getByLabel('Generation').selectOption('1');
     await expect(output).toContainText('3 missing entries');
-    await expect(output.locator('code')).toHaveText('4,7,133');
+    await expect(output.locator('.search-string code')).toHaveText('!traded&4,7,133');
 
     await page.getByLabel('Category').selectOption('shiny');
-    await expect(output.locator('code')).toHaveText('shiny&1,7,25,133');
+    await expect(output.locator('.search-string code')).toHaveText('!traded&shiny&1,7,25,133');
+
+    const xxlRecommendation = page
+      .locator('.recommended-list article')
+      .filter({ hasText: 'My missing XXL families' });
+    await expect(xxlRecommendation.locator('code')).toHaveText(
+      '!traded&xxl&1-4,7,25,133,152,155,158,252',
+    );
+    await expect(xxlRecommendation).toContainText(
+      'includes catchable family stages you can evolve',
+    );
+
+    await page.getByRole('button', { name: 'My wanted trades' }).click();
+    await page.getByLabel('Request').selectOption('xxl');
+    await expect(output).toContainText('1 requested entry');
+    await expect(output.locator('.search-string code')).toHaveText('!traded&xxl&7');
+  });
+
+  test('Trade lets an owned size satisfy and remove an active size request', async ({ page }) => {
+    const api = await installFakeApi(page);
+    await openDex(page);
+
+    await page.locator('.bottom-nav').getByRole('button', { name: 'Trade' }).click();
+    await expect(page).toHaveURL(/#\/trade$/);
+    await expect(page.getByRole('heading', { name: 'Wanted' })).toBeVisible();
+    const supportedRequests = page.locator('.trade-trait-strip');
+    for (const request of ['Normal', 'Shiny', 'XXL', 'XXS', 'Costume']) {
+      await expect(supportedRequests.getByText(request, { exact: true })).toBeVisible();
+    }
+
+    const requestCard = page.locator('.trade-wanted-card').filter({ hasText: 'Squirtle' });
+    await expect(requestCard).toContainText('XXL');
+    await requestCard.getByRole('button', { name: 'I have this' }).click();
+
+    await expect(page.getByText('No active requests')).toBeVisible();
+    await expect.poll(() => api.collectionMutationCount).toBe(1);
+    expect(api.wantedMutationCount).toBe(0);
+    expect(api.isCollected('form-0007-standard', 'xxl')).toBe(true);
+    expect(api.isWanted('form-0007-standard', 'xxl')).toBe(false);
+    expect(api.unexpectedWriteCount).toBe(0);
   });
 
   test('CSV fixture produces a client-side preview without applying changes', async ({ page }) => {

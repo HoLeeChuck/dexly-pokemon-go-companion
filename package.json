@@ -23,6 +23,7 @@
     "format": "prettier --check .",
     "format:write": "prettier --write .",
     "catalog:sync": "node scripts/sync-catalog.mjs",
+    "catalog:sync:evolutions": "node scripts/sync-evolution-families.mjs",
     "catalog:verify": "node scripts/verify-sprites.mjs",
     "check": "pnpm lint && pnpm format && pnpm test && pnpm build"
   },

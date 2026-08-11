@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { deriveCollectionState } from '../../shared/domain';
 import type { CatalogItem, CategoryId, CollectionState } from '../../shared/types';
+import { typeTheme } from '../lib/typeTheme';
 import { Icon } from './Icon';
 import { PokemonSprite } from './PokemonSprite';
 
@@ -90,14 +91,24 @@ export function PokemonGrid({
           const canToggle = rule === 'released';
           const pending = pendingKeys.has(key);
           const shiny = categoryId === 'shiny';
+          const releasedCategories = Object.entries(item.rules)
+            .filter(([, value]) => value === 'released')
+            .map(([value]) => value as CategoryId);
+          const collectionComplete =
+            releasedCategories.length > 0 &&
+            releasedCategories.every((value) => collectedKeys.has(`${item.id}:${value}`));
 
           return (
             <button
               type="button"
               key={item.id}
-              className={`pokemon-card pokemon-card--${state}${quickCheck ? ' pokemon-card--quick' : ''}`}
+              className={`pokemon-card pokemon-card--${state}${quickCheck ? ' pokemon-card--quick' : ''}${collectionComplete ? ' pokemon-card--complete' : ''}`}
               data-state={state}
+              data-collection-complete={collectionComplete || undefined}
+              data-primary-type={item.types[0]}
+              data-secondary-type={item.types[1]}
               data-testid={`pokemon-card-${item.dexNumber}`}
+              style={typeTheme(item.types)}
               aria-pressed={quickCheck && canToggle ? collected : undefined}
               aria-label={
                 quickCheck && canToggle

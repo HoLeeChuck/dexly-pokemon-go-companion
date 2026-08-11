@@ -1,7 +1,14 @@
 import { env, SELF } from 'cloudflare:test';
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import type { BootstrapPayload, RuleState } from '../../shared/types';
+import type {
+  BootstrapPayload,
+  RuleState,
+  TradeOfferTrait,
+  TradeRequestTrait,
+  TradeSpecimen,
+  WantedEntry,
+} from '../../shared/types';
 
 const LOCAL_ORIGIN = 'http://localhost';
 const PROFILE_ID = 'profile:local-development';
@@ -11,6 +18,7 @@ beforeEach(async () => {
     env.DB.prepare('DELETE FROM import_jobs'),
     env.DB.prepare('DELETE FROM backup_snapshots'),
     env.DB.prepare('DELETE FROM mutation_batches'),
+    env.DB.prepare('DELETE FROM trade_wanted_entries'),
     env.DB.prepare('DELETE FROM collection_entries'),
     env.DB.prepare('DELETE FROM wanted_entries'),
     env.DB.prepare('DELETE FROM trade_specimens'),
@@ -122,6 +130,29 @@ async function putCollection(input: {
 }): Promise<Response> {
   return localApi('/api/v1/collection', {
     method: 'PUT',
+    body: JSON.stringify(input),
+  });
+}
+
+function putWanted(input: {
+  formId: string;
+  traitId: unknown;
+  wanted: boolean;
+}): Promise<Response> {
+  return localApi('/api/v1/wanted', {
+    method: 'PUT',
+    body: JSON.stringify(input),
+  });
+}
+
+function postTrade(input: {
+  formId: string;
+  traits: unknown;
+  quantity: number;
+  notes?: string;
+}): Promise<Response> {
+  return localApi('/api/v1/trades', {
+    method: 'POST',
     body: JSON.stringify(input),
   });
 }
@@ -406,6 +437,229 @@ describe('sparse collection mutations', () => {
     const state = await bootstrap();
     expect(state.revision).toBe(0);
     expect(state.collectionEntries).toEqual([]);
+  });
+});
+
+describe('trade requests and specimens', () => {
+  it('persists every supported wanted trait and maps trait_id into bootstrap entries', async () => {
+    const traits: TradeRequestTrait[] = ['normal', 'shiny', 'xxl', 'xxs', 'costume'];
+
+    for (const traitId of traits) {
+      const response = await putWanted({
+        formId: 'form-0001-standard',
+        traitId,
+        wanted: true,
+      });
+      const payload = await responseJson<WantedEntry>(response);
+
+      expect(response.status).toBe(200);
+      expect(payload).toMatchObject({
+        profileId: PROFILE_ID,
+        formId: 'form-0001-standard',
+        categoryId: traitId,
+        wanted: true,
+      });
+    }
+
+    const state = await bootstrap();
+    expect(
+      state.wantedEntries.map((entry) => `${entry.formId}:${entry.categoryId}`).sort(),
+    ).toEqual(traits.map((traitId) => `form-0001-standard:${traitId}`).sort());
+
+    const stored = await env.DB.prepare(
+      `SELECT trait_id
+       FROM trade_wanted_entries
+       WHERE profile_id = ? AND form_id = ?
+       ORDER BY trait_id`,
+    )
+      .bind(PROFILE_ID, 'form-0001-standard')
+      .all<{ trait_id: TradeRequestTrait }>();
+    expect(stored.results.map((row) => row.trait_id)).toEqual([...traits].sort());
+  });
+
+  it.each(['hundo', 'lucky', 'shadow', 'purified', 'party', null] as const)(
+    'rejects unsupported wanted trait %s without persisting a row',
+    async (traitId) => {
+      const response = await putWanted({
+        formId: 'form-0001-standard',
+        traitId,
+        wanted: true,
+      });
+      const payload = await responseJson<ErrorResponse>(response);
+
+      expect(response.status).toBe(400);
+      expect(payload.error.code).toBe('INVALID_TRADE_TRAIT');
+      expect((await bootstrap()).wantedEntries).toEqual([]);
+    },
+  );
+
+  it('rejects wanted and offered traits that are not released for the selected form', async () => {
+    await env.DB.prepare(
+      `UPDATE form_category_rules
+       SET state = 'unreleased'
+       WHERE form_id = 'form-0001-standard' AND category_id = 'shiny'`,
+    ).run();
+
+    const wantedResponse = await putWanted({
+      formId: 'form-0001-standard',
+      traitId: 'shiny',
+      wanted: true,
+    });
+    const wantedPayload = await responseJson<ErrorResponse>(wantedResponse);
+    expect(wantedResponse.status).toBe(422);
+    expect(wantedPayload.error.code).toBe('TRAIT_NOT_AVAILABLE');
+
+    const offerResponse = await postTrade({
+      formId: 'form-0001-standard',
+      traits: ['shiny'],
+      quantity: 1,
+    });
+    const offerPayload = await responseJson<ErrorResponse>(offerResponse);
+    expect(offerResponse.status).toBe(422);
+    expect(offerPayload.error.code).toBe('TRAIT_NOT_AVAILABLE');
+
+    const state = await bootstrap();
+    expect(state.wantedEntries).toEqual([]);
+    expect(state.tradeSpecimens).toEqual([]);
+  });
+
+  it.each(['xxl', 'xxs'] as const)(
+    'rejects an active %s request when that size is already collected',
+    async (traitId) => {
+      const collectionResponse = await putCollection({
+        formId: 'form-0001-standard',
+        categoryId: traitId,
+        collected: true,
+        operationId: `op:test:owned-size:${traitId}`,
+        expectedRevision: 0,
+      });
+      expect(collectionResponse.status).toBe(200);
+
+      const response = await putWanted({
+        formId: 'form-0001-standard',
+        traitId,
+        wanted: true,
+      });
+      const payload = await responseJson<ErrorResponse>(response);
+
+      expect(response.status).toBe(409);
+      expect(payload.error.code).toBe('SIZE_ALREADY_OWNED');
+      expect((await bootstrap()).wantedEntries).toEqual([]);
+    },
+  );
+
+  it.each(['xxl', 'xxs'] as const)(
+    'clears an active %s request when that size is marked collected',
+    async (traitId) => {
+      const wantedResponse = await putWanted({
+        formId: 'form-0001-standard',
+        traitId,
+        wanted: true,
+      });
+      expect(wantedResponse.status).toBe(200);
+      expect((await bootstrap()).wantedEntries).toHaveLength(1);
+
+      const collectionResponse = await putCollection({
+        formId: 'form-0001-standard',
+        categoryId: traitId,
+        collected: true,
+        operationId: `op:test:complete-size-goal:${traitId}`,
+        expectedRevision: 0,
+      });
+      expect(collectionResponse.status).toBe(200);
+
+      const state = await bootstrap();
+      expect(state.wantedEntries).toEqual([]);
+      expect(
+        state.collectionEntries.some(
+          (entry) =>
+            entry.formId === 'form-0001-standard' &&
+            entry.categoryId === traitId &&
+            entry.collected,
+        ),
+      ).toBe(true);
+
+      const stored = await env.DB.prepare(
+        `SELECT count(*) AS count
+         FROM trade_wanted_entries
+         WHERE profile_id = ? AND form_id = ? AND trait_id = ?`,
+      )
+        .bind(PROFILE_ID, 'form-0001-standard', traitId)
+        .first<{ count: number }>();
+      expect(stored?.count).toBe(0);
+    },
+  );
+
+  it('accepts normal and combined special offers, including costume, in bootstrap', async () => {
+    const combinedTraits: TradeOfferTrait[] = ['shiny', 'xxl', 'xxs', 'costume'];
+    const combinedResponse = await postTrade({
+      formId: 'form-0001-standard',
+      traits: combinedTraits,
+      quantity: 2,
+      notes: 'Event spare',
+    });
+    const combined = await responseJson<TradeSpecimen>(combinedResponse);
+
+    expect(combinedResponse.status).toBe(201);
+    expect(combined).toMatchObject({
+      profileId: PROFILE_ID,
+      formId: 'form-0001-standard',
+      traits: combinedTraits,
+      quantity: 2,
+      notes: 'Event spare',
+    });
+    expect(combined.id).toMatch(/^trade:[0-9a-f-]{36}$/);
+
+    const normalResponse = await postTrade({
+      formId: 'form-0004-standard',
+      traits: [],
+      quantity: 1,
+    });
+    const normal = await responseJson<TradeSpecimen>(normalResponse);
+    expect(normalResponse.status).toBe(201);
+    expect(normal.traits).toEqual([]);
+
+    const state = await bootstrap();
+    expect(state.tradeSpecimens).toHaveLength(2);
+    expect(state.tradeSpecimens.find((entry) => entry.id === combined.id)).toMatchObject({
+      traits: combinedTraits,
+      quantity: 2,
+      notes: 'Event spare',
+    });
+    expect(state.tradeSpecimens.find((entry) => entry.id === normal.id)).toMatchObject({
+      formId: 'form-0004-standard',
+      traits: [],
+      quantity: 1,
+    });
+  });
+
+  it.each(['normal', 'hundo', 'lucky', 'shadow', 'purified', 'party'] as const)(
+    'rejects forbidden or unsupported offer trait %s',
+    async (trait) => {
+      const response = await postTrade({
+        formId: 'form-0001-standard',
+        traits: [trait],
+        quantity: 1,
+      });
+      const payload = await responseJson<ErrorResponse>(response);
+
+      expect(response.status).toBe(400);
+      expect(payload.error.code).toBe('INVALID_TRAITS');
+      expect((await bootstrap()).tradeSpecimens).toEqual([]);
+    },
+  );
+
+  it('rejects a malformed offer trait list', async () => {
+    const response = await postTrade({
+      formId: 'form-0001-standard',
+      traits: ['shiny', 42],
+      quantity: 1,
+    });
+    const payload = await responseJson<ErrorResponse>(response);
+
+    expect(response.status).toBe(400);
+    expect(payload.error.code).toBe('INVALID_TRAITS');
+    expect((await bootstrap()).tradeSpecimens).toEqual([]);
   });
 });
 

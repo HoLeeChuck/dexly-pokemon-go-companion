@@ -817,7 +817,11 @@ p {
   border-radius: 17px;
   flex-direction: column;
   color: var(--ink);
-  background: rgb(251 252 247 / 88%);
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--type-primary) 16%, #fff),
+    color-mix(in srgb, var(--type-secondary) 13%, #fff)
+  );
   box-shadow: 0 2px 7px rgb(16 55 46 / 4%);
   transition:
     transform 130ms ease,
@@ -851,7 +855,11 @@ p {
   width: 73px;
   height: 73px;
   border-radius: 50%;
-  background: linear-gradient(145deg, #e7f2e8, #f3f6ed);
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--type-primary) 28%, #fff),
+    color-mix(in srgb, var(--type-secondary) 23%, #fff)
+  );
 }
 
 .pokemon-card__halo::after {
@@ -933,12 +941,61 @@ p {
 
 .pokemon-card--collected {
   border-color: #b7dccd;
-  background: linear-gradient(180deg, #fafff9, #f3faf5);
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--type-primary) 22%, #fff),
+    color-mix(in srgb, var(--type-secondary) 19%, #f6fff8)
+  );
   box-shadow: 0 5px 13px rgb(33 124 101 / 9%);
 }
 
 .pokemon-card--collected .pokemon-card__halo {
-  background: radial-gradient(circle, #e8f8d0, #d9f1e7);
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--type-primary) 34%, #fff),
+    color-mix(in srgb, var(--type-secondary) 25%, #effff4)
+  );
+}
+
+.pokemon-card--complete {
+  border-color: transparent;
+  box-shadow:
+    0 0 0 2px rgb(255 255 255 / 85%) inset,
+    0 7px 18px rgb(35 75 68 / 15%);
+}
+
+.pokemon-card--complete::after,
+.detail-sheet--complete::before {
+  position: absolute;
+  z-index: 5;
+  inset: 0;
+  padding: 3px;
+  border-radius: inherit;
+  pointer-events: none;
+  content: '';
+  background: linear-gradient(
+    90deg,
+    #ff5263,
+    #ffb52e,
+    #f7ea4b,
+    #52d979,
+    #42bff5,
+    #7868ee,
+    #ec65cf,
+    #ff5263
+  );
+  background-size: 300% 100%;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: rainbow-border-flow 3s linear infinite;
+}
+
+@keyframes rainbow-border-flow {
+  to {
+    background-position: 300% 0;
+  }
 }
 
 .pokemon-card--missing .pokemon-card__sprite {
@@ -1085,6 +1142,7 @@ p {
 }
 
 .detail-sheet {
+  position: relative;
   display: flex;
   height: 100%;
   overflow: hidden;
@@ -1092,6 +1150,11 @@ p {
   flex-direction: column;
   background: var(--paper);
   box-shadow: var(--shadow-lg);
+  touch-action: pan-y;
+}
+
+.detail-nav {
+  display: none;
 }
 
 .detail-sheet__handle {
@@ -1117,8 +1180,16 @@ p {
   overflow: hidden;
   color: white;
   background:
-    radial-gradient(circle at 28% 60%, rgb(185 228 109 / 24%), transparent 8rem),
-    linear-gradient(135deg, var(--brand-800), var(--brand-950));
+    radial-gradient(
+      circle at 28% 60%,
+      color-mix(in srgb, var(--type-primary) 45%, transparent),
+      transparent 8rem
+    ),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--type-primary) 62%, var(--brand-950)),
+      color-mix(in srgb, var(--type-secondary) 58%, #052d26)
+    );
 }
 
 .detail-hero::after {
@@ -1196,29 +1267,87 @@ p {
 }
 
 .type-chip {
+  --chip-color: #7f958d;
   padding: 0.28rem 0.54rem;
   border: 1px solid rgb(255 255 255 / 13%);
   border-radius: 999px;
-  color: #dceae5;
-  background: rgb(255 255 255 / 9%);
+  color: white;
+  background: color-mix(in srgb, var(--chip-color) 68%, transparent);
   font-size: 0.6rem;
   font-weight: 750;
   text-transform: capitalize;
 }
 
 .type-chip--grass {
-  color: #e4f6bd;
-  background: rgb(116 174 75 / 27%);
+  --chip-color: #58a957;
 }
 
 .type-chip--fire {
-  color: #ffddc3;
-  background: rgb(225 107 61 / 26%);
+  --chip-color: #ef6a45;
 }
 
 .type-chip--water {
-  color: #d8ebff;
-  background: rgb(67 129 187 / 27%);
+  --chip-color: #438bd4;
+}
+
+.type-chip--normal {
+  --chip-color: #8f9aa6;
+}
+
+.type-chip--electric {
+  --chip-color: #c99a16;
+}
+
+.type-chip--ice {
+  --chip-color: #52b8c6;
+}
+
+.type-chip--fighting {
+  --chip-color: #c95645;
+}
+
+.type-chip--poison {
+  --chip-color: #9a62b5;
+}
+
+.type-chip--ground {
+  --chip-color: #bd8550;
+}
+
+.type-chip--flying {
+  --chip-color: #7599d8;
+}
+
+.type-chip--psychic {
+  --chip-color: #dc658c;
+}
+
+.type-chip--bug {
+  --chip-color: #8ca63c;
+}
+
+.type-chip--rock {
+  --chip-color: #a68c55;
+}
+
+.type-chip--ghost {
+  --chip-color: #6c6aa7;
+}
+
+.type-chip--dragon {
+  --chip-color: #7165cc;
+}
+
+.type-chip--dark {
+  --chip-color: #615f69;
+}
+
+.type-chip--steel {
+  --chip-color: #758f9e;
+}
+
+.type-chip--fairy {
+  --chip-color: #d97fa7;
 }
 
 .detail-tabs {
@@ -1389,6 +1518,17 @@ p {
 
 .category-tile--wanted.is-active .category-tile__mark svg {
   fill: currentColor;
+}
+
+.category-tile--wanted.is-owned {
+  border-color: #acd8c9;
+  opacity: 1;
+  background: #f1faf5;
+}
+
+.category-tile--wanted.is-owned .category-tile__mark {
+  color: white;
+  background: var(--brand-700);
 }
 
 .trade-form {
@@ -1894,6 +2034,22 @@ p {
   gap: 0.6rem;
 }
 
+.trade-trait-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.38rem;
+}
+
+.trade-trait-strip span {
+  padding: 0.32rem 0.58rem;
+  border: 1px solid color-mix(in srgb, var(--brand-500) 28%, white);
+  border-radius: 999px;
+  color: var(--brand-800);
+  background: var(--brand-100);
+  font-size: 0.59rem;
+  font-weight: 780;
+}
+
 .trade-stats article {
   display: flex;
   min-width: 0;
@@ -1949,9 +2105,109 @@ p {
 }
 
 .mini-card-grid,
+.trade-wanted-list,
 .offer-list {
   display: grid;
   gap: 0.5rem;
+}
+
+.trade-wanted-card {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: white;
+}
+
+.trade-wanted-card__pokemon {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 56px minmax(0, 1fr) 24px;
+  min-height: 66px;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.35rem 0.55rem;
+  border: 0;
+  color: var(--ink);
+  background: white;
+  text-align: left;
+}
+
+.trade-wanted-card__pokemon img,
+.trade-wanted-card__pokemon .sprite-fallback {
+  width: 54px;
+  height: 54px;
+  object-fit: contain;
+}
+
+.trade-wanted-card__pokemon > span {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.trade-wanted-card__pokemon strong {
+  font-size: 0.74rem;
+}
+
+.trade-wanted-card__pokemon small {
+  color: var(--muted);
+  font-size: 0.57rem;
+}
+
+.trade-wanted-card__pokemon > svg {
+  width: 1rem;
+  color: var(--faint);
+}
+
+.trade-request-list {
+  display: grid;
+  gap: 1px;
+  border-top: 1px solid var(--line);
+  background: var(--line);
+}
+
+.trade-request-list > div {
+  display: flex;
+  min-height: 42px;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.5rem 0.35rem 0.7rem;
+  background: #f8faf6;
+}
+
+.trade-request-list > div > span {
+  margin-right: auto;
+  color: var(--brand-800);
+  font-size: 0.63rem;
+  font-weight: 800;
+}
+
+.trade-request-list button {
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.48rem;
+  border: 1px solid #b9dacc;
+  border-radius: 9px;
+  color: var(--brand-800);
+  background: white;
+  font-size: 0.55rem;
+  font-weight: 760;
+}
+
+.trade-request-list button svg {
+  width: 0.72rem;
+  height: 0.72rem;
+}
+
+.trade-request-list .trade-request-list__remove {
+  width: 30px;
+  padding: 0;
+  justify-content: center;
+  border-color: transparent;
+  color: var(--muted);
+  background: transparent;
 }
 
 .mini-card-grid button,
@@ -2725,6 +2981,32 @@ p {
     display: none;
   }
 
+  .detail-nav {
+    position: absolute;
+    z-index: 12;
+    top: 50%;
+    display: grid;
+    width: 44px;
+    height: 58px;
+    border: 1px solid rgb(255 255 255 / 65%);
+    color: var(--brand-900);
+    background: rgb(255 255 255 / 92%);
+    box-shadow: 0 8px 22px rgb(1 31 25 / 20%);
+    transform: translateY(-50%);
+  }
+
+  .detail-nav--previous {
+    left: 0.75rem;
+  }
+
+  .detail-nav--next {
+    right: 0.75rem;
+  }
+
+  .detail-nav:disabled {
+    visibility: hidden;
+  }
+
   .page {
     padding: 2rem 2.2rem 3rem;
   }
@@ -2838,6 +3120,7 @@ p {
   }
 
   .page--lab .segmented-control,
+  .page--trade .trade-trait-strip,
   .page--trade .trade-stats,
   .page--data > .notice {
     grid-column: 1 / -1;

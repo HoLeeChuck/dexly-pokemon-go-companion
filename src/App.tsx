@@ -12,6 +12,8 @@ import type {
   CatalogItem,
   CategoryId,
   CollectionEntry,
+  TradeOfferTrait,
+  TradeRequestTrait,
   TradeSpecimen,
   WantedEntry,
 } from '../shared/types';
@@ -314,7 +316,7 @@ export default function App() {
     setCollectionEntries(next);
   }
 
-  function updateLocalWanted(formId: string, categoryId: CategoryId, wanted: boolean) {
+  function updateLocalWanted(formId: string, categoryId: TradeRequestTrait, wanted: boolean) {
     const rest = wantedRef.current.filter(
       (entry) => !(entry.formId === formId && entry.categoryId === categoryId),
     );
@@ -342,6 +344,15 @@ export default function App() {
           expectedRevision: revisionRef.current,
         });
         revisionRef.current = Math.max(revisionRef.current, result.revision);
+        if (
+          desired &&
+          (categoryId === 'xxl' || categoryId === 'xxs') &&
+          wantedRef.current.some(
+            (entry) => entry.formId === item.id && entry.categoryId === categoryId && entry.wanted,
+          )
+        ) {
+          updateLocalWanted(item.id, categoryId, false);
+        }
         setToast({
           tone: 'success',
           message: `${item.name} marked ${desired ? 'collected' : 'missing'} in ${categoryId}.`,
@@ -384,14 +395,14 @@ export default function App() {
     }
   }
 
-  async function changeWanted(item: CatalogItem, categoryId: CategoryId, wanted: boolean) {
+  async function changeWanted(item: CatalogItem, categoryId: TradeRequestTrait, wanted: boolean) {
     const previous = wantedRef.current.some(
       (entry) => entry.formId === item.id && entry.categoryId === categoryId && entry.wanted,
     );
     updateLocalWanted(item.id, categoryId, wanted);
     const operation = wantedMutationQueue.current.then(async () => {
       try {
-        await api.setWanted({ formId: item.id, categoryId, wanted });
+        await api.setWanted({ formId: item.id, traitId: categoryId, wanted });
       } catch (error) {
         const current = wantedRef.current.some(
           (entry) => entry.formId === item.id && entry.categoryId === categoryId && entry.wanted,
@@ -409,7 +420,7 @@ export default function App() {
 
   async function addTrade(input: {
     formId: string;
-    traits: CategoryId[];
+    traits: TradeOfferTrait[];
     quantity: number;
     notes: string;
   }) {
@@ -779,15 +790,21 @@ export default function App() {
           {route === 'trade' && (
             <TradePage
               catalog={bootstrap.catalog}
+              collectionEntries={collectionEntries}
               wantedEntries={wantedEntries}
               tradeSpecimens={tradeSpecimens}
               onOpen={setSelected}
+              onCollectionChange={(item, categoryId, value) =>
+                changeCollection(item, categoryId, value)
+              }
+              onWantedChange={changeWanted}
             />
           )}
           {route === 'search' && (
             <SearchLab
               catalog={bootstrap.catalog}
               entries={collectionEntries}
+              wantedEntries={wantedEntries}
               categories={bootstrap.categories}
               activeCategory={activeCategory}
               onCategoryChange={changeCategory}
@@ -824,12 +841,14 @@ export default function App() {
       {selected && (
         <DetailSheet
           item={selected}
+          catalog={bootstrap.catalog}
           categories={bootstrap.categories}
           collectionEntries={collectionEntries}
           wantedEntries={wantedEntries}
           tradeSpecimens={tradeSpecimens}
           pendingKeys={pendingKeys}
           onClose={() => setSelected(null)}
+          onNavigate={setSelected}
           onCollectionChange={changeCollection}
           onWantedChange={changeWanted}
           onAddTrade={addTrade}

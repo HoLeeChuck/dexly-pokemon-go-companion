@@ -5,10 +5,12 @@ import type {
   CategoryId,
   CollectionEntry,
   RuleState,
+  TradeOfferTrait,
+  TradeRequestTrait,
   TradeSpecimen,
   WantedEntry,
 } from '../shared/types';
-import { CATEGORY_IDS } from '../shared/types';
+import { CATEGORY_IDS, TRADE_OFFER_TRAIT_IDS } from '../shared/types';
 import { ApiError } from './http';
 
 interface CatalogRow {
@@ -48,6 +50,13 @@ interface EntryRow {
   updated_at: string;
 }
 
+interface WantedRow {
+  profile_id: string;
+  form_id: string;
+  trait_id: TradeRequestTrait;
+  updated_at: string;
+}
+
 interface TradeRow {
   id: string;
   profile_id: string;
@@ -77,12 +86,13 @@ function isCategoryId(value: string): value is CategoryId {
   return CATEGORY_IDS.includes(value as CategoryId);
 }
 
-function parseTraits(value: string): CategoryId[] {
+function parseTraits(value: string): TradeOfferTrait[] {
   try {
     const parsed: unknown = JSON.parse(value);
     if (!Array.isArray(parsed)) return [];
     return parsed.filter(
-      (item): item is CategoryId => typeof item === 'string' && isCategoryId(item),
+      (item): item is TradeOfferTrait =>
+        typeof item === 'string' && TRADE_OFFER_TRAIT_IDS.includes(item as TradeOfferTrait),
     );
   } catch {
     return [];
@@ -143,10 +153,10 @@ export async function getBootstrap(db: D1Database, profileId: string): Promise<B
       .bind(profileId),
     db
       .prepare(
-        `SELECT profile_id, form_id, category_id, updated_at
-         FROM wanted_entries
+        `SELECT profile_id, form_id, trait_id, updated_at
+         FROM trade_wanted_entries
          WHERE profile_id = ?
-         ORDER BY form_id, category_id`,
+         ORDER BY form_id, trait_id`,
       )
       .bind(profileId),
     db
@@ -203,13 +213,15 @@ export async function getBootstrap(db: D1Database, profileId: string): Promise<B
       updatedAt: row.updated_at,
     }),
   );
-  const wantedEntries = (wantedResult.results as unknown as EntryRow[]).map((row): WantedEntry => ({
-    profileId: row.profile_id,
-    formId: row.form_id,
-    categoryId: row.category_id,
-    wanted: true,
-    updatedAt: row.updated_at,
-  }));
+  const wantedEntries = (wantedResult.results as unknown as WantedRow[]).map(
+    (row): WantedEntry => ({
+      profileId: row.profile_id,
+      formId: row.form_id,
+      categoryId: row.trait_id,
+      wanted: true,
+      updatedAt: row.updated_at,
+    }),
+  );
   const tradeSpecimens = (tradeResult.results as unknown as TradeRow[]).map(
     (row): TradeSpecimen => ({
       id: row.id,
@@ -488,6 +500,17 @@ export async function setCollectionEntry(
         )
         .bind(profileId, input.formId, input.categoryId),
     );
+
+    if (input.categoryId === 'xxl' || input.categoryId === 'xxs') {
+      statements.push(
+        db
+          .prepare(
+            `DELETE FROM trade_wanted_entries
+             WHERE profile_id = ? AND form_id = ? AND trait_id = ?`,
+          )
+          .bind(profileId, input.formId, input.categoryId),
+      );
+    }
   } else {
     statements.push(
       db
@@ -677,60 +700,107 @@ export async function setWantedEntry(
   db: D1Database,
   profileId: string,
   formId: string,
-  categoryId: CategoryId,
+  traitId: TradeRequestTrait,
   wanted: boolean,
 ): Promise<WantedEntry> {
-  const rule = await db
-    .prepare('SELECT state FROM form_category_rules WHERE form_id = ? AND category_id = ?')
-    .bind(formId, categoryId)
-    .first<{ state: RuleState }>();
-  if (!rule)
-    throw new ApiError(404, 'CATALOG_ENTRY_NOT_FOUND', 'That Pokémon or category was not found.');
-  if (rule.state === 'ineligible') {
-    throw new ApiError(
-      422,
-      'CATEGORY_NOT_ELIGIBLE',
-      'This Pokémon is not eligible for that category.',
-    );
+  const form = await db
+    .prepare('SELECT is_tradeable FROM pokemon_forms WHERE id = ? AND retired_at IS NULL')
+    .bind(formId)
+    .first<{ is_tradeable: number }>();
+  if (!form) throw new ApiError(404, 'FORM_NOT_FOUND', 'That Pokémon form was not found.');
+  if (wanted && form.is_tradeable !== 1)
+    throw new ApiError(422, 'NOT_TRADEABLE', 'That Pokémon form cannot be traded.');
+
+  if (wanted && traitId !== 'costume') {
+    const rule = await db
+      .prepare('SELECT state FROM form_category_rules WHERE form_id = ? AND category_id = ?')
+      .bind(formId, traitId)
+      .first<{ state: RuleState }>();
+    if (rule?.state !== 'released') {
+      throw new ApiError(
+        422,
+        'TRAIT_NOT_AVAILABLE',
+        `This ${traitId} request is not currently available for that Pokémon.`,
+      );
+    }
+  }
+
+  if (wanted && (traitId === 'xxl' || traitId === 'xxs')) {
+    const owned = await db
+      .prepare(
+        `SELECT 1 AS owned FROM collection_entries
+         WHERE profile_id = ? AND form_id = ? AND category_id = ?`,
+      )
+      .bind(profileId, formId, traitId)
+      .first<{ owned: number }>();
+    if (owned)
+      throw new ApiError(
+        409,
+        'SIZE_ALREADY_OWNED',
+        `This ${traitId.toUpperCase()} is already in your collection.`,
+      );
   }
 
   if (wanted) {
     await db
       .prepare(
-        `INSERT INTO wanted_entries (profile_id, form_id, category_id)
+        `INSERT INTO trade_wanted_entries (profile_id, form_id, trait_id)
          VALUES (?, ?, ?)
-         ON CONFLICT (profile_id, form_id, category_id)
+         ON CONFLICT (profile_id, form_id, trait_id)
          DO UPDATE SET updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')`,
       )
-      .bind(profileId, formId, categoryId)
+      .bind(profileId, formId, traitId)
       .run();
   } else {
     await db
       .prepare(
-        'DELETE FROM wanted_entries WHERE profile_id = ? AND form_id = ? AND category_id = ?',
+        'DELETE FROM trade_wanted_entries WHERE profile_id = ? AND form_id = ? AND trait_id = ?',
       )
-      .bind(profileId, formId, categoryId)
+      .bind(profileId, formId, traitId)
       .run();
   }
-  return { profileId, formId, categoryId, wanted };
+  return { profileId, formId, categoryId: traitId, wanted };
 }
 
 export async function addTradeSpecimen(
   db: D1Database,
   profileId: string,
-  input: { formId: string; traits: CategoryId[]; quantity: number; notes: string },
+  input: { formId: string; traits: TradeOfferTrait[]; quantity: number; notes: string },
 ): Promise<TradeSpecimen> {
   const form = await db
     .prepare('SELECT is_tradeable FROM pokemon_forms WHERE id = ? AND retired_at IS NULL')
     .bind(input.formId)
     .first<{ is_tradeable: number }>();
   if (!form) throw new ApiError(404, 'FORM_NOT_FOUND', 'That Pokémon form was not found.');
-  if (form.is_tradeable !== 1 || input.traits.includes('shadow')) {
-    throw new ApiError(
-      422,
-      'NOT_TRADEABLE',
-      'Shadow Pokémon and non-tradeable forms cannot be offered.',
+  if (form.is_tradeable !== 1) {
+    throw new ApiError(422, 'NOT_TRADEABLE', 'That Pokémon form cannot be offered for trade.');
+  }
+
+  const ruleTraits = input.traits.filter(
+    (trait): trait is Exclude<TradeOfferTrait, 'costume'> => trait !== 'costume',
+  );
+  if (ruleTraits.length > 0) {
+    const ruleResult = await db
+      .prepare(
+        `SELECT category_id, state
+         FROM form_category_rules
+         WHERE form_id = ? AND category_id IN ('shiny', 'xxl', 'xxs')`,
+      )
+      .bind(input.formId)
+      .all<{ category_id: Exclude<TradeOfferTrait, 'costume'>; state: RuleState }>();
+    const available = new Set(
+      ruleResult.results
+        .filter((rule) => rule.state === 'released')
+        .map((rule) => rule.category_id),
     );
+    const unavailable = ruleTraits.filter((trait) => !available.has(trait));
+    if (unavailable.length > 0) {
+      throw new ApiError(
+        422,
+        'TRAIT_NOT_AVAILABLE',
+        `These trade traits are not currently available for that Pokémon: ${unavailable.join(', ')}.`,
+      );
+    }
   }
 
   const id = `trade:${crypto.randomUUID()}`;

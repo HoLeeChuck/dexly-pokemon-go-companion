@@ -1,7 +1,6 @@
 import { ApiError } from './http';
 
-export interface AppEnv {
-  DB: D1Database;
+export interface AppEnv extends Env {
   /** Production secret set with `wrangler secret put APP_ACCESS_TOKEN`. */
   APP_ACCESS_TOKEN?: string;
 }
