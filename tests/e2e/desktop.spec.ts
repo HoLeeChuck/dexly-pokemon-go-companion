@@ -4,6 +4,7 @@ import { installFakeApi } from './support/fake-api';
 test('public SMNA home introduces the community and opens the private Dex tab', async ({
   page,
 }) => {
+  await page.setViewportSize({ width: 1920, height: 1000 });
   const api = await installFakeApi(page);
   await page.goto('/');
 
@@ -20,6 +21,18 @@ test('public SMNA home introduces the community and opens the private Dex tab', 
     'href',
     'https://cmpf.re/QXGp7L',
   );
+  const wideLayout = await page.locator('.smna-hero').evaluate((hero) => {
+    const heroRect = hero.getBoundingClientRect();
+    const sidebarRect = document.querySelector('.desktop-sidebar')!.getBoundingClientRect();
+    return {
+      heroLeft: heroRect.left,
+      heroRight: heroRect.right,
+      sidebarRight: sidebarRect.right,
+      viewportWidth: innerWidth,
+    };
+  });
+  expect(wideLayout.heroLeft).toBeLessThanOrEqual(wideLayout.sidebarRight + 1);
+  expect(wideLayout.heroRight).toBeGreaterThanOrEqual(wideLayout.viewportWidth - 1);
   await page.getByRole('button', { name: /Open Dex tracker/ }).click();
   await expect(page).toHaveURL(/#\/dex$/);
   await expect(page.getByRole('heading', { name: 'Pokédex' })).toBeVisible();

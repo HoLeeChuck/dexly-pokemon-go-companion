@@ -390,14 +390,17 @@ p {
 }
 
 .page--home {
-  width: min(100%, 1220px);
+  --home-gutter: 1rem;
+
+  width: 100%;
+  max-width: none;
   padding-top: 0;
 }
 
 .smna-hero {
   position: relative;
   min-height: 590px;
-  margin: 0 -1rem;
+  margin: 0 calc(var(--home-gutter) * -1);
   padding: 3.2rem 1.25rem 4rem;
   overflow: hidden;
   color: white;
@@ -3553,12 +3556,16 @@ p {
   }
 
   .page--home {
-    padding-top: 0;
+    --home-gutter: clamp(1.5rem, 3vw, 4rem);
+
+    width: 100%;
+    max-width: none;
+    padding: 0 var(--home-gutter) 3rem;
   }
 
   .smna-hero {
     min-height: 650px;
-    margin: 0 -2.2rem 1rem;
+    margin: 0 calc(var(--home-gutter) * -1) 1rem;
     padding: 5rem 4rem;
     border-radius: 0 0 34px 34px;
   }
@@ -3628,7 +3635,7 @@ p {
   }
 
   .page.page--home {
-    padding-top: 0;
+    padding: 0 var(--home-gutter) 3rem;
   }
 
   .dex-header {
