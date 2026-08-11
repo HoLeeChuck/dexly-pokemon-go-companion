@@ -11,6 +11,17 @@ async function openDex(page: import('@playwright/test').Page) {
   await expect(page.getByRole('heading', { name: 'Pokédex' })).toBeVisible();
 }
 
+async function openMobileRoute(
+  page: import('@playwright/test').Page,
+  route: 'Home' | 'Dex' | 'Trade' | 'Search Lab' | 'Profile',
+) {
+  await page.getByRole('button', { name: 'Open navigation menu' }).click();
+  const menu = page.locator('.mobile-nav-panel');
+  await expect(menu).toBeVisible();
+  await menu.getByRole('button', { name: route }).click();
+  await expect(menu).toBeHidden();
+}
+
 async function swipeHorizontally(target: Locator, direction: 'left' | 'right') {
   await target.evaluate((element, swipeDirection) => {
     const rect = element.getBoundingClientRect();
@@ -130,7 +141,44 @@ test.describe('mobile collection experience', () => {
       return { top: rect.top, bottom: rect.bottom, viewportHeight: innerHeight };
     });
     expect(controls.top).toBeGreaterThanOrEqual(68);
-    expect(controls.bottom).toBeLessThan(controls.viewportHeight - 70);
+    expect(controls.bottom).toBeLessThan(controls.viewportHeight);
+
+    const stacking = await page.evaluate(() => {
+      const heading = document.querySelector<HTMLElement>('.dex-results .grid-heading')!;
+      const card = document.querySelector<HTMLElement>('.pokemon-card')!;
+      return {
+        headingZIndex: Number(getComputedStyle(heading).zIndex),
+        headingBackground: getComputedStyle(heading).backgroundColor,
+        cardIsolation: getComputedStyle(card).isolation,
+      };
+    });
+    expect(stacking.headingZIndex).toBeGreaterThanOrEqual(20);
+    expect(stacking.headingBackground).toBe('rgb(246, 249, 242)');
+    expect(stacking.cardIsolation).toBe('isolate');
+  });
+
+  test('uses the top hamburger menu instead of a persistent bottom bar', async ({ page }) => {
+    await installFakeApi(page);
+    await openDex(page);
+
+    await expect(page.locator('.bottom-nav')).toHaveCount(0);
+    const menuButton = page.getByRole('button', { name: 'Open navigation menu' });
+    await expect(menuButton).toBeVisible();
+    await menuButton.click();
+
+    const menu = page.locator('.mobile-nav-panel');
+    await expect(menu).toBeVisible();
+    for (const route of ['Home', 'Dex', 'Trade', 'Search Lab', 'Profile']) {
+      await expect(menu.getByRole('button', { name: route, exact: true })).toBeVisible();
+    }
+    await expect(menu.getByRole('button', { name: 'Dex', exact: true })).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
+    await expect(page.locator('body')).toHaveCSS('overflow', 'hidden');
+    await page.getByRole('button', { name: 'Close navigation menu' }).click();
+    await expect(menu).toBeHidden();
+    await expect(page.locator('body')).not.toHaveCSS('overflow', 'hidden');
   });
 
   test('a normal browse tap opens details without mutating collection state', async ({ page }) => {
@@ -211,7 +259,7 @@ test.describe('mobile collection experience', () => {
     await installFakeApi(page);
     await openDex(page);
 
-    await page.locator('.bottom-nav').getByRole('button', { name: 'Search Lab' }).click();
+    await openMobileRoute(page, 'Search Lab');
     await expect(page).toHaveURL(/#\/search$/);
     await expect(
       page.getByRole('heading', { name: 'Turn gaps into useful searches.' }),
@@ -253,7 +301,7 @@ test.describe('mobile collection experience', () => {
     const api = await installFakeApi(page);
     await openDex(page);
 
-    await page.locator('.bottom-nav').getByRole('button', { name: 'Trade' }).click();
+    await openMobileRoute(page, 'Trade');
     await expect(page).toHaveURL(/#\/trade$/);
     await expect(page.getByRole('heading', { name: 'Wanted' })).toBeVisible();
     const supportedRequests = page.locator('.trade-trait-strip');
@@ -277,7 +325,7 @@ test.describe('mobile collection experience', () => {
     const api = await installFakeApi(page);
     await openDex(page);
 
-    await page.locator('.bottom-nav').getByRole('button', { name: 'Profile' }).click();
+    await openMobileRoute(page, 'Profile');
     await expect(page.getByRole('heading', { name: 'Import CSV' })).toBeVisible();
     await page
       .locator('input[type="file"]')
@@ -303,7 +351,7 @@ test.describe('mobile collection experience', () => {
     const api = await installFakeApi(page);
     await openDex(page);
 
-    await page.locator('.bottom-nav').getByRole('button', { name: 'Profile' }).click();
+    await openMobileRoute(page, 'Profile');
     await page
       .locator('input[type="file"]')
       .setInputFiles(resolve(fixtureDirectory, 'collection-malformed.csv'));

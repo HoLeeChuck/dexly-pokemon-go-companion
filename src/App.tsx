@@ -95,6 +95,94 @@ function AppBrand({ compact = false }: { compact?: boolean }) {
   );
 }
 
+function MobileNavigationHeader({
+  route,
+  onNavigate,
+}: {
+  route: RouteId;
+  onNavigate: (route: RouteId) => void;
+}) {
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    const previousOverflow = document.body.style.overflow;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpen(false);
+    };
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [open]);
+
+  function navigate(nextRoute: RouteId) {
+    setOpen(false);
+    onNavigate(nextRoute);
+  }
+
+  return (
+    <>
+      <header className="mobile-topbar">
+        <AppBrand compact />
+        <div className="mobile-topbar__actions">
+          <button
+            type="button"
+            className="avatar-button"
+            onClick={() => navigate('profile')}
+            aria-label="Open profile"
+          >
+            <span>LT</span>
+            <i />
+          </button>
+          <button
+            type="button"
+            className="mobile-menu-button"
+            aria-label={open ? 'Close navigation menu' : 'Open navigation menu'}
+            aria-expanded={open}
+            aria-controls="mobile-primary-menu"
+            onClick={() => setOpen((value) => !value)}
+          >
+            <Icon name={open ? 'close' : 'menu'} />
+          </button>
+        </div>
+      </header>
+      {open && (
+        <div className="mobile-nav-overlay" onClick={() => setOpen(false)}>
+          <nav
+            id="mobile-primary-menu"
+            className="mobile-nav-panel"
+            aria-label="Primary navigation"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="mobile-nav-panel__heading">
+              <span className="eyebrow">South Minneapolis Nokomis Area</span>
+              <strong>Explore Dexly</strong>
+            </div>
+            {routes.map((item) => (
+              <button
+                type="button"
+                key={item.id}
+                className={route === item.id ? 'is-active' : ''}
+                aria-current={route === item.id ? 'page' : undefined}
+                onClick={() => navigate(item.id)}
+              >
+                <span>
+                  <Icon name={item.icon} />
+                </span>
+                <strong>{item.label}</strong>
+                <Icon name="chevron-right" />
+              </button>
+            ))}
+          </nav>
+        </div>
+      )}
+    </>
+  );
+}
+
 function AccessDialog({
   open,
   message,
@@ -527,27 +615,10 @@ export default function App() {
         </aside>
 
         <div className="app-stage">
-          <header className="mobile-topbar mobile-topbar--community">
-            <AppBrand compact />
-            <span className="smna-topbar-badge">SMNA</span>
-          </header>
+          <MobileNavigationHeader route={route} onNavigate={navigate} />
           <main>
             <CommunityHome onOpenDex={() => navigate('dex')} />
           </main>
-          <nav className="bottom-nav" aria-label="Primary navigation">
-            {routes.map((item) => (
-              <button
-                type="button"
-                key={item.id}
-                className={item.id === 'home' ? 'is-active' : ''}
-                aria-current={item.id === 'home' ? 'page' : undefined}
-                onClick={() => navigate(item.id)}
-              >
-                <Icon name={item.icon} />
-                <span>{item.label}</span>
-              </button>
-            ))}
-          </nav>
         </div>
       </div>
     );
@@ -629,18 +700,7 @@ export default function App() {
       </aside>
 
       <div className="app-stage">
-        <header className="mobile-topbar">
-          <AppBrand compact />
-          <button
-            type="button"
-            className="avatar-button"
-            onClick={() => navigate('profile')}
-            aria-label="Open profile"
-          >
-            <span>LT</span>
-            <i />
-          </button>
-        </header>
+        <MobileNavigationHeader route={route} onNavigate={navigate} />
         <main>
           {route === 'dex' && (
             <section className="page page--dex">
@@ -865,21 +925,6 @@ export default function App() {
             />
           )}
         </main>
-
-        <nav className="bottom-nav" aria-label="Primary navigation">
-          {routes.map((item) => (
-            <button
-              type="button"
-              key={item.id}
-              className={route === item.id ? 'is-active' : ''}
-              aria-current={route === item.id ? 'page' : undefined}
-              onClick={() => navigate(item.id)}
-            >
-              <Icon name={item.icon} />
-              <span>{item.label}</span>
-            </button>
-          ))}
-        </nav>
       </div>
 
       {selected && (

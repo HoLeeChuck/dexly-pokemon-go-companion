@@ -50,7 +50,7 @@ test('desktop shell shows its sidebar and navigates without the mobile bar', asy
   await expect(sidebar.getByText('dexly')).toBeVisible();
   await expect(sidebar.getByText('Private by default')).toBeVisible();
   await expect(sidebar.getByText('Local D1 session')).toBeVisible();
-  await expect(page.locator('.bottom-nav')).toBeHidden();
+  await expect(page.locator('.bottom-nav')).toHaveCount(0);
 
   const navigation = sidebar.getByRole('navigation', { name: 'Primary navigation' });
   await expect(navigation.getByRole('button')).toHaveCount(5);

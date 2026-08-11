@@ -110,7 +110,7 @@ p {
 .page {
   width: min(100%, 1120px);
   margin: 0 auto;
-  padding: 1rem 1rem calc(6.5rem + var(--safe-bottom));
+  padding: 1rem 1rem calc(1.5rem + var(--safe-bottom));
 }
 
 .eyebrow {
@@ -279,7 +279,7 @@ p {
 
 .mobile-topbar {
   position: sticky;
-  z-index: 30;
+  z-index: 50;
   top: 0;
   display: flex;
   height: 68px;
@@ -290,6 +290,12 @@ p {
   color: white;
   background: rgb(8 43 37 / 94%);
   backdrop-filter: blur(16px);
+}
+
+.mobile-topbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .avatar-button {
@@ -321,58 +327,105 @@ p {
   background: var(--lime);
 }
 
-.bottom-nav {
+.mobile-menu-button {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  place-items: center;
+  border: 1px solid rgb(255 255 255 / 20%);
+  border-radius: 14px;
+  color: white;
+  background: rgb(255 255 255 / 9%);
+}
+
+.mobile-menu-button svg {
+  width: 1.45rem;
+  height: 1.45rem;
+}
+
+.mobile-nav-overlay {
   position: fixed;
-  z-index: 35;
+  z-index: 45;
+  top: 68px;
   right: 0;
   bottom: 0;
   left: 0;
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  min-height: calc(70px + var(--safe-bottom));
-  padding: 0.35rem 0.5rem var(--safe-bottom);
-  border-top: 1px solid rgb(24 54 47 / 10%);
-  background: rgb(251 252 247 / 96%);
-  box-shadow: 0 -10px 35px rgb(19 57 48 / 8%);
-  backdrop-filter: blur(18px);
+  display: flex;
+  justify-content: flex-end;
+  background: rgb(3 24 20 / 54%);
+  backdrop-filter: blur(5px);
 }
 
-.bottom-nav button {
-  position: relative;
+.mobile-nav-panel {
   display: flex;
-  min-width: 0;
+  width: min(86vw, 340px);
+  height: 100%;
+  padding: 1rem 1rem calc(1rem + var(--safe-bottom));
+  overflow-y: auto;
+  flex-direction: column;
+  gap: 0.45rem;
+  background: #fbfcf7;
+  box-shadow: -18px 0 50px rgb(3 31 26 / 22%);
+}
+
+.mobile-nav-panel__heading {
+  display: flex;
+  padding: 0.45rem 0.35rem 1rem;
+  flex-direction: column;
+}
+
+.mobile-nav-panel__heading .eyebrow {
+  margin-bottom: 0.2rem;
+  font-size: 0.58rem;
+}
+
+.mobile-nav-panel__heading strong {
+  color: var(--brand-950);
+  font-size: 1.35rem;
+}
+
+.mobile-nav-panel > button {
+  display: grid;
   min-height: 58px;
   align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 0.28rem;
-  padding: 0.3rem;
+  grid-template-columns: 42px 1fr 20px;
+  gap: 0.75rem;
+  padding: 0.5rem 0.7rem;
   border: 0;
-  border-radius: 13px;
-  color: #7e8e88;
+  border-radius: 15px;
+  color: #566b64;
   background: transparent;
-  font-size: 0.64rem;
-  font-weight: 750;
+  text-align: left;
 }
 
-.bottom-nav button svg {
-  width: 1.35rem;
-  height: 1.35rem;
+.mobile-nav-panel > button > span {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border-radius: 13px;
+  background: #edf4ef;
 }
 
-.bottom-nav button.is-active {
+.mobile-nav-panel > button svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.mobile-nav-panel > button > svg:last-child {
+  width: 1rem;
+  color: #9aaba5;
+}
+
+.mobile-nav-panel > button.is-active {
   color: var(--brand-800);
   background: var(--brand-100);
 }
 
-.bottom-nav button.is-active::before {
-  position: absolute;
-  top: 0;
-  width: 26px;
-  height: 3px;
-  border-radius: 0 0 5px 5px;
-  content: '';
-  background: var(--brand-700);
+.mobile-nav-panel > button.is-active > span {
+  color: var(--brand-950);
+  background: var(--lime);
 }
 
 .smna-topbar-badge {
@@ -1076,7 +1129,7 @@ p {
   position: relative;
   z-index: 10;
   display: flex;
-  height: calc(100dvh - 138px - var(--safe-bottom));
+  height: calc(100dvh - 68px - var(--safe-bottom));
   min-height: 470px;
   margin-top: 1rem;
   padding: 0.65rem;
@@ -1113,11 +1166,12 @@ p {
 
 .dex-results .grid-heading {
   position: sticky;
-  z-index: 4;
+  z-index: 20;
   top: 0;
   margin: 0;
   padding: 0.7rem 0 0.55rem;
-  background: linear-gradient(rgb(246 249 242) 82%, rgb(246 249 242 / 0%));
+  background: rgb(246 249 242);
+  box-shadow: 0 8px 10px -12px rgb(19 57 48 / 55%);
 }
 
 .quick-banner {
@@ -1337,6 +1391,7 @@ p {
 
 .pokemon-card {
   position: relative;
+  isolation: isolate;
   display: flex;
   min-width: 0;
   min-height: 160px;
@@ -1497,7 +1552,6 @@ p {
 .pokemon-card--complete::after,
 .detail-sheet--complete::before {
   position: absolute;
-  z-index: 5;
   inset: 0;
   padding: 3px;
   border-radius: inherit;
@@ -1520,6 +1574,14 @@ p {
     linear-gradient(#000 0 0);
   mask-composite: exclude;
   animation: rainbow-border-flow 3s linear infinite;
+}
+
+.pokemon-card--complete::after {
+  z-index: 2;
+}
+
+.detail-sheet--complete::before {
+  z-index: 5;
 }
 
 @keyframes rainbow-border-flow {
@@ -3052,7 +3114,7 @@ p {
   position: fixed;
   z-index: 80;
   right: 0.75rem;
-  bottom: calc(79px + var(--safe-bottom));
+  bottom: calc(1rem + var(--safe-bottom));
   left: 0.75rem;
   display: flex;
   min-height: 58px;
@@ -3608,7 +3670,7 @@ p {
   }
 
   .mobile-topbar,
-  .bottom-nav {
+  .mobile-nav-overlay {
     display: none;
   }
 
