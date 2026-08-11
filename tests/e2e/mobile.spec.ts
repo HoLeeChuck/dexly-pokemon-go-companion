@@ -136,9 +136,10 @@ test.describe('mobile collection experience', () => {
     await results.evaluate((element) => element.scrollTo(0, element.scrollHeight));
     await expect.poll(() => results.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
 
-    const controls = await page.locator('.search-field input').evaluate((element) => {
-      const rect = element.closest('.dex-controls')!.getBoundingClientRect();
-      return { top: rect.top, bottom: rect.bottom, viewportHeight: innerHeight };
+    const controls = await page.locator('.dex-primary-controls').evaluate((element) => {
+      const topRect = element.getBoundingClientRect();
+      const filterRect = document.querySelector('.dex-controls')!.getBoundingClientRect();
+      return { top: topRect.top, bottom: filterRect.bottom, viewportHeight: innerHeight };
     });
     expect(controls.top).toBeGreaterThanOrEqual(68);
     expect(controls.bottom).toBeLessThan(controls.viewportHeight);
@@ -155,6 +156,15 @@ test.describe('mobile collection experience', () => {
     expect(stacking.headingZIndex).toBeGreaterThanOrEqual(20);
     expect(stacking.headingBackground).toBe('rgb(246, 249, 242)');
     expect(stacking.cardIsolation).toBe('isolate');
+
+    const categoryPicker = page.locator('.category-picker__toggle');
+    await categoryPicker.click();
+    await expect(categoryPicker).toHaveAttribute('aria-expanded', 'true');
+    const categoryOptions = page.getByRole('toolbar', { name: 'Collection category' });
+    await expect(categoryOptions).toBeVisible();
+    await categoryOptions.getByRole('button', { name: 'Shiny' }).click();
+    await expect(categoryPicker).toContainText('Shiny');
+    await expect(categoryOptions).toBeHidden();
   });
 
   test('uses the top hamburger menu instead of a persistent bottom bar', async ({ page }) => {

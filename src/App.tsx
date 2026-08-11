@@ -317,6 +317,7 @@ export default function App() {
   const [generation, setGeneration] = useState('all');
   const [region, setRegion] = useState('all');
   const [collectionFilter, setCollectionFilter] = useState<CollectionFilter>('all');
+  const [categoryPickerOpen, setCategoryPickerOpen] = useState(false);
   const [quickCheck, setQuickCheck] = useState(false);
   const [selected, setSelected] = useState<CatalogItem | null>(null);
   const [collectionEntries, setCollectionEntries] = useState<CollectionEntry[]>([]);
@@ -397,6 +398,7 @@ export default function App() {
 
   function changeCategory(value: CategoryId) {
     setActiveCategory(value);
+    setCategoryPickerOpen(false);
     localStorage.setItem('dexly:active-category', value);
   }
 
@@ -757,19 +759,55 @@ export default function App() {
               </section>
 
               <section className="dex-browser" aria-label="Collection browser">
-                <div className="category-scroller" role="toolbar" aria-label="Collection category">
-                  {bootstrap.categories.map((category) => (
+                <div className="dex-primary-controls">
+                  <div className={`category-picker${categoryPickerOpen ? ' is-open' : ''}`}>
                     <button
                       type="button"
-                      key={category.id}
-                      className={activeCategory === category.id ? 'is-active' : ''}
-                      aria-pressed={activeCategory === category.id}
-                      onClick={() => changeCategory(category.id)}
+                      className="category-picker__toggle"
+                      aria-expanded={categoryPickerOpen}
+                      aria-controls="collection-category-options"
+                      onClick={() => setCategoryPickerOpen((value) => !value)}
                     >
-                      <span>{categoryGlyphs[category.id]}</span>
-                      {category.shortLabel ?? category.label}
+                      <span>{categoryGlyphs[activeCategory]}</span>
+                      <strong>{activeCategoryLabel}</strong>
+                      <Icon name="chevron-right" />
                     </button>
-                  ))}
+                    <div
+                      id="collection-category-options"
+                      className="category-scroller"
+                      role="toolbar"
+                      aria-label="Collection category"
+                    >
+                      {bootstrap.categories.map((category) => (
+                        <button
+                          type="button"
+                          key={category.id}
+                          className={activeCategory === category.id ? 'is-active' : ''}
+                          aria-pressed={activeCategory === category.id}
+                          onClick={() => changeCategory(category.id)}
+                        >
+                          <span>{categoryGlyphs[category.id]}</span>
+                          {category.shortLabel ?? category.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <label className="search-field">
+                    <Icon name="search" />
+                    <input
+                      type="search"
+                      value={query}
+                      onChange={(event) => setQuery(event.target.value)}
+                      placeholder="Name or Pokédex number"
+                      aria-label="Search Pokémon"
+                    />
+                    {query && (
+                      <button type="button" onClick={() => setQuery('')} aria-label="Clear search">
+                        <Icon name="close" />
+                      </button>
+                    )}
+                  </label>
                 </div>
 
                 {quickCheck && (
@@ -796,21 +834,6 @@ export default function App() {
                 )}
 
                 <section className="dex-controls" aria-label="Pokédex filters">
-                  <label className="search-field">
-                    <Icon name="search" />
-                    <input
-                      type="search"
-                      value={query}
-                      onChange={(event) => setQuery(event.target.value)}
-                      placeholder="Name or Pokédex number"
-                      aria-label="Search Pokémon"
-                    />
-                    {query && (
-                      <button type="button" onClick={() => setQuery('')} aria-label="Clear search">
-                        <Icon name="close" />
-                      </button>
-                    )}
-                  </label>
                   <div className="filter-row">
                     <label>
                       <Icon name="filter" />
