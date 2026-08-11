@@ -102,7 +102,8 @@ export function PokemonGrid({
             <button
               type="button"
               key={item.id}
-              className={`pokemon-card pokemon-card--${state}${quickCheck ? ' pokemon-card--quick' : ''}${collectionComplete ? ' pokemon-card--complete' : ''}`}
+              className={`pokemon-card pokemon-card--${state}${categoryId === 'shadow' ? ' pokemon-card--shadow' : ''}${quickCheck ? ' pokemon-card--quick' : ''}${collectionComplete ? ' pokemon-card--complete' : ''}`}
+              data-category={categoryId}
               data-state={state}
               data-collection-complete={collectionComplete || undefined}
               data-primary-type={item.types[0]}
@@ -126,6 +127,7 @@ export function PokemonGrid({
               </span>
               <span className="pokemon-card__art" aria-hidden="true">
                 <span className="pokemon-card__halo" />
+                {categoryId === 'shadow' && <span className="pokemon-card__shadow-aura" />}
                 <PokemonSprite item={item} shiny={shiny} className="pokemon-card__sprite" />
               </span>
               <span className="pokemon-card__name">{item.name}</span>

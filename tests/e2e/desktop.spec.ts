@@ -101,6 +101,33 @@ test('completing every released category activates the animated rainbow hook', a
   expect(api.unexpectedWriteCount).toBe(0);
 });
 
+test('Shadow collection cards render an animated aura only on the Shadow page', async ({
+  page,
+}) => {
+  const api = await installFakeApi(page);
+  await page.goto('/#/dex');
+
+  await page.getByRole('button', { name: 'Shadow' }).click();
+  const shadowCard = page.getByTestId('pokemon-card-1');
+  await expect(shadowCard).toHaveAttribute('data-category', 'shadow');
+  await expect(shadowCard).toHaveClass(/pokemon-card--shadow/);
+  await expect(shadowCard.locator('.pokemon-card__shadow-aura')).toBeVisible();
+  await expect
+    .poll(() =>
+      shadowCard
+        .locator('.pokemon-card__shadow-aura')
+        .evaluate((element) => getComputedStyle(element).animationName),
+    )
+    .toContain('shadow-aura-pulse');
+
+  await page.getByRole('button', { name: 'Normal' }).click();
+  const normalCard = page.getByTestId('pokemon-card-1');
+  await expect(normalCard).toHaveAttribute('data-category', 'normal');
+  await expect(normalCard.locator('.pokemon-card__shadow-aura')).toHaveCount(0);
+  expect(api.collectionMutationCount).toBe(0);
+  expect(api.unexpectedWriteCount).toBe(0);
+});
+
 test('Wanted details expose only realistic trade requests and recognize owned sizes', async ({
   page,
 }) => {

@@ -870,6 +870,102 @@ p {
   content: '';
 }
 
+.pokemon-card__shadow-aura {
+  position: absolute;
+  z-index: 1;
+  inset: 5px;
+  border-radius: 46% 54% 48% 52%;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 28% 72%, rgb(165 72 255 / 78%) 0 9%, transparent 32%),
+    radial-gradient(circle at 74% 66%, rgb(89 32 172 / 76%) 0 12%, transparent 36%),
+    radial-gradient(circle at 48% 38%, rgb(213 104 255 / 55%) 0 10%, transparent 42%);
+  filter: blur(5px) drop-shadow(0 0 7px rgb(116 39 210 / 72%));
+  opacity: 0.92;
+  transform-origin: 50% 75%;
+  animation: shadow-aura-pulse 2.4s ease-in-out infinite alternate;
+}
+
+.pokemon-card__shadow-aura::before,
+.pokemon-card__shadow-aura::after {
+  position: absolute;
+  content: '';
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(197 92 255 / 68%), transparent 68%);
+  filter: blur(2px);
+  animation: shadow-wisp-rise 2.8s ease-in-out infinite;
+}
+
+.pokemon-card__shadow-aura::before {
+  width: 25px;
+  height: 38px;
+  top: 4px;
+  left: 5px;
+  rotate: -22deg;
+}
+
+.pokemon-card__shadow-aura::after {
+  width: 22px;
+  height: 34px;
+  top: 0;
+  right: 6px;
+  rotate: 24deg;
+  animation-delay: -1.35s;
+}
+
+.pokemon-card--shadow .pokemon-card__halo {
+  background: radial-gradient(circle, #eee2ff 0, #c695f0 48%, #6b3298 100%);
+  box-shadow:
+    0 0 13px rgb(131 49 211 / 56%),
+    0 0 28px rgb(67 18 118 / 25%);
+}
+
+.pokemon-card--shadow .pokemon-card__halo::after {
+  border-color: rgb(255 226 255 / 30%);
+}
+
+.pokemon-card--shadow .pokemon-card__sprite {
+  z-index: 2;
+  filter: drop-shadow(0 1px 2px rgb(49 8 78 / 75%)) drop-shadow(0 0 7px rgb(178 78 255 / 65%));
+}
+
+.pokemon-card--shadow.pokemon-card--missing .pokemon-card__sprite {
+  opacity: 0.58;
+  filter: grayscale(0.65) saturate(0.7) drop-shadow(0 0 6px rgb(126 53 186 / 48%));
+}
+
+.pokemon-card--shadow.pokemon-card--unreleased .pokemon-card__shadow-aura,
+.pokemon-card--shadow.pokemon-card--ineligible .pokemon-card__shadow-aura,
+.pokemon-card--shadow.pokemon-card--unknown .pokemon-card__shadow-aura {
+  opacity: 0.2;
+  animation: none;
+}
+
+@keyframes shadow-aura-pulse {
+  from {
+    opacity: 0.72;
+    transform: scale(0.91) rotate(-2deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1.07) rotate(2deg);
+  }
+}
+
+@keyframes shadow-wisp-rise {
+  0%,
+  100% {
+    opacity: 0.32;
+    transform: translateY(9px) scale(0.78);
+  }
+
+  50% {
+    opacity: 0.92;
+    transform: translateY(-7px) scale(1.1);
+  }
+}
+
 .pokemon-card__sprite,
 .sprite-fallback {
   position: relative;
@@ -3247,6 +3343,12 @@ p {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .pokemon-card__shadow-aura,
+  .pokemon-card__shadow-aura::before,
+  .pokemon-card__shadow-aura::after {
+    animation: none;
+  }
+
   *,
   *::before,
   *::after {
