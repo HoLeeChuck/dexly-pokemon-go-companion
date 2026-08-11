@@ -103,6 +103,13 @@ test.describe('mobile collection experience', () => {
     await openDex(page);
 
     await expect(page.getByLabel('Type')).toHaveCount(0);
+    const mobileControlSizes = await page
+      .locator('.search-field input, .filter-row select')
+      .evaluateAll((elements) =>
+        elements.map((element) => Number.parseFloat(getComputedStyle(element).fontSize)),
+      );
+    expect(mobileControlSizes.length).toBeGreaterThan(0);
+    expect(mobileControlSizes.every((size) => size >= 16)).toBe(true);
     const browser = page.locator('.dex-browser');
     await browser.evaluate((element) => window.scrollTo(0, element.offsetTop - 68));
 
