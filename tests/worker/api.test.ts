@@ -193,6 +193,14 @@ describe('Worker bootstrap and authentication boundary', () => {
       shadow: 'released',
       purified: 'released',
     });
+
+    const solgaleo = payload.catalog.find((item) => item.id === 'form-0791-standard');
+    expect(solgaleo).toMatchObject({
+      dexNumber: 791,
+      name: 'Solgaleo',
+      shinySpriteUrl: expect.stringContaining('pm791.s.icon.png'),
+    });
+    expect(solgaleo?.rules.shiny).toBe('released');
   });
 
   it('fails closed on a production hostname when no access token is configured', async () => {

@@ -21095,10 +21095,10 @@
       "generation": 7,
       "region": "Alola",
       "types": ["psychic", "steel"],
-      "release": { "normal": true, "shiny": false, "shadow": false, "purified": false },
+      "release": { "normal": true, "shiny": true, "shadow": false, "purified": false },
       "eligibility": {
         "normal": true,
-        "shiny": false,
+        "shiny": true,
         "lucky": true,
         "hundo": true,
         "xxl": true,
@@ -21107,7 +21107,10 @@
         "purified": false
       },
       "tradeable": true,
-      "assets": { "normal": { "upstreamPath": "pm791.icon.png" } }
+      "assets": {
+        "normal": { "upstreamPath": "pm791.icon.png" },
+        "shiny": { "upstreamPath": "pm791.s.icon.png" }
+      }
     },
     {
       "speciesId": "species-0792",
