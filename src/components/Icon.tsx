@@ -12,6 +12,7 @@ export type IconName =
   | 'flask'
   | 'grid'
   | 'heart'
+  | 'home'
   | 'lock'
   | 'menu'
   | 'minus'
@@ -56,6 +57,12 @@ const paths: Record<IconName, ReactNode> = {
   ),
   heart: (
     <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z" />
+  ),
+  home: (
+    <>
+      <path d="m3 11 9-8 9 8" />
+      <path d="M5 10v10h14V10M9 20v-6h6v6" />
+    </>
   ),
   lock: (
     <>

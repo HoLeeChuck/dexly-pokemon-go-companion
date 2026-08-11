@@ -1,6 +1,31 @@
 import { expect, test } from '@playwright/test';
 import { installFakeApi } from './support/fake-api';
 
+test('public SMNA home introduces the community and opens the private Dex tab', async ({
+  page,
+}) => {
+  const api = await installFakeApi(page);
+  await page.goto('/');
+
+  await expect(
+    page.getByRole('heading', { name: 'Play local. Meet neighbors. Catch together.' }),
+  ).toBeVisible();
+  await expect(page.getByText('12,600+', { exact: true })).toBeVisible();
+  await expect(page.getByText('3,500+', { exact: true })).toBeVisible();
+  await expect(page.getByRole('link', { name: /Join our Discord/ })).toHaveAttribute(
+    'href',
+    'https://discord.gg/9ZBN3EePRq',
+  );
+  await expect(page.getByRole('link', { name: /Find us on Campfire/ })).toHaveAttribute(
+    'href',
+    'https://cmpf.re/QXGp7L',
+  );
+  await page.getByRole('button', { name: /Open Dex tracker/ }).click();
+  await expect(page).toHaveURL(/#\/dex$/);
+  await expect(page.getByRole('heading', { name: 'Pokédex' })).toBeVisible();
+  expect(api.unexpectedWriteCount).toBe(0);
+});
+
 test('desktop shell shows its sidebar and navigates without the mobile bar', async ({ page }) => {
   const api = await installFakeApi(page);
   await page.goto('/#/dex');
@@ -15,7 +40,7 @@ test('desktop shell shows its sidebar and navigates without the mobile bar', asy
   await expect(page.locator('.bottom-nav')).toBeHidden();
 
   const navigation = sidebar.getByRole('navigation', { name: 'Primary navigation' });
-  await expect(navigation.getByRole('button')).toHaveCount(4);
+  await expect(navigation.getByRole('button')).toHaveCount(5);
   const searchLab = navigation.getByRole('button', { name: 'Search Lab' });
   await searchLab.click();
 
