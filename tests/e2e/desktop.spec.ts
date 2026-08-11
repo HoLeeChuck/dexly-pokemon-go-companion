@@ -118,8 +118,7 @@ test('Shadow collection cards render an animated aura only on the Shadow page', 
         .locator('.pokemon-card__shadow-aura')
         .evaluate((element) => getComputedStyle(element).animationName),
     )
-    .toContain('shadow-aura-pulse');
-
+    .toContain('shadow-flame-frames');
   await page.getByRole('button', { name: 'Normal' }).click();
   const normalCard = page.getByTestId('pokemon-card-1');
   await expect(normalCard).toHaveAttribute('data-category', 'normal');

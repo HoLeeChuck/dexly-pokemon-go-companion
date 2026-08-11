@@ -873,65 +873,48 @@ p {
 .pokemon-card__shadow-aura {
   position: absolute;
   z-index: 1;
-  inset: 5px;
-  border-radius: 46% 54% 48% 52%;
+  width: 94px;
+  height: 94px;
   pointer-events: none;
-  background:
-    radial-gradient(circle at 28% 72%, rgb(165 72 255 / 78%) 0 9%, transparent 32%),
-    radial-gradient(circle at 74% 66%, rgb(89 32 172 / 76%) 0 12%, transparent 36%),
-    radial-gradient(circle at 48% 38%, rgb(213 104 255 / 55%) 0 10%, transparent 42%);
-  filter: blur(5px) drop-shadow(0 0 7px rgb(116 39 210 / 72%));
-  opacity: 0.92;
-  transform-origin: 50% 75%;
-  animation: shadow-aura-pulse 2.4s ease-in-out infinite alternate;
+  background: #7d32c8;
+  filter: drop-shadow(0 0 4px rgb(112 40 191 / 82%)) drop-shadow(0 3px 8px rgb(72 17 125 / 48%));
+  mask-image: url('https://raw.githubusercontent.com/PokeMiners/pogo_assets/1a4ad1fc6c39f361ea85d53fc3040ce482ee9d90/Images/Effects/ShadowFlame4x4.png');
+  mask-repeat: no-repeat;
+  mask-size: 400% 400%;
+  opacity: 0.88;
+  transform: translateY(-3px) scale(1.08);
+  animation: shadow-flame-frames 1.45s steps(1, end) infinite alternate;
 }
 
-.pokemon-card__shadow-aura::before,
-.pokemon-card__shadow-aura::after {
-  position: absolute;
-  content: '';
-  border-radius: 50%;
-  background: radial-gradient(circle, rgb(197 92 255 / 68%), transparent 68%);
-  filter: blur(2px);
-  animation: shadow-wisp-rise 2.8s ease-in-out infinite;
-}
-
-.pokemon-card__shadow-aura::before {
-  width: 25px;
-  height: 38px;
-  top: 4px;
-  left: 5px;
-  rotate: -22deg;
-}
-
-.pokemon-card__shadow-aura::after {
-  width: 22px;
-  height: 34px;
-  top: 0;
-  right: 6px;
-  rotate: 24deg;
-  animation-delay: -1.35s;
+.pokemon-card--shadow {
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--type-primary) 9%, #fff4fb),
+    color-mix(in srgb, #a76bd4 17%, #f7f0ff)
+  );
 }
 
 .pokemon-card--shadow .pokemon-card__halo {
-  background: radial-gradient(circle, #eee2ff 0, #c695f0 48%, #6b3298 100%);
-  box-shadow:
-    0 0 13px rgb(131 49 211 / 56%),
-    0 0 28px rgb(67 18 118 / 25%);
+  background: radial-gradient(
+    circle,
+    rgb(209 175 242 / 52%) 0,
+    rgb(190 135 229 / 20%) 48%,
+    transparent 72%
+  );
 }
 
 .pokemon-card--shadow .pokemon-card__halo::after {
-  border-color: rgb(255 226 255 / 30%);
+  border-color: transparent;
 }
 
 .pokemon-card--shadow .pokemon-card__sprite {
   z-index: 2;
-  filter: drop-shadow(0 1px 2px rgb(49 8 78 / 75%)) drop-shadow(0 0 7px rgb(178 78 255 / 65%));
+  filter: drop-shadow(0 2px 2px rgb(49 8 78 / 68%)) drop-shadow(0 0 3px rgb(156 65 223 / 46%));
 }
 
 .pokemon-card--shadow.pokemon-card--missing .pokemon-card__sprite {
-  opacity: 0.58;
-  filter: grayscale(0.65) saturate(0.7) drop-shadow(0 0 6px rgb(126 53 186 / 48%));
+  opacity: 0.68;
+  filter: grayscale(0.35) saturate(0.82) drop-shadow(0 2px 3px rgb(70 18 110 / 48%));
 }
 
 .pokemon-card--shadow.pokemon-card--unreleased .pokemon-card__shadow-aura,
@@ -941,28 +924,69 @@ p {
   animation: none;
 }
 
-@keyframes shadow-aura-pulse {
-  from {
-    opacity: 0.72;
-    transform: scale(0.91) rotate(-2deg);
+@keyframes shadow-flame-frames {
+  0% {
+    mask-position: 0% 0%;
   }
 
-  to {
-    opacity: 1;
-    transform: scale(1.07) rotate(2deg);
+  6.66% {
+    mask-position: 33.333% 0%;
   }
-}
 
-@keyframes shadow-wisp-rise {
-  0%,
+  13.33% {
+    mask-position: 66.667% 0%;
+  }
+
+  20% {
+    mask-position: 100% 0%;
+  }
+
+  26.66% {
+    mask-position: 0% 33.333%;
+  }
+
+  33.33% {
+    mask-position: 33.333% 33.333%;
+  }
+
+  40% {
+    mask-position: 66.667% 33.333%;
+  }
+
+  46.66% {
+    mask-position: 100% 33.333%;
+  }
+
+  53.33% {
+    mask-position: 0% 66.667%;
+  }
+
+  60% {
+    mask-position: 33.333% 66.667%;
+  }
+
+  66.66% {
+    mask-position: 66.667% 66.667%;
+  }
+
+  73.33% {
+    mask-position: 100% 66.667%;
+  }
+
+  80% {
+    mask-position: 0% 100%;
+  }
+
+  86.66% {
+    mask-position: 33.333% 100%;
+  }
+
+  93.33% {
+    mask-position: 66.667% 100%;
+  }
+
   100% {
-    opacity: 0.32;
-    transform: translateY(9px) scale(0.78);
-  }
-
-  50% {
-    opacity: 0.92;
-    transform: translateY(-7px) scale(1.1);
+    mask-position: 100% 100%;
   }
 }
 
