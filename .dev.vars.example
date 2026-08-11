@@ -1,0 +1,2 @@
+# Localhost requests work without a token. Set this to exercise the production lock locally.
+APP_ACCESS_TOKEN=replace-with-a-long-random-value

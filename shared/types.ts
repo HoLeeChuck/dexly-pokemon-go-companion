@@ -1,0 +1,84 @@
+export const CATEGORY_IDS = [
+  'normal',
+  'shiny',
+  'lucky',
+  'hundo',
+  'xxl',
+  'xxs',
+  'shadow',
+  'purified',
+] as const;
+
+export type CategoryId = (typeof CATEGORY_IDS)[number];
+
+export const RULE_STATES = ['released', 'unreleased', 'ineligible', 'unknown'] as const;
+
+export type RuleState = (typeof RULE_STATES)[number];
+
+export type CollectionState = 'collected' | 'missing' | Exclude<RuleState, 'released'>;
+
+export interface CatalogItem {
+  /** Stable application-owned form identifier. */
+  id: string;
+  speciesId: string;
+  dexNumber: number;
+  name: string;
+  formName?: string;
+  formKey: string;
+  generation: number;
+  region: string;
+  types: readonly string[];
+  isDefault: boolean;
+  /** False when Pokemon GO search syntax can only narrow to candidates. */
+  searchExact: boolean;
+  spriteUrl?: string;
+  shinySpriteUrl?: string;
+  rules: Readonly<Partial<Record<CategoryId, RuleState>>>;
+}
+
+export interface Category {
+  id: CategoryId;
+  label: string;
+  shortLabel?: string;
+  sortOrder: number;
+  searchKeyword: string | null;
+  tradeSearchSupported: boolean;
+}
+
+export interface CollectionEntry {
+  profileId?: string;
+  formId: string;
+  categoryId: CategoryId;
+  collected: boolean;
+  updatedAt?: string;
+}
+
+export interface WantedEntry {
+  id?: string;
+  profileId?: string;
+  formId: string;
+  categoryId?: CategoryId;
+  wanted: boolean;
+  notes?: string;
+  updatedAt?: string;
+}
+
+export interface TradeSpecimen {
+  id: string;
+  profileId?: string;
+  formId: string;
+  traits: readonly CategoryId[];
+  quantity: number;
+  notes?: string;
+  verifiedAt?: string;
+}
+
+export interface BootstrapPayload {
+  catalogVersion: string;
+  profileId: string;
+  categories: readonly Category[];
+  catalog: readonly CatalogItem[];
+  collectionEntries: readonly CollectionEntry[];
+  wantedEntries: readonly WantedEntry[];
+  tradeSpecimens: readonly TradeSpecimen[];
+}

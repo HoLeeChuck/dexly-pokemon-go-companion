@@ -1,0 +1,636 @@
+{
+  "schemaVersion": 1,
+  "catalogVersion": "2026-08-11.1",
+  "releaseMetadataAsOf": "2026-08-11",
+  "source": {
+    "name": "PokeMiners pogo_assets",
+    "repositoryUrl": "https://github.com/PokeMiners/pogo_assets",
+    "commit": "1a4ad1fc6c39f361ea85d53fc3040ce482ee9d90",
+    "assetRoot": "Images/Pokemon - 256x256/Addressable Assets",
+    "rawBaseUrl": "https://raw.githubusercontent.com/PokeMiners/pogo_assets/1a4ad1fc6c39f361ea85d53fc3040ce482ee9d90/Images/Pokemon%20-%20256x256/Addressable%20Assets/"
+  },
+  "eligibilityKeys": ["normal", "shiny", "lucky", "hundo", "xxl", "xxs", "shadow", "purified"],
+  "forms": [
+    {
+      "speciesId": "species-0001",
+      "formId": "form-0001-standard",
+      "formKey": "standard",
+      "dex": 1,
+      "name": "Bulbasaur",
+      "normalizedName": "bulbasaur",
+      "generation": 1,
+      "region": "Kanto",
+      "types": ["grass", "poison"],
+      "release": { "normal": true, "shiny": true, "shadow": true, "purified": true },
+      "eligibility": {
+        "normal": true,
+        "shiny": true,
+        "lucky": true,
+        "hundo": true,
+        "xxl": true,
+        "xxs": true,
+        "shadow": true,
+        "purified": true
+      },
+      "tradeable": true,
+      "assets": {
+        "normal": { "upstreamPath": "pm1.icon.png" },
+        "shiny": { "upstreamPath": "pm1.s.icon.png" }
+      }
+    },
+    {
+      "speciesId": "species-0004",
+      "formId": "form-0004-standard",
+      "formKey": "standard",
+      "dex": 4,
+      "name": "Charmander",
+      "normalizedName": "charmander",
+      "generation": 1,
+      "region": "Kanto",
+      "types": ["fire"],
+      "release": { "normal": true, "shiny": true, "shadow": true, "purified": true },
+      "eligibility": {
+        "normal": true,
+        "shiny": true,
+        "lucky": true,
+        "hundo": true,
+        "xxl": true,
+        "xxs": true,
+        "shadow": true,
+        "purified": true
+      },
+      "tradeable": true,
+      "assets": {
+        "normal": { "upstreamPath": "pm4.icon.png" },
+        "shiny": { "upstreamPath": "pm4.s.icon.png" }
+      }
+    },
+    {
+      "speciesId": "species-0007",
+      "formId": "form-0007-standard",
+      "formKey": "standard",
+      "dex": 7,
+      "name": "Squirtle",
+      "normalizedName": "squirtle",
+      "generation": 1,
+      "region": "Kanto",
+      "types": ["water"],
+      "release": { "normal": true, "shiny": true, "shadow": true, "purified": true },
+      "eligibility": {
+        "normal": true,
+        "shiny": true,
+        "lucky": true,
+        "hundo": true,
+        "xxl": true,
+        "xxs": true,
+        "shadow": true,
+        "purified": true
+      },
+      "tradeable": true,
+      "assets": {
+        "normal": { "upstreamPath": "pm7.icon.png" },
+        "shiny": { "upstreamPath": "pm7.s.icon.png" }
+      }
+    },
+    {
+      "speciesId": "species-0025",
+      "formId": "form-0025-standard",
+      "formKey": "standard",
+      "dex": 25,
+      "name": "Pikachu",
+      "normalizedName": "pikachu",
+      "generation": 1,
+      "region": "Kanto",
+      "types": ["electric"],
+      "release": { "normal": true, "shiny": true, "shadow": null, "purified": null },
+      "eligibility": {
+        "normal": true,
+        "shiny": true,
+        "lucky": true,
+        "hundo": true,
+        "xxl": true,
+        "xxs": true,
+        "shadow": null,
+        "purified": null
+      },
+      "tradeable": true,
+      "assets": {
+        "normal": { "upstreamPath": "pm25.icon.png" },
+        "shiny": { "upstreamPath": "pm25.s.icon.png" }
+      }
+    },
+    {
+      "speciesId": "species-0133",
+      "formId": "form-0133-standard",
+      "formKey": "standard",
+      "dex": 133,
+      "name": "Eevee",
+      "normalizedName": "eevee",
+      "generation": 1,
+      "region": "Kanto",
+      "types": ["normal"],
+      "release": { "normal": true, "shiny": true, "shadow": null, "purified": null },
+      "eligibility": {
+        "normal": true,
+        "shiny": true,
+        "lucky": true,
+        "hundo": true,
+        "xxl": true,
+        "xxs": true,
+        "shadow": null,
+        "purified": null
+      },
+      "tradeable": true,
+      "assets": {
+        "normal": { "upstreamPath": "pm133.icon.png" },
+        "shiny": { "upstreamPath": "pm133.s.icon.png" }
+      }
+    },
+    {
+      "speciesId": "species-0152",
+      "formId": "form-0152-standard",
+      "formKey": "standard",
+      "dex": 152,
+      "name": "Chikorita",
+      "normalizedName": "chikorita",
+      "generation": 2,
+      "region": "Johto",
+      "types": ["grass"],
+      "release": { "normal": true, "shiny": true, "shadow": null, "purified": null },
+      "eligibility": {
+        "normal": true,
+        "shiny": true,
+        "lucky": true,
+        "hundo": true,
+        "xxl": true,
+        "xxs": true,
+        "shadow": null,
+        "purified": null
+      },
+      "tradeable": true,
+      "assets": {
+        "normal": { "upstreamPath": "pm152.icon.png" },
+        "shiny": { "upstreamPath": "pm152.s.icon.png" }
+      }
+    },
+    {
+      "speciesId": "species-0155",
+      "formId": "form-0155-standard",
+      "formKey": "standard",
+      "dex": 155,
+      "name": "Cyndaquil",
+      "normalizedName": "cyndaquil",
+      "generation": 2,
+      "region": "Johto",
+      "types": ["fire"],
+      "release": { "normal": true, "shiny": true, "shadow": null, "purified": null },
+      "eligibility": {
+        "normal": true,
+        "shiny": true,
+        "lucky": true,
+        "hundo": true,
+        "xxl": true,
+        "xxs": true,
+        "shadow": null,
+        "purified": null
+      },
+      "tradeable": true,
+      "assets": {
+        "normal": { "upstreamPath": "pm155.icon.png" },
+        "shiny": { "upstreamPath": "pm155.s.icon.png" }
+      }
+    },
+    {
+      "speciesId": "species-0158",
+      "formId": "form-0158-standard",
+      "formKey": "standard",
+      "dex": 158,
+      "name": "Totodile",
+      "normalizedName": "totodile",
+      "generation": 2,
+      "region": "Johto",
+      "types": ["water"],
+      "release": { "normal": true, "shiny": true, "shadow": null, "purified": null },
+      "eligibility": {
+        "normal": true,
+        "shiny": true,
+        "lucky": true,
+        "hundo": true,
+        "xxl": true,
+        "xxs": true,
+        "shadow": null,
+        "purified": null
+      },
+      "tradeable": true,
+      "assets": {
+        "normal": { "upstreamPath": "pm158.icon.png" },
+        "shiny": { "upstreamPath": "pm158.s.icon.png" }
+      }
+    },
+    {
+      "speciesId": "species-0252",
+      "formId": "form-0252-standard",
+      "formKey": "standard",
+      "dex": 252,
+      "name": "Treecko",
+      "normalizedName": "treecko",
+      "generation": 3,
+      "region": "Hoenn",
+      "types": ["grass"],
+      "release": { "normal": true, "shiny": true, "shadow": null, "purified": null },
+      "eligibility": {
+        "normal": true,
+        "shiny": true,
+        "lucky": true,
+        "hundo": true,
+        "xxl": true,
+        "xxs": true,
+        "shadow": null,
+        "purified": null
+      },
+      "tradeable": true,
+      "assets": {
+        "normal": { "upstreamPath": "pm252.icon.png" },
+        "shiny": { "upstreamPath": "pm252.s.icon.png" }
+      }
+    },
+    {
+      "speciesId": "species-0255",
+      "formId": "form-0255-standard",
+      "formKey": "standard",
+      "dex": 255,
+      "name": "Torchic",
+      "normalizedName": "torchic",
+      "generation": 3,
+      "region": "Hoenn",
+      "types": ["fire"],
+      "release": { "normal": true, "shiny": true, "shadow": null, "purified": null },
+      "eligibility": {
+        "normal": true,
+        "shiny": true,
+        "lucky": true,
+        "hundo": true,
+        "xxl": true,
+        "xxs": true,
+        "shadow": null,
+        "purified": null
+      },
+      "tradeable": true,
+      "assets": {
+        "normal": { "upstreamPath": "pm255.icon.png" },
+        "shiny": { "upstreamPath": "pm255.s.icon.png" }
+      }
+    },
+    {
+      "speciesId": "species-0258",
+      "formId": "form-0258-standard",
+      "formKey": "standard",
+      "dex": 258,
+      "name": "Mudkip",
+      "normalizedName": "mudkip",
+      "generation": 3,
+      "region": "Hoenn",
+      "types": ["water"],
+      "release": { "normal": true, "shiny": true, "shadow": null, "purified": null },
+      "eligibility": {
+        "normal": true,
+        "shiny": true,
+        "lucky": true,
+        "hundo": true,
+        "xxl": true,
+        "xxs": true,
+        "shadow": null,
+        "purified": null
+      },
+      "tradeable": true,
+      "assets": {
+        "normal": { "upstreamPath": "pm258.icon.png" },
+        "shiny": { "upstreamPath": "pm258.s.icon.png" }
+      }
+    },
+    {
+      "speciesId": "species-0387",
+      "formId": "form-0387-standard",
+      "formKey": "standard",
+      "dex": 387,
+      "name": "Turtwig",
+      "normalizedName": "turtwig",
+      "generation": 4,
+      "region": "Sinnoh",
+      "types": ["grass"],
+      "release": { "normal": true, "shiny": true, "shadow": null, "purified": null },
+      "eligibility": {
+        "normal": true,
+        "shiny": true,
+        "lucky": true,
+        "hundo": true,
+        "xxl": true,
+        "xxs": true,
+        "shadow": null,
+        "purified": null
+      },
+      "tradeable": true,
+      "assets": {
+        "normal": { "upstreamPath": "pm387.icon.png" },
+        "shiny": { "upstreamPath": "pm387.s.icon.png" }
+      }
+    },
+    {
+      "speciesId": "species-0390",
+      "formId": "form-0390-standard",
+      "formKey": "standard",
+      "dex": 390,
+      "name": "Chimchar",
+      "normalizedName": "chimchar",
+      "generation": 4,
+      "region": "Sinnoh",
+      "types": ["fire"],
+      "release": { "normal": true, "shiny": true, "shadow": null, "purified": null },
+      "eligibility": {
+        "normal": true,
+        "shiny": true,
+        "lucky": true,
+        "hundo": true,
+        "xxl": true,
+        "xxs": true,
+        "shadow": null,
+        "purified": null
+      },
+      "tradeable": true,
+      "assets": {
+        "normal": { "upstreamPath": "pm390.icon.png" },
+        "shiny": { "upstreamPath": "pm390.s.icon.png" }
+      }
+    },
+    {
+      "speciesId": "species-0393",
+      "formId": "form-0393-standard",
+      "formKey": "standard",
+      "dex": 393,
+      "name": "Piplup",
+      "normalizedName": "piplup",
+      "generation": 4,
+      "region": "Sinnoh",
+      "types": ["water"],
+      "release": { "normal": true, "shiny": true, "shadow": null, "purified": null },
+      "eligibility": {
+        "normal": true,
+        "shiny": true,
+        "lucky": true,
+        "hundo": true,
+        "xxl": true,
+        "xxs": true,
+        "shadow": null,
+        "purified": null
+      },
+      "tradeable": true,
+      "assets": {
+        "normal": { "upstreamPath": "pm393.icon.png" },
+        "shiny": { "upstreamPath": "pm393.s.icon.png" }
+      }
+    },
+    {
+      "speciesId": "species-0495",
+      "formId": "form-0495-standard",
+      "formKey": "standard",
+      "dex": 495,
+      "name": "Snivy",
+      "normalizedName": "snivy",
+      "generation": 5,
+      "region": "Unova",
+      "types": ["grass"],
+      "release": { "normal": true, "shiny": true, "shadow": null, "purified": null },
+      "eligibility": {
+        "normal": true,
+        "shiny": true,
+        "lucky": true,
+        "hundo": true,
+        "xxl": true,
+        "xxs": true,
+        "shadow": null,
+        "purified": null
+      },
+      "tradeable": true,
+      "assets": {
+        "normal": { "upstreamPath": "pm495.icon.png" },
+        "shiny": { "upstreamPath": "pm495.s.icon.png" }
+      }
+    },
+    {
+      "speciesId": "species-0498",
+      "formId": "form-0498-standard",
+      "formKey": "standard",
+      "dex": 498,
+      "name": "Tepig",
+      "normalizedName": "tepig",
+      "generation": 5,
+      "region": "Unova",
+      "types": ["fire"],
+      "release": { "normal": true, "shiny": true, "shadow": null, "purified": null },
+      "eligibility": {
+        "normal": true,
+        "shiny": true,
+        "lucky": true,
+        "hundo": true,
+        "xxl": true,
+        "xxs": true,
+        "shadow": null,
+        "purified": null
+      },
+      "tradeable": true,
+      "assets": {
+        "normal": { "upstreamPath": "pm498.icon.png" },
+        "shiny": { "upstreamPath": "pm498.s.icon.png" }
+      }
+    },
+    {
+      "speciesId": "species-0501",
+      "formId": "form-0501-standard",
+      "formKey": "standard",
+      "dex": 501,
+      "name": "Oshawott",
+      "normalizedName": "oshawott",
+      "generation": 5,
+      "region": "Unova",
+      "types": ["water"],
+      "release": { "normal": true, "shiny": true, "shadow": null, "purified": null },
+      "eligibility": {
+        "normal": true,
+        "shiny": true,
+        "lucky": true,
+        "hundo": true,
+        "xxl": true,
+        "xxs": true,
+        "shadow": null,
+        "purified": null
+      },
+      "tradeable": true,
+      "assets": {
+        "normal": { "upstreamPath": "pm501.icon.png" },
+        "shiny": { "upstreamPath": "pm501.s.icon.png" }
+      }
+    },
+    {
+      "speciesId": "species-0650",
+      "formId": "form-0650-standard",
+      "formKey": "standard",
+      "dex": 650,
+      "name": "Chespin",
+      "normalizedName": "chespin",
+      "generation": 6,
+      "region": "Kalos",
+      "types": ["grass"],
+      "release": { "normal": true, "shiny": true, "shadow": null, "purified": null },
+      "eligibility": {
+        "normal": true,
+        "shiny": true,
+        "lucky": true,
+        "hundo": true,
+        "xxl": true,
+        "xxs": true,
+        "shadow": null,
+        "purified": null
+      },
+      "tradeable": true,
+      "assets": {
+        "normal": { "upstreamPath": "pm650.icon.png" },
+        "shiny": { "upstreamPath": "pm650.s.icon.png" }
+      }
+    },
+    {
+      "speciesId": "species-0653",
+      "formId": "form-0653-standard",
+      "formKey": "standard",
+      "dex": 653,
+      "name": "Fennekin",
+      "normalizedName": "fennekin",
+      "generation": 6,
+      "region": "Kalos",
+      "types": ["fire"],
+      "release": { "normal": true, "shiny": true, "shadow": null, "purified": null },
+      "eligibility": {
+        "normal": true,
+        "shiny": true,
+        "lucky": true,
+        "hundo": true,
+        "xxl": true,
+        "xxs": true,
+        "shadow": null,
+        "purified": null
+      },
+      "tradeable": true,
+      "assets": {
+        "normal": { "upstreamPath": "pm653.icon.png" },
+        "shiny": { "upstreamPath": "pm653.s.icon.png" }
+      }
+    },
+    {
+      "speciesId": "species-0656",
+      "formId": "form-0656-standard",
+      "formKey": "standard",
+      "dex": 656,
+      "name": "Froakie",
+      "normalizedName": "froakie",
+      "generation": 6,
+      "region": "Kalos",
+      "types": ["water"],
+      "release": { "normal": true, "shiny": true, "shadow": null, "purified": null },
+      "eligibility": {
+        "normal": true,
+        "shiny": true,
+        "lucky": true,
+        "hundo": true,
+        "xxl": true,
+        "xxs": true,
+        "shadow": null,
+        "purified": null
+      },
+      "tradeable": true,
+      "assets": {
+        "normal": { "upstreamPath": "pm656.icon.png" },
+        "shiny": { "upstreamPath": "pm656.s.icon.png" }
+      }
+    },
+    {
+      "speciesId": "species-0722",
+      "formId": "form-0722-standard",
+      "formKey": "standard",
+      "dex": 722,
+      "name": "Rowlet",
+      "normalizedName": "rowlet",
+      "generation": 7,
+      "region": "Alola",
+      "types": ["grass", "flying"],
+      "release": { "normal": true, "shiny": true, "shadow": null, "purified": null },
+      "eligibility": {
+        "normal": true,
+        "shiny": true,
+        "lucky": true,
+        "hundo": true,
+        "xxl": true,
+        "xxs": true,
+        "shadow": null,
+        "purified": null
+      },
+      "tradeable": true,
+      "assets": {
+        "normal": { "upstreamPath": "pm722.icon.png" },
+        "shiny": { "upstreamPath": "pm722.s.icon.png" }
+      }
+    },
+    {
+      "speciesId": "species-0725",
+      "formId": "form-0725-standard",
+      "formKey": "standard",
+      "dex": 725,
+      "name": "Litten",
+      "normalizedName": "litten",
+      "generation": 7,
+      "region": "Alola",
+      "types": ["fire"],
+      "release": { "normal": true, "shiny": true, "shadow": null, "purified": null },
+      "eligibility": {
+        "normal": true,
+        "shiny": true,
+        "lucky": true,
+        "hundo": true,
+        "xxl": true,
+        "xxs": true,
+        "shadow": null,
+        "purified": null
+      },
+      "tradeable": true,
+      "assets": {
+        "normal": { "upstreamPath": "pm725.icon.png" },
+        "shiny": { "upstreamPath": "pm725.s.icon.png" }
+      }
+    },
+    {
+      "speciesId": "species-0728",
+      "formId": "form-0728-standard",
+      "formKey": "standard",
+      "dex": 728,
+      "name": "Popplio",
+      "normalizedName": "popplio",
+      "generation": 7,
+      "region": "Alola",
+      "types": ["water"],
+      "release": { "normal": true, "shiny": true, "shadow": null, "purified": null },
+      "eligibility": {
+        "normal": true,
+        "shiny": true,
+        "lucky": true,
+        "hundo": true,
+        "xxl": true,
+        "xxs": true,
+        "shadow": null,
+        "purified": null
+      },
+      "tradeable": true,
+      "assets": {
+        "normal": { "upstreamPath": "pm728.icon.png" },
+        "shiny": { "upstreamPath": "pm728.s.icon.png" }
+      }
+    }
+  ]
+}
