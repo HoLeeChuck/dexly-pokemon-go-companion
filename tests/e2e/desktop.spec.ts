@@ -9,6 +9,19 @@ test('first launch opens the all-in-one Home without exposing the unfinished Tra
   await page.goto('/');
 
   await expect(page.getByRole('heading', { name: 'Your Dex at a glance.' })).toBeVisible();
+  const dashboardLayout = await page.locator('.page--dashboard').evaluate((dashboard) => {
+    const hero = dashboard.querySelector('.dashboard-hero')!.getBoundingClientRect();
+    const progress = dashboard.querySelector('.regional-progress')!.getBoundingClientRect();
+    return {
+      pageOverflows: document.documentElement.scrollWidth > document.documentElement.clientWidth,
+      heroWidth: Math.round(hero.width),
+      progressWidth: Math.round(progress.width),
+      sameColumn: Math.abs(hero.left - progress.left) < 2,
+    };
+  });
+  expect(dashboardLayout.pageOverflows).toBe(false);
+  expect(dashboardLayout.sameColumn).toBe(true);
+  expect(Math.abs(dashboardLayout.heroWidth - dashboardLayout.progressWidth)).toBeLessThan(2);
   const navigation = page.getByRole('navigation', { name: 'Primary navigation' });
   await expect(navigation.getByRole('button')).toHaveCount(3);
   await expect(navigation.getByRole('button', { name: 'Home' })).toBeVisible();

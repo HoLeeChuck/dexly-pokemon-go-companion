@@ -73,6 +73,23 @@ async function swipeHorizontally(target: Locator, direction: 'left' | 'right') {
 }
 
 test.describe('mobile collection experience', () => {
+  test('Home dashboard fits the viewport and stacks regional summaries', async ({ page }) => {
+    await installFakeApi(page);
+    await page.goto('/#/home');
+    await expect(page.getByRole('heading', { name: 'Your Dex at a glance.' })).toBeVisible();
+
+    const layout = await page.locator('.page--dashboard').evaluate((dashboard) => {
+      const cards = [...dashboard.querySelectorAll('.region-progress-card')].slice(0, 2);
+      const rectangles = cards.map((card) => card.getBoundingClientRect());
+      return {
+        pageOverflows: document.documentElement.scrollWidth > document.documentElement.clientWidth,
+        cardsFit: rectangles.every((rect) => rect.left >= 0 && rect.right <= innerWidth),
+        cardsStack: rectangles.length === 2 && rectangles[1].top > rectangles[0].bottom,
+      };
+    });
+    expect(layout).toEqual({ pageOverflows: false, cardsFit: true, cardsStack: true });
+  });
+
   test('renders an exact 390x844 three-column grid without page-level overflow', async ({
     page,
   }) => {
