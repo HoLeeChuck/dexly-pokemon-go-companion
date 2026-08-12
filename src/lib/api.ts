@@ -10,7 +10,7 @@ import type { CsvImportPolicy, CsvImportPreview } from '../../shared/csv';
 
 export interface BootstrapResponse extends BootstrapPayload {
   revision: number;
-  authMode: 'local' | 'token';
+  authMode: 'local' | 'token' | 'browser';
 }
 
 export interface CollectionMutationResponse {
@@ -116,6 +116,10 @@ async function requestJson<T>(
 }
 
 export const api = {
+  catalog(): Promise<BootstrapResponse> {
+    return requestJson('/api/v1/catalog');
+  },
+
   bootstrap(token = storedAccessToken()): Promise<BootstrapResponse> {
     return requestJson('/api/v1/bootstrap', {}, token);
   },

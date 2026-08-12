@@ -29,7 +29,7 @@ test('desktop shell shows its sidebar and navigates without the mobile bar', asy
   await expect(sidebar).toBeVisible();
   await expect(sidebar.getByText('dexly')).toBeVisible();
   await expect(sidebar.getByText('Private by default')).toBeVisible();
-  await expect(sidebar.getByText('Local D1 session')).toBeVisible();
+  await expect(sidebar.getByText('Saved on this browser')).toBeVisible();
   await expect(page.locator('.bottom-nav')).toHaveCount(0);
 
   const navigation = sidebar.getByRole('navigation', { name: 'Primary navigation' });
@@ -113,7 +113,15 @@ test('completing every released category activates the animated rainbow hook', a
   await expect
     .poll(() => sheet.evaluate((element) => getComputedStyle(element, '::before').animationName))
     .toContain('rainbow-border-flow');
-  await expect.poll(() => api.collectionMutationCount).toBe(5);
+  const saved = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem('dexly:local-profile:v1') ?? '{}'),
+  );
+  expect(
+    saved.collectionEntries.filter(
+      (entry: { formId: string; collected: boolean }) =>
+        entry.formId === 'form-0025-standard' && entry.collected,
+    ).length,
+  ).toBeGreaterThanOrEqual(6);
 
   await page.getByRole('button', { name: 'Close details' }).click();
   await expect(card).toHaveAttribute('data-collection-complete', 'true');
@@ -163,7 +171,14 @@ test('Wanted details expose only realistic trade requests and recognize owned si
   const costume = requestGrid.getByRole('button', { name: /^Costume/ });
   await costume.click();
   await expect(costume).toHaveAttribute('aria-pressed', 'true');
-  await expect.poll(() => api.wantedMutationCount).toBe(1);
-  expect(api.isWanted('form-0001-standard', 'costume')).toBe(true);
+  const savedWanted = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem('dexly:local-profile:v1') ?? '{}'),
+  );
+  expect(
+    savedWanted.wantedEntries.some(
+      (entry: { formId: string; categoryId: string; wanted: boolean }) =>
+        entry.formId === 'form-0001-standard' && entry.categoryId === 'costume' && entry.wanted,
+    ),
+  ).toBe(true);
   expect(api.unexpectedWriteCount).toBe(0);
 });

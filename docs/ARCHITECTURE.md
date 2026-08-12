@@ -1,12 +1,13 @@
 # Architecture
 
-Dexly is one Cloudflare Worker application: Vite builds the React single-page app and
-the Worker module, Cloudflare serves the static bundle, `/api/*` runs through the Worker
-first, and the Worker is the only component with a D1 binding.
+Dexly is a local-first Cloudflare Worker application: Vite builds the React single-page
+app and Worker module, D1 provides the shared catalog, and each browser stores its own
+trainer state under the versioned `dexly:local-profile:v1` local-storage key.
 
 ```mermaid
 flowchart LR
-  B["React + TypeScript browser app"] -->|"same-origin /api/*"| W["Cloudflare Worker"]
+  B["React + TypeScript browser app"] -->|"public catalog request"| W["Cloudflare Worker"]
+  B --> L[("Browser local storage")]
   W --> A["Auth, validation, HTTP policy"]
   A --> R["Direct typed D1 repository"]
   R --> D[("Cloudflare D1")]
@@ -118,15 +119,17 @@ Unknown `/api/*` routes return JSON errors rather than falling through to the SP
 
 ## Security and authentication
 
-The current production model protects one private collection; it is not a user-account
-system. The public Worker is
+The current production model has no user accounts. Each browser is an independent local
+profile. The public Worker is
 [dexly-companion.codyleejohnson26.workers.dev](https://dexly-companion.codyleejohnson26.workers.dev/).
 
 - Loopback hosts use the seeded local actor for frictionless offline development.
-- Every non-loopback private API request requires `Authorization: Bearer <token>`.
+- `GET /api/v1/catalog` is public and contains no trainer state.
+- Legacy D1 mutation APIs remain token-protected during the migration period.
 - If `APP_ACCESS_TOKEN` is absent outside localhost, the private API fails closed with
   `503 PRIVATE_API_NOT_CONFIGURED`.
-- The UI retains the access key only in `sessionStorage`, not durable local storage.
+- A former access key, if present in `sessionStorage`, is used only for a one-time legacy
+  collection import when the browser-local profile is empty.
 - Mutations reject a mismatched `Origin`; JSON bodies, identifiers, enums, lengths, and
   upload size are validated at the Worker boundary.
 - Private responses are `no-store` and receive defensive content, frame, and referrer
@@ -135,11 +138,9 @@ system. The public Worker is
   allowed only from the pinned GitHub asset host.
 - D1 is never exposed to browser code, and Dexly never accepts Pokémon GO credentials.
 
-The shared token maps every request to the same seeded profile. Before supporting
-multiple people, public profiles, or sharing, replace it with real identity and session
-management, per-profile authorization, account recovery, rate limiting, and an
-abuse/privacy review. Do not describe the shared token as OAuth, password login, or
-multi-user authentication.
+Local profiles naturally support many independent users without server-side trainer
+rows, but they do not sync or support public profiles. Export/import is the portability
+boundary. Clearing site storage removes the local profile.
 
 ## Catalog and search boundaries
 

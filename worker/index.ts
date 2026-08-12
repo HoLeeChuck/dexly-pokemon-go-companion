@@ -84,6 +84,22 @@ async function handleApi(request: Request, env: AppEnv): Promise<Response> {
     );
   }
 
+  if (request.method === 'GET' && path === '/api/v1/catalog') {
+    const payload = await getBootstrap(env.DB, 'profile:local-development');
+    return jsonResponse(
+      {
+        ...payload,
+        profileId: 'profile:browser-local',
+        collectionEntries: [],
+        wantedEntries: [],
+        tradeSpecimens: [],
+        revision: 0,
+        authMode: 'browser',
+      },
+      { cache: 'public' },
+    );
+  }
+
   const actor = await resolveActor(request, env);
 
   if (request.method === 'GET' && path === '/api/v1/bootstrap') {

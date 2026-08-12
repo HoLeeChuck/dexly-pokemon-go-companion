@@ -285,9 +285,15 @@ test.describe('mobile collection experience', () => {
     await expect(card).toHaveAttribute('aria-pressed', baselinePressed ?? '');
     await expect(card).toHaveAttribute('data-state', baselineState ?? '');
     await expect(toast).toContainText('Last checklist change undone.');
-    expect(api.collectionMutationCount).toBe(1);
-    expect(api.undoCount).toBe(1);
-    expect(api.isCollected('form-0001-standard', 'normal')).toBe(baselinePressed === 'true');
+    const savedAfterUndo = await page.evaluate(() =>
+      JSON.parse(localStorage.getItem('dexly:local-profile:v1') ?? '{}'),
+    );
+    expect(
+      savedAfterUndo.collectionEntries.some(
+        (entry: { formId: string; categoryId: string; collected: boolean }) =>
+          entry.formId === 'form-0001-standard' && entry.categoryId === 'normal' && entry.collected,
+      ),
+    ).toBe(baselinePressed === 'true');
     expect(api.unexpectedWriteCount).toBe(0);
   });
 

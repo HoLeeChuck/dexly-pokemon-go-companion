@@ -104,16 +104,29 @@ export async function installFakeApi(page: Page): Promise<ApiHarness> {
     return entry;
   };
 
-  await page.addInitScript(() => {
-    globalThis.localStorage.setItem('dexly:active-category', 'normal');
-    globalThis.sessionStorage.clear();
-  });
+  await page.addInitScript(
+    (profile) => {
+      globalThis.localStorage.setItem('dexly:active-category', 'normal');
+      globalThis.localStorage.setItem('dexly:local-profile:v1', JSON.stringify(profile));
+      globalThis.sessionStorage.clear();
+    },
+    {
+      version: 1,
+      revision,
+      collectionEntries: state.collectionEntries,
+      wantedEntries: state.wantedEntries,
+      tradeSpecimens: state.tradeSpecimens,
+    },
+  );
 
   await page.route('**/api/v1/**', async (route) => {
     const request = route.request();
     const path = new URL(request.url()).pathname;
 
-    if (path === '/api/v1/bootstrap' && request.method() === 'GET') {
+    if (
+      (path === '/api/v1/bootstrap' || path === '/api/v1/catalog') &&
+      request.method() === 'GET'
+    ) {
       await fulfillJson(route, { ...structuredClone(state), revision });
       return;
     }

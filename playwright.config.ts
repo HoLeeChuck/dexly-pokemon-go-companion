@@ -50,7 +50,7 @@ export default defineConfig({
   webServer: {
     command: `pnpm exec vite --config tests/e2e/vite.config.ts --host 127.0.0.1 --port ${port}`,
     url: baseURL,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: false,
     timeout: 120_000,
   },
 });

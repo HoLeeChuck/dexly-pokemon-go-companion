@@ -1,14 +1,14 @@
 # Dexly
 
 Dexly is a visual Pokémon GO collection companion built with React, TypeScript, Vite,
-Cloudflare Workers, and D1. It tracks collection categories, realistic wanted entries,
+Cloudflare Workers, browser local storage, and D1. It tracks collection categories, realistic wanted entries,
 actual trade specimens, CSV imports, undoable changes, and Pokémon GO search strings.
 
 > **Production:** [Open Dexly](https://dexly-companion.codyleejohnson26.workers.dev/)
 > or view the public source at
 > [HoLeeChuck/dexly-pokemon-go-companion](https://github.com/HoLeeChuck/dexly-pokemon-go-companion).
-> The app shell is public, while private collection data requires the configured
-> `APP_ACCESS_TOKEN` outside localhost.
+> The catalog is public. Each browser keeps its own private collection, wanted entries,
+> and trade notes locally; no account or access key is required.
 
 Dexly is an unofficial fan project. It is not affiliated with or endorsed by Niantic,
 The Pokémon Company, or Nintendo. It never asks for Pokémon GO account credentials.
@@ -76,12 +76,12 @@ confirm `wrangler whoami`, pending migrations, and the exact Git revision first.
 - Generated missing, wanted, and recommended strings begin with `!traded&`. Personal
   XXL/XXS strings include eligible earlier evolution stages when evolving them could
   fill a later size-Dex gap.
-- Production uses one shared bearer secret and one seeded profile. This is suitable for
-  a private personal collection, not multi-user authentication or public profile sharing.
-- Imports create a bounded D1 backup before applying, but the app does not yet expose a
-  backup-restore screen or endpoint.
-- The browser never receives a D1 binding; collection data is read and changed only
-  through the same-origin Worker API.
+- Trainer state is local to one browser and does not sync across phones, computers, or
+  browser profiles. Clearing site data removes it, so users should export CSV backups.
+- D1 remains the shared catalog source. A browser holding the former access key performs
+  a one-time import of that legacy D1 collection when no local state exists.
+- The browser never receives a D1 binding; only the shared catalog is read through the
+  same-origin Worker API.
 
 See [Architecture](docs/ARCHITECTURE.md) for the data/security design,
 [Deployment](docs/DEPLOYMENT.md) for the Cloudflare runbook, and

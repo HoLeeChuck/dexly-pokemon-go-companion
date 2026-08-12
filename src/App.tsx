@@ -29,6 +29,8 @@ import {
   storedAccessToken,
   type BootstrapResponse,
 } from './lib/api';
+import { loadLocalProfile, saveLocalProfile } from './lib/localProfile';
+import { previewCanonicalWideCsv } from '../shared/csv';
 
 type RouteId = 'dex' | 'search' | 'profile';
 type CollectionFilter = 'all' | 'missing' | 'collected';
@@ -386,6 +388,10 @@ export default function App() {
   const revisionRef = useRef(0);
   const collectionRef = useRef<CollectionEntry[]>([]);
   const wantedRef = useRef<WantedEntry[]>([]);
+  const tradeRef = useRef<TradeSpecimen[]>([]);
+  const undoRef = useRef(
+    new Map<string, { formId: string; categoryId: CategoryId; previous: boolean }>(),
+  );
   const mutationQueue = useRef<Promise<void>>(Promise.resolve());
   const wantedMutationQueue = useRef<Promise<void>>(Promise.resolve());
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -396,21 +402,63 @@ export default function App() {
   });
 
   function adoptPayload(payload: BootstrapResponse) {
-    setBootstrap(payload);
-    setCollectionEntries([...payload.collectionEntries]);
-    collectionRef.current = [...payload.collectionEntries];
-    setWantedEntries([...payload.wantedEntries]);
-    wantedRef.current = [...payload.wantedEntries];
-    setTradeSpecimens([...payload.tradeSpecimens]);
-    revisionRef.current = payload.revision;
+    const local = loadLocalProfile();
+    const hydrated = {
+      ...payload,
+      profileId: 'profile:browser-local',
+      authMode: 'browser' as const,
+      revision: local.revision,
+      collectionEntries: local.collectionEntries,
+      wantedEntries: local.wantedEntries,
+      tradeSpecimens: local.tradeSpecimens,
+    };
+    setBootstrap(hydrated);
+    setCollectionEntries([...local.collectionEntries]);
+    collectionRef.current = [...local.collectionEntries];
+    setWantedEntries([...local.wantedEntries]);
+    wantedRef.current = [...local.wantedEntries];
+    setTradeSpecimens([...local.tradeSpecimens]);
+    tradeRef.current = [...local.tradeSpecimens];
+    revisionRef.current = local.revision;
     setStatus('ready');
+  }
+
+  function persistLocalState(revision = revisionRef.current) {
+    saveLocalProfile({
+      version: 1,
+      revision,
+      collectionEntries: collectionRef.current,
+      wantedEntries: wantedRef.current,
+      tradeSpecimens: tradeRef.current,
+    });
   }
 
   async function load(token = storedAccessToken()) {
     setStatus('loading');
     setLoadMessage('');
     try {
-      adoptPayload(await api.bootstrap(token));
+      const catalogPayload = await api.catalog();
+      const local = loadLocalProfile();
+      const hasLocalState =
+        local.revision > 0 ||
+        local.collectionEntries.length > 0 ||
+        local.wantedEntries.length > 0 ||
+        local.tradeSpecimens.length > 0;
+      if (!hasLocalState && token) {
+        try {
+          const legacy = await api.bootstrap(token);
+          saveLocalProfile({
+            version: 1,
+            revision: legacy.revision,
+            collectionEntries: [...legacy.collectionEntries],
+            wantedEntries: [...legacy.wantedEntries],
+            tradeSpecimens: [...legacy.tradeSpecimens],
+          });
+        } catch {
+          // A stale legacy key must not prevent the browser-local collection from opening.
+        }
+      }
+      adoptPayload(catalogPayload);
     } catch (error) {
       if (
         error instanceof ApiClientError &&
@@ -472,6 +520,7 @@ export default function App() {
     const next = setEntryLocally(collectionRef.current, formId, categoryId, collected);
     collectionRef.current = next;
     setCollectionEntries(next);
+    persistLocalState();
   }
 
   function updateLocalWanted(formId: string, categoryId: TradeRequestTrait, wanted: boolean) {
@@ -481,6 +530,7 @@ export default function App() {
     const next = wanted ? [...rest, { formId, categoryId, wanted: true }] : rest;
     wantedRef.current = next;
     setWantedEntries(next);
+    persistLocalState();
   }
 
   function changeCollection(item: CatalogItem, categoryId: CategoryId, desired: boolean) {
@@ -494,14 +544,9 @@ export default function App() {
 
     mutationQueue.current = mutationQueue.current.then(async () => {
       try {
-        const result = await api.setCollection({
-          formId: item.id,
-          categoryId,
-          collected: desired,
-          operationId: `op:${crypto.randomUUID()}`,
-          expectedRevision: revisionRef.current,
-        });
-        revisionRef.current = Math.max(revisionRef.current, result.revision);
+        const batchId = `local:${crypto.randomUUID()}`;
+        undoRef.current.set(batchId, { formId: item.id, categoryId, previous });
+        revisionRef.current += 1;
         if (
           desired &&
           (categoryId === 'xxl' || categoryId === 'xxs') &&
@@ -511,10 +556,11 @@ export default function App() {
         ) {
           updateLocalWanted(item.id, categoryId, false);
         }
+        persistLocalState();
         setToast({
           tone: 'success',
           message: `${item.name} marked ${desired ? 'collected' : 'missing'} in ${categoryId}.`,
-          batchId: result.batchId ?? undefined,
+          batchId,
         });
       } catch (error) {
         updateLocalCollection(item.id, categoryId, previous);
@@ -539,18 +585,19 @@ export default function App() {
 
   async function undoLatest(batchId: string) {
     await mutationQueue.current;
-    try {
-      const result = await api.undo(batchId);
-      revisionRef.current = result.revision;
-      for (const change of result.changes)
-        updateLocalCollection(change.formId, change.categoryId, change.collected);
-      setToast({ tone: 'info', message: 'Last checklist change undone.' });
-    } catch (error) {
+    const change = undoRef.current.get(batchId);
+    if (!change) {
       setToast({
         tone: 'error',
-        message: error instanceof Error ? error.message : 'Undo was not available.',
+        message: 'Undo was not available.',
       });
+      return;
     }
+    updateLocalCollection(change.formId, change.categoryId, change.previous);
+    undoRef.current.delete(batchId);
+    revisionRef.current += 1;
+    persistLocalState();
+    setToast({ tone: 'info', message: 'Last checklist change undone.' });
   }
 
   async function changeWanted(item: CatalogItem, categoryId: TradeRequestTrait, wanted: boolean) {
@@ -559,18 +606,8 @@ export default function App() {
     );
     updateLocalWanted(item.id, categoryId, wanted);
     const operation = wantedMutationQueue.current.then(async () => {
-      try {
-        await api.setWanted({ formId: item.id, traitId: categoryId, wanted });
-      } catch (error) {
-        const current = wantedRef.current.some(
-          (entry) => entry.formId === item.id && entry.categoryId === categoryId && entry.wanted,
-        );
-        if (current === wanted) updateLocalWanted(item.id, categoryId, previous);
-        setToast({
-          tone: 'error',
-          message: error instanceof Error ? error.message : 'Wanted list was not changed.',
-        });
-      }
+      revisionRef.current += previous === wanted ? 0 : 1;
+      persistLocalState();
     });
     wantedMutationQueue.current = operation;
     await operation;
@@ -583,8 +620,11 @@ export default function App() {
     notes: string;
   }) {
     try {
-      const saved = await api.addTrade(input);
-      setTradeSpecimens((current) => [saved, ...current]);
+      const saved: TradeSpecimen = { ...input, id: `trade:local-${crypto.randomUUID()}` };
+      tradeRef.current = [saved, ...tradeRef.current];
+      setTradeSpecimens(tradeRef.current);
+      revisionRef.current += 1;
+      persistLocalState();
       setToast({ tone: 'success', message: 'Trade specimen saved with its combined traits.' });
     } catch (error) {
       setToast({
@@ -597,8 +637,10 @@ export default function App() {
 
   async function deleteTrade(id: string) {
     try {
-      await api.deleteTrade(id);
-      setTradeSpecimens((current) => current.filter((trade) => trade.id !== id));
+      tradeRef.current = tradeRef.current.filter((trade) => trade.id !== id);
+      setTradeSpecimens(tradeRef.current);
+      revisionRef.current += 1;
+      persistLocalState();
       setToast({ tone: 'info', message: 'Trade specimen removed.' });
     } catch (error) {
       setToast({
@@ -613,31 +655,45 @@ export default function App() {
     fileName: string;
     policy: import('../shared/csv').CsvImportPolicy;
   }) {
-    const authoritative = await api.previewImport({
-      csv: input.csv,
-      sourceName: input.fileName,
-      policy: input.policy,
-    });
-    if (!authoritative.jobId || authoritative.preview.summary.rejected > 0) {
+    if (!bootstrap) throw new Error('The catalog is not available.');
+    const preview = previewCanonicalWideCsv(
+      input.csv,
+      bootstrap.catalog,
+      collectionRef.current,
+      input.policy,
+    );
+    if (preview.summary.rejected > 0) {
       throw new Error(
-        authoritative.preview.issues.find((issue) => issue.severity === 'error')?.message ??
-          'The Worker rejected this import preview.',
+        preview.issues.find((issue) => issue.severity === 'error')?.message ??
+          'The import contains unresolved entries.',
       );
     }
-    const result = await api.applyImport(authoritative.jobId);
-    const refreshed = await api.bootstrap();
-    adoptPayload(refreshed);
+    let next = collectionRef.current;
+    for (const change of preview.changes) {
+      if (change.disposition === 'add' || change.disposition === 'remove')
+        next = setEntryLocally(next, change.formId, change.categoryId, change.after);
+    }
+    collectionRef.current = next;
+    setCollectionEntries(next);
+    revisionRef.current += 1;
+    persistLocalState();
     setToast({
       tone: 'success',
-      message: `Import applied: ${result.added} added, ${result.removed} removed.`,
-      batchId: result.batchId ?? undefined,
+      message: `Import applied: ${preview.summary.added} added, ${preview.summary.removed} removed.`,
     });
   }
 
   async function unlock(token: string) {
     saveAccessToken(token);
     const payload = await api.bootstrap(token);
-    adoptPayload(payload);
+    saveLocalProfile({
+      version: 1,
+      revision: payload.revision,
+      collectionEntries: [...payload.collectionEntries],
+      wantedEntries: [...payload.wantedEntries],
+      tradeSpecimens: [...payload.tradeSpecimens],
+    });
+    adoptPayload(await api.catalog());
     setAccessDialogOpen(false);
   }
 
@@ -737,7 +793,13 @@ export default function App() {
             <Icon name="shield" />
           </span>
           <strong>Private by default</strong>
-          <p>{bootstrap.authMode === 'local' ? 'Local D1 session' : 'Access-key session'}</p>
+          <p>
+            {bootstrap.authMode === 'browser'
+              ? 'Saved on this browser'
+              : bootstrap.authMode === 'local'
+                ? 'Local D1 session'
+                : 'Access-key session'}
+          </p>
         </div>
         <p className="sidebar-foot">
           Unofficial fan project

@@ -18,7 +18,7 @@ export function DataPage({
   catalog: readonly CatalogItem[];
   collectionEntries: readonly CollectionEntry[];
   catalogVersion: string;
-  authMode: 'local' | 'token';
+  authMode: 'local' | 'token' | 'browser';
   onUnlock: () => void;
   onImport: (input: { csv: string; fileName: string; policy: CsvImportPolicy }) => Promise<void>;
 }) {
@@ -97,7 +97,7 @@ export function DataPage({
           </span>
           <h1>Your collection stays portable.</h1>
           <p>
-            Import with a preview, export at any time, and keep private state locked by default.
+            Import with a preview, export at any time, and keep this browser's collection portable.
           </p>
         </div>
         <span className="data-hero__icon" aria-hidden="true">
@@ -245,8 +245,8 @@ export function DataPage({
               <Icon name="shield" />
               <div>
                 <p>
-                  Dexly creates a D1 backup and re-validates this CSV on the Worker before applying
-                  it.
+                  Dexly previews every change before saving it to this browser. Export a CSV first
+                  when you want a separate backup.
                 </p>
               </div>
             </div>
@@ -270,17 +270,25 @@ export function DataPage({
             <h2>Collection access</h2>
           </div>
           <span className={`connection-pill connection-pill--${authMode}`}>
-            <Icon name={authMode === 'local' ? 'database' : 'lock'} />
-            {authMode === 'local' ? 'Local session' : 'Access key'}
+            <Icon
+              name={authMode === 'browser' ? 'user' : authMode === 'local' ? 'database' : 'lock'}
+            />
+            {authMode === 'browser'
+              ? 'This browser'
+              : authMode === 'local'
+                ? 'Local session'
+                : 'Access key'}
           </span>
         </div>
         <p>
-          Localhost uses the development trainer abstraction. A deployed Worker fails closed until{' '}
-          <code>APP_ACCESS_TOKEN</code> is configured as a Cloudflare secret.
+          Collection, wanted, and trade data are stored only in this browser. They do not sync to
+          another phone or computer and can be removed when browser data is cleared.
         </p>
-        <button type="button" className="button button--secondary" onClick={onUnlock}>
-          <Icon name="lock" /> Change access key
-        </button>
+        {authMode !== 'browser' && (
+          <button type="button" className="button button--secondary" onClick={onUnlock}>
+            <Icon name="lock" /> Change access key
+          </button>
+        )}
       </section>
 
       <footer className="attribution">
