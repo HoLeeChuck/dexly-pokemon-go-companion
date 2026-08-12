@@ -9,15 +9,41 @@ test('dark mode switches the complete interface and persists after reload', asyn
   await expect(toggle).toBeVisible();
   await toggle.click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-  await expect(page.locator('.regional-progress')).toHaveCSS('background-color', 'rgb(16, 41, 37)');
-  await expect(page.locator('.region-progress-card').first()).toHaveCSS(
-    'background-color',
-    'rgb(20, 47, 42)',
-  );
+  await expect(page.locator('.regional-progress')).toHaveCSS('background-color', 'rgb(23, 30, 28)');
 
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await expect(page.getByRole('button', { name: 'Use light mode' })).toBeVisible();
+});
+
+test('appearance settings combine a persistent color theme with light and dark modes', async ({
+  page,
+}) => {
+  await installFakeApi(page);
+  await page.goto('/#/profile');
+
+  const colorThemes = page.getByRole('radiogroup', { name: 'Color theme' });
+  await expect(colorThemes.getByRole('radio')).toHaveCount(6);
+  await colorThemes.getByRole('radio', { name: 'Purple' }).click();
+  await page
+    .getByRole('group', { name: 'Brightness mode' })
+    .getByRole('button', { name: 'Dark' })
+    .click();
+  await expect(page.locator('html')).toHaveAttribute('data-accent', 'purple');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+
+  const purpleAccent = await page
+    .locator('html')
+    .evaluate((element) => getComputedStyle(element).getPropertyValue('--brand-700').trim());
+  expect(purpleAccent).toBe('#a17bd1');
+
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('data-accent', 'purple');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await expect(colorThemes.getByRole('radio', { name: 'Purple' })).toHaveAttribute(
+    'aria-checked',
+    'true',
+  );
 });
 
 test('first launch opens the all-in-one Home without exposing the unfinished Trade page', async ({

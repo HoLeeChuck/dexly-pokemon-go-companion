@@ -97,7 +97,30 @@ test.describe('mobile collection experience', () => {
     await expect(toggle).toBeVisible();
     await toggle.click();
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-    await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(7, 28, 25)');
+    await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(13, 18, 17)');
+  });
+
+  test('dark Dex controls use consistent dark surfaces and readable text', async ({ page }) => {
+    await installFakeApi(page);
+    await page.addInitScript(() => localStorage.setItem('dexly:theme', 'dark'));
+    await openDex(page);
+
+    await expect(page.locator('.quick-toggle')).not.toHaveCSS(
+      'background-color',
+      'rgb(255, 255, 255)',
+    );
+    await expect(page.locator('.quick-toggle')).toHaveCSS('color', 'rgb(231, 243, 238)');
+    await expect(page.locator('.dex-results .grid-heading')).toHaveCSS(
+      'background-color',
+      'rgb(23, 30, 28)',
+    );
+    await expect(page.locator('.dex-results .grid-heading')).toHaveCSS(
+      'color',
+      'rgb(231, 243, 238)',
+    );
+    await expect(
+      page.getByRole('group', { name: 'Collection state' }).getByRole('button', { name: 'All' }),
+    ).toHaveCSS('background-color', 'rgb(24, 61, 53)');
   });
 
   test('renders an exact 390x844 three-column grid without page-level overflow', async ({
@@ -216,6 +239,25 @@ test.describe('mobile collection experience', () => {
     await categoryOptions.getByRole('button', { name: 'Shiny' }).click();
     await expect(categoryPicker).toContainText('Shiny');
     await expect(categoryOptions).toBeHidden();
+
+    await categoryPicker.click();
+    await categoryOptions.getByRole('button', { name: 'XXS' }).click();
+    const pickerLayout = await categoryPicker.evaluate((button) => {
+      const badge = button.querySelector(':scope > span:first-child')!.getBoundingClientRect();
+      const copy = button.querySelector('.picker-copy')!.getBoundingClientRect();
+      const title = button.querySelector('.picker-copy strong')!.getBoundingClientRect();
+      const helper = button.querySelector('.picker-copy small')!.getBoundingClientRect();
+      return {
+        badgeBeforeCopy: badge.right < copy.left,
+        copyHasWidth: copy.width > 40,
+        linesDoNotOverlap: title.bottom <= helper.top,
+      };
+    });
+    expect(pickerLayout).toEqual({
+      badgeBeforeCopy: true,
+      copyHasWidth: true,
+      linesDoNotOverlap: true,
+    });
   });
 
   test('uses the top hamburger menu instead of a persistent bottom bar', async ({ page }) => {

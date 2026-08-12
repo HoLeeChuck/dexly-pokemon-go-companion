@@ -13,7 +13,9 @@
         const saved = localStorage.getItem('dexly:theme');
         const theme =
           saved || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        const accent = localStorage.getItem('dexly:accent-theme') || 'green';
         document.documentElement.dataset.theme = theme;
+        document.documentElement.dataset.accent = accent;
         document.documentElement.style.colorScheme = theme;
       })();
     </script>

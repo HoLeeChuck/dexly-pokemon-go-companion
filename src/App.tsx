@@ -37,6 +37,7 @@ type CollectionFilter = 'all' | 'missing' | 'collected';
 type MedalTier = 'none' | 'bronze' | 'silver' | 'gold' | 'platinum';
 type StorageMode = 'browser' | 'cloud';
 type Theme = 'light' | 'dark';
+type AccentTheme = 'green' | 'blue' | 'purple' | 'red' | 'orange' | 'pink';
 
 const REGION_MEDAL_REQUIREMENTS: Record<
   string,
@@ -388,6 +389,12 @@ export default function App() {
     if (saved === 'light' || saved === 'dark') return saved;
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   });
+  const [accentTheme, setAccentTheme] = useState<AccentTheme>(() => {
+    const saved = localStorage.getItem('dexly:accent-theme');
+    return ['green', 'blue', 'purple', 'red', 'orange', 'pink'].includes(saved ?? '')
+      ? (saved as AccentTheme)
+      : 'green';
+  });
   const [activeCategory, setActiveCategory] = useState<CategoryId>(() => {
     const saved = localStorage.getItem('dexly:active-category') as CategoryId | null;
     return saved &&
@@ -544,6 +551,11 @@ export default function App() {
       .querySelector('meta[name="theme-color"]')
       ?.setAttribute('content', theme === 'dark' ? '#071c19' : '#0c2723');
   }, [theme]);
+
+  useEffect(() => {
+    document.documentElement.dataset.accent = accentTheme;
+    localStorage.setItem('dexly:accent-theme', accentTheme);
+  }, [accentTheme]);
 
   useEffect(() => {
     const onHashChange = () => setRoute(routeFromHash());
@@ -1231,6 +1243,10 @@ export default function App() {
               collectionEntries={collectionEntries}
               catalogVersion={bootstrap.catalogVersion}
               storageMode={storageMode}
+              theme={theme}
+              accentTheme={accentTheme}
+              onThemeChange={setTheme}
+              onAccentThemeChange={setAccentTheme}
               onUnlock={() => setAccessDialogOpen(true)}
               onLeaveCloud={() => void leaveCloud()}
               onImport={applyImport}

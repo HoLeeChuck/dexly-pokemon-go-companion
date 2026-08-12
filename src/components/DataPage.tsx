@@ -12,6 +12,10 @@ export function DataPage({
   collectionEntries,
   catalogVersion,
   storageMode,
+  theme,
+  accentTheme,
+  onThemeChange,
+  onAccentThemeChange,
   onUnlock,
   onLeaveCloud,
   onImport,
@@ -20,6 +24,10 @@ export function DataPage({
   collectionEntries: readonly CollectionEntry[];
   catalogVersion: string;
   storageMode: 'browser' | 'cloud';
+  theme: 'light' | 'dark';
+  accentTheme: 'green' | 'blue' | 'purple' | 'red' | 'orange' | 'pink';
+  onThemeChange: (theme: 'light' | 'dark') => void;
+  onAccentThemeChange: (theme: 'green' | 'blue' | 'purple' | 'red' | 'orange' | 'pink') => void;
   onUnlock: () => void;
   onLeaveCloud: () => void;
   onImport: (input: { csv: string; fileName: string; policy: CsvImportPolicy }) => Promise<void>;
@@ -115,6 +123,51 @@ export function DataPage({
           </div>
         </div>
       )}
+
+      <section className="panel appearance-panel">
+        <div className="panel-heading">
+          <div>
+            <span className="eyebrow">Personalize Dexly</span>
+            <h2>Appearance</h2>
+          </div>
+          <Icon name={theme === 'dark' ? 'moon' : 'sun'} />
+        </div>
+        <p>
+          Choose a color family and brightness. Every color includes a tuned light and dark mode.
+        </p>
+        <div className="appearance-mode" role="group" aria-label="Brightness mode">
+          {(['light', 'dark'] as const).map((mode) => (
+            <button
+              type="button"
+              key={mode}
+              aria-pressed={theme === mode}
+              onClick={() => onThemeChange(mode)}
+            >
+              <Icon name={mode === 'dark' ? 'moon' : 'sun'} />
+              {mode === 'dark' ? 'Dark' : 'Light'}
+            </button>
+          ))}
+        </div>
+        <div className="theme-choice-grid" role="radiogroup" aria-label="Color theme">
+          {(['green', 'blue', 'purple', 'red', 'orange', 'pink'] as const).map((color) => (
+            <button
+              type="button"
+              role="radio"
+              aria-checked={accentTheme === color}
+              className={`theme-choice theme-choice--${color}`}
+              key={color}
+              onClick={() => onAccentThemeChange(color)}
+            >
+              <span aria-hidden="true">
+                <i />
+                <i />
+              </span>
+              <strong>{color.charAt(0).toUpperCase() + color.slice(1)}</strong>
+              {accentTheme === color && <Icon name="check" />}
+            </button>
+          ))}
+        </div>
+      </section>
 
       <section className="panel data-actions">
         <div className="panel-heading">
