@@ -7,7 +7,7 @@ import {
   type CSSProperties,
   type FormEvent,
 } from 'react';
-import { deriveCollectionState, progressForCategory } from '../shared/domain';
+import { deriveCollectionState } from '../shared/domain';
 import type {
   CatalogItem,
   CategoryId,
@@ -21,7 +21,7 @@ import { DataPage } from './components/DataPage';
 import { DetailSheet } from './components/DetailSheet';
 import { Icon, type IconName } from './components/Icon';
 import { PokemonGrid } from './components/PokemonGrid';
-import { SearchLab } from './components/SearchLab';
+import { HomeDashboard } from './components/HomeDashboard';
 import {
   ApiClientError,
   api,
@@ -32,7 +32,7 @@ import {
 import { loadLocalProfile, saveLocalProfile } from './lib/localProfile';
 import { previewCanonicalWideCsv } from '../shared/csv';
 
-type RouteId = 'dex' | 'search' | 'profile';
+type RouteId = 'home' | 'dex' | 'profile';
 type CollectionFilter = 'all' | 'missing' | 'collected';
 type MedalTier = 'none' | 'bronze' | 'silver' | 'gold' | 'platinum';
 type StorageMode = 'browser' | 'cloud';
@@ -69,8 +69,8 @@ const REGION_MEDAL_ASSET_ROOT =
   'https://raw.githubusercontent.com/PokeMiners/pogo_assets/1a4ad1fc6c39f361ea85d53fc3040ce482ee9d90/Images/Badges/Achievements/';
 
 const routes: Array<{ id: RouteId; label: string; icon: IconName }> = [
+  { id: 'home', label: 'Home', icon: 'home' },
   { id: 'dex', label: 'Dex', icon: 'grid' },
-  { id: 'search', label: 'Search Lab', icon: 'flask' },
   { id: 'profile', label: 'Profile', icon: 'user' },
 ];
 
@@ -87,7 +87,7 @@ const categoryGlyphs: Record<CategoryId, string> = {
 
 function routeFromHash(): RouteId {
   const value = window.location.hash.replace(/^#\/?/, '');
-  return routes.some((route) => route.id === value) ? (value as RouteId) : 'dex';
+  return routes.some((route) => route.id === value) ? (value as RouteId) : 'home';
 }
 
 function collectionKey(formId: string, categoryId: CategoryId): string {
@@ -400,8 +400,8 @@ export default function App() {
   const wantedMutationQueue = useRef<Promise<void>>(Promise.resolve());
   const searchInputRef = useRef<HTMLInputElement>(null);
   const scrollPositions = useRef<Record<RouteId, number>>({
+    home: 0,
     dex: 0,
-    search: 0,
     profile: 0,
   });
 
@@ -851,7 +851,6 @@ export default function App() {
   if (status === 'error' || !bootstrap)
     return <ErrorScreen message={loadMessage} onRetry={() => void load()} />;
 
-  const progress = progressForCategory(bootstrap.catalog, collectionEntries, activeCategory);
   const defaultCatalog = bootstrap.catalog.filter((item) => item.isDefault);
   const regions = [...new Set(defaultCatalog.map((item) => titleCase(item.region)))];
   const regionMedals = new Map(
@@ -937,6 +936,15 @@ export default function App() {
       <div className="app-stage">
         <MobileNavigationHeader route={route} onNavigate={navigate} />
         <main>
+          {route === 'home' && (
+            <HomeDashboard
+              catalog={bootstrap.catalog}
+              categories={bootstrap.categories}
+              entries={collectionEntries}
+              wantedEntries={wantedEntries}
+              onOpenDex={() => navigate('dex')}
+            />
+          )}
           {route === 'dex' && (
             <section className="page page--dex">
               <header className="dex-header">
@@ -957,39 +965,6 @@ export default function App() {
                   </span>
                 </button>
               </header>
-
-              <section
-                className="progress-card"
-                style={{ '--progress': `${progress.percentage * 3.6}deg` } as CSSProperties}
-              >
-                <div className="progress-ring">
-                  <div>
-                    <strong>{progress.percentage}%</strong>
-                    <span>complete</span>
-                  </div>
-                </div>
-                <div className="progress-copy">
-                  <span className="eyebrow">{activeCategoryLabel} Dex</span>
-                  <h2>
-                    {progress.collected}
-                    <span> / {progress.total}</span>
-                  </h2>
-                  <p>
-                    {progress.missing} missing ·{' '}
-                    {progress.unreleased + progress.ineligible + progress.unknown} unavailable or
-                    uncataloged
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  aria-label="Open Search Lab for this category"
-                  onClick={() => navigate('search')}
-                >
-                  <Icon name="search" />
-                  <span>Find missing</span>
-                  <Icon name="chevron-right" />
-                </button>
-              </section>
 
               <section className="dex-browser" aria-label="Collection browser">
                 <section className="dex-controls" aria-label="Pokédex filters">
@@ -1206,16 +1181,6 @@ export default function App() {
                 </div>
               </section>
             </section>
-          )}
-          {route === 'search' && (
-            <SearchLab
-              catalog={bootstrap.catalog}
-              entries={collectionEntries}
-              wantedEntries={wantedEntries}
-              categories={bootstrap.categories}
-              activeCategory={activeCategory}
-              onCategoryChange={changeCategory}
-            />
           )}
           {route === 'profile' && (
             <DataPage

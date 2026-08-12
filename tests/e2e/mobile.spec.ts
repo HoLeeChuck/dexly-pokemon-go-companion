@@ -13,7 +13,7 @@ async function openDex(page: import('@playwright/test').Page) {
 
 async function openMobileRoute(
   page: import('@playwright/test').Page,
-  route: 'Dex' | 'Search Lab' | 'Profile',
+  route: 'Home' | 'Dex' | 'Profile',
 ) {
   await page.getByRole('button', { name: 'Open navigation menu' }).click();
   const menu = page.locator('.mobile-nav-panel');
@@ -202,10 +202,10 @@ test.describe('mobile collection experience', () => {
 
     const menu = page.locator('.mobile-nav-panel');
     await expect(menu).toBeVisible();
-    for (const route of ['Dex', 'Search Lab', 'Profile']) {
+    for (const route of ['Home', 'Dex', 'Profile']) {
       await expect(menu.getByRole('button', { name: route, exact: true })).toBeVisible();
     }
-    await expect(menu.getByRole('button', { name: 'Home', exact: true })).toHaveCount(0);
+    await expect(menu.getByRole('button', { name: 'Search Lab', exact: true })).toHaveCount(0);
     await expect(menu.getByRole('button', { name: 'Trade', exact: true })).toHaveCount(0);
     await expect(menu.getByRole('button', { name: 'Dex', exact: true })).toHaveAttribute(
       'aria-current',
@@ -301,28 +301,27 @@ test.describe('mobile collection experience', () => {
     await installFakeApi(page);
     await openDex(page);
 
-    await openMobileRoute(page, 'Search Lab');
-    await expect(page).toHaveURL(/#\/search$/);
+    await openMobileRoute(page, 'Home');
+    await expect(page).toHaveURL(/#\/home$/);
     await expect(
       page.getByRole('heading', { name: 'Turn gaps into useful searches.' }),
     ).toBeVisible();
 
-    const output = page.locator('.search-output');
-    await expect(output).toContainText('7 missing entries');
+    const output = page
+      .locator('.all-category-searches .search-output')
+      .filter({ hasText: 'Normal' });
+    await expect(output).toContainText('7 missing');
     await expect(output.locator('.search-string code')).toHaveText(
       '!traded&4,7,133,152,155,158,252',
     );
-    await expect(output).toContainText(
-      'Matches the released normal Pokedex entries currently marked missing.',
-    );
-
     await expect(page.getByLabel('Generation')).toHaveCount(0);
     await page.getByLabel('Region').selectOption('Kanto');
-    await expect(output).toContainText('3 missing entries');
+    await expect(output).toContainText('3 missing');
     await expect(output.locator('.search-string code')).toHaveText('!traded&4,7,133');
-
-    await page.getByLabel('Category').selectOption('shiny');
-    await expect(output.locator('.search-string code')).toHaveText('!traded&shiny&1,7,25,133');
+    const shinyOutput = page
+      .locator('.all-category-searches .search-output')
+      .filter({ hasText: 'Shiny' });
+    await expect(shinyOutput.locator('.search-string code')).toHaveText('!traded&shiny&1,7,25,133');
 
     const xxlRecommendation = page
       .locator('.recommended-list article')
@@ -336,8 +335,9 @@ test.describe('mobile collection experience', () => {
 
     await page.getByRole('button', { name: 'My wanted trades' }).click();
     await page.getByLabel('Request').selectOption('xxl');
-    await expect(output).toContainText('1 requested entry');
-    await expect(output.locator('.search-string code')).toHaveText('!traded&xxl&7');
+    const tradeOutput = page.locator('.generator-panel > .search-output');
+    await expect(tradeOutput).toContainText('1 requested entry');
+    await expect(tradeOutput.locator('.search-string code')).toHaveText('!traded&xxl&7');
   });
 
   test('CSV fixture produces a client-side preview without applying changes', async ({ page }) => {

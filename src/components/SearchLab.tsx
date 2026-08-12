@@ -48,13 +48,15 @@ export function SearchLab({
   categories,
   activeCategory,
   onCategoryChange,
+  showAllCategories = false,
 }: {
   catalog: readonly CatalogItem[];
   entries: readonly CollectionEntry[];
   wantedEntries: readonly WantedEntry[];
   categories: readonly Category[];
-  activeCategory: CategoryId;
-  onCategoryChange: (value: CategoryId) => void;
+  activeCategory?: CategoryId;
+  onCategoryChange?: (value: CategoryId) => void;
+  showAllCategories?: boolean;
 }) {
   const [workflow, setWorkflow] = useState<'reconcile' | 'trade'>('reconcile');
   const [tradeTrait, setTradeTrait] = useState<TradeRequestTrait>('normal');
@@ -66,7 +68,8 @@ export function SearchLab({
     () => catalog.filter((item) => region === 'all' || item.region === region),
     [catalog, region],
   );
-  const missingCategory = isMissingSearchSupported(activeCategory) ? activeCategory : 'normal';
+  const missingCategory =
+    activeCategory && isMissingSearchSupported(activeCategory) ? activeCategory : 'normal';
   const generated = useMemo(
     () =>
       workflow === 'trade'
@@ -96,6 +99,16 @@ export function SearchLab({
   );
   const collectionSearchCategories = categories.filter((category) =>
     isMissingSearchSupported(category.id),
+  );
+  const allCategoryResults = useMemo(
+    () =>
+      collectionSearchCategories.map((category) => ({
+        category,
+        generated: generateMissingSearchStrings(filteredCatalog, entries, category.id, {
+          maxLength: 4500,
+        }),
+      })),
+    [collectionSearchCategories, entries, filteredCatalog],
   );
   const regions = [...new Set(catalog.map((item) => item.region))];
   const recommendations = [
@@ -190,10 +203,10 @@ export function SearchLab({
                   </option>
                 ))}
               </select>
-            ) : (
+            ) : !showAllCategories ? (
               <select
                 value={missingCategory}
-                onChange={(event) => onCategoryChange(event.target.value as CategoryId)}
+                onChange={(event) => onCategoryChange?.(event.target.value as CategoryId)}
               >
                 {collectionSearchCategories.map((category) => (
                   <option value={category.id} key={category.id}>
@@ -201,6 +214,8 @@ export function SearchLab({
                   </option>
                 ))}
               </select>
+            ) : (
+              <span className="lab-field-summary">All collection categories</span>
             )}
           </label>
           <label>
@@ -216,50 +231,83 @@ export function SearchLab({
           </label>
         </div>
 
-        <div className="search-output">
-          <div className="search-output__meta">
-            <span>
-              {generated.dexNumbers.length} {workflow === 'trade' ? 'requested' : 'missing'}{' '}
-              {generated.dexNumbers.length === 1 ? 'entry' : 'entries'}
-            </span>
-            <span>
-              {generated.strings.length || 1}{' '}
-              {generated.strings.length === 1 ? 'search string' : 'search strings'}
-            </span>
+        {workflow === 'reconcile' && showAllCategories ? (
+          <div className="all-category-searches">
+            {allCategoryResults.map(({ category, generated: categoryResult }) => (
+              <section className="search-output" key={category.id}>
+                <div className="search-output__meta">
+                  <strong>{category.label}</strong>
+                  <span>{categoryResult.dexNumbers.length} missing</span>
+                </div>
+                {categoryResult.strings.length ? (
+                  categoryResult.strings.map((value, index) => (
+                    <div className="search-string" key={value}>
+                      <code>{value}</code>
+                      <button
+                        type="button"
+                        className="button button--copy"
+                        onClick={() => void handleCopy(value, `${category.id}-${index}`)}
+                      >
+                        <Icon name={copied === `${category.id}-${index}` ? 'check' : 'clipboard'} />
+                        {copied === `${category.id}-${index}` ? 'Copied' : 'Copy'}
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <div className="search-empty">
+                    <Icon name="sparkles" />
+                    <strong>Nothing missing here</strong>
+                  </div>
+                )}
+              </section>
+            ))}
           </div>
-          {generated.strings.length ? (
-            generated.strings.map((value, index) => (
-              <div className="search-string" key={value}>
-                <code>{value}</code>
-                <button
-                  type="button"
-                  className="button button--copy"
-                  onClick={() => void handleCopy(value, `generated-${index}`)}
-                >
-                  <Icon name={copied === `generated-${index}` ? 'check' : 'clipboard'} />
-                  {copied === `generated-${index}` ? 'Copied' : 'Copy'}
-                </button>
-              </div>
-            ))
-          ) : (
-            <div className="search-empty">
-              <Icon name="sparkles" />
-              <strong>
-                {workflow === 'trade' ? 'No active requests here' : 'Nothing missing here'}
-              </strong>
-              <span>Try another request, category, or filter.</span>
+        ) : (
+          <div className="search-output">
+            <div className="search-output__meta">
+              <span>
+                {generated.dexNumbers.length} {workflow === 'trade' ? 'requested' : 'missing'}{' '}
+                {generated.dexNumbers.length === 1 ? 'entry' : 'entries'}
+              </span>
+              <span>
+                {generated.strings.length || 1}{' '}
+                {generated.strings.length === 1 ? 'search string' : 'search strings'}
+              </span>
             </div>
-          )}
-          <p className="search-explanation">
-            <Icon name="shield" />
-            {generated.explanation} Every string begins with <code>!traded</code>.
-          </p>
-          {copyFailure && (
-            <p className="copy-failure" role="alert">
-              Clipboard access is blocked in this browser. Select the string and press Ctrl/Cmd+C.
+            {generated.strings.length ? (
+              generated.strings.map((value, index) => (
+                <div className="search-string" key={value}>
+                  <code>{value}</code>
+                  <button
+                    type="button"
+                    className="button button--copy"
+                    onClick={() => void handleCopy(value, `generated-${index}`)}
+                  >
+                    <Icon name={copied === `generated-${index}` ? 'check' : 'clipboard'} />
+                    {copied === `generated-${index}` ? 'Copied' : 'Copy'}
+                  </button>
+                </div>
+              ))
+            ) : (
+              <div className="search-empty">
+                <Icon name="sparkles" />
+                <strong>
+                  {workflow === 'trade' ? 'No active requests here' : 'Nothing missing here'}
+                </strong>
+                <span>Try another request, category, or filter.</span>
+              </div>
+            )}
+            <p className="search-explanation">
+              <Icon name="shield" />
+              {generated.explanation} Every string begins with <code>!traded</code>.
             </p>
-          )}
-        </div>
+            {copyFailure && (
+              <p className="copy-failure" role="alert">
+                Clipboard access is blocked in this browser. Select the string and press Ctrl/Cmd+C.
+              </p>
+            )}
+          </div>
+        )}
       </section>
 
       <section className="panel recommended-panel">

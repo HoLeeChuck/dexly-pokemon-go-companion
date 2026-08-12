@@ -1,21 +1,22 @@
 import { expect, test } from '@playwright/test';
 import { installFakeApi } from './support/fake-api';
 
-test('first launch opens the Dex without exposing unfinished Home or Trade pages', async ({
+test('first launch opens the all-in-one Home without exposing the unfinished Trade page', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1920, height: 1000 });
   const api = await installFakeApi(page);
   await page.goto('/');
 
-  await expect(page.getByRole('heading', { name: 'Pokédex' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Your Dex at a glance.' })).toBeVisible();
   const navigation = page.getByRole('navigation', { name: 'Primary navigation' });
   await expect(navigation.getByRole('button')).toHaveCount(3);
-  await expect(navigation.getByRole('button', { name: 'Home' })).toHaveCount(0);
+  await expect(navigation.getByRole('button', { name: 'Home' })).toBeVisible();
+  await expect(navigation.getByRole('button', { name: 'Search Lab' })).toHaveCount(0);
   await expect(navigation.getByRole('button', { name: 'Trade' })).toHaveCount(0);
 
   await page.goto('/#/trade');
-  await expect(page.getByRole('heading', { name: 'Pokédex' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Your Dex at a glance.' })).toBeVisible();
   expect(api.unexpectedWriteCount).toBe(0);
 });
 
@@ -34,11 +35,11 @@ test('desktop shell shows its sidebar and navigates without the mobile bar', asy
 
   const navigation = sidebar.getByRole('navigation', { name: 'Primary navigation' });
   await expect(navigation.getByRole('button')).toHaveCount(3);
-  const searchLab = navigation.getByRole('button', { name: 'Search Lab' });
-  await searchLab.click();
+  const home = navigation.getByRole('button', { name: 'Home' });
+  await home.click();
 
-  await expect(page).toHaveURL(/#\/search$/);
-  await expect(searchLab).toHaveClass(/is-active/);
+  await expect(page).toHaveURL(/#\/home$/);
+  await expect(home).toHaveClass(/is-active/);
   await expect(
     page.getByRole('heading', { name: 'Turn gaps into useful searches.' }),
   ).toBeVisible();
