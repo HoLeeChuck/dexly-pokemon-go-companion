@@ -37,6 +37,29 @@
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  color: #e7f3ee;
+  background: #071c19;
+  --ink: #e7f3ee;
+  --muted: #9db2ab;
+  --faint: #718881;
+  --paper: #102925;
+  --canvas: #071c19;
+  --line: #29443e;
+  --brand-950: #061a17;
+  --brand-900: #0a2d28;
+  --brand-800: #145247;
+  --brand-700: #42a88f;
+  --brand-500: #61c2a7;
+  --brand-200: #8fc8b8;
+  --brand-100: #183d35;
+  --lime-soft: #334c29;
+  --shadow-sm: 0 3px 14px rgb(0 0 0 / 24%);
+  --shadow-md: 0 14px 38px rgb(0 0 0 / 30%);
+  --shadow-lg: 0 30px 80px rgb(0 0 0 / 48%);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -342,6 +365,41 @@ p {
 .mobile-menu-button svg {
   width: 1.45rem;
   height: 1.45rem;
+}
+
+.theme-toggle {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  border: 1px solid rgb(255 255 255 / 18%);
+  color: white;
+  background: rgb(255 255 255 / 8%);
+}
+
+.theme-toggle svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.theme-toggle--mobile {
+  width: 44px;
+  padding: 0;
+  border-radius: 14px;
+}
+
+.theme-toggle--desktop {
+  width: 100%;
+  margin-top: auto;
+  padding: 0 0.8rem;
+  border-radius: 14px;
+  font-size: 0.72rem;
+  font-weight: 750;
+}
+
+.theme-toggle--desktop + .sidebar-card {
+  margin-top: 0.65rem;
 }
 
 .mobile-nav-overlay {
@@ -4590,4 +4648,107 @@ p {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Dark theme surfaces stay explicit so type colors and status colors retain meaning. */
+:root[data-theme='dark'] body {
+  background:
+    radial-gradient(circle at 85% -10%, rgb(185 228 109 / 8%), transparent 28rem), var(--canvas);
+}
+
+:root[data-theme='dark'] .mobile-nav-panel,
+:root[data-theme='dark'] .regional-progress,
+:root[data-theme='dark'] .region-progress-card,
+:root[data-theme='dark'] .panel,
+:root[data-theme='dark'] .dex-browser,
+:root[data-theme='dark'] .dex-browser .category-scroller,
+:root[data-theme='dark'] .region-options,
+:root[data-theme='dark'] .region-picker__toggle,
+:root[data-theme='dark'] .category-picker__toggle,
+:root[data-theme='dark'] .collapsible-search__trigger,
+:root[data-theme='dark'] .search-field,
+:root[data-theme='dark'] .lab-field-summary,
+:root[data-theme='dark'] .segmented-control,
+:root[data-theme='dark'] .detail-sheet,
+:root[data-theme='dark'] .access-dialog form,
+:root[data-theme='dark'] .file-picker,
+:root[data-theme='dark'] input,
+:root[data-theme='dark'] select,
+:root[data-theme='dark'] textarea {
+  color: var(--ink);
+  border-color: var(--line);
+  background: #102925;
+}
+
+:root[data-theme='dark'] .region-progress-card,
+:root[data-theme='dark'] .search-output,
+:root[data-theme='dark'] .recommended-list article,
+:root[data-theme='dark'] .category-tile,
+:root[data-theme='dark'] .mini-card,
+:root[data-theme='dark'] .trade-card {
+  color: var(--ink);
+  border-color: var(--line);
+  background-color: #142f2a;
+}
+
+:root[data-theme='dark'] .pokemon-card {
+  border-color: color-mix(in srgb, var(--type-primary) 28%, var(--line));
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--type-primary) 20%, #102925),
+    color-mix(in srgb, var(--type-secondary) 17%, #102925)
+  );
+  box-shadow: 0 3px 10px rgb(0 0 0 / 22%);
+}
+
+:root[data-theme='dark'] .pokemon-card__halo {
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--type-primary) 34%, #17352f),
+    color-mix(in srgb, var(--type-secondary) 29%, #17352f)
+  );
+}
+
+:root[data-theme='dark'] .pokemon-card--collected {
+  border-color: #357964;
+}
+
+:root[data-theme='dark'] .pokemon-card--unreleased,
+:root[data-theme='dark'] .pokemon-card--ineligible,
+:root[data-theme='dark'] .pokemon-card--unknown {
+  background: #0d2420;
+}
+
+:root[data-theme='dark'] .state-pill {
+  color: #b4c5c0;
+  background: #263d38;
+}
+
+:root[data-theme='dark'] .state-pill--collected {
+  color: #bcebdc;
+  background: #175244;
+}
+
+:root[data-theme='dark'] .segmented-control button[aria-pressed='true'],
+:root[data-theme='dark'] .region-options > button[aria-selected='true'] {
+  color: #e9fff7;
+  background: #1b4b40;
+}
+
+:root[data-theme='dark'] .region-category-progress > div {
+  background: #28463f;
+}
+
+:root[data-theme='dark'] .search-string,
+:root[data-theme='dark'] code {
+  color: #c9ef9a;
+}
+
+:root[data-theme='dark'] .notice--subtle,
+:root[data-theme='dark'] .empty-state {
+  background: #132e29;
+}
+
+:root[data-theme='dark'] .theme-toggle:hover {
+  background: rgb(255 255 255 / 14%);
 }

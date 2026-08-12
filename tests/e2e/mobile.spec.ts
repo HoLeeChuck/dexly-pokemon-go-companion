@@ -90,6 +90,16 @@ test.describe('mobile collection experience', () => {
     expect(layout).toEqual({ pageOverflows: false, cardsFit: true, cardsStack: true });
   });
 
+  test('mobile header exposes the persistent theme control', async ({ page }) => {
+    await installFakeApi(page);
+    await page.goto('/#/home');
+    const toggle = page.getByRole('button', { name: 'Use dark mode' });
+    await expect(toggle).toBeVisible();
+    await toggle.click();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+    await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(7, 28, 25)');
+  });
+
   test('renders an exact 390x844 three-column grid without page-level overflow', async ({
     page,
   }) => {

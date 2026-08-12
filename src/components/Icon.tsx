@@ -21,6 +21,8 @@ export type IconName =
   | 'search'
   | 'shield'
   | 'sparkles'
+  | 'moon'
+  | 'sun'
   | 'swap'
   | 'undo'
   | 'upload'
@@ -71,6 +73,7 @@ const paths: Record<IconName, ReactNode> = {
     </>
   ),
   menu: <path d="M4 6h16M4 12h16M4 18h16" />,
+  moon: <path d="M20.5 14.5A8 8 0 0 1 9.5 3.5 8.5 8.5 0 1 0 20.5 14.5Z" />,
   minus: <path d="M5 12h14" />,
   plus: <path d="M12 5v14M5 12h14" />,
   refresh: <path d="M20 7v5h-5M4 17v-5h5m9.5-4A8 8 0 0 0 6 5l-2 2m2 10a8 8 0 0 0 12.5 0L20 15" />,
@@ -78,6 +81,12 @@ const paths: Record<IconName, ReactNode> = {
   shield: <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Zm-3-10 2 2 4-5" />,
   sparkles: (
     <path d="m12 3 1.2 3.8L17 8l-3.8 1.2L12 13l-1.2-3.8L7 8l3.8-1.2L12 3ZM5 14l.8 2.2L8 17l-2.2.8L5 20l-.8-2.2L2 17l2.2-.8L5 14Zm14-1 .8 2.2L22 16l-2.2.8L19 19l-.8-2.2L16 16l2.2-.8L19 13Z" />
+  ),
+  sun: (
+    <>
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41" />
+    </>
   ),
   swap: <path d="m7 7-4 4 4 4M3 11h13M17 17l4-4-4-4M21 13H8" />,
   undo: <path d="m9 7-5 5 5 5M4 12h9a6 6 0 0 1 6 6" />,

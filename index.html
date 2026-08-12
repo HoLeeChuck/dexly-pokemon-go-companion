@@ -8,6 +8,15 @@
       content="Dexly is a visual, unofficial Pokemon GO collection companion."
     />
     <meta name="theme-color" content="#0c2723" />
+    <script>
+      (() => {
+        const saved = localStorage.getItem('dexly:theme');
+        const theme =
+          saved || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme;
+      })();
+    </script>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <title>Dexly · Pokémon GO Collection Companion</title>
   </head>

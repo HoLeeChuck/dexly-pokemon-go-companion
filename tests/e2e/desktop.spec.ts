@@ -1,6 +1,25 @@
 import { expect, test } from '@playwright/test';
 import { installFakeApi } from './support/fake-api';
 
+test('dark mode switches the complete interface and persists after reload', async ({ page }) => {
+  await installFakeApi(page);
+  await page.goto('/#/home');
+
+  const toggle = page.getByRole('button', { name: 'Use dark mode' });
+  await expect(toggle).toBeVisible();
+  await toggle.click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await expect(page.locator('.regional-progress')).toHaveCSS('background-color', 'rgb(16, 41, 37)');
+  await expect(page.locator('.region-progress-card').first()).toHaveCSS(
+    'background-color',
+    'rgb(20, 47, 42)',
+  );
+
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await expect(page.getByRole('button', { name: 'Use light mode' })).toBeVisible();
+});
+
 test('first launch opens the all-in-one Home without exposing the unfinished Trade page', async ({
   page,
 }) => {

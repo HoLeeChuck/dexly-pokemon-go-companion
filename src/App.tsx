@@ -36,6 +36,7 @@ type RouteId = 'home' | 'dex' | 'profile';
 type CollectionFilter = 'all' | 'missing' | 'collected';
 type MedalTier = 'none' | 'bronze' | 'silver' | 'gold' | 'platinum';
 type StorageMode = 'browser' | 'cloud';
+type Theme = 'light' | 'dark';
 
 const REGION_MEDAL_REQUIREMENTS: Record<
   string,
@@ -158,9 +159,13 @@ function AppBrand({ compact = false }: { compact?: boolean }) {
 function MobileNavigationHeader({
   route,
   onNavigate,
+  theme,
+  onToggleTheme,
 }: {
   route: RouteId;
   onNavigate: (route: RouteId) => void;
+  theme: Theme;
+  onToggleTheme: () => void;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -188,6 +193,15 @@ function MobileNavigationHeader({
       <header className="mobile-topbar">
         <AppBrand compact />
         <div className="mobile-topbar__actions">
+          <button
+            type="button"
+            className="theme-toggle theme-toggle--mobile"
+            onClick={onToggleTheme}
+            aria-label={`Use ${theme === 'dark' ? 'light' : 'dark'} mode`}
+            aria-pressed={theme === 'dark'}
+          >
+            <Icon name={theme === 'dark' ? 'sun' : 'moon'} />
+          </button>
           <button
             type="button"
             className="avatar-button"
@@ -369,6 +383,11 @@ export default function App() {
   const [storageMode, setStorageMode] = useState<StorageMode>(() =>
     storedAccessToken() ? 'cloud' : 'browser',
   );
+  const [theme, setTheme] = useState<Theme>(() => {
+    const saved = localStorage.getItem('dexly:theme');
+    if (saved === 'light' || saved === 'dark') return saved;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  });
   const [activeCategory, setActiveCategory] = useState<CategoryId>(() => {
     const saved = localStorage.getItem('dexly:active-category') as CategoryId | null;
     return saved &&
@@ -516,6 +535,15 @@ export default function App() {
     // The first load intentionally runs once; later retries are user initiated.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.style.colorScheme = theme;
+    localStorage.setItem('dexly:theme', theme);
+    document
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute('content', theme === 'dark' ? '#071c19' : '#0c2723');
+  }, [theme]);
 
   useEffect(() => {
     const onHashChange = () => setRoute(routeFromHash());
@@ -913,6 +941,16 @@ export default function App() {
             </button>
           ))}
         </nav>
+        <button
+          type="button"
+          className="theme-toggle theme-toggle--desktop"
+          onClick={() => setTheme((value) => (value === 'dark' ? 'light' : 'dark'))}
+          aria-label={`Use ${theme === 'dark' ? 'light' : 'dark'} mode`}
+          aria-pressed={theme === 'dark'}
+        >
+          <Icon name={theme === 'dark' ? 'sun' : 'moon'} />
+          <span>{theme === 'dark' ? 'Light mode' : 'Dark mode'}</span>
+        </button>
         <div className="sidebar-card">
           <span>
             <Icon name="shield" />
@@ -934,7 +972,12 @@ export default function App() {
       </aside>
 
       <div className="app-stage">
-        <MobileNavigationHeader route={route} onNavigate={navigate} />
+        <MobileNavigationHeader
+          route={route}
+          onNavigate={navigate}
+          theme={theme}
+          onToggleTheme={() => setTheme((value) => (value === 'dark' ? 'light' : 'dark'))}
+        />
         <main>
           {route === 'home' && (
             <HomeDashboard
