@@ -1387,6 +1387,7 @@ p {
   width: auto;
   height: auto;
   min-width: 0;
+  justify-content: center;
   place-items: initial;
   border-radius: 0;
   flex-direction: column;
@@ -1404,12 +1405,14 @@ p {
 
 .picker-copy strong {
   font-size: 0.69rem;
+  line-height: 1.15;
 }
 
 .picker-copy small {
-  margin-top: 0.05rem;
+  margin-top: 0.12rem;
   color: var(--muted);
   font-size: 0.52rem;
+  line-height: 1.15;
 }
 
 .region-picker__toggle > svg,

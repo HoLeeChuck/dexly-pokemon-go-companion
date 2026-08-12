@@ -11,15 +11,17 @@ export function DataPage({
   catalog,
   collectionEntries,
   catalogVersion,
-  authMode,
+  storageMode,
   onUnlock,
+  onLeaveCloud,
   onImport,
 }: {
   catalog: readonly CatalogItem[];
   collectionEntries: readonly CollectionEntry[];
   catalogVersion: string;
-  authMode: 'local' | 'token' | 'browser';
+  storageMode: 'browser' | 'cloud';
   onUnlock: () => void;
+  onLeaveCloud: () => void;
   onImport: (input: { csv: string; fileName: string; policy: CsvImportPolicy }) => Promise<void>;
 }) {
   const fileRef = useRef<HTMLInputElement>(null);
@@ -269,24 +271,23 @@ export function DataPage({
             <span className="eyebrow">Private by default</span>
             <h2>Collection access</h2>
           </div>
-          <span className={`connection-pill connection-pill--${authMode}`}>
-            <Icon
-              name={authMode === 'browser' ? 'user' : authMode === 'local' ? 'database' : 'lock'}
-            />
-            {authMode === 'browser'
-              ? 'This browser'
-              : authMode === 'local'
-                ? 'Local session'
-                : 'Access key'}
+          <span className={`connection-pill connection-pill--${storageMode}`}>
+            <Icon name={storageMode === 'cloud' ? 'database' : 'user'} />
+            {storageMode === 'cloud' ? 'Cody Cloud' : 'This browser'}
           </span>
         </div>
         <p>
-          Collection, wanted, and trade data are stored only in this browser. They do not sync to
-          another phone or computer and can be removed when browser data is cleared.
+          {storageMode === 'cloud'
+            ? 'Cody Cloud is active. Collection changes sync through the private D1 profile on this device.'
+            : 'Collection, wanted, and trade data are stored only in this browser. They do not sync to another phone or computer and can be removed when browser data is cleared.'}
         </p>
-        {authMode !== 'browser' && (
+        {storageMode === 'cloud' ? (
+          <button type="button" className="button button--secondary" onClick={onLeaveCloud}>
+            <Icon name="user" /> Return to this browser
+          </button>
+        ) : (
           <button type="button" className="button button--secondary" onClick={onUnlock}>
-            <Icon name="lock" /> Change access key
+            <Icon name="lock" /> Sign in to Cody Cloud
           </button>
         )}
       </section>

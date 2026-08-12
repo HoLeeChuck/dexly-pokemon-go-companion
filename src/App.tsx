@@ -35,6 +35,7 @@ import { previewCanonicalWideCsv } from '../shared/csv';
 type RouteId = 'dex' | 'search' | 'profile';
 type CollectionFilter = 'all' | 'missing' | 'collected';
 type MedalTier = 'none' | 'bronze' | 'silver' | 'gold' | 'platinum';
+type StorageMode = 'browser' | 'cloud';
 
 const REGION_MEDAL_REQUIREMENTS: Record<
   string,
@@ -290,14 +291,14 @@ function AccessDialog({
         <span className="access-dialog__mark">
           <Icon name="lock" />
         </span>
-        <span className="eyebrow">Private collection</span>
-        <h2>Unlock Dexly</h2>
+        <span className="eyebrow">Cody Cloud</span>
+        <h2>Sign in to Cody Cloud</h2>
         <p>
           {message ??
-            'Enter the access key configured for this deployed Worker. It stays in this browser tab only.'}
+            'Enter your private cloud access key. Public browser collections never require this key.'}
         </p>
         <label>
-          Collection access key
+          Cloud access key
           <input
             type="password"
             autoComplete="current-password"
@@ -317,7 +318,7 @@ function AccessDialog({
           disabled={!token.trim() || submitting}
         >
           <Icon name="lock" />
-          {submitting ? 'Checking…' : 'Unlock collection'}
+          {submitting ? 'Checking…' : 'Connect Cody Cloud'}
         </button>
         {onClose && (
           <button type="button" className="button button--ghost button--full" onClick={onClose}>
@@ -365,6 +366,9 @@ export default function App() {
   const [status, setStatus] = useState<'loading' | 'ready' | 'locked' | 'error'>('loading');
   const [loadMessage, setLoadMessage] = useState('');
   const [accessDialogOpen, setAccessDialogOpen] = useState(false);
+  const [storageMode, setStorageMode] = useState<StorageMode>(() =>
+    storedAccessToken() ? 'cloud' : 'browser',
+  );
   const [activeCategory, setActiveCategory] = useState<CategoryId>(() => {
     const saved = localStorage.getItem('dexly:active-category') as CategoryId | null;
     return saved &&
@@ -423,6 +427,19 @@ export default function App() {
     setStatus('ready');
   }
 
+  function adoptCloudPayload(payload: BootstrapResponse) {
+    setBootstrap(payload);
+    setCollectionEntries([...payload.collectionEntries]);
+    collectionRef.current = [...payload.collectionEntries];
+    setWantedEntries([...payload.wantedEntries]);
+    wantedRef.current = [...payload.wantedEntries];
+    setTradeSpecimens([...payload.tradeSpecimens]);
+    tradeRef.current = [...payload.tradeSpecimens];
+    revisionRef.current = payload.revision;
+    setStorageMode('cloud');
+    setStatus('ready');
+  }
+
   function persistLocalState(revision = revisionRef.current) {
     saveLocalProfile({
       version: 1,
@@ -437,6 +454,10 @@ export default function App() {
     setStatus('loading');
     setLoadMessage('');
     try {
+      if (storageMode === 'cloud' && token) {
+        adoptCloudPayload(await api.bootstrap(token));
+        return;
+      }
       const catalogPayload = await api.catalog();
       const local = loadLocalProfile();
       const hasLocalState =
@@ -464,8 +485,22 @@ export default function App() {
         error instanceof ApiClientError &&
         ['AUTH_REQUIRED', 'PRIVATE_API_NOT_CONFIGURED'].includes(error.code)
       ) {
-        setStatus('locked');
-        setLoadMessage(error.message);
+        saveAccessToken('');
+        setStorageMode('browser');
+        try {
+          adoptPayload(await api.catalog());
+          setToast({
+            tone: 'info',
+            message: "Your Cody Cloud session expired. This browser's collection is still here.",
+          });
+        } catch (catalogError) {
+          setStatus('error');
+          setLoadMessage(
+            catalogError instanceof Error
+              ? catalogError.message
+              : 'The Pokédex catalog could not be loaded.',
+          );
+        }
       } else {
         setStatus('error');
         setLoadMessage(
@@ -520,7 +555,7 @@ export default function App() {
     const next = setEntryLocally(collectionRef.current, formId, categoryId, collected);
     collectionRef.current = next;
     setCollectionEntries(next);
-    persistLocalState();
+    if (storageMode === 'browser') persistLocalState();
   }
 
   function updateLocalWanted(formId: string, categoryId: TradeRequestTrait, wanted: boolean) {
@@ -530,7 +565,7 @@ export default function App() {
     const next = wanted ? [...rest, { formId, categoryId, wanted: true }] : rest;
     wantedRef.current = next;
     setWantedEntries(next);
-    persistLocalState();
+    if (storageMode === 'browser') persistLocalState();
   }
 
   function changeCollection(item: CatalogItem, categoryId: CategoryId, desired: boolean) {
@@ -544,6 +579,32 @@ export default function App() {
 
     mutationQueue.current = mutationQueue.current.then(async () => {
       try {
+        if (storageMode === 'cloud') {
+          const result = await api.setCollection({
+            formId: item.id,
+            categoryId,
+            collected: desired,
+            operationId: `op:${crypto.randomUUID()}`,
+            expectedRevision: revisionRef.current,
+          });
+          revisionRef.current = result.revision;
+          if (
+            desired &&
+            (categoryId === 'xxl' || categoryId === 'xxs') &&
+            wantedRef.current.some(
+              (entry) =>
+                entry.formId === item.id && entry.categoryId === categoryId && entry.wanted,
+            )
+          ) {
+            updateLocalWanted(item.id, categoryId, false);
+          }
+          setToast({
+            tone: 'success',
+            message: `${item.name} synced ${desired ? 'collected' : 'missing'} in ${categoryId}.`,
+            batchId: result.batchId ?? undefined,
+          });
+          return;
+        }
         const batchId = `local:${crypto.randomUUID()}`;
         undoRef.current.set(batchId, { formId: item.id, categoryId, previous });
         revisionRef.current += 1;
@@ -585,6 +646,21 @@ export default function App() {
 
   async function undoLatest(batchId: string) {
     await mutationQueue.current;
+    if (storageMode === 'cloud') {
+      try {
+        const result = await api.undo(batchId);
+        revisionRef.current = result.revision;
+        for (const change of result.changes)
+          updateLocalCollection(change.formId, change.categoryId, change.collected);
+        setToast({ tone: 'info', message: 'Last cloud change undone.' });
+      } catch (error) {
+        setToast({
+          tone: 'error',
+          message: error instanceof Error ? error.message : 'Cloud undo was not available.',
+        });
+      }
+      return;
+    }
     const change = undoRef.current.get(batchId);
     if (!change) {
       setToast({
@@ -606,6 +682,21 @@ export default function App() {
     );
     updateLocalWanted(item.id, categoryId, wanted);
     const operation = wantedMutationQueue.current.then(async () => {
+      if (storageMode === 'cloud') {
+        try {
+          await api.setWanted({ formId: item.id, traitId: categoryId, wanted });
+        } catch (error) {
+          const current = wantedRef.current.some(
+            (entry) => entry.formId === item.id && entry.categoryId === categoryId && entry.wanted,
+          );
+          if (current === wanted) updateLocalWanted(item.id, categoryId, previous);
+          setToast({
+            tone: 'error',
+            message: error instanceof Error ? error.message : 'Cloud wanted list was not changed.',
+          });
+        }
+        return;
+      }
       revisionRef.current += previous === wanted ? 0 : 1;
       persistLocalState();
     });
@@ -620,6 +711,13 @@ export default function App() {
     notes: string;
   }) {
     try {
+      if (storageMode === 'cloud') {
+        const saved = await api.addTrade(input);
+        tradeRef.current = [saved, ...tradeRef.current];
+        setTradeSpecimens(tradeRef.current);
+        setToast({ tone: 'success', message: 'Trade specimen synced to Cody Cloud.' });
+        return;
+      }
       const saved: TradeSpecimen = { ...input, id: `trade:local-${crypto.randomUUID()}` };
       tradeRef.current = [saved, ...tradeRef.current];
       setTradeSpecimens(tradeRef.current);
@@ -637,6 +735,13 @@ export default function App() {
 
   async function deleteTrade(id: string) {
     try {
+      if (storageMode === 'cloud') {
+        await api.deleteTrade(id);
+        tradeRef.current = tradeRef.current.filter((trade) => trade.id !== id);
+        setTradeSpecimens(tradeRef.current);
+        setToast({ tone: 'info', message: 'Cloud trade specimen removed.' });
+        return;
+      }
       tradeRef.current = tradeRef.current.filter((trade) => trade.id !== id);
       setTradeSpecimens(tradeRef.current);
       revisionRef.current += 1;
@@ -656,6 +761,27 @@ export default function App() {
     policy: import('../shared/csv').CsvImportPolicy;
   }) {
     if (!bootstrap) throw new Error('The catalog is not available.');
+    if (storageMode === 'cloud') {
+      const authoritative = await api.previewImport({
+        csv: input.csv,
+        sourceName: input.fileName,
+        policy: input.policy,
+      });
+      if (!authoritative.jobId || authoritative.preview.summary.rejected > 0) {
+        throw new Error(
+          authoritative.preview.issues.find((issue) => issue.severity === 'error')?.message ??
+            'The cloud import preview was rejected.',
+        );
+      }
+      const result = await api.applyImport(authoritative.jobId);
+      adoptCloudPayload(await api.bootstrap());
+      setToast({
+        tone: 'success',
+        message: `Cloud import applied: ${result.added} added, ${result.removed} removed.`,
+        batchId: result.batchId ?? undefined,
+      });
+      return;
+    }
     const preview = previewCanonicalWideCsv(
       input.csv,
       bootstrap.catalog,
@@ -686,15 +812,15 @@ export default function App() {
   async function unlock(token: string) {
     saveAccessToken(token);
     const payload = await api.bootstrap(token);
-    saveLocalProfile({
-      version: 1,
-      revision: payload.revision,
-      collectionEntries: [...payload.collectionEntries],
-      wantedEntries: [...payload.wantedEntries],
-      tradeSpecimens: [...payload.tradeSpecimens],
-    });
-    adoptPayload(await api.catalog());
+    adoptCloudPayload(payload);
     setAccessDialogOpen(false);
+  }
+
+  async function leaveCloud() {
+    saveAccessToken('');
+    setStorageMode('browser');
+    adoptPayload(await api.catalog());
+    setToast({ tone: 'info', message: "Using this browser's local collection." });
   }
 
   const collectedKeys = useMemo(
@@ -1096,8 +1222,9 @@ export default function App() {
               catalog={bootstrap.catalog}
               collectionEntries={collectionEntries}
               catalogVersion={bootstrap.catalogVersion}
-              authMode={bootstrap.authMode}
+              storageMode={storageMode}
               onUnlock={() => setAccessDialogOpen(true)}
+              onLeaveCloud={() => void leaveCloud()}
               onImport={applyImport}
             />
           )}
