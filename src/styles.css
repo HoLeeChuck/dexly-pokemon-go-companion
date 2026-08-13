@@ -2067,11 +2067,6 @@ p {
   display: flex;
 }
 
-.dex-browser .quick-banner {
-  flex: 0 0 auto;
-  margin-bottom: 0.55rem;
-}
-
 .dex-results {
   min-height: 0;
   margin-top: 0.45rem;
@@ -2092,49 +2087,6 @@ p {
   padding: 0.7rem 0 0.55rem;
   background: color-mix(in srgb, var(--paper) 78%, var(--canvas));
   box-shadow: 0 8px 10px -12px color-mix(in srgb, var(--brand-950) 55%, transparent);
-}
-
-.quick-banner {
-  display: flex;
-  align-items: center;
-  gap: 0.72rem;
-  margin-bottom: 0.9rem;
-  padding: 0.72rem;
-  border: 1px solid #efd790;
-  border-radius: 17px;
-  color: #4d3c12;
-  background: #fff4cf;
-}
-
-.quick-banner > span {
-  display: grid;
-  width: 38px;
-  height: 38px;
-  flex: 0 0 auto;
-  place-items: center;
-  border-radius: 12px;
-  color: white;
-  background: #b88b20;
-}
-
-.quick-banner > div {
-  flex: 1;
-}
-
-.quick-banner strong {
-  display: block;
-  font-size: 0.78rem;
-}
-
-.quick-banner p {
-  margin: 0.1rem 0 0;
-  font-size: 0.65rem;
-  line-height: 1.4;
-}
-
-.quick-banner .icon-button {
-  color: #66511c;
-  background: rgb(255 255 255 / 45%);
 }
 
 .dex-controls {
@@ -4833,6 +4785,12 @@ p {
   animation: toast-in 220ms ease-out;
 }
 
+.toast.toast--undo {
+  top: calc(68px + 0.75rem);
+  bottom: auto;
+  animation-name: toast-in-top;
+}
+
 .toast > span {
   display: grid;
   width: 34px;
@@ -5058,6 +5016,15 @@ p {
 @keyframes toast-in {
   from {
     transform: translateY(12px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes toast-in-top {
+  from {
+    transform: translateY(-12px);
   }
   to {
     transform: translateY(0);
@@ -5619,6 +5586,10 @@ p {
     right: 1.5rem;
     bottom: 1.5rem;
   }
+
+  .toast.toast--undo {
+    top: 1.5rem;
+  }
 }
 
 @media (min-width: 1280px) {
@@ -5843,21 +5814,6 @@ p {
 :root[data-theme='dark'] .state-filter button[aria-pressed='true'] {
   color: var(--ink);
   background: var(--brand-100);
-}
-
-:root[data-theme='dark'] .quick-banner {
-  color: #ffeab0;
-  border-color: #7b642d;
-  background: #3d341d;
-}
-
-:root[data-theme='dark'] .quick-banner > span {
-  color: #fff8df;
-  background: #8c6c21;
-}
-
-:root[data-theme='dark'] .quick-banner p {
-  color: #dacda8;
 }
 
 :root[data-theme='dark'] .state-legend i.is-missing {

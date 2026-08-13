@@ -1536,29 +1536,6 @@ export default function App() {
                   </div>
                 </section>
 
-                {quickCheck && (
-                  <div className="quick-banner" role="status">
-                    <span>
-                      <Icon name="check" />
-                    </span>
-                    <div>
-                      <strong>Quick Check is on</strong>
-                      <p>
-                        Card taps now change {activeCategoryLabel} state. Every saved tap can be
-                        undone.
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      className="icon-button"
-                      onClick={() => setQuickCheck(false)}
-                      aria-label="Turn off Quick Check"
-                    >
-                      <Icon name="close" />
-                    </button>
-                  </div>
-                )}
-
                 <div className="dex-results">
                   <div className="dex-view-switcher" role="group" aria-label="Pokédex view">
                     {(
@@ -1658,7 +1635,10 @@ export default function App() {
         />
       )}
       {toast && (
-        <div className={`toast toast--${toast.tone}`} role="status">
+        <div
+          className={`toast toast--${toast.tone}${toast.batchId ? ' toast--undo' : ''}`}
+          role="status"
+        >
           <span>
             <Icon
               name={
