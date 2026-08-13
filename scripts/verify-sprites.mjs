@@ -5,7 +5,9 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const scriptDirectory = dirname(fileURLToPath(import.meta.url));
-const defaultManifestPath = resolve(scriptDirectory, '..', 'catalog', 'catalog.v1.json');
+const rootDirectory = resolve(scriptDirectory, '..');
+const defaultManifestPath = resolve(rootDirectory, 'catalog', 'catalog.v1.json');
+const medalsPath = resolve(rootDirectory, 'catalog', 'region-medals.v1.json');
 const allowedTypes = new Set([
   'bug',
   'dark',
@@ -26,30 +28,39 @@ const allowedTypes = new Set([
   'steel',
   'water',
 ]);
-const releaseKeys = ['normal', 'shiny', 'shadow', 'purified'];
+const allowedVariants = new Set([
+  'standard',
+  'regional',
+  'costume',
+  'gender',
+  'alternate',
+  'mega',
+  'primal',
+  'gigantamax',
+  'fusion',
+  'other',
+]);
+const categories = ['normal', 'shiny', 'lucky', 'hundo', 'xxl', 'xxs', 'shadow', 'purified'];
+const ruleStates = new Set(['released', 'unreleased', 'ineligible', 'unknown']);
 
 function usage() {
   console.log(`Usage: node scripts/verify-sprites.mjs [options]
 
 Options:
-  --network          Send an HTTP HEAD request for every sprite URL
+  --network          Send an HTTP HEAD request for every unique sprite URL
   --manifest <path>  Validate a different manifest (defaults to catalog/catalog.v1.json)
   --help             Show this help`);
 }
 
 function parseArguments(arguments_) {
   const options = { manifestPath: defaultManifestPath, network: false };
-
   for (let index = 0; index < arguments_.length; index += 1) {
     const argument = arguments_[index];
-
     if (argument === '--network') {
       options.network = true;
     } else if (argument === '--manifest') {
       const value = arguments_[index + 1];
-      if (!value || value.startsWith('--')) {
-        throw new Error('--manifest requires a file path.');
-      }
+      if (!value || value.startsWith('--')) throw new Error('--manifest requires a file path.');
       options.manifestPath = resolve(process.cwd(), value);
       index += 1;
     } else if (argument === '--help' || argument === '-h') {
@@ -58,7 +69,6 @@ function parseArguments(arguments_) {
       throw new Error(`Unknown option: ${argument}`);
     }
   }
-
   return options;
 }
 
@@ -71,201 +81,244 @@ function normalizeName(value) {
     .trim();
 }
 
-function isBooleanOrNull(value) {
-  return typeof value === 'boolean' || value === null;
+function safeAssetPath(value) {
+  return (
+    typeof value === 'string' &&
+    value.length > 0 &&
+    !value.startsWith('/') &&
+    !value.startsWith('\\') &&
+    !value.includes('..') &&
+    !value.includes('\\') &&
+    !/^[a-z][a-z\d+.-]*:/i.test(value) &&
+    value.endsWith('.png')
+  );
 }
 
-function isSafeRelativeAssetPath(value) {
-  if (typeof value !== 'string' || value.length === 0) return false;
-  if (value.startsWith('/') || value.startsWith('\\')) return false;
-  if (value.includes('..') || value.includes('\\')) return false;
-  if (/^[a-z][a-z\d+.-]*:/i.test(value)) return false;
-  return value.endsWith('.png');
-}
-
-function validateManifest(manifest) {
-  const errors = [];
-  const addError = (message) => errors.push(message);
-
-  if (!manifest || typeof manifest !== 'object' || Array.isArray(manifest)) {
-    return ['Manifest root must be a JSON object.'];
+function validUrl(value) {
+  try {
+    return new URL(value).protocol === 'https:';
+  } catch {
+    return false;
   }
+}
 
-  if (manifest.schemaVersion !== 1) addError('schemaVersion must equal 1.');
-  if (typeof manifest.catalogVersion !== 'string' || manifest.catalogVersion.length === 0) {
-    addError('catalogVersion must be a non-empty string.');
+function validateManifest(manifest, medals) {
+  const errors = [];
+  const add = (message) => errors.push(message);
+  if (!manifest || typeof manifest !== 'object' || Array.isArray(manifest)) {
+    return ['Manifest root must be an object.'];
+  }
+  if (manifest.schemaVersion !== 2) add('schemaVersion must equal 2.');
+  if (!/^\d{4}-\d{2}-\d{2}\.\d+$/.test(manifest.catalogVersion ?? '')) {
+    add('catalogVersion must be a date plus revision (YYYY-MM-DD.N).');
   }
   if (!/^\d{4}-\d{2}-\d{2}$/.test(manifest.releaseMetadataAsOf ?? '')) {
-    addError('releaseMetadataAsOf must use YYYY-MM-DD.');
+    add('releaseMetadataAsOf must use YYYY-MM-DD.');
   }
-
-  const source = manifest.source;
-  if (!source || typeof source !== 'object' || Array.isArray(source)) {
-    addError('source must be an object.');
+  if (manifest.nationalDex?.min !== 1 || manifest.nationalDex?.max !== 1025) {
+    add('nationalDex must cover #1 through #1025.');
+  }
+  if (manifest.nationalDex?.includesUnreleased !== true) {
+    add('nationalDex.includesUnreleased must be true.');
+  }
+  if (!/^[a-f\d]{40}$/.test(manifest.source?.commit ?? '')) {
+    add('source.commit must be a pinned 40-character lowercase SHA.');
+  }
+  if (!/^[a-f\d]{64}$/.test(manifest.source?.assetTreeSha256 ?? '')) {
+    add('source.assetTreeSha256 must be SHA-256.');
+  }
+  if (!/^[a-f\d]{64}$/.test(manifest.source?.overridesSha256 ?? '')) {
+    add('source.overridesSha256 must be SHA-256.');
+  }
+  if (!validUrl(manifest.source?.rawBaseUrl)) add('source.rawBaseUrl must use HTTPS.');
+  if (!manifest.source?.rawBaseUrl?.includes(`/${manifest.source?.commit}/`)) {
+    add('source.rawBaseUrl must contain the pinned asset commit.');
+  }
+  if (!Array.isArray(manifest.sourceInputs) || manifest.sourceInputs.length < 10) {
+    add('sourceInputs must include hash-addressed API, asset, and manual inputs.');
   } else {
-    if (!/^[a-f\d]{40}$/.test(source.commit ?? '')) {
-      addError('source.commit must be a 40-character lowercase Git commit SHA.');
-    }
-    if (typeof source.assetRoot !== 'string' || source.assetRoot.length === 0) {
-      addError('source.assetRoot must be a non-empty string.');
-    }
-
-    try {
-      const repositoryUrl = new URL(source.repositoryUrl);
-      if (repositoryUrl.protocol !== 'https:') addError('source.repositoryUrl must use HTTPS.');
-    } catch {
-      addError('source.repositoryUrl must be a valid URL.');
-    }
-
-    try {
-      const rawBaseUrl = new URL(source.rawBaseUrl);
-      if (rawBaseUrl.protocol !== 'https:') addError('source.rawBaseUrl must use HTTPS.');
-      if (!rawBaseUrl.pathname.includes(`/${source.commit}/`)) {
-        addError('source.rawBaseUrl must include the pinned source.commit, not a moving branch.');
+    const sourceKeys = new Set();
+    const kinds = new Set();
+    for (const [index, source] of manifest.sourceInputs.entries()) {
+      if (sourceKeys.has(source.key)) add(`sourceInputs[${index}] duplicates ${source.key}.`);
+      sourceKeys.add(source.key);
+      kinds.add(source.kind);
+      if (!['official', 'secondary', 'asset', 'manual'].includes(source.kind)) {
+        add(`sourceInputs[${index}].kind is invalid.`);
       }
-      if (!source.rawBaseUrl.endsWith('/')) addError('source.rawBaseUrl must end with a slash.');
-    } catch {
-      addError('source.rawBaseUrl must be a valid URL.');
+      if (!/^[a-f\d]{64}$/.test(source.sha256 ?? '')) {
+        add(`sourceInputs[${index}].sha256 must be SHA-256.`);
+      }
+      if (source.url !== 'catalog/catalog-overrides.v1.json' && !validUrl(source.url)) {
+        add(`sourceInputs[${index}].url must be HTTPS or the versioned local overrides path.`);
+      }
+    }
+    for (const kind of ['official', 'secondary', 'asset', 'manual']) {
+      if (!kinds.has(kind)) add(`sourceInputs is missing kind ${kind}.`);
     }
   }
-
-  const eligibilityKeys = manifest.eligibilityKeys;
-  if (!Array.isArray(eligibilityKeys) || eligibilityKeys.length === 0) {
-    addError('eligibilityKeys must be a non-empty array.');
-  } else {
-    const duplicateKeys = eligibilityKeys.filter(
-      (key, index) => eligibilityKeys.indexOf(key) !== index,
-    );
-    if (duplicateKeys.length > 0)
-      addError(`eligibilityKeys contains duplicates: ${[...new Set(duplicateKeys)].join(', ')}.`);
+  if (JSON.stringify(manifest.eligibilityKeys) !== JSON.stringify(categories)) {
+    add('eligibilityKeys must equal the canonical category order.');
   }
-
-  if (!Array.isArray(manifest.forms) || manifest.forms.length === 0) {
-    addError('forms must be a non-empty array.');
+  if (!Array.isArray(manifest.forms) || manifest.forms.length < 1025) {
+    add('forms must include the complete National Dex plus reviewed forms.');
     return errors;
   }
 
-  const formIds = new Set();
-  const dexAndFormKeys = new Set();
-  const assetPaths = new Set();
-
+  const ids = new Set();
+  const dexFormKeys = new Set();
+  const defaultsByDex = new Map();
+  const formById = new Map();
   for (const [index, form] of manifest.forms.entries()) {
-    const location = `forms[${index}]`;
-    if (!form || typeof form !== 'object' || Array.isArray(form)) {
-      addError(`${location} must be an object.`);
-      continue;
-    }
-
-    if (!/^species-\d{4}$/.test(form.speciesId ?? '')) {
-      addError(`${location}.speciesId must match species-0000.`);
-    }
-    if (!/^form-\d{4}-[a-z0-9-]+$/.test(form.formId ?? '')) {
-      addError(`${location}.formId must match form-0000-key.`);
-    } else if (formIds.has(form.formId)) {
-      addError(`${location}.formId duplicates ${form.formId}.`);
-    } else {
-      formIds.add(form.formId);
-    }
+    const at = `forms[${index}]`;
+    if (!Number.isInteger(form.dex) || form.dex < 1 || form.dex > 1025) add(`${at}.dex invalid.`);
+    const padded = String(form.dex).padStart(4, '0');
+    if (form.speciesId !== `species-${padded}`) add(`${at}.speciesId is not stable for its dex.`);
     if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(form.formKey ?? '')) {
-      addError(`${location}.formKey must be a lowercase kebab-case key.`);
+      add(`${at}.formKey must be kebab-case.`);
     }
-    if (!Number.isInteger(form.dex) || form.dex < 1) {
-      addError(`${location}.dex must be a positive integer.`);
-    } else {
-      const paddedDex = String(form.dex).padStart(4, '0');
-      if (form.speciesId !== `species-${paddedDex}`) {
-        addError(`${location}.speciesId does not agree with dex ${form.dex}.`);
-      }
-      if (typeof form.formKey === 'string' && form.formId !== `form-${paddedDex}-${form.formKey}`) {
-        addError(`${location}.formId does not agree with dex and formKey.`);
-      }
-
-      const compositeKey = `${form.dex}:${form.formKey}`;
-      if (dexAndFormKeys.has(compositeKey)) {
-        addError(`${location} duplicates dex/formKey ${compositeKey}.`);
-      } else {
-        dexAndFormKeys.add(compositeKey);
-      }
+    if (form.formId !== `form-${padded}-${form.formKey}`) add(`${at}.formId is not stable.`);
+    if (ids.has(form.formId)) add(`${at}.formId duplicates ${form.formId}.`);
+    ids.add(form.formId);
+    formById.set(form.formId, form);
+    const dexForm = `${form.dex}:${form.formKey}`;
+    if (dexFormKeys.has(dexForm)) add(`${at} duplicates ${dexForm}.`);
+    dexFormKeys.add(dexForm);
+    if (form.normalizedName !== normalizeName(form.name)) add(`${at}.normalizedName is incorrect.`);
+    if (!allowedVariants.has(form.variantKind)) add(`${at}.variantKind is invalid.`);
+    if (typeof form.collectorGroupId !== 'string' || !form.collectorGroupId) {
+      add(`${at}.collectorGroupId must be stable and non-empty.`);
     }
-    if (typeof form.name !== 'string' || form.name.trim().length === 0) {
-      addError(`${location}.name must be a non-empty string.`);
-    } else if (form.normalizedName !== normalizeName(form.name)) {
-      addError(`${location}.normalizedName must equal "${normalizeName(form.name)}".`);
-    }
-    if (!Number.isInteger(form.generation) || form.generation < 1) {
-      addError(`${location}.generation must be a positive integer.`);
-    }
-    if (typeof form.region !== 'string' || form.region.trim().length === 0) {
-      addError(`${location}.region must be a non-empty string.`);
-    }
+    if (typeof form.isDefault !== 'boolean') add(`${at}.isDefault must be boolean.`);
+    if (typeof form.isReleased !== 'boolean') add(`${at}.isReleased must be boolean.`);
+    if (typeof form.tradeable !== 'boolean') add(`${at}.tradeable must be boolean.`);
+    if (!Number.isInteger(form.formSortOrder)) add(`${at}.formSortOrder must be an integer.`);
+    if (typeof form.searchExact !== 'boolean') add(`${at}.searchExact must be boolean.`);
     if (!Array.isArray(form.types) || form.types.length < 1 || form.types.length > 2) {
-      addError(`${location}.types must contain one or two types.`);
+      add(`${at}.types must contain one or two types.`);
     } else {
-      const uniqueTypes = new Set(form.types);
-      if (uniqueTypes.size !== form.types.length)
-        addError(`${location}.types must not contain duplicates.`);
-      for (const type of form.types) {
-        if (!allowedTypes.has(type)) addError(`${location}.types contains unknown type "${type}".`);
-      }
+      for (const type of form.types)
+        if (!allowedTypes.has(type)) add(`${at} has invalid type ${type}.`);
     }
-
-    if (!form.release || typeof form.release !== 'object' || Array.isArray(form.release)) {
-      addError(`${location}.release must be an object.`);
+    if (!form.rules || typeof form.rules !== 'object') {
+      add(`${at}.rules must be an object.`);
     } else {
-      for (const key of releaseKeys) {
-        if (!Object.hasOwn(form.release, key) || !isBooleanOrNull(form.release[key])) {
-          addError(`${location}.release.${key} must be true, false, or null.`);
-        }
+      for (const category of categories) {
+        if (!ruleStates.has(form.rules[category])) add(`${at}.rules.${category} is invalid.`);
       }
     }
+    if (!form.release || typeof form.release !== 'object') add(`${at}.release must be an object.`);
+    if (form.isReleased !== (form.release?.normal === true)) {
+      add(`${at}.isReleased must match release.normal.`);
+    }
+    if (form.assets?.normal && !safeAssetPath(form.assets.normal.upstreamPath)) {
+      add(`${at}.assets.normal is unsafe.`);
+    }
+    if (form.assets?.shiny && !safeAssetPath(form.assets.shiny.upstreamPath)) {
+      add(`${at}.assets.shiny is unsafe.`);
+    }
+    if (form.release?.normal === true && !form.assets?.normal)
+      add(`${at} released form needs a sprite.`);
+    if (form.release?.shiny === true && !form.assets?.shiny)
+      add(`${at} released Shiny needs a sprite.`);
 
-    if (
-      !form.eligibility ||
-      typeof form.eligibility !== 'object' ||
-      Array.isArray(form.eligibility)
-    ) {
-      addError(`${location}.eligibility must be an object.`);
-    } else if (Array.isArray(eligibilityKeys)) {
-      for (const key of eligibilityKeys) {
-        if (!Object.hasOwn(form.eligibility, key) || !isBooleanOrNull(form.eligibility[key])) {
-          addError(`${location}.eligibility.${key} must be true, false, or null.`);
-        }
+    if (form.isDefault) {
+      if (form.formKey !== 'standard' || form.variantKind !== 'standard') {
+        add(`${at} default must use standard key/kind.`);
       }
-    }
-
-    if (typeof form.tradeable !== 'boolean') addError(`${location}.tradeable must be a boolean.`);
-
-    if (!form.assets || typeof form.assets !== 'object' || Array.isArray(form.assets)) {
-      addError(`${location}.assets must be an object.`);
-      continue;
-    }
-
-    for (const kind of ['normal', 'shiny']) {
-      const upstreamPath = form.assets[kind]?.upstreamPath;
-      const isRequired =
-        kind === 'normal' ? form.release?.normal === true : form.release?.shiny === true;
-
-      if (isRequired && !isSafeRelativeAssetPath(upstreamPath)) {
-        addError(`${location}.assets.${kind}.upstreamPath must be a safe relative PNG path.`);
-      } else if (upstreamPath !== undefined && !isSafeRelativeAssetPath(upstreamPath)) {
-        addError(`${location}.assets.${kind}.upstreamPath is invalid.`);
-      } else if (upstreamPath !== undefined) {
-        if (assetPaths.has(upstreamPath))
-          addError(`${location}.assets.${kind} duplicates asset path ${upstreamPath}.`);
-        assetPaths.add(upstreamPath);
+      if (form.collectorGroupId !== form.speciesId)
+        add(`${at} default group must equal speciesId.`);
+      if (defaultsByDex.has(form.dex)) add(`${at} is a second default for #${form.dex}.`);
+      defaultsByDex.set(form.dex, form);
+    } else {
+      for (const category of ['lucky', 'hundo', 'xxl', 'xxs', 'shadow', 'purified']) {
+        if (form.rules?.[category] !== 'ineligible') {
+          add(`${at} collector form ${category} must be ineligible.`);
+        }
       }
     }
   }
 
+  for (let dex = 1; dex <= 1025; dex += 1) {
+    const form = defaultsByDex.get(dex);
+    if (!form) add(`National Dex #${dex} has no default representative.`);
+    else if (form.formId !== `form-${String(dex).padStart(4, '0')}-standard`) {
+      add(`National Dex #${dex} default ID changed.`);
+    }
+  }
+  const unown = manifest.forms.filter((form) => form.collectorGroupId === 'unown');
+  if (unown.length !== 28) add(`Unown group must have 28 forms, found ${unown.length}.`);
+  const requiredForms = [
+    'form-0038-alola',
+    'form-0678-female',
+    'form-0479-heat',
+    'form-0006-mega-x',
+    'form-0382-primal',
+    'form-0812-gigantamax',
+    'form-0646-black',
+    'form-0025-party-hat-2017',
+  ];
+  for (const id of requiredForms)
+    if (!formById.has(id)) add(`Required reviewed form ${id} missing.`);
+  const nickit = formById.get('form-0827-standard');
+  if (nickit?.release.shiny !== false || nickit?.rules.shiny !== 'unreleased') {
+    add('Nickit must remain non-Shiny before its August 16, 2026 scheduled release.');
+  }
+
+  if (medals?.schemaVersion !== 2) add('Region medals schemaVersion must equal 2.');
+  if (medals?.nationalDexMax !== 1025) add('Region medals must target National Dex #1025.');
+  if (JSON.stringify(medals?.categoryIds) !== JSON.stringify(categories)) {
+    add('Region medals categoryIds must equal the canonical category order.');
+  }
+  for (const region of medals?.regions ?? []) {
+    const count = [...defaultsByDex.values()].filter((form) => form.region === region.label).length;
+    if (count !== region.thresholds.platinum) {
+      add(
+        `Region medal ${region.label} platinum=${region.thresholds.platinum}, but catalog has ${count} defaults.`,
+      );
+    }
+    const { bronze, silver, gold, platinum } = region.thresholds;
+    if (!(bronze <= silver && silver <= gold && gold <= platinum)) {
+      add(`Region medal ${region.label} thresholds are not monotonic.`);
+    }
+    for (const category of categories) {
+      const categoryThresholds = region.categoryThresholds?.[category];
+      if (!categoryThresholds) {
+        add(`Region medal ${region.label} is missing ${category} thresholds.`);
+        continue;
+      }
+      const categoryValues = [
+        categoryThresholds.bronze,
+        categoryThresholds.silver,
+        categoryThresholds.gold,
+        categoryThresholds.platinum,
+      ];
+      if (!categoryValues.every(Number.isInteger)) {
+        add(`Region medal ${region.label}/${category} thresholds must be integers.`);
+      }
+      if (!(
+        categoryThresholds.bronze <= categoryThresholds.silver &&
+        categoryThresholds.silver <= categoryThresholds.gold &&
+        categoryThresholds.gold <= categoryThresholds.platinum
+      )) {
+        add(`Region medal ${region.label}/${category} thresholds are not monotonic.`);
+      }
+      if (categoryThresholds.platinum !== count) {
+        add(
+          `Region medal ${region.label}/${category} platinum=${categoryThresholds.platinum}; it must remain the full ${count}-species denominator, not current availability.`,
+        );
+      }
+    }
+  }
   return errors;
 }
 
 function collectAssetChecks(manifest) {
-  const checks = [];
+  const byPath = new Map();
   for (const form of manifest.forms) {
-    for (const [kind, asset] of Object.entries(form.assets)) {
-      if (!asset?.upstreamPath) continue;
-      checks.push({
+    for (const [kind, asset] of Object.entries(form.assets ?? {})) {
+      if (!asset?.upstreamPath || byPath.has(asset.upstreamPath)) continue;
+      byPath.set(asset.upstreamPath, {
         formId: form.formId,
         kind,
         path: asset.upstreamPath,
@@ -273,25 +326,24 @@ function collectAssetChecks(manifest) {
       });
     }
   }
-  return checks;
+  return [...byPath.values()];
 }
 
 async function checkUrl(check) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 15_000);
-
   try {
     const response = await fetch(check.url, {
       method: 'HEAD',
       redirect: 'follow',
       signal: controller.signal,
-      headers: { 'user-agent': 'pogo-collection-companion-sprite-verifier/1' },
+      headers: { 'user-agent': 'CatchGrid catalog verifier/2' },
     });
-    if (!response.ok) return { ...check, error: `HTTP ${response.status} ${response.statusText}` };
-    return { ...check, status: response.status };
+    return response.ok
+      ? { ...check, status: response.status }
+      : { ...check, error: `HTTP ${response.status}` };
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    return { ...check, error: message };
+    return { ...check, error: error instanceof Error ? error.message : String(error) };
   } finally {
     clearTimeout(timeout);
   }
@@ -299,17 +351,15 @@ async function checkUrl(check) {
 
 async function mapWithConcurrency(items, concurrency, worker) {
   const results = new Array(items.length);
-  let nextIndex = 0;
-
-  async function runWorker() {
-    while (nextIndex < items.length) {
-      const index = nextIndex;
-      nextIndex += 1;
+  let next = 0;
+  async function run() {
+    while (next < items.length) {
+      const index = next;
+      next += 1;
       results[index] = await worker(items[index]);
     }
   }
-
-  await Promise.all(Array.from({ length: Math.min(concurrency, items.length) }, runWorker));
+  await Promise.all(Array.from({ length: Math.min(concurrency, items.length) }, run));
   return results;
 }
 
@@ -323,59 +373,38 @@ async function main() {
     process.exitCode = 2;
     return;
   }
-
-  if (options.help) {
-    usage();
-    return;
-  }
-
-  let manifest;
-  try {
-    manifest = JSON.parse(await readFile(options.manifestPath, 'utf8'));
-  } catch (error) {
-    console.error(`Could not read manifest ${options.manifestPath}: ${error.message}`);
+  if (options.help) return;
+  const [manifest, medals] = await Promise.all([
+    readFile(options.manifestPath, 'utf8').then(JSON.parse),
+    readFile(medalsPath, 'utf8').then(JSON.parse),
+  ]);
+  const errors = validateManifest(manifest, medals);
+  if (errors.length) {
+    console.error(`Manifest validation failed with ${errors.length} error(s):`);
+    for (const error of errors) console.error(`  - ${error}`);
     process.exitCode = 1;
     return;
   }
-
-  const validationErrors = validateManifest(manifest);
-  if (validationErrors.length > 0) {
-    console.error(`Manifest validation failed with ${validationErrors.length} error(s):`);
-    for (const error of validationErrors) console.error(`  - ${error}`);
-    process.exitCode = 1;
-    return;
-  }
-
-  const speciesCount = new Set(manifest.forms.map((form) => form.speciesId)).size;
-  const assetChecks = collectAssetChecks(manifest);
+  const checks = collectAssetChecks(manifest);
   console.log(
     `Manifest valid: schema v${manifest.schemaVersion}, catalog ${manifest.catalogVersion}, ` +
-      `${speciesCount} species, ${manifest.forms.length} forms, ${assetChecks.length} sprite references.`,
+      `1025 National Dex representatives, ${manifest.forms.length} total forms, ${checks.length} unique sprite references.`,
   );
-
   if (!options.network) {
-    console.log(
-      'Network checks skipped. Run with --network to verify the commit-pinned sprite URLs.',
-    );
+    console.log('Network checks skipped. Run with --network to verify commit-pinned sprite URLs.');
     return;
   }
-
-  console.log(`Checking ${assetChecks.length} sprite URL(s) with HTTP HEAD requests...`);
-  const results = await mapWithConcurrency(assetChecks, 8, checkUrl);
+  const results = await mapWithConcurrency(checks, 16, checkUrl);
   const failures = results.filter((result) => result.error);
-
-  if (failures.length > 0) {
-    console.error(`Sprite URL verification failed for ${failures.length} asset(s):`);
-    for (const failure of failures) {
-      console.error(`  - ${failure.formId} ${failure.kind}: ${failure.error}\n    ${failure.url}`);
-    }
-    process.exitCode = 1;
-    return;
+  if (failures.length) {
+    for (const failure of failures)
+      console.error(`${failure.formId}/${failure.kind}: ${failure.error}`);
+    throw new Error(`${failures.length} sprite URL checks failed.`);
   }
-
-  console.log(
-    `Sprite URL verification passed: ${results.length}/${results.length} returned a successful response.`,
-  );
+  console.log(`Network verification passed for ${checks.length} unique sprite URLs.`);
 }
 
-await main();
+main().catch((error) => {
+  console.error(error instanceof Error ? error.message : String(error));
+  process.exitCode = 1;
+});

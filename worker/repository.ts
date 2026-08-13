@@ -4,6 +4,7 @@ import type {
   Category,
   CategoryId,
   CollectionEntry,
+  PublicCatalogPayload,
   RuleState,
   TradeOfferTrait,
   TradeRequestTrait,
@@ -23,6 +24,17 @@ interface CatalogRow {
   generation: number;
   region_code: string;
   is_default: number;
+  collector_kind: CatalogItem['variantKind'];
+  collector_group_id: string;
+  is_released: number;
+  is_tradeable: number;
+  regional_origin: string | null;
+  costume_family: string | null;
+  gender_code: string | null;
+  transformation_group: string | null;
+  form_sort_order: number;
+  search_exact: number;
+  retired_at: string | null;
   normal_path: string;
   shiny_path: string | null;
   types: string | null;
@@ -99,77 +111,53 @@ function parseTraits(value: string): TradeOfferTrait[] {
   }
 }
 
-export async function getBootstrap(db: D1Database, profileId: string): Promise<BootstrapPayload> {
-  const [
-    versionResult,
-    categoryResult,
-    catalogResult,
-    ruleResult,
-    collectionResult,
-    wantedResult,
-    tradeResult,
-  ] = await db.batch([
-    db.prepare('SELECT version FROM catalog_versions ORDER BY imported_at DESC LIMIT 1'),
-    db
-      .prepare(
-        `SELECT id, display_name, short_label, search_keyword, sort_order, trade_semantics
-         FROM collection_categories
-         WHERE owner_profile_id IS NULL OR owner_profile_id = ?
-         ORDER BY sort_order, display_name`,
-      )
-      .bind(profileId),
-    db.prepare(
-      `SELECT
-           f.id,
-           f.species_id,
-           s.dex_number,
-           s.display_name AS species_name,
-           f.display_name AS form_name,
-           f.form_key,
-           s.generation,
-           s.region_code,
-           f.is_default,
-           a.normal_path,
-           a.shiny_path,
-           (SELECT group_concat(pt.type, '|') FROM pokemon_types pt WHERE pt.species_id = s.id) AS types
-         FROM pokemon_forms f
-         JOIN pokemon_species s ON s.id = f.species_id
-         JOIN sprite_assets a ON a.id = f.sprite_asset_id
-         WHERE f.retired_at IS NULL
-         ORDER BY s.dex_number, f.is_default DESC, f.form_key`,
-    ),
-    db.prepare(
-      `SELECT form_id, category_id, state
-         FROM form_category_rules
-         ORDER BY form_id, category_id`,
-    ),
-    db
-      .prepare(
-        `SELECT profile_id, form_id, category_id, updated_at
-         FROM collection_entries
-         WHERE profile_id = ?
-         ORDER BY form_id, category_id`,
-      )
-      .bind(profileId),
-    db
-      .prepare(
-        `SELECT profile_id, form_id, trait_id, updated_at
-         FROM trade_wanted_entries
-         WHERE profile_id = ?
-         ORDER BY form_id, trait_id`,
-      )
-      .bind(profileId),
-    db
-      .prepare(
-        `SELECT id, profile_id, form_id, traits_json, quantity, notes, verified_at
-         FROM trade_specimens
-         WHERE profile_id = ?
-         ORDER BY created_at DESC`,
-      )
-      .bind(profileId),
-  ]);
+const VERSION_QUERY = 'SELECT version FROM catalog_versions ORDER BY imported_at DESC LIMIT 1';
+const PUBLIC_CATEGORY_QUERY = `SELECT id, display_name, short_label, search_keyword, sort_order, trade_semantics
+  FROM collection_categories
+  WHERE owner_profile_id IS NULL
+  ORDER BY sort_order, display_name`;
+const CATALOG_QUERY = `SELECT
+    f.id,
+    f.species_id,
+    s.dex_number,
+    s.display_name AS species_name,
+    f.display_name AS form_name,
+    f.form_key,
+    s.generation,
+    s.region_code,
+    f.is_default,
+    f.collector_kind,
+    f.collector_group_id,
+    f.is_released,
+    f.is_tradeable,
+    f.regional_origin,
+    f.costume_family,
+    f.gender_code,
+    f.transformation_group,
+    f.form_sort_order,
+    f.search_exact,
+    f.retired_at,
+    a.normal_path,
+    a.shiny_path,
+    COALESCE(
+      (SELECT group_concat(ft.type, '|') FROM pokemon_form_types ft WHERE ft.form_id = f.id),
+      (SELECT group_concat(pt.type, '|') FROM pokemon_types pt WHERE pt.species_id = s.id)
+    ) AS types
+  FROM pokemon_forms f
+  JOIN pokemon_species s ON s.id = f.species_id
+  JOIN sprite_assets a ON a.id = f.sprite_asset_id
+  ORDER BY s.dex_number, f.is_default DESC, f.form_sort_order, f.form_key`;
+const RULE_QUERY = `SELECT form_id, category_id, state
+  FROM form_category_rules
+  ORDER BY form_id, category_id`;
 
-  const version =
+function mapCoreCatalog(
+  versionResult: D1Result<unknown>,
+  categoryResult: D1Result<unknown>,
+  catalogResult: D1Result<unknown>,
+  ruleResult: D1Result<unknown>,
+): Pick<BootstrapPayload, 'catalogVersion' | 'categories' | 'catalog'> {
+  const catalogVersion =
     (versionResult.results[0] as { version?: string } | undefined)?.version ?? 'unknown';
   const categories = (categoryResult.results as unknown as CategoryRow[]).map((row): Category => ({
     id: row.id,
@@ -198,11 +186,84 @@ export async function getBootstrap(db: D1Database, profileId: string): Promise<B
     region: row.region_code,
     types: row.types?.split('|').filter(Boolean) ?? [],
     isDefault: row.is_default === 1,
-    searchExact: row.is_default === 1,
-    spriteUrl: row.normal_path,
+    variantKind: row.collector_kind,
+    collectorGroupId: row.collector_group_id,
+    isReleased: row.is_released === 1,
+    isTradeable: row.is_tradeable === 1,
+    formSortOrder: row.form_sort_order,
+    regionalOrigin: row.regional_origin ?? undefined,
+    costumeFamily: row.costume_family ?? undefined,
+    genderCode: row.gender_code ?? undefined,
+    transformationGroup: row.transformation_group ?? undefined,
+    retiredAt: row.retired_at ?? undefined,
+    searchExact: row.search_exact === 1,
+    spriteUrl: row.normal_path || undefined,
     shinySpriteUrl: row.shiny_path ?? undefined,
     rules: rulesByForm.get(row.id) ?? {},
   }));
+
+  return { catalogVersion, categories, catalog };
+}
+
+/** Public bootstrap data. This deliberately never queries profile-owned tables. */
+export async function getPublicCatalog(db: D1Database): Promise<PublicCatalogPayload> {
+  const [versionResult, categoryResult, catalogResult, ruleResult] = await db.batch([
+    db.prepare(VERSION_QUERY),
+    db.prepare(PUBLIC_CATEGORY_QUERY),
+    db.prepare(CATALOG_QUERY),
+    db.prepare(RULE_QUERY),
+  ]);
+  return mapCoreCatalog(versionResult, categoryResult, catalogResult, ruleResult);
+}
+
+export async function getBootstrap(db: D1Database, profileId: string): Promise<BootstrapPayload> {
+  const [
+    versionResult,
+    categoryResult,
+    catalogResult,
+    ruleResult,
+    collectionResult,
+    wantedResult,
+    tradeResult,
+  ] = await db.batch([
+    db.prepare(VERSION_QUERY),
+    db
+      .prepare(
+        `SELECT id, display_name, short_label, search_keyword, sort_order, trade_semantics
+         FROM collection_categories
+         WHERE owner_profile_id IS NULL OR owner_profile_id = ?
+         ORDER BY sort_order, display_name`,
+      )
+      .bind(profileId),
+    db.prepare(CATALOG_QUERY),
+    db.prepare(RULE_QUERY),
+    db
+      .prepare(
+        `SELECT profile_id, form_id, category_id, updated_at
+         FROM collection_entries
+         WHERE profile_id = ?
+         ORDER BY form_id, category_id`,
+      )
+      .bind(profileId),
+    db
+      .prepare(
+        `SELECT profile_id, form_id, trait_id, updated_at
+         FROM trade_wanted_entries
+         WHERE profile_id = ?
+         ORDER BY form_id, trait_id`,
+      )
+      .bind(profileId),
+    db
+      .prepare(
+        `SELECT id, profile_id, form_id, traits_json, quantity, notes, verified_at
+         FROM trade_specimens
+         WHERE profile_id = ?
+         ORDER BY created_at DESC`,
+      )
+      .bind(profileId),
+  ]);
+
+  const core = mapCoreCatalog(versionResult, categoryResult, catalogResult, ruleResult);
 
   const collectionEntries = (collectionResult.results as unknown as EntryRow[]).map(
     (row): CollectionEntry => ({
@@ -235,10 +296,8 @@ export async function getBootstrap(db: D1Database, profileId: string): Promise<B
   );
 
   return {
-    catalogVersion: version,
+    ...core,
     profileId,
-    categories,
-    catalog,
     collectionEntries,
     wantedEntries,
     tradeSpecimens,
