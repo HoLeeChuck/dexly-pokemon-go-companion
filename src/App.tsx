@@ -27,17 +27,14 @@ import {
   emptyLocalProfile,
   listLocalProfileSnapshots,
   loadLocalProfileResult,
-  removeLocalSavedSearch,
   resetCorruptLocalProfile,
   restoreLocalProfileSnapshot,
   saveLocalProfileSafely,
   updateLocalProfileSettings,
-  upsertLocalSavedSearch,
   type LocalProfile,
   type LocalProfileLoadResult,
 } from './lib/localProfile';
 import { createPortableProfileBackupJson, restorePortableProfileBackup } from './lib/profileBackup';
-import type { SavedSearch } from './lib/savedSearches';
 import { catalogDisplayName } from './lib/catalogDisplay';
 import { previewCanonicalWideCsv } from '../shared/csv';
 import regionMedalPolicy from '../catalog/region-medals.v1.json';
@@ -589,7 +586,6 @@ export default function App() {
   const [quickCheck, setQuickCheck] = useState(false);
   const [selected, setSelected] = useState<CatalogItem | null>(null);
   const [collectionEntries, setCollectionEntries] = useState<CollectionEntry[]>([]);
-  const [savedSearches, setSavedSearches] = useState<SavedSearch[]>([]);
   const [updateReady, setUpdateReady] = useState(false);
   const [wantedEntries, setWantedEntries] = useState<WantedEntry[]>([]);
   const [, setTradeSpecimens] = useState<TradeSpecimen[]>([]);
@@ -635,7 +631,6 @@ export default function App() {
     localProfileRef.current = local;
     setCollectionEntries(localEntries);
     collectionRef.current = localEntries;
-    setSavedSearches([...local.savedSearches]);
     setWantedEntries([...local.wantedEntries]);
     wantedRef.current = [...local.wantedEntries];
     setTradeSpecimens([...local.tradeSpecimens]);
@@ -667,7 +662,6 @@ export default function App() {
     const local = loadLocalProfileResult();
     if (local.status !== 'corrupt') {
       localProfileRef.current = local.profile;
-      setSavedSearches([...local.profile.savedSearches]);
     }
     setStorageMode('cloud');
     setStatus('ready');
@@ -1101,27 +1095,6 @@ export default function App() {
     setToast({ tone: 'info', message: "Using this browser's local collection." });
   }
 
-  function saveSearch(search: SavedSearch) {
-    const saved = upsertLocalSavedSearch(localProfileRef.current, search);
-    if (!saved.ok) {
-      setToast({ tone: 'error', message: saved.error.message });
-      return;
-    }
-    localProfileRef.current = saved.profile;
-    setSavedSearches([...saved.profile.savedSearches]);
-    setToast({ tone: 'success', message: `Saved “${search.name}” in this browser.` });
-  }
-
-  function removeSearch(searchId: string) {
-    const saved = removeLocalSavedSearch(localProfileRef.current, searchId);
-    if (!saved.ok) {
-      setToast({ tone: 'error', message: saved.error.message });
-      return;
-    }
-    localProfileRef.current = saved.profile;
-    setSavedSearches([...saved.profile.savedSearches]);
-  }
-
   function exportPortableBackup() {
     if (!bootstrap) return;
     try {
@@ -1143,7 +1116,6 @@ export default function App() {
     localProfileRef.current = profile;
     collectionRef.current = [...profile.collectionEntries, ...profile.formCollectionEntries];
     setCollectionEntries(collectionRef.current);
-    setSavedSearches([...profile.savedSearches]);
     wantedRef.current = [...profile.wantedEntries];
     setWantedEntries(wantedRef.current);
     tradeRef.current = [...profile.tradeSpecimens];
@@ -1312,7 +1284,7 @@ export default function App() {
         </p>
       </aside>
 
-      <div className="app-stage">
+      <div className={`app-stage${route === 'dex' ? ' app-stage--dex' : ''}`}>
         <MobileNavigationHeader route={route} onNavigate={navigate} />
         {legacyOrigin && (
           <aside className="origin-migration-banner" role="status">
@@ -1345,9 +1317,6 @@ export default function App() {
               catalog={bootstrap.catalog}
               entries={collectionEntries}
               categories={bootstrap.categories}
-              savedSearches={savedSearches}
-              onSaveSearch={saveSearch}
-              onRemoveSearch={removeSearch}
             />
           )}
           {route === 'dex' && (

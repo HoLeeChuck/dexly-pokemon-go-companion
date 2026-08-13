@@ -132,6 +132,8 @@ test.describe('mobile collection experience', () => {
         gridLeft: gridRect.left,
         gridRight: gridRect.right,
         viewportWidth: innerWidth,
+        documentClientHeight: document.documentElement.clientHeight,
+        documentScrollHeight: document.documentElement.scrollHeight,
       };
     });
 
@@ -142,6 +144,7 @@ test.describe('mobile collection experience', () => {
     expect(layout.bodyScrollWidth).toBeLessThanOrEqual(layout.documentClientWidth);
     expect(layout.gridLeft).toBeGreaterThanOrEqual(0);
     expect(layout.gridRight).toBeLessThanOrEqual(layout.viewportWidth + 1);
+    expect(layout.documentScrollHeight).toBeLessThanOrEqual(layout.documentClientHeight + 1);
   });
 
   test('keeps search and essential filters above a boxed collection scroller', async ({ page }) => {
@@ -157,9 +160,6 @@ test.describe('mobile collection experience', () => {
       );
     expect(mobileControlSizes.length).toBeGreaterThan(0);
     expect(mobileControlSizes.every((size) => size >= 16)).toBe(true);
-    const browser = page.locator('.dex-browser');
-    await browser.evaluate((element) => window.scrollTo(0, element.offsetTop - 68));
-
     const results = page.locator('.dex-results');
     const before = await results.evaluate((element) => ({
       clientHeight: element.clientHeight,
@@ -178,6 +178,7 @@ test.describe('mobile collection experience', () => {
     });
     expect(controls.top).toBeGreaterThanOrEqual(68);
     expect(controls.bottom).toBeLessThan(controls.viewportHeight);
+    expect(await page.evaluate(() => window.scrollY)).toBe(0);
 
     const stacking = await page.evaluate(() => {
       const heading = document.querySelector<HTMLElement>('.dex-results .grid-heading')!;
@@ -419,6 +420,7 @@ test.describe('mobile collection experience', () => {
     await expect(
       page.getByRole('heading', { name: 'Turn gaps into useful searches.' }),
     ).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Visual search builder' })).toHaveCount(0);
 
     const output = page
       .locator('.all-category-searches .search-output')

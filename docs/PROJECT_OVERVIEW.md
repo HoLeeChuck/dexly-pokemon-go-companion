@@ -23,8 +23,8 @@ account. Collection updates are manual or import-assisted.
 
 - **Home** — full National Dex and regional/category progress.
 - **Dex** — category-aware species grid plus Mega/Primal and Gigantamax views.
-- **Search Lab** — missing Normal, Shiny, XXL, and XXS searches; Discord/Web Share;
-  visual search builder; saved searches; syntax resources.
+- **Search Lab** — missing Normal, Shiny, XXL, and XXS searches, collection-aware catch helpers,
+  and Discord/Web Share output.
 - **Profile** — themes, CSV import/export, full portable backup/restore, and recovery
   snapshots.
 

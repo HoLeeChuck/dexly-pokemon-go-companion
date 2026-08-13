@@ -230,6 +230,53 @@ test('desktop shell shows its sidebar and navigates without the mobile bar', asy
   await expect(sidebar.getByText('Private by default')).toHaveCount(0);
   await expect(page.locator('.bottom-nav')).toHaveCount(0);
 
+  const dexViewport = await page.evaluate(() => {
+    const browser = document.querySelector<HTMLElement>('.dex-browser')!;
+    const results = document.querySelector<HTMLElement>('.dex-results')!;
+    return {
+      documentClientHeight: document.documentElement.clientHeight,
+      documentScrollHeight: document.documentElement.scrollHeight,
+      browserBottom: browser.getBoundingClientRect().bottom,
+      viewportHeight: innerHeight,
+      resultsClientHeight: results.clientHeight,
+      resultsScrollHeight: results.scrollHeight,
+      resultsOverflowY: getComputedStyle(results).overflowY,
+      stageWidth: document.querySelector<HTMLElement>('.app-stage')!.getBoundingClientRect().width,
+      pageWidth: document.querySelector<HTMLElement>('.page--dex')!.getBoundingClientRect().width,
+    };
+  });
+  expect(dexViewport.documentScrollHeight).toBeLessThanOrEqual(
+    dexViewport.documentClientHeight + 1,
+  );
+  expect(dexViewport.browserBottom).toBeLessThanOrEqual(dexViewport.viewportHeight + 1);
+  expect(dexViewport.resultsOverflowY).toBe('auto');
+  expect(dexViewport.resultsScrollHeight).toBeGreaterThanOrEqual(dexViewport.resultsClientHeight);
+  expect(Math.abs(dexViewport.stageWidth - dexViewport.pageWidth)).toBeLessThanOrEqual(1);
+
+  await page.setViewportSize({ width: 1024, height: 600 });
+  const compactDexViewport = await page.evaluate(() => {
+    const browser = document.querySelector<HTMLElement>('.dex-browser')!;
+    const results = document.querySelector<HTMLElement>('.dex-results')!;
+    return {
+      documentClientHeight: document.documentElement.clientHeight,
+      documentScrollHeight: document.documentElement.scrollHeight,
+      browserBottom: browser.getBoundingClientRect().bottom,
+      viewportHeight: innerHeight,
+      resultsClientHeight: results.clientHeight,
+      resultsScrollHeight: results.scrollHeight,
+    };
+  });
+  expect(compactDexViewport.documentScrollHeight).toBeLessThanOrEqual(
+    compactDexViewport.documentClientHeight + 1,
+  );
+  expect(compactDexViewport.browserBottom).toBeLessThanOrEqual(
+    compactDexViewport.viewportHeight + 1,
+  );
+  expect(compactDexViewport.resultsScrollHeight).toBeGreaterThan(
+    compactDexViewport.resultsClientHeight,
+  );
+  await page.setViewportSize({ width: 1440, height: 900 });
+
   const navigation = sidebar.getByRole('navigation', { name: 'Primary navigation' });
   await expect(navigation.getByRole('button')).toHaveCount(4);
   const home = navigation.getByRole('button', { name: 'Home' });
