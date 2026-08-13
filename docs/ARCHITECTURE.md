@@ -112,11 +112,10 @@ must use distinct secrets and distinct D1 databases.
 
 ## Search Lab
 
-The visual search builder models include/exclude clauses joined with AND or OR, validates
-term-specific values, produces plain-language interpretation, and persists saved searches in
-local profile v2. Generated collection-gap queries use the reviewed Pokémon GO inventory
-grammar and preserve the `!traded&` guard, including on OR branches. Output is labeled
-`exact` or `candidate`; incomplete metadata never becomes a silent exact claim.
+Search Lab generates collection-gap queries from the reviewed Pokémon GO inventory grammar and
+preserves the `!traded&` guard. Output is labeled `exact` or `candidate`; incomplete metadata never
+becomes a silent exact claim. Local profile v2 continues to validate and retain historical saved
+search records in portable backups, although the visual builder is no longer part of the public UI.
 
 Missing Normal, Shiny, XXL, and XXS strings remain collection helpers. Evolution-family
 data can add an eligible earlier stage when evolving it could

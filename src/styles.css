@@ -454,10 +454,35 @@ p {
   min-height: 100vh;
 }
 
+.app-stage--dex {
+  display: flex;
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+  flex-direction: column;
+}
+
+.app-stage--dex > main {
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+.page--dex {
+  display: flex;
+  height: 100%;
+  min-height: 0;
+  flex-direction: column;
+}
+
 .page {
   width: min(100%, 1120px);
   margin: 0 auto;
   padding: 1rem 1rem calc(1.5rem + var(--safe-bottom));
+}
+
+.page.page--dex {
+  width: 100%;
+  max-width: none;
 }
 
 .eyebrow {
@@ -2032,14 +2057,14 @@ p {
   position: relative;
   z-index: 10;
   display: flex;
-  height: calc(100dvh - 68px - var(--safe-bottom));
-  min-height: 470px;
+  min-height: 0;
   margin-top: 1rem;
   padding: 0.65rem;
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 22px 22px 0 0;
   flex-direction: column;
+  flex: 1 1 auto;
   background: color-mix(in srgb, var(--paper) 78%, var(--canvas));
   box-shadow: 0 12px 32px color-mix(in srgb, var(--brand-950) 10%, transparent);
   backdrop-filter: blur(16px);
@@ -5352,6 +5377,10 @@ p {
     grid-column: 2;
   }
 
+  .app-stage--dex {
+    height: 100dvh;
+  }
+
   .mobile-topbar,
   .mobile-nav-overlay {
     display: none;
@@ -5387,12 +5416,17 @@ p {
     padding: 2rem 2.2rem 3rem;
   }
 
+  .page--dex {
+    padding-top: clamp(0.85rem, 2.2vh, 2rem);
+    padding-bottom: clamp(0.85rem, 2.2vh, 2rem);
+  }
+
   .page.page--home {
     padding: 0 var(--home-gutter) 3rem;
   }
 
   .dex-header {
-    margin-bottom: 1.25rem;
+    margin-bottom: clamp(0.65rem, 1.5vh, 1.25rem);
   }
 
   .progress-card {
@@ -5419,8 +5453,9 @@ p {
   }
 
   .dex-browser {
-    height: calc(100vh - 2rem);
-    min-height: 620px;
+    height: auto;
+    min-height: 0;
+    margin-top: 0;
     padding: 0.9rem;
     border-radius: 24px;
   }
@@ -5471,7 +5506,7 @@ p {
   }
 
   .pokemon-grid {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(clamp(128px, 11vw, 168px), 1fr));
     gap: 0.8rem;
   }
 
@@ -5594,7 +5629,7 @@ p {
 
 @media (min-width: 1280px) {
   .pokemon-grid {
-    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(clamp(128px, 11vw, 168px), 1fr));
   }
 }
 

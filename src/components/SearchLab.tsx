@@ -6,9 +6,7 @@ import {
 } from '../../shared/domain';
 import type { CatalogItem, Category, CategoryId, CollectionEntry } from '../../shared/types';
 import { buildDiscordMessages } from '../lib/discordShare';
-import type { SavedSearch } from '../lib/savedSearches';
 import { Icon } from './Icon';
-import { SearchBuilder } from './SearchBuilder';
 
 const SEARCH_CATEGORY_IDS = [
   'normal',
@@ -36,16 +34,10 @@ export function SearchLab({
   catalog,
   entries,
   categories,
-  savedSearches,
-  onSaveSearch,
-  onRemoveSearch,
 }: {
   catalog: readonly CatalogItem[];
   entries: readonly CollectionEntry[];
   categories: readonly Category[];
-  savedSearches: readonly SavedSearch[];
-  onSaveSearch: (search: SavedSearch) => void;
-  onRemoveSearch: (id: string) => void;
 }) {
   const [copied, setCopied] = useState<string | null>(null);
   const [copyFailure, setCopyFailure] = useState(false);
@@ -213,13 +205,6 @@ export function SearchLab({
           </p>
         )}
       </section>
-
-      <SearchBuilder
-        savedSearches={savedSearches}
-        onSave={onSaveSearch}
-        onRemove={onRemoveSearch}
-        onCopy={(value, id) => void handleCopy(value, id)}
-      />
 
       <section className="panel discord-share-panel">
         <div className="panel-heading">
