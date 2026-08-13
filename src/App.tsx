@@ -181,13 +181,9 @@ function AppBrand({ compact = false, onHome }: { compact?: boolean; onHome?: () 
 function MobileNavigationHeader({
   route,
   onNavigate,
-  theme,
-  onToggleTheme,
 }: {
   route: RouteId;
   onNavigate: (route: RouteId) => void;
-  theme: Theme;
-  onToggleTheme: () => void;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -214,36 +210,16 @@ function MobileNavigationHeader({
     <>
       <header className="mobile-topbar">
         <AppBrand compact onHome={() => navigate('home')} />
-        <div className="mobile-topbar__actions">
-          <button
-            type="button"
-            className="theme-toggle theme-toggle--mobile"
-            onClick={onToggleTheme}
-            aria-label={`Use ${theme === 'dark' ? 'light' : 'dark'} mode`}
-            aria-pressed={theme === 'dark'}
-          >
-            <Icon name={theme === 'dark' ? 'sun' : 'moon'} />
-          </button>
-          <button
-            type="button"
-            className="avatar-button"
-            onClick={() => navigate('profile')}
-            aria-label="Open profile"
-          >
-            <span>LT</span>
-            <i />
-          </button>
-          <button
-            type="button"
-            className="mobile-menu-button"
-            aria-label={open ? 'Close navigation menu' : 'Open navigation menu'}
-            aria-expanded={open}
-            aria-controls="mobile-primary-menu"
-            onClick={() => setOpen((value) => !value)}
-          >
-            <Icon name={open ? 'close' : 'menu'} />
-          </button>
-        </div>
+        <button
+          type="button"
+          className="mobile-menu-button"
+          aria-label={open ? 'Close navigation menu' : 'Open navigation menu'}
+          aria-expanded={open}
+          aria-controls="mobile-primary-menu"
+          onClick={() => setOpen((value) => !value)}
+        >
+          <Icon name={open ? 'close' : 'menu'} />
+        </button>
       </header>
       {open && (
         <div className="mobile-nav-overlay" onClick={() => setOpen(false)}>
@@ -918,19 +894,13 @@ export default function App() {
       </aside>
 
       <div className="app-stage">
-        <MobileNavigationHeader
-          route={route}
-          onNavigate={navigate}
-          theme={theme}
-          onToggleTheme={() => setTheme((value) => (value === 'dark' ? 'light' : 'dark'))}
-        />
+        <MobileNavigationHeader route={route} onNavigate={navigate} />
         <main>
           {route === 'home' && (
             <HomeDashboard
               catalog={bootstrap.catalog}
               categories={bootstrap.categories}
               entries={collectionEntries}
-              onOpenDex={() => navigate('dex')}
             />
           )}
           {route === 'search' && (

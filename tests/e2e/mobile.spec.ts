@@ -77,6 +77,10 @@ test.describe('mobile collection experience', () => {
     await installFakeApi(page);
     await page.goto('/#/home');
     await expect(page.getByRole('heading', { name: 'Your Dex at a glance.' })).toBeVisible();
+    const overview = page.getByLabel('All Pokemon collection overview');
+    await expect(overview.locator('article')).toHaveCount(4);
+    await expect(overview).toContainText(/All Pok/);
+    await expect(page.getByRole('button', { name: 'Open Dex' })).toHaveCount(0);
 
     const layout = await page.locator('.page--dashboard').evaluate((dashboard) => {
       const cards = [...dashboard.querySelectorAll('.region-progress-card')].slice(0, 2);
@@ -90,14 +94,13 @@ test.describe('mobile collection experience', () => {
     expect(layout).toEqual({ pageOverflows: false, cardsFit: true, cardsStack: true });
   });
 
-  test('mobile header exposes the persistent theme control', async ({ page }) => {
+  test('mobile header keeps profile and appearance controls in the menu', async ({ page }) => {
     await installFakeApi(page);
     await page.goto('/#/home');
-    const toggle = page.getByRole('button', { name: 'Use dark mode' });
-    await expect(toggle).toBeVisible();
-    await toggle.click();
-    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-    await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(13, 18, 17)');
+    await expect(page.getByRole('button', { name: 'Use dark mode' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Use light mode' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Open profile' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Open navigation menu' })).toBeVisible();
   });
 
   test('dark Dex controls use consistent dark surfaces and readable text', async ({ page }) => {
@@ -271,6 +274,14 @@ test.describe('mobile collection experience', () => {
 
     const menu = page.locator('.mobile-nav-panel');
     await expect(menu).toBeVisible();
+    const menuLayout = await menu.evaluate((element) => {
+      const rect = element.getBoundingClientRect();
+      return {
+        fillsWidth: Math.abs(rect.left) <= 1 && Math.abs(rect.right - innerWidth) <= 1,
+        fillsBelowHeader: Math.abs(rect.top - 68) <= 1 && Math.abs(rect.bottom - innerHeight) <= 1,
+      };
+    });
+    expect(menuLayout).toEqual({ fillsWidth: true, fillsBelowHeader: true });
     for (const route of ['Home', 'Dex', 'Profile']) {
       await expect(menu.getByRole('button', { name: route, exact: true })).toBeVisible();
     }
@@ -398,6 +409,7 @@ test.describe('mobile collection experience', () => {
   test('Search Lab generates mobile-safe strings and a selectable Discord post', async ({
     page,
   }) => {
+    await page.setViewportSize({ width: 600, height: 900 });
     await installFakeApi(page);
     await openDex(page);
 
@@ -435,14 +447,27 @@ test.describe('mobile collection experience', () => {
       'includes catchable family stages you can evolve',
     );
 
-    const layout = await page.locator('.generator-panel').evaluate((panel) => ({
-      pageOverflows: document.documentElement.scrollWidth > document.documentElement.clientWidth,
-      panelFits: panel.getBoundingClientRect().right <= document.documentElement.clientWidth,
-      stringsFit: [...panel.querySelectorAll('.search-string')].every(
-        (entry) => entry.getBoundingClientRect().right <= panel.getBoundingClientRect().right,
-      ),
-    }));
-    expect(layout).toEqual({ pageOverflows: false, panelFits: true, stringsFit: true });
+    const layout = await page.locator('.generator-panel').evaluate((panel) => {
+      const hero = document.querySelector('.page--lab .page-hero')!.getBoundingClientRect();
+      const cards = [...panel.querySelectorAll('.search-output')].slice(0, 2);
+      const cardRects = cards.map((card) => card.getBoundingClientRect());
+      return {
+        pageOverflows: document.documentElement.scrollWidth > document.documentElement.clientWidth,
+        panelFits: panel.getBoundingClientRect().right <= document.documentElement.clientWidth,
+        stringsFit: [...panel.querySelectorAll('.search-string')].every(
+          (entry) => entry.getBoundingClientRect().right <= panel.getBoundingClientRect().right,
+        ),
+        searchCardsStack: cardRects.length === 2 && cardRects[1].top >= cardRects[0].bottom,
+        heroAligned: Math.abs(hero.left) <= 1 && Math.abs(hero.right - innerWidth) <= 1,
+      };
+    });
+    expect(layout).toEqual({
+      pageOverflows: false,
+      panelFits: true,
+      stringsFit: true,
+      searchCardsStack: true,
+      heroAligned: true,
+    });
 
     const sharePicker = page.getByRole('group', { name: 'Lists to share' });
     await sharePicker.getByRole('button', { name: /^Normal/ }).click();

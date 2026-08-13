@@ -1,32 +1,52 @@
 import { progressForCategory } from '../../shared/domain';
 import type { CatalogItem, Category, CollectionEntry } from '../../shared/types';
-import { Icon } from './Icon';
 
 export function HomeDashboard({
   catalog,
   categories,
   entries,
-  onOpenDex,
 }: {
   catalog: readonly CatalogItem[];
   categories: readonly Category[];
   entries: readonly CollectionEntry[];
-  onOpenDex: () => void;
 }) {
   const defaultCatalog = catalog.filter((item) => item.isDefault);
   const regions = [...new Set(defaultCatalog.map((item) => item.region))];
+  const normalProgress = progressForCategory(defaultCatalog, entries, 'normal');
+  const unavailable =
+    normalProgress.unreleased + normalProgress.ineligible + normalProgress.unknown;
+  const completePercentage =
+    defaultCatalog.length === 0
+      ? 0
+      : Math.round((normalProgress.collected / defaultCatalog.length) * 100);
+  const overview = [
+    { label: 'All Pok\u00e9mon', value: defaultCatalog.length, detail: 'Complete Dex' },
+    {
+      label: 'Collected',
+      value: normalProgress.collected,
+      detail: `${completePercentage}% complete`,
+    },
+    { label: 'Missing', value: normalProgress.missing, detail: 'Available now' },
+    { label: 'Unavailable', value: unavailable, detail: 'Not currently obtainable' },
+  ];
 
   return (
     <section className="page page--dashboard">
       <header className="dashboard-hero">
         <div>
-          <span className="eyebrow eyebrow--light">Collection command center</span>
+          <span className="eyebrow eyebrow--light">Complete collection overview</span>
           <h1>Your Dex at a glance.</h1>
           <p>Review every regional collection, then turn the gaps into Pokémon GO searches.</p>
         </div>
-        <button type="button" className="button button--primary" onClick={onOpenDex}>
-          <Icon name="grid" /> Open Dex
-        </button>
+        <div className="dashboard-overview" aria-label="All Pokemon collection overview">
+          {overview.map((item) => (
+            <article key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
+            </article>
+          ))}
+        </div>
       </header>
 
       <section className="regional-progress" aria-labelledby="regional-progress-title">
