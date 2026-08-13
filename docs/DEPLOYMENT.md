@@ -19,10 +19,12 @@ Both environments bind D1 as `DB`, but the UUIDs are deliberately different. Eac
 have a different `APP_ACCESS_TOKEN` Worker secret; values never belong in Git, shell
 arguments, screenshots, logs, or documentation. The public app does not need either token.
 
-The release target in this working tree is catalog `2026-08-13.1`: National Dex #1-1025,
-949 released standard species, 177 reviewed collector forms, and 1,202 form rows total.
-Unreleased standard placeholders remain in denominators. Do not infer that this target has
-been deployed until live version/smoke checks say so.
+Catalog `2026-08-13.1` is deployed from protected `main` SHA
+`9eb839e3c971bfee8dd3d972a6803e3a90a8dae1`: National Dex #1-1025, 949 released standard
+species, 177 reviewed collector forms, and 1,202 form rows total. Unreleased standard
+placeholders remain in denominators. Exact staging and production evidence is retained in
+[`RELEASE_EVIDENCE_2026-08-13.md`](RELEASE_EVIDENCE_2026-08-13.md); repeat the runbook for every
+later release rather than treating that evidence as permanent.
 
 ## Local release gate
 
@@ -55,7 +57,9 @@ immutable.
 ## Staging release
 
 The staging D1 resource is provisioned with its real UUID. The August 13 Phase B candidate was
-migrated, deployed, smoke-tested, and rollback-rehearsed; see
+migrated, deployed, smoke-tested, and rollback-rehearsed. Its final deployment version is
+`0977a8ee-57d6-4cb4-9dda-291f88b622e6`, serving source
+`29dbbb0078c0379ec16ba2637caaf07f311b46fa`; see
 [`RELEASE_EVIDENCE_2026-08-13.md`](RELEASE_EVIDENCE_2026-08-13.md). Repeat the same gates for every
 new release candidate rather than treating historical evidence as permanent.
 Never substitute the production UUID.
@@ -160,8 +164,10 @@ protected `main` revision.
    authorized owner change/undo, and unauthorized private-API denial.
 
 `pnpm deploy:production` runs preflight, bookmark, migration, deployment, and smoke in that
-order. The named steps above are preferred when producing auditable release evidence. This
-runbook does not claim that production smoke has been run for the current revision.
+order. The named steps above are preferred when producing auditable release evidence. The
+August 13 release completed those production gates for exact protected-`main` SHA
+`9eb839e3c971bfee8dd3d972a6803e3a90a8dae1`; its current version is
+`0f533154-80ca-44c0-9edb-cd7be4ad4ab5`, with detailed evidence linked above.
 
 ## Probes and caching
 
@@ -212,11 +218,15 @@ Worker version:
 pnpm exec wrangler rollback <VERSION_ID> --message "Rollback <incident-reference>"
 ```
 
-`pnpm release:rollback:production` selects the preceding Worker version and is safe only
-when that exact version is known. Worker rollback does not undo D1. D1 Time Travel restore
-overwrites database state and cancels in-flight queries; use the retained bookmark only as
-a deliberate incident action after impact review. A rollback rehearsal/bookmark record is
-still required before this launch gate is closed.
+`pnpm release:rollback:production` selects the preceding Worker version and is safe only when
+that exact version is known. For this release, fully smoked Phase B version
+`5d008ae6-711e-4098-b6bf-80e15f1ccfd2` is the retained migrations-0008/0009-compatible target;
+do not select the older pre-Phase-B version that failed staging rehearsal. Worker rollback does
+not undo D1. The retained production bookmarks are
+`0000004d-00000000-000050c6-f350d0f7c5a996f42d9c0acc5fdeb656` before release and
+`00000051-00000000-000050c6-e3cea36aec1c842c0d76b87830373458` after release. D1 Time Travel
+restore overwrites database state and cancels in-flight queries; use it only as a deliberate
+incident action after impact review.
 
 Browser-local profiles are independent of D1 rollback. Recovery snapshots and full-profile
 exports are the user portability boundary; the legacy hostname notice exists because local
@@ -238,13 +248,14 @@ Authoritative references:
 - `browser-desktop-chromium`
 - `browser-mobile-webkit`
 - `browser-desktop-webkit`
+- `browser-pwa-chromium`
 
-Protect `main` after these checks exist on the repository: require a pull request, all five
-checks, current branches, stale-approval dismissal, no force push/deletion, and a narrowly
-controlled emergency bypass. The workflow has `contents: read` and no Cloudflare credential;
-deployment remains an explicit operator action. Branch protection and synchronization of
-the reviewed release SHA to public `main` require external GitHub evidence and are not
-complete because this runbook describes them.
+Protected `main` requires a pull request and strict/current completion of all six contexts.
+Force pushes and branch deletion are disabled; required approving reviews are set to zero and
+administrators retain bypass authority. PR #2 merged SHA
+`9eb839e3c971bfee8dd3d972a6803e3a90a8dae1` at `2026-08-13T09:13:08Z`, and exact-main run
+`31685587736` passed every required context. The workflow has `contents: read` and no
+Cloudflare credential; deployment remains an explicit operator action.
 
 If deployment is automated later, use separate protected GitHub Environments and narrowly
 scoped Cloudflare API tokens for staging and production. Never give an unreviewed preview a
@@ -266,6 +277,6 @@ Before broad public launch, the release record must still include:
 - accepted permission/legal risk or replacement assets for the pinned sprites;
 - real-device VoiceOver, keyboard, 200% zoom, contrast, reduced-motion, and all-theme review;
 - trustworthy production LCP, INP, and CLS evidence (not inferred from bundle size);
-- Cloudflare alerts/measurements and a rollback rehearsal;
-- verified legacy-origin export messaging before any fallback retirement; and
-- protected-`main`, staging, production smoke, headers, CSP, and exact-SHA evidence.
+- Cloudflare alerts/dashboards, operational ownership, cache/D1 trend measurements, and an
+  incident drill; and
+- a separately approved retirement window before disabling the verified legacy export origin.
