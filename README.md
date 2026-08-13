@@ -1,17 +1,39 @@
 # CatchGrid
 
-CatchGrid is a visual Pokémon GO collection companion built with React, TypeScript, Vite,
-Cloudflare Workers, browser local storage, and D1. It tracks collection categories, realistic wanted entries,
-actual trade specimens, CSV imports, undoable changes, and Pokémon GO search strings.
+CatchGrid is a local-first Pokémon GO collection companion built with React,
+TypeScript, Vite, Cloudflare Workers, and D1. It provides a National Dex, separate
+collector-form tracking, collection-aware Pokémon GO search strings, CSV and full-profile
+portability, saved visual searches, and an installable offline-capable PWA.
 
-> **Production:** [Open CatchGrid](https://dex.cjdev.app/)
-> or view the public source at
-> [HoLeeChuck/dexly-pokemon-go-companion](https://github.com/HoLeeChuck/dexly-pokemon-go-companion).
-> The catalog is public. Each browser keeps its own private collection, wanted entries,
-> and trade notes locally; no account or access key is required.
+> **Canonical site:** [dex.cjdev.app](https://dex.cjdev.app/)
+>
+> **Public source:**
+> [HoLeeChuck/dexly-pokemon-go-companion](https://github.com/HoLeeChuck/dexly-pokemon-go-companion)
+
+The public app needs no account or access key. Each browser stores its private collection,
+alternate-form selections, saved searches, and appearance settings in local storage. The
+public catalog comes from a profile-free edge endpoint backed by D1; trainer state is not
+sent with that request.
 
 CatchGrid is an unofficial fan project. It is not affiliated with or endorsed by Niantic,
-The Pokémon Company, or Nintendo. It never asks for Pokémon GO account credentials.
+The Pokémon Company, or Nintendo, and it never asks for Pokémon GO credentials. See
+[Third-party notices](THIRD_PARTY_NOTICES.md) for the unresolved sprite-rights limitation.
+
+## Catalog scope
+
+The reviewed `2026-08-13.1` snapshot contains:
+
+- one stable representative for every National Dex number from #1 through #1025, including
+  unreleased placeholders used for complete-Dex denominators;
+- 949 released standard species as of August 13, 2026;
+- 177 reviewed collector forms, for 1,202 total form records;
+- regional, gender, costume, alternate, Mega, Primal, Gigantamax, and fusion form groups;
+- all 28 Unown forms, tracked separately for Regular and Shiny only; and
+- release, tradeability, category-rule, sprite, and provenance metadata per form.
+
+Sprite availability is not treated as release evidence. The dated catalog and its additive
+D1 migration are verified offline by `pnpm catalog:verify`. Nickit's announced Shiny debut
+is after this snapshot and is intentionally not enabled early.
 
 ## Local setup
 
@@ -24,68 +46,80 @@ From PowerShell:
 
 ```powershell
 pnpm install
-pnpm exec playwright install chromium
+pnpm exec playwright install chromium webkit
 Copy-Item .dev.vars.example .dev.vars
 pnpm db:migrate:local
 pnpm dev
 ```
 
-Open the loopback URL printed by Vite. Localhost intentionally uses the seeded `Local
-Trainer` profile and does not require an access key. Local D1 state lives under
-`.wrangler/state` and is separate from the remote production database.
+Open the loopback URL printed by Vite. Local D1 state under `.wrangler/state` is isolated
+from staging and production. `.dev.vars` is ignored by Git; never commit an
+`APP_ACCESS_TOKEN`, `.dev.vars`, or Cloudflare API token.
 
-`.dev.vars` is ignored by Git. Never commit a real `APP_ACCESS_TOKEN`, `.dev.vars`, or
-Cloudflare API token.
+## Verification and release commands
 
-## Useful commands
+| Command                  | Purpose                                                                 |
+| ------------------------ | ----------------------------------------------------------------------- |
+| `pnpm dev`               | Run the React app, Worker, assets, and local bindings.                  |
+| `pnpm db:migrate:local`  | Apply checked-in migrations to isolated local D1.                       |
+| `pnpm lint`              | Check TypeScript and React lint rules.                                  |
+| `pnpm format`            | Check Prettier formatting without rewriting files.                      |
+| `pnpm test:unit`         | Run domain, catalog, local-profile, PWA, and search unit tests.         |
+| `pnpm test:worker`       | Run Worker/API integration tests against isolated migrated D1.          |
+| `pnpm test:e2e`          | Run mobile/desktop Chromium and WebKit flows, including axe checks.     |
+| `pnpm build`             | Generate binding types, type-check, and create the production bundle.   |
+| `pnpm check`             | Run lint, formatting, unit/Worker tests, and a production build.        |
+| `pnpm catalog:verify`    | Verify catalog provenance, forms, sprites, and immutable generation.    |
+| `pnpm release:preflight` | Run every local release gate plus Wrangler's strict deployment dry run. |
+| `pnpm deploy:production` | Preflight, bookmark, migrate, deploy, and smoke production in order.    |
 
-| Command                                     | Purpose                                                                   |
-| ------------------------------------------- | ------------------------------------------------------------------------- |
-| `pnpm dev`                                  | Run the React app, Worker, static assets, and local bindings together.    |
-| `pnpm db:migrate:local`                     | Apply checked-in migrations to local D1 explicitly.                       |
-| `pnpm test:unit`                            | Run normal Node-based unit tests.                                         |
-| `pnpm test:worker`                          | Run Worker/API integration tests in workerd with an isolated migrated D1. |
-| `pnpm test`                                 | Run both Vitest suites.                                                   |
-| `pnpm test:e2e`                             | Run Playwright mobile and desktop user-flow tests.                        |
-| `pnpm lint`                                 | Check TypeScript and React lint rules.                                    |
-| `pnpm format`                               | Check formatting without rewriting files.                                 |
-| `pnpm build`                                | Generate Wrangler binding types, type-check, and build the app/Worker.    |
-| `pnpm check`                                | Run lint, formatting, both Vitest suites, and a production build.         |
-| `pnpm catalog:sync:evolutions`              | Refresh the reviewed evolution-family search data.                        |
-| `node scripts/verify-sprites.mjs`           | Validate the versioned catalog and sprite manifest offline.               |
-| `node scripts/verify-sprites.mjs --network` | Also send opt-in checks to pinned sprite URLs.                            |
-| `pnpm db:migrate:production`                | Apply migrations to the configured remote D1 database.                    |
-| `pnpm deploy:production`                    | Build, migrate remote D1, then deploy. This changes production.           |
+Production mutation is intentionally separated into named steps:
+`release:bookmark:production`, `release:migrate:production`,
+`release:deploy:production`, and `release:smoke:production`. Follow the
+[deployment runbook](docs/DEPLOYMENT.md); do not treat a successful local build as proof
+that staging, production, headers, or release metadata are live.
 
-The last two commands mutate the configured production resources. `wrangler.jsonc`
-binds `DB` to `dexly-db` with UUID `154ac34c-cdfc-4a98-a0c4-f159153a6e2e`. Always
-confirm `wrangler whoami`, pending migrations, and the exact Git revision first.
+## Data ownership and portability
 
-## Current scope and limitations
+Public users are stored under the validated `catchgrid:local-profile:v2` schema. Writes are
+durable-first, recovery snapshots rotate automatically, and corrupt payloads are preserved
+instead of silently becoming an empty collection. CSV import previews apply the same
+catalog eligibility rules as the Worker. Full JSON backups include standard and alternate
+form state, saved searches, and appearance settings.
 
-- Catalog version `2026-08-11.2` represents 949 released National Pokédex species as
-  one standard form each, based on the reviewed 2026-08-11 snapshot. It is not a catalog
-  of every regional, costume, gender, Mega, Dynamax, Gigantamax, or alternate form.
-- Sprite paths are explicit and pinned to a PokeMiners commit. A sprite's existence is
-  not proof that a form, Shiny, Shadow, or other category is released or eligible.
-- Trade requests are limited to Normal, Shiny, XXL, XXS, and generic Costume. Recorded
-  offers may combine Shiny, XXL, XXS, and Costume; an empty trait set means Normal.
-  Hundo, Lucky, Shadow, and Purified are excluded from trade matching.
-- Generic Costume is a species-level candidate request, not a cataloged costume form.
-  Pokémon GO cannot distinguish every costume exactly, so visual review is required.
-- Generated missing, wanted, and recommended strings begin with `!traded&`. Personal
-  XXL/XXS strings include eligible earlier evolution stages when evolving them could
-  fill a later size-Dex gap.
-- Trainer state is local to one browser and does not sync across phones, computers, or
-  browser profiles. Clearing site data removes it, so users should export CSV backups.
-- D1 remains the shared catalog source. A browser holding the former access key performs
-  a one-time import of that legacy D1 collection when no local state exists.
-- The browser never receives a D1 binding; only the shared catalog is read through the
-  same-origin Worker API.
+Browser storage is origin-scoped. The legacy
+`dexly-companion.codyleejohnson26.workers.dev` origin therefore cannot silently transfer
+data to `dex.cjdev.app`; its migration notice offers an export and the canonical link
+without an automatic redirect. Clearing site storage removes the local profile unless a
+backup has been exported.
 
-See [Architecture](docs/ARCHITECTURE.md) for the data/security design,
-[Deployment](docs/DEPLOYMENT.md) for the Cloudflare runbook, and
-[Catalog notes](catalog/README.md) for provenance and synchronization rules.
+An unlisted owner route retains a token-protected D1 profile for personal continuity. It is
+not public multi-user authentication and is separate from normal browser-local profiles.
+
+## Search and PWA behavior
+
+The Search Lab has a visual include/exclude and AND/OR builder, plain-language
+interpretation, saved searches, copy/share actions, and generated collection-gap strings.
+Generated inventory queries preserve the `!traded&` guard. Exact and candidate output are
+labeled rather than presented as equivalent.
+
+The installable PWA caches the application shell and safe public catalog responses, never
+private API responses. Updates require an explicit refresh action. Catalog downtime is
+shown as a recoverable error and is never rendered as an empty collection.
+
+## Legacy infrastructure names
+
+CatchGrid is the public product name. These pre-rename identifiers remain intentionally to
+preserve deployed resources, database history, bookmarks, and repository links:
+
+- Worker `dexly-companion` and its `workers.dev` fallback origin;
+- D1 databases `dexly-db` and `dexly-db-staging`;
+- repository slug `dexly-pokemon-go-companion`; and
+- read-only migration support for legacy `dexly:*` browser-storage keys.
+
+See [Architecture](docs/ARCHITECTURE.md), [Deployment](docs/DEPLOYMENT.md),
+[Catalog notes](catalog/README.md), and the
+[public-launch closure matrix](docs/PUBLIC_LAUNCH_CLOSURE_MATRIX.md).
 
 ## Official platform references
 

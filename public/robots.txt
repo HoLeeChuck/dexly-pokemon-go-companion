@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /cody
+Disallow: /api/
+
+Sitemap: https://dex.cjdev.app/sitemap.xml

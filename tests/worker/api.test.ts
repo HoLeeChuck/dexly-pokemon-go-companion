@@ -1,6 +1,9 @@
 import { env, SELF } from 'cloudflare:test';
 import { beforeEach, describe, expect, it } from 'vitest';
 
+import { ApiError } from '../../worker/http';
+import { enforceOwnerBoundary, type OwnerRateLimitEnv } from '../../worker/rateLimit';
+
 import type {
   BootstrapPayload,
   RuleState,
@@ -163,6 +166,56 @@ function postTrade(input: {
 }
 
 describe('Worker bootstrap and authentication boundary', () => {
+  it('serves separate GET and HEAD liveness/readiness probes with release metadata', async () => {
+    for (const path of ['/api/health', '/api/ready']) {
+      const getResponse = await localApi(path, {}, null);
+      const payload = await responseJson<{
+        ok: boolean;
+        gitSha: string;
+        environment: string;
+        catalogVersion?: string;
+      }>(getResponse);
+      expect(getResponse.status).toBe(200);
+      expect(payload.ok).toBe(true);
+      expect(payload.gitSha).toBeTruthy();
+      expect(payload.environment).toBeTruthy();
+      expect(getResponse.headers.get('cache-control')).toContain('no-store');
+
+      const headResponse = await localApi(path, { method: 'HEAD' }, null);
+      expect(headResponse.status).toBe(200);
+      expect(await headResponse.text()).toBe('');
+    }
+  });
+
+  it('serves public catalog HEAD and a profile-free cacheable payload', async () => {
+    const versionResponse = await localApi('/api/v1/catalog/version', {}, null);
+    expect(versionResponse.status).toBe(200);
+    const versionPayload = await responseJson<{ catalogVersion: string }>(versionResponse);
+    expect(versionPayload.catalogVersion).toMatch(/^\d{4}-\d{2}-\d{2}\.\d+$/);
+    const versionHead = await localApi('/api/v1/catalog/version', { method: 'HEAD' }, null);
+    expect(versionHead.status).toBe(200);
+    expect(await versionHead.text()).toBe('');
+
+    const headResponse = await localApi('/api/v1/catalog', { method: 'HEAD' }, null);
+    expect(headResponse.status).toBe(200);
+    expect(headResponse.headers.get('cache-control')).toContain('s-maxage=3600');
+    expect(await headResponse.text()).toBe('');
+
+    const getResponse = await localApi('/api/v1/catalog', {}, null);
+    const payload = await responseJson<Record<string, unknown> & { catalog: unknown[] }>(
+      getResponse,
+    );
+    expect(getResponse.status).toBe(200);
+    expect(getResponse.headers.get('x-catchgrid-cache')).toBe('HIT');
+    expect(payload.catalog.length).toBeGreaterThan(0);
+    expect(payload).not.toHaveProperty('profileId');
+    expect(payload).not.toHaveProperty('collectionEntries');
+    expect(payload).not.toHaveProperty('wantedEntries');
+    expect(payload).not.toHaveProperty('tradeSpecimens');
+    expect(payload).not.toHaveProperty('revision');
+    expect(JSON.stringify(payload)).not.toContain('profile:local-development');
+  });
+
   it('serves the seeded catalog to the localhost development actor', async () => {
     const response = await localApi('/api/v1/bootstrap', {}, null);
     const payload = await responseJson<BootstrapResponse>(response);
@@ -171,7 +224,7 @@ describe('Worker bootstrap and authentication boundary', () => {
     expect(response.headers.get('cache-control')).toContain('no-store');
     expect(payload.authMode).toBe('local');
     expect(payload.profileId).toBe(PROFILE_ID);
-    expect(payload.catalogVersion).toBe('2026-08-12.1');
+    expect(payload.catalogVersion).toBe('2026-08-13.1');
     expect(payload.revision).toBe(0);
     expect(payload.categories.map((category) => category.id)).toEqual([
       'normal',
@@ -228,6 +281,60 @@ describe('Worker bootstrap and authentication boundary', () => {
     expect(response.status).toBe(503);
     expect(payload.error.code).toBe('PRIVATE_API_NOT_CONFIGURED');
     expect(payload.error.requestId).toBeTruthy();
+  });
+});
+
+describe('owner boundary rate limits', () => {
+  function limiter(success: boolean): RateLimit {
+    return { limit: async () => ({ success }) };
+  }
+
+  it('fails a rate-limited unauthenticated owner attempt before authentication', async () => {
+    const env = {
+      APP_ACCESS_TOKEN: 'expected-secret',
+      OWNER_AUTH_LIMITER: limiter(false),
+    } satisfies OwnerRateLimitEnv;
+
+    await expect(
+      enforceOwnerBoundary(
+        new Request('https://dex.cjdev.app/api/v1/bootstrap', {
+          headers: { 'cf-connecting-ip': '192.0.2.10', authorization: 'Bearer wrong-secret' },
+        }),
+        env,
+      ),
+    ).rejects.toMatchObject({ status: 429, code: 'RATE_LIMITED' } satisfies Partial<ApiError>);
+  });
+
+  it('rate-limits authenticated mutations by a token-derived key', async () => {
+    const env = {
+      APP_ACCESS_TOKEN: 'expected-secret',
+      OWNER_AUTH_LIMITER: limiter(true),
+      OWNER_MUTATION_LIMITER: limiter(false),
+    } satisfies OwnerRateLimitEnv;
+
+    await expect(
+      enforceOwnerBoundary(
+        new Request('https://dex.cjdev.app/api/v1/collection', {
+          method: 'PUT',
+          headers: { authorization: 'Bearer expected-secret' },
+        }),
+        env,
+      ),
+    ).rejects.toMatchObject({ status: 429, code: 'RATE_LIMITED' } satisfies Partial<ApiError>);
+  });
+
+  it('does not invoke production limiters for loopback development', async () => {
+    const rejectingLimiter: RateLimit = {
+      limit: async () => {
+        throw new Error('Limiter should not run on loopback');
+      },
+    };
+    await expect(
+      enforceOwnerBoundary(new Request('http://localhost/api/v1/collection'), {
+        OWNER_AUTH_LIMITER: rejectingLimiter,
+        OWNER_MUTATION_LIMITER: rejectingLimiter,
+      }),
+    ).resolves.toBeUndefined();
   });
 });
 
@@ -690,6 +797,41 @@ describe('trade requests and specimens', () => {
 });
 
 describe('authoritative CSV import', () => {
+  it('allows cleanup removals when a formerly collected category is now ineligible', async () => {
+    await env.DB.prepare(
+      `INSERT INTO collection_entries (profile_id, form_id, category_id)
+       VALUES (?, 'form-0151-standard', 'lucky')`,
+    )
+      .bind(PROFILE_ID)
+      .run();
+
+    const previewResponse = await localApi('/api/v1/imports/preview', {
+      method: 'POST',
+      body: JSON.stringify({
+        csv: ['form_id,lucky', 'form-0151-standard,false'].join('\n'),
+        sourceName: 'cleanup.csv',
+        policy: 'update',
+      }),
+    });
+    const preview = await responseJson<ImportPreviewResponse>(previewResponse);
+    expect(previewResponse.status).toBe(200);
+    expect(preview.preview.summary).toMatchObject({ removed: 1, rejected: 0 });
+    if (!preview.jobId) throw new Error('Expected a cleanup import job');
+
+    const applyResponse = await localApi(`/api/v1/imports/${preview.jobId}/apply`, {
+      method: 'POST',
+      body: JSON.stringify({}),
+    });
+    const applied = await responseJson<ImportApplyResponse>(applyResponse);
+    expect(applyResponse.status).toBe(200);
+    expect(applied.removed).toBe(1);
+    expect(
+      (await bootstrap()).collectionEntries.some(
+        (entry) => entry.formId === 'form-0151-standard' && entry.categoryId === 'lucky',
+      ),
+    ).toBe(false);
+  });
+
   it('previews without collection writes, then atomically creates backup and mutation', async () => {
     const csv = [
       'dex_number,form_id,name,normal,shiny',

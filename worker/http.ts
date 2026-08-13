@@ -4,6 +4,16 @@ const PRIVATE_HEADERS = {
   'X-Content-Type-Options': 'nosniff',
   'X-Frame-Options': 'DENY',
   'Referrer-Policy': 'no-referrer',
+  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+  'Cross-Origin-Opener-Policy': 'same-origin',
+} as const;
+
+const PUBLIC_HEADERS = {
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'DENY',
+  'Referrer-Policy': 'no-referrer',
+  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+  'Cross-Origin-Opener-Policy': 'same-origin',
 } as const;
 
 export class ApiError extends Error {
@@ -26,8 +36,12 @@ export function jsonResponse<T>(
   headers.set('Content-Type', 'application/json; charset=utf-8');
 
   if (init.cache === 'public') {
-    headers.set('Cache-Control', 'public, max-age=300, stale-while-revalidate=3600');
-    headers.set('X-Content-Type-Options', 'nosniff');
+    if (!headers.has('Cache-Control')) {
+      headers.set('Cache-Control', 'public, max-age=300, stale-while-revalidate=3600');
+    }
+    for (const [name, content] of Object.entries(PUBLIC_HEADERS)) {
+      headers.set(name, content);
+    }
   } else {
     for (const [name, content] of Object.entries(PRIVATE_HEADERS)) {
       headers.set(name, content);
@@ -52,7 +66,11 @@ export function errorResponse(error: unknown, requestId: string): Response {
     );
   }
 
-  console.error('Unhandled API error', { requestId, error });
+  console.error({
+    event: 'api_unhandled_error',
+    requestId,
+    error: error instanceof Error ? error.message : String(error),
+  });
   return jsonResponse(
     {
       error: {

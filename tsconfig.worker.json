@@ -14,5 +14,6 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true
   },
+  "files": ["worker/build-metadata.d.ts"],
   "include": ["worker", "shared", "node_modules/.worker-configuration.d.ts"]
 }

@@ -12,6 +12,7 @@ export default defineConfig({
     timeout: 7_500,
   },
   fullyParallel: true,
+  workers: 4,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 2 : 0,
   reporter: process.env.CI
@@ -30,7 +31,7 @@ export default defineConfig({
   projects: [
     {
       name: 'mobile-chromium',
-      testMatch: /mobile\.spec\.ts/,
+      testMatch: /(mobile|accessibility|resilience)\.spec\.ts/,
       use: {
         ...devices['Desktop Chrome'],
         viewport: { width: 390, height: 844 },
@@ -40,17 +41,42 @@ export default defineConfig({
     },
     {
       name: 'desktop-chromium',
-      testMatch: /desktop\.spec\.ts/,
+      testMatch: /(desktop|accessibility|resilience)\.spec\.ts/,
       use: {
         ...devices['Desktop Chrome'],
         viewport: { width: 1440, height: 900 },
       },
     },
+    {
+      name: 'mobile-webkit',
+      testMatch: /(mobile|accessibility|resilience)\.spec\.ts/,
+      use: {
+        ...devices['iPhone 13'],
+        viewport: { width: 390, height: 844 },
+      },
+    },
+    {
+      name: 'desktop-webkit',
+      testMatch: /(desktop|accessibility|resilience)\.spec\.ts/,
+      use: {
+        ...devices['Desktop Safari'],
+        viewport: { width: 1440, height: 900 },
+      },
+    },
+    {
+      name: 'pwa-chromium',
+      testMatch: /pwa\.spec\.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 390, height: 844 },
+        serviceWorkers: 'allow',
+      },
+    },
   ],
   webServer: {
-    command: `pnpm exec vite --config tests/e2e/vite.config.ts --host 127.0.0.1 --port ${port}`,
+    command: `pnpm exec vite build --config tests/e2e/vite.config.ts && pnpm exec vite preview --config tests/e2e/vite.config.ts --host 127.0.0.1 --port ${port}`,
     url: baseURL,
-    reuseExistingServer: false,
+    reuseExistingServer: !process.env.CI,
     timeout: 120_000,
   },
 });
