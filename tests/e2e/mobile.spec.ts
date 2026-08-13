@@ -274,7 +274,7 @@ test.describe('mobile collection experience', () => {
     for (const route of ['Home', 'Dex', 'Profile']) {
       await expect(menu.getByRole('button', { name: route, exact: true })).toBeVisible();
     }
-    await expect(menu.getByRole('button', { name: 'Search Lab', exact: true })).toHaveCount(0);
+    await expect(menu.getByRole('button', { name: 'Search Lab', exact: true })).toBeVisible();
     await expect(menu.getByRole('button', { name: 'Trade', exact: true })).toHaveCount(0);
     await expect(menu.getByRole('button', { name: 'Dex', exact: true })).toHaveAttribute(
       'aria-current',

@@ -22,6 +22,7 @@ import { DetailSheet } from './components/DetailSheet';
 import { Icon, type IconName } from './components/Icon';
 import { PokemonGrid } from './components/PokemonGrid';
 import { HomeDashboard } from './components/HomeDashboard';
+import { SearchLab } from './components/SearchLab';
 import {
   ApiClientError,
   api,
@@ -32,7 +33,7 @@ import {
 import { loadLocalProfile, saveLocalProfile } from './lib/localProfile';
 import { previewCanonicalWideCsv } from '../shared/csv';
 
-type RouteId = 'home' | 'dex' | 'profile';
+type RouteId = 'home' | 'dex' | 'search' | 'profile';
 type CollectionFilter = 'all' | 'missing' | 'collected';
 type MedalTier = 'none' | 'bronze' | 'silver' | 'gold' | 'platinum';
 type StorageMode = 'browser' | 'cloud';
@@ -73,6 +74,7 @@ const REGION_MEDAL_ASSET_ROOT =
 const routes: Array<{ id: RouteId; label: string; icon: IconName }> = [
   { id: 'home', label: 'Home', icon: 'home' },
   { id: 'dex', label: 'Dex', icon: 'grid' },
+  { id: 'search', label: 'Search Lab', icon: 'flask' },
   { id: 'profile', label: 'Profile', icon: 'user' },
 ];
 
@@ -143,9 +145,9 @@ interface ToastState {
   batchId?: string;
 }
 
-function AppBrand({ compact = false }: { compact?: boolean }) {
-  return (
-    <div className={`app-brand${compact ? ' app-brand--compact' : ''}`}>
+function AppBrand({ compact = false, onHome }: { compact?: boolean; onHome?: () => void }) {
+  const content = (
+    <>
       <span className="app-brand__mark" aria-hidden="true">
         <span />
       </span>
@@ -153,8 +155,21 @@ function AppBrand({ compact = false }: { compact?: boolean }) {
         <strong>dexly</strong>
         {!compact && <small>collection companion</small>}
       </span>
-    </div>
+    </>
   );
+  if (onHome) {
+    return (
+      <button
+        type="button"
+        className={`app-brand app-brand--link${compact ? ' app-brand--compact' : ''}`}
+        onClick={onHome}
+        aria-label="Go to home page"
+      >
+        {content}
+      </button>
+    );
+  }
+  return <div className={`app-brand${compact ? ' app-brand--compact' : ''}`}>{content}</div>;
 }
 
 function MobileNavigationHeader({
@@ -192,7 +207,7 @@ function MobileNavigationHeader({
   return (
     <>
       <header className="mobile-topbar">
-        <AppBrand compact />
+        <AppBrand compact onHome={() => navigate('home')} />
         <div className="mobile-topbar__actions">
           <button
             type="button"
@@ -428,6 +443,7 @@ export default function App() {
   const scrollPositions = useRef<Record<RouteId, number>>({
     home: 0,
     dex: 0,
+    search: 0,
     profile: 0,
   });
 
@@ -938,7 +954,7 @@ export default function App() {
   return (
     <div className="app-shell">
       <aside className="desktop-sidebar">
-        <AppBrand />
+        <AppBrand onHome={() => navigate('home')} />
         <nav aria-label="Primary navigation">
           {routes.map((item) => (
             <button
@@ -996,8 +1012,16 @@ export default function App() {
               catalog={bootstrap.catalog}
               categories={bootstrap.categories}
               entries={collectionEntries}
-              wantedEntries={wantedEntries}
               onOpenDex={() => navigate('dex')}
+            />
+          )}
+          {route === 'search' && (
+            <SearchLab
+              catalog={bootstrap.catalog}
+              entries={collectionEntries}
+              wantedEntries={wantedEntries}
+              categories={bootstrap.categories}
+              showAllCategories
             />
           )}
           {route === 'dex' && (

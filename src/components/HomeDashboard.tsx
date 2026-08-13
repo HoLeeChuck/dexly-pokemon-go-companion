@@ -1,19 +1,16 @@
 import { progressForCategory } from '../../shared/domain';
-import type { CatalogItem, Category, CollectionEntry, WantedEntry } from '../../shared/types';
+import type { CatalogItem, Category, CollectionEntry } from '../../shared/types';
 import { Icon } from './Icon';
-import { SearchLab } from './SearchLab';
 
 export function HomeDashboard({
   catalog,
   categories,
   entries,
-  wantedEntries,
   onOpenDex,
 }: {
   catalog: readonly CatalogItem[];
   categories: readonly Category[];
   entries: readonly CollectionEntry[];
-  wantedEntries: readonly WantedEntry[];
   onOpenDex: () => void;
 }) {
   const defaultCatalog = catalog.filter((item) => item.isDefault);
@@ -76,14 +73,6 @@ export function HomeDashboard({
           })}
         </div>
       </section>
-
-      <SearchLab
-        catalog={catalog}
-        entries={entries}
-        wantedEntries={wantedEntries}
-        categories={categories}
-        showAllCategories
-      />
     </section>
   );
 }

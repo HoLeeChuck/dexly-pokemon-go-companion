@@ -348,6 +348,15 @@ p {
   gap: 0.67rem;
 }
 
+.app-brand--link {
+  padding: 0;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
 .app-brand__mark {
   position: relative;
   display: block;
@@ -5053,4 +5062,47 @@ p {
 
 :root[data-theme='dark'] .state-legend i.is-unavailable {
   background: #60736d;
+}
+
+:root[data-theme='dark'] .mobile-nav-panel__heading strong,
+:root[data-theme='dark'] .mobile-nav-panel > button,
+:root[data-theme='dark'] .mobile-nav-panel > button.is-active > span {
+  color: var(--ink);
+}
+
+:root[data-theme='dark'] .mobile-nav-panel > button > span {
+  background: color-mix(in srgb, var(--paper) 82%, white);
+}
+
+:root[data-theme='dark'] .mobile-nav-panel > button.is-active {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--brand-100) 72%, var(--paper));
+}
+
+:root[data-theme='dark'] .button--secondary {
+  color: var(--ink);
+  border-color: var(--line);
+  background: color-mix(in srgb, var(--paper) 88%, white);
+}
+
+:root[data-theme='dark'] .button--secondary:disabled {
+  color: var(--faint);
+  background: color-mix(in srgb, var(--paper) 94%, black);
+}
+
+:root[data-theme='dark'] .attribution {
+  color: var(--muted);
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--paper) 92%, white);
+}
+
+:root[data-theme='dark'] .attribution strong {
+  color: var(--ink);
+}
+
+:root[data-theme='dark'] .preview-stats span,
+:root[data-theme='dark'] .preview-table-wrap th,
+:root[data-theme='dark'] .notice--subtle {
+  color: var(--muted);
+  background: color-mix(in srgb, var(--paper) 88%, white);
 }

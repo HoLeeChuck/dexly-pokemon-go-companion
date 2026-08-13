@@ -68,9 +68,9 @@ test('first launch opens the all-in-one Home without exposing the unfinished Tra
   expect(dashboardLayout.sameColumn).toBe(true);
   expect(Math.abs(dashboardLayout.heroWidth - dashboardLayout.progressWidth)).toBeLessThan(2);
   const navigation = page.getByRole('navigation', { name: 'Primary navigation' });
-  await expect(navigation.getByRole('button')).toHaveCount(3);
+  await expect(navigation.getByRole('button')).toHaveCount(4);
   await expect(navigation.getByRole('button', { name: 'Home' })).toBeVisible();
-  await expect(navigation.getByRole('button', { name: 'Search Lab' })).toHaveCount(0);
+  await expect(navigation.getByRole('button', { name: 'Search Lab' })).toBeVisible();
   await expect(navigation.getByRole('button', { name: 'Trade' })).toHaveCount(0);
 
   await page.goto('/#/trade');
@@ -92,15 +92,25 @@ test('desktop shell shows its sidebar and navigates without the mobile bar', asy
   await expect(page.locator('.bottom-nav')).toHaveCount(0);
 
   const navigation = sidebar.getByRole('navigation', { name: 'Primary navigation' });
-  await expect(navigation.getByRole('button')).toHaveCount(3);
+  await expect(navigation.getByRole('button')).toHaveCount(4);
   const home = navigation.getByRole('button', { name: 'Home' });
   await home.click();
 
   await expect(page).toHaveURL(/#\/home$/);
   await expect(home).toHaveClass(/is-active/);
+  await expect(page.getByRole('heading', { name: 'Turn gaps into useful searches.' })).toHaveCount(
+    0,
+  );
+
+  await navigation.getByRole('button', { name: 'Search Lab' }).click();
+  await expect(page).toHaveURL(/#\/search$/);
   await expect(
     page.getByRole('heading', { name: 'Turn gaps into useful searches.' }),
   ).toBeVisible();
+
+  await sidebar.getByRole('button', { name: 'Go to home page' }).click();
+  await expect(page).toHaveURL(/#\/home$/);
+  await expect(page.getByRole('heading', { name: 'Your Dex at a glance.' })).toBeVisible();
   expect(api.collectionMutationCount).toBe(0);
   expect(api.unexpectedWriteCount).toBe(0);
 });
