@@ -20,6 +20,10 @@ export function DataPage({
   onUnlock,
   onLeaveCloud,
   onImport,
+  onExportBackup,
+  onRestoreBackup,
+  snapshots,
+  onRestoreSnapshot,
 }: {
   catalog: readonly CatalogItem[];
   collectionEntries: readonly CollectionEntry[];
@@ -33,8 +37,13 @@ export function DataPage({
   onUnlock: () => void;
   onLeaveCloud: () => void;
   onImport: (input: { csv: string; fileName: string; policy: CsvImportPolicy }) => Promise<void>;
+  onExportBackup: () => void;
+  onRestoreBackup: (json: string) => void;
+  snapshots: readonly { id: string; createdAt: string; reason: string }[];
+  onRestoreSnapshot: (id: string) => void;
 }) {
   const fileRef = useRef<HTMLInputElement>(null);
+  const backupRef = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState('');
   const [csv, setCsv] = useState('');
   const [policy, setPolicy] = useState<CsvImportPolicy>('merge');
@@ -186,6 +195,62 @@ export function DataPage({
         <button type="button" className="button button--primary button--full" onClick={exportCsv}>
           <Icon name="download" /> Export collection CSV
         </button>
+        <div className="portable-backup-actions">
+          <button type="button" className="button button--secondary" onClick={onExportBackup}>
+            <Icon name="shield" /> Export full JSON backup
+          </button>
+          <input
+            ref={backupRef}
+            type="file"
+            accept="application/json,.json"
+            hidden
+            disabled={storageMode === 'cloud'}
+            onChange={(event) => {
+              const file = event.target.files?.[0];
+              if (!file) return;
+              void file
+                .text()
+                .then(onRestoreBackup)
+                .catch(() => setMessage('The backup file could not be read.'));
+              event.currentTarget.value = '';
+            }}
+          />
+          <button
+            type="button"
+            className="button button--secondary"
+            disabled={storageMode === 'cloud'}
+            aria-describedby={storageMode === 'cloud' ? 'backup-restore-help' : undefined}
+            onClick={() => backupRef.current?.click()}
+          >
+            <Icon name="upload" />
+            {storageMode === 'cloud' ? 'Switch to browser to restore' : 'Restore JSON backup'}
+          </button>
+        </div>
+        <p className="backup-help" id="backup-restore-help">
+          {storageMode === 'cloud'
+            ? 'Local JSON restore is disabled while Cody Cloud is connected. Return to this browser first so a local backup cannot overwrite or diverge from cloud data.'
+            : 'Full backups include default and alternate-form collection state, wanted and trade data, saved searches, appearance settings, catalog version, and migration history.'}
+        </p>
+        {snapshots.length > 0 && (
+          <details className="snapshot-list">
+            <summary>Browser recovery snapshots ({snapshots.length})</summary>
+            {snapshots.map((snapshot) => (
+              <article key={snapshot.id}>
+                <span>
+                  <strong>{new Date(snapshot.createdAt).toLocaleString()}</strong>
+                  <small>{snapshot.reason}</small>
+                </span>
+                <button
+                  type="button"
+                  className="button button--secondary"
+                  onClick={() => onRestoreSnapshot(snapshot.id)}
+                >
+                  Restore
+                </button>
+              </article>
+            ))}
+          </details>
+        )}
       </section>
 
       <section className="panel import-panel">
@@ -205,6 +270,7 @@ export function DataPage({
             ref={fileRef}
             type="file"
             accept=".csv,text/csv"
+            aria-label="Choose a CSV file to preview"
             onChange={(event) => {
               const file = event.target.files?.[0];
               if (file) void readFile(file);
@@ -359,6 +425,11 @@ export function DataPage({
         <span>
           Catalog {catalogVersion} · {catalog.length} representative forms
         </span>
+        <nav aria-label="Legal and project policies">
+          <a href="/privacy/">Privacy</a>
+          <a href="/security/">Security</a>
+          <a href="/notices/">Third-party notices</a>
+        </nav>
       </footer>
     </section>
   );

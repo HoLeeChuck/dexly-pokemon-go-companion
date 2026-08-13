@@ -49,7 +49,7 @@ async function fulfillJson(route: Route, value: unknown, status = 200): Promise<
  */
 export async function installFakeApi(
   page: Page,
-  options: { catalogCopies?: number } = {},
+  options: { catalogCopies?: number; catalogFailureCount?: number } = {},
 ): Promise<ApiHarness> {
   let state = createBootstrapFixture();
   if ((options.catalogCopies ?? 1) > 1) {
@@ -76,6 +76,7 @@ export async function installFakeApi(
   let wantedMutationCount = 0;
   let undoCount = 0;
   let unexpectedWriteCount = 0;
+  let catalogFailureCount = options.catalogFailureCount ?? 0;
 
   const isCollected = (formId: string, categoryId: CategoryId): boolean =>
     state.collectionEntries.some(
@@ -148,6 +149,15 @@ export async function installFakeApi(
       (path === '/api/v1/bootstrap' || path === '/api/v1/catalog') &&
       request.method() === 'GET'
     ) {
+      if (path === '/api/v1/catalog' && catalogFailureCount > 0) {
+        catalogFailureCount -= 1;
+        await fulfillJson(
+          route,
+          { error: { code: 'CATALOG_UNAVAILABLE', message: 'Catalog temporarily unavailable.' } },
+          503,
+        );
+        return;
+      }
       await fulfillJson(route, { ...structuredClone(state), revision });
       return;
     }

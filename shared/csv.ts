@@ -408,11 +408,6 @@ function resolveCatalogItem(
     return candidates[0];
   }
 
-  const defaults = candidates.filter((candidate) => candidate.isDefault);
-  if (defaults.length === 1) {
-    return defaults[0];
-  }
-
   issues.push({
     severity: 'error',
     code: candidates.length === 0 ? 'unmatched_pokemon' : 'ambiguous_pokemon',
@@ -613,18 +608,68 @@ export function previewCanonicalWideCsv(
     changes.filter((change) => change.disposition === disposition).length;
   const rejected = issues.filter((issue) => issue.severity === 'error').length;
 
+  return applyCsvRuleValidation(
+    {
+      policy,
+      changes,
+      issues,
+      summary: {
+        sourceRows,
+        resolvedRows,
+        added: count('add'),
+        removed: count('remove'),
+        unchanged: count('unchanged'),
+        ignored: count('ignored'),
+        rejected,
+      },
+    },
+    catalog,
+  );
+}
+
+/**
+ * Applies the authoritative catalog eligibility rules to an import preview.
+ * Both local and cloud paths use this function so neither can import an
+ * unreleased, ineligible, or unknown collected state. Removing a stale state is
+ * intentionally allowed so a user can repair data after a rule changes.
+ */
+export function applyCsvRuleValidation(
+  preview: CsvImportPreview,
+  catalog: readonly CatalogItem[],
+): CsvImportPreview {
+  const catalogById = new Map(catalog.map((item) => [item.id, item]));
+  const issues = [...preview.issues];
+  const changes = preview.changes.map((change) => {
+    if (change.disposition !== 'add') return change;
+    const item = catalogById.get(change.formId);
+    const rule = item?.rules[change.categoryId] ?? 'unknown';
+    if (rule === 'released') return change;
+    issues.push({
+      severity: 'error',
+      code: 'category_not_collectible',
+      row: change.row,
+      column: change.categoryId,
+      message: `This ${change.categoryId} entry is ${rule} and cannot be imported.`,
+    });
+    return {
+      ...change,
+      after: change.before,
+      disposition: 'ignored' as const,
+    };
+  });
+  const count = (disposition: CsvChangeDisposition): number =>
+    changes.filter((change) => change.disposition === disposition).length;
   return {
-    policy,
+    ...preview,
     changes,
     issues,
     summary: {
-      sourceRows,
-      resolvedRows,
+      ...preview.summary,
       added: count('add'),
       removed: count('remove'),
       unchanged: count('unchanged'),
       ignored: count('ignored'),
-      rejected,
+      rejected: issues.filter((issue) => issue.severity === 'error').length,
     },
   };
 }

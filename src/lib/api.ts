@@ -1,6 +1,7 @@
 import type {
   BootstrapPayload,
   CategoryId,
+  PublicCatalogPayload,
   TradeOfferTrait,
   TradeRequestTrait,
   TradeSpecimen,
@@ -67,12 +68,20 @@ export class ApiClientError extends Error {
 const ACCESS_TOKEN_KEY = 'dexly:access-token';
 
 export function storedAccessToken(): string {
-  return sessionStorage.getItem(ACCESS_TOKEN_KEY) ?? '';
+  try {
+    return globalThis.sessionStorage?.getItem(ACCESS_TOKEN_KEY) ?? '';
+  } catch {
+    return '';
+  }
 }
 
 export function saveAccessToken(value: string): void {
-  if (value) sessionStorage.setItem(ACCESS_TOKEN_KEY, value);
-  else sessionStorage.removeItem(ACCESS_TOKEN_KEY);
+  try {
+    if (value) globalThis.sessionStorage?.setItem(ACCESS_TOKEN_KEY, value);
+    else globalThis.sessionStorage?.removeItem(ACCESS_TOKEN_KEY);
+  } catch {
+    // Private browsing and hardened environments may expose Storage but reject every operation.
+  }
 }
 
 async function requestJson<T>(
@@ -116,7 +125,7 @@ async function requestJson<T>(
 }
 
 export const api = {
-  catalog(): Promise<BootstrapResponse> {
+  catalog(): Promise<PublicCatalogPayload> {
     return requestJson('/api/v1/catalog');
   },
 

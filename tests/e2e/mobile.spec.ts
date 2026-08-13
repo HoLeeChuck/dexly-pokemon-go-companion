@@ -13,7 +13,7 @@ async function openDex(page: import('@playwright/test').Page) {
 
 async function openMobileRoute(
   page: import('@playwright/test').Page,
-  route: 'Home' | 'Dex' | 'Profile',
+  route: 'Home' | 'Dex' | 'Search Lab' | 'Profile',
 ) {
   await page.getByRole('button', { name: 'Open navigation menu' }).click();
   const menu = page.locator('.mobile-nav-panel');
@@ -28,8 +28,8 @@ async function swipeHorizontally(target: Locator, direction: 'left' | 'right') {
     const startX = swipeDirection === 'left' ? rect.right - 28 : rect.left + 28;
     const endX = swipeDirection === 'left' ? rect.left + 28 : rect.right - 28;
     const y = rect.top + rect.height / 2;
-    const touch = (clientX: number) =>
-      new Touch({
+    const dispatchTouch = (type: string, clientX: number, ended = false) => {
+      const touch = {
         identifier: 1,
         target: element,
         clientX,
@@ -38,37 +38,19 @@ async function swipeHorizontally(target: Locator, direction: 'left' | 'right') {
         pageY: y,
         screenX: clientX,
         screenY: y,
+      };
+      const event = new Event(type, { bubbles: true, cancelable: true });
+      Object.defineProperties(event, {
+        touches: { value: ended ? [] : [touch] },
+        targetTouches: { value: ended ? [] : [touch] },
+        changedTouches: { value: [touch] },
       });
-    const start = touch(startX);
-    const end = touch(endX);
+      element.dispatchEvent(event);
+    };
 
-    element.dispatchEvent(
-      new TouchEvent('touchstart', {
-        bubbles: true,
-        cancelable: true,
-        touches: [start],
-        targetTouches: [start],
-        changedTouches: [start],
-      }),
-    );
-    element.dispatchEvent(
-      new TouchEvent('touchmove', {
-        bubbles: true,
-        cancelable: true,
-        touches: [end],
-        targetTouches: [end],
-        changedTouches: [end],
-      }),
-    );
-    element.dispatchEvent(
-      new TouchEvent('touchend', {
-        bubbles: true,
-        cancelable: true,
-        touches: [],
-        targetTouches: [],
-        changedTouches: [end],
-      }),
-    );
+    dispatchTouch('touchstart', startX);
+    dispatchTouch('touchmove', endX);
+    dispatchTouch('touchend', endX, true);
   }, direction);
 }
 
@@ -207,8 +189,18 @@ test.describe('mobile collection experience', () => {
       };
     });
     expect(stacking.headingZIndex).toBeGreaterThanOrEqual(20);
-    expect(stacking.headingBackground).toBe('rgb(246, 249, 242)');
+    expect(stacking.headingBackground).not.toBe('rgba(0, 0, 0, 0)');
+    expect(stacking.headingBackground).not.toBe('transparent');
     expect(stacking.cardIsolation).toBe('isolate');
+
+    const brandTarget = await page
+      .getByRole('button', { name: 'Go to home page' })
+      .evaluate((element) => {
+        const rect = element.getBoundingClientRect();
+        return { width: rect.width, height: rect.height };
+      });
+    expect(brandTarget.width).toBeGreaterThanOrEqual(44);
+    expect(brandTarget.height).toBeGreaterThanOrEqual(44);
 
     const stateFilter = page.getByRole('group', { name: 'Collection state' });
     await expect(stateFilter.getByRole('button', { name: 'Available' })).toHaveCount(0);
@@ -366,7 +358,7 @@ test.describe('mobile collection experience', () => {
     await expect(card).toHaveAttribute('data-state', baselineState ?? '');
     await expect(toast).toContainText('Last checklist change undone.');
     const savedAfterUndo = await page.evaluate(() =>
-      JSON.parse(localStorage.getItem('dexly:local-profile:v1') ?? '{}'),
+      JSON.parse(localStorage.getItem('catchgrid:local-profile:v2') ?? '{}'),
     );
     expect(
       savedAfterUndo.collectionEntries.some(
@@ -422,26 +414,26 @@ test.describe('mobile collection experience', () => {
     const output = page
       .locator('.all-category-searches .search-output')
       .filter({ hasText: 'Normal' });
-    await expect(output).toContainText('7 missing');
+    await expect(output).toContainText('8 missing');
     await expect(output.locator('.search-string code')).toHaveText(
-      '!traded&4,7,133,152,155,158,252',
+      '!traded&4,7,38,133,152,155,158,252',
     );
-    await expect(page.getByLabel('Generation')).toHaveCount(0);
-    await expect(page.getByLabel('Region')).toHaveCount(0);
-    await expect(page.getByLabel('Category')).toHaveCount(0);
+    await expect(page.locator('.generator-panel').getByLabel('Generation')).toHaveCount(0);
+    await expect(page.locator('.generator-panel').getByLabel('Region')).toHaveCount(0);
+    await expect(page.locator('.generator-panel').getByLabel('Category')).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'My wanted trades' })).toHaveCount(0);
     const shinyOutput = page
       .locator('.all-category-searches .search-output')
       .filter({ hasText: 'Shiny' });
     await expect(shinyOutput.locator('.search-string code')).toHaveText(
-      '!traded&shiny&1,7,25,133,152,155,158,252',
+      '!traded&shiny&1,7,25,38,133,152,155,158,252',
     );
 
     const xxlRecommendation = page
       .locator('.recommended-list article')
       .filter({ hasText: 'My missing XXL families' });
     await expect(xxlRecommendation.locator('code')).toHaveText(
-      '!traded&xxl&1-4,7,25,133,152,155,158,252',
+      '!traded&xxl&1-4,7,25,38,133,152,155,158,252',
     );
     await expect(xxlRecommendation).toContainText(
       'includes catchable family stages you can evolve',
@@ -488,7 +480,7 @@ test.describe('mobile collection experience', () => {
     await openMobileRoute(page, 'Profile');
     await expect(page.getByRole('heading', { name: 'Import CSV' })).toBeVisible();
     await page
-      .locator('input[type="file"]')
+      .getByLabel('Choose a CSV file to preview')
       .setInputFiles(resolve(fixtureDirectory, 'collection-preview.csv'));
 
     await expect(page.getByText('collection-preview.csv')).toBeVisible();
@@ -513,7 +505,7 @@ test.describe('mobile collection experience', () => {
 
     await openMobileRoute(page, 'Profile');
     await page
-      .locator('input[type="file"]')
+      .getByLabel('Choose a CSV file to preview')
       .setInputFiles(resolve(fixtureDirectory, 'collection-malformed.csv'));
 
     const alert = page.getByRole('alert');

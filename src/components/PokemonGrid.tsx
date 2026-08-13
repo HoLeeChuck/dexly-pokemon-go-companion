@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { deriveCollectionState } from '../../shared/domain';
 import type { CatalogItem, CategoryId, CollectionState } from '../../shared/types';
-import { typeTheme } from '../lib/typeTheme';
+import { catalogDisplayName } from '../lib/catalogDisplay';
 import { Icon } from './Icon';
 import { PokemonSprite } from './PokemonSprite';
 
@@ -67,7 +67,7 @@ export function PokemonGrid({
           <Icon name="search" />
         </span>
         <h3>No Pokémon found</h3>
-        <p>Try another name, generation, type, or collection state.</p>
+        <p>Try another name, region, collection form, or collection state.</p>
       </div>
     );
   }
@@ -76,6 +76,7 @@ export function PokemonGrid({
     <>
       <div className="pokemon-grid" data-testid="pokemon-grid">
         {items.slice(0, visibleCount).map((item) => {
+          const displayName = catalogDisplayName(item);
           const key = `${item.id}:${categoryId}`;
           const collected = collectedKeys.has(key);
           const rule = item.rules[categoryId] ?? 'unknown';
@@ -100,13 +101,16 @@ export function PokemonGrid({
               data-collection-complete={collectionComplete || undefined}
               data-primary-type={item.types[0]}
               data-secondary-type={item.types[1]}
-              data-testid={`pokemon-card-${item.dexNumber}`}
-              style={typeTheme(item.types)}
+              data-testid={
+                item.isDefault
+                  ? `pokemon-card-${item.dexNumber}`
+                  : `pokemon-card-${item.dexNumber}-${item.formKey}`
+              }
               aria-pressed={quickCheck && canToggle ? collected : undefined}
               aria-label={
                 quickCheck && canToggle
-                  ? `${collected ? 'Mark' : 'Mark'} ${item.name} as ${collected ? 'missing' : 'collected'} in ${categoryId}`
-                  : `Open ${item.name} details. ${stateLabel(state)} in ${categoryId}.`
+                  ? `Mark ${displayName} as ${collected ? 'missing' : 'collected'} in ${categoryId}`
+                  : `Open ${displayName} details. ${stateLabel(state)} in ${categoryId}.`
               }
               disabled={quickCheck && !canToggle}
               onClick={() => {
@@ -121,7 +125,7 @@ export function PokemonGrid({
                 <span className="pokemon-card__halo" />
                 <PokemonSprite item={item} shiny={shiny} className="pokemon-card__sprite" />
               </span>
-              <span className="pokemon-card__name">{item.name}</span>
+              <span className="pokemon-card__name">{displayName}</span>
               <span className={`state-pill state-pill--${state}`}>
                 {state === 'collected' && <Icon name="check" />}
                 {state === 'unreleased' && <Icon name="lock" />}

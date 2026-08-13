@@ -6,7 +6,9 @@ import {
 } from '../../shared/domain';
 import type { CatalogItem, Category, CategoryId, CollectionEntry } from '../../shared/types';
 import { buildDiscordMessages } from '../lib/discordShare';
+import type { SavedSearch } from '../lib/savedSearches';
 import { Icon } from './Icon';
+import { SearchBuilder } from './SearchBuilder';
 
 const SEARCH_CATEGORY_IDS = [
   'normal',
@@ -21,8 +23,7 @@ async function copyText(value: string): Promise<boolean> {
   } catch {
     const area = document.createElement('textarea');
     area.value = value;
-    area.style.position = 'fixed';
-    area.style.opacity = '0';
+    area.className = 'clipboard-fallback';
     document.body.append(area);
     area.select();
     const copied = document.execCommand('copy');
@@ -35,10 +36,16 @@ export function SearchLab({
   catalog,
   entries,
   categories,
+  savedSearches,
+  onSaveSearch,
+  onRemoveSearch,
 }: {
   catalog: readonly CatalogItem[];
   entries: readonly CollectionEntry[];
   categories: readonly Category[];
+  savedSearches: readonly SavedSearch[];
+  onSaveSearch: (search: SavedSearch) => void;
+  onRemoveSearch: (id: string) => void;
 }) {
   const [copied, setCopied] = useState<string | null>(null);
   const [copyFailure, setCopyFailure] = useState(false);
@@ -50,15 +57,20 @@ export function SearchLab({
     () => new Map(categories.map((category) => [category.id, category.label])),
     [categories],
   );
+  const nationalCatalog = useMemo(() => catalog.filter((item) => item.isDefault), [catalog]);
   const results = useMemo(
     () =>
       SEARCH_CATEGORY_IDS.map((categoryId) => ({
         categoryId,
         label: labels.get(categoryId) ?? categoryId.toUpperCase(),
-        generated: generateMissingSearchStrings(catalog, entries, categoryId, { maxLength: 4_500 }),
-        discord: generateMissingSearchStrings(catalog, entries, categoryId, { maxLength: 1_500 }),
+        generated: generateMissingSearchStrings(nationalCatalog, entries, categoryId, {
+          maxLength: 4_500,
+        }),
+        discord: generateMissingSearchStrings(nationalCatalog, entries, categoryId, {
+          maxLength: 1_500,
+        }),
       })),
-    [catalog, entries, labels],
+    [entries, labels, nationalCatalog],
   );
   const discordMessages = useMemo(
     () =>
@@ -71,19 +83,19 @@ export function SearchLab({
   );
   const personalXXL = useMemo(
     () =>
-      generatePersonalSizeCatchSearchStrings(catalog, entries, 'xxl', {
+      generatePersonalSizeCatchSearchStrings(nationalCatalog, entries, 'xxl', {
         maxLength: 4_500,
         evolutionFamilies: evolutionFamilyData.families,
       }),
-    [catalog, entries],
+    [entries, nationalCatalog],
   );
   const personalXXS = useMemo(
     () =>
-      generatePersonalSizeCatchSearchStrings(catalog, entries, 'xxs', {
+      generatePersonalSizeCatchSearchStrings(nationalCatalog, entries, 'xxs', {
         maxLength: 4_500,
         evolutionFamilies: evolutionFamilyData.families,
       }),
-    [catalog, entries],
+    [entries, nationalCatalog],
   );
   const recommendations = [
     {
@@ -115,6 +127,19 @@ export function SearchLab({
       window.setTimeout(() => setCopied((current) => (current === id ? null : current)), 1_800);
     } else {
       setCopyFailure(true);
+    }
+  }
+
+  async function shareDiscordMessage(message: string) {
+    if (!navigator.share) {
+      await handleCopy(message, 'discord-share');
+      return;
+    }
+    try {
+      await navigator.share({ title: 'My missing CatchGrid lists', text: message });
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') return;
+      await handleCopy(message, 'discord-share');
     }
   }
 
@@ -189,6 +214,13 @@ export function SearchLab({
         )}
       </section>
 
+      <SearchBuilder
+        savedSearches={savedSearches}
+        onSave={onSaveSearch}
+        onRemove={onRemoveSearch}
+        onCopy={(value, id) => void handleCopy(value, id)}
+      />
+
       <section className="panel discord-share-panel">
         <div className="panel-heading">
           <div>
@@ -234,7 +266,9 @@ export function SearchLab({
                   </strong>
                   <small>{message.length}/2,000 characters</small>
                 </div>
-                <pre>{message}</pre>
+                <pre tabIndex={0} aria-label={`Discord message ${index + 1} preview`}>
+                  {message}
+                </pre>
                 <button
                   type="button"
                   className="button button--primary button--full"
@@ -243,6 +277,16 @@ export function SearchLab({
                   <Icon name={copied === `discord-${index}` ? 'check' : 'clipboard'} />
                   {copied === `discord-${index}` ? 'Copied' : 'Copy Discord message'}
                 </button>
+                {index === 0 && discordMessages.length === 1 && (
+                  <button
+                    type="button"
+                    className="button button--secondary button--full"
+                    onClick={() => void shareDiscordMessage(message)}
+                  >
+                    <Icon name="upload" />
+                    {'share' in navigator ? 'Share message' : 'Copy to share'}
+                  </button>
+                )}
               </article>
             ))}
           </div>

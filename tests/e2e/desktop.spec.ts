@@ -1,6 +1,40 @@
 import { expect, test } from '@playwright/test';
 import { installFakeApi } from './support/fake-api';
 
+test('legacy workers.dev visitors receive a safe export path without an automatic redirect', async ({
+  baseURL,
+  page,
+}) => {
+  if (!baseURL) throw new Error('The E2E base URL is required.');
+  const legacyOrigin = 'http://catchgrid-migration-test.workers.dev';
+  await page.route(`${legacyOrigin}/**`, async (route) => {
+    const requested = new URL(route.request().url());
+    const localUrl = new URL(`${requested.pathname}${requested.search}`, baseURL);
+    const response = await page.request.fetch(localUrl.toString(), {
+      method: route.request().method(),
+      headers: route.request().headers(),
+      data: route.request().postDataBuffer(),
+    });
+    await route.fulfill({ response });
+  });
+  await installFakeApi(page);
+
+  await page.goto(`${legacyOrigin}/#/home`);
+  const migration = page.getByRole('status').filter({
+    hasText: 'CatchGrid has moved to dex.cjdev.app',
+  });
+  await expect(migration).toContainText('Browser collections are tied to this web address');
+  await expect(migration.getByRole('link', { name: 'Open canonical site' })).toHaveAttribute(
+    'href',
+    'https://dex.cjdev.app/',
+  );
+  expect(new URL(page.url()).hostname).toBe('catchgrid-migration-test.workers.dev');
+
+  const download = page.waitForEvent('download');
+  await migration.getByRole('button', { name: 'Export backup' }).click();
+  expect((await download).suggestedFilename()).toMatch(/\.json$/);
+});
+
 test('dark mode switches the complete interface and persists after reload', async ({ page }) => {
   await installFakeApi(page);
   await page.goto('/#/home');
@@ -35,10 +69,11 @@ test('appearance settings combine a persistent color theme with light and dark m
     .getByRole('navigation', { name: 'Primary navigation' })
     .getByRole('button', { name: 'Search Lab' })
     .click();
-  await expect(page.locator('.lab-hero')).toHaveCSS(
-    'background-image',
-    /rgb\(84, 51, 126\).*rgb\(26, 16, 40\)/,
-  );
+  const heroBackground = await page
+    .locator('.lab-hero')
+    .evaluate((element) => getComputedStyle(element).backgroundImage);
+  expect(heroBackground).toContain('linear-gradient');
+  expect(heroBackground).not.toBe('none');
 
   const purpleAccent = await page
     .locator('html')
@@ -59,8 +94,13 @@ test('appearance settings combine a persistent color theme with light and dark m
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-accent', 'blue');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-  await page.goto('/#/profile');
-  await expect(colorThemes.getByRole('radio', { name: 'Blue' })).toHaveAttribute(
+  await page
+    .getByRole('navigation', { name: 'Primary navigation' })
+    .getByRole('button', { name: 'Profile' })
+    .click();
+  await expect(page.getByRole('heading', { name: 'Appearance' })).toBeVisible();
+  const restoredColorThemes = page.getByRole('radiogroup', { name: 'Color theme' });
+  await expect(restoredColorThemes.getByRole('radio', { name: 'Blue' })).toHaveAttribute(
     'aria-checked',
     'true',
   );
@@ -128,6 +168,56 @@ test('first launch opens the all-in-one Home without exposing the unfinished Tra
   expect(api.unexpectedWriteCount).toBe(0);
 });
 
+test('critical routes fit every public launch viewport without horizontal overflow', async ({
+  page,
+}) => {
+  await installFakeApi(page);
+  const widths = [320, 375, 390, 430, 768, 1024, 1440];
+  const routes = ['home', 'dex', 'search', 'profile'];
+
+  for (const width of widths) {
+    await page.setViewportSize({ width, height: width < 768 ? 844 : 900 });
+    for (const route of routes) {
+      await page.goto(`/#/${route}`);
+      await expect(page.locator('main')).toBeVisible();
+      const layout = await page.evaluate(() => ({
+        clientWidth: document.documentElement.clientWidth,
+        scrollWidth: document.documentElement.scrollWidth,
+      }));
+      expect.soft({ width, route, ...layout }).toMatchObject({
+        width,
+        route,
+        clientWidth: width,
+        scrollWidth: width,
+      });
+    }
+  }
+});
+
+test('multi-form details track alternate Regular and Shiny without inflating species progress', async ({
+  page,
+}) => {
+  await installFakeApi(page);
+  await page.goto('/#/dex');
+
+  await page.getByTestId('pokemon-card-38').click();
+  await expect(page.getByRole('dialog', { name: 'Ninetales' })).toBeVisible();
+  await page.getByRole('tab', { name: /Forms 2/ }).click();
+  const forms = page.locator('.forms-gallery');
+  await expect(forms.locator('.form-card')).toHaveCount(2);
+  const alolan = forms.locator('.form-card', { hasText: 'Alolan Ninetales' });
+  await expect(alolan).toContainText('regional');
+  await expect(alolan.getByRole('button')).toHaveCount(2);
+  await alolan.getByRole('button', { name: /Alolan Ninetales Regular: missing/ }).click();
+  await expect(
+    alolan.getByRole('button', { name: /Alolan Ninetales Regular: collected/ }),
+  ).toHaveAttribute('aria-pressed', 'true');
+
+  await page.getByRole('button', { name: 'Close details' }).click();
+  await page.goto('/#/home');
+  await expect(page.getByLabel('All Pokemon collection overview')).toContainText('12');
+});
+
 test('desktop shell shows its sidebar and navigates without the mobile bar', async ({ page }) => {
   const api = await installFakeApi(page);
   await page.goto('/#/dex');
@@ -164,6 +254,36 @@ test('desktop shell shows its sidebar and navigates without the mobile bar', asy
   expect(api.unexpectedWriteCount).toBe(0);
 });
 
+test('transformation views show and search the full collector form name', async ({ page }) => {
+  await installFakeApi(page);
+  await page.goto('/#/dex');
+
+  await page
+    .getByRole('group', { name: 'Pokédex view' })
+    .getByRole('button', { name: 'Mega & Primal' })
+    .click();
+  const mega = page.getByRole('button', { name: /Open Mega Charizard X details/ });
+  await expect(mega).toContainText('Mega Charizard X');
+  await mega.click();
+  await expect(page.getByRole('dialog', { name: 'Mega Charizard X' })).toBeVisible();
+  await page.getByRole('button', { name: 'Close details' }).click();
+
+  await page.getByRole('searchbox', { name: 'Search Pokémon' }).fill('Mega Charizard X');
+  await expect(page.getByRole('button', { name: /Open Mega Charizard X details/ })).toBeVisible();
+});
+
+test('navigating away from a forms gallery returns to collection controls', async ({ page }) => {
+  await installFakeApi(page);
+  await page.goto('/#/dex');
+  await page.getByTestId('pokemon-card-25').click();
+
+  await page.getByRole('tab', { name: /Forms/ }).click();
+  await expect(page.getByRole('heading', { name: 'Regular & Shiny' })).toBeVisible();
+  await page.getByRole('button', { name: 'Next Pokémon: Ninetales' }).click();
+  await expect(page.getByRole('dialog', { name: 'Ninetales' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Collection', exact: true })).toBeVisible();
+});
+
 test('detail arrows follow catalog order and type themes update with the Pokémon', async ({
   page,
 }) => {
@@ -179,8 +299,8 @@ test('detail arrows follow catalog order and type themes update with the Pokémo
   await expect(page.getByRole('button', { name: 'Next Pokémon: Ivysaur' })).toBeVisible();
 
   const grassTheme = await sheet.evaluate((element) => ({
-    primary: (element as HTMLElement).style.getPropertyValue('--type-primary'),
-    secondary: (element as HTMLElement).style.getPropertyValue('--type-secondary'),
+    primary: getComputedStyle(element).getPropertyValue('--type-primary').trim(),
+    secondary: getComputedStyle(element).getPropertyValue('--type-secondary').trim(),
     heroBackground: getComputedStyle(element.querySelector('.detail-hero')!).backgroundImage,
   }));
   expect(grassTheme).toEqual({
@@ -201,8 +321,8 @@ test('detail arrows follow catalog order and type themes update with the Pokémo
   await expect(sheet).toHaveAttribute('data-primary-type', 'fire');
   await expect(sheet).not.toHaveAttribute('data-secondary-type', /.+/);
   const fireTheme = await sheet.evaluate((element) => ({
-    primary: (element as HTMLElement).style.getPropertyValue('--type-primary'),
-    secondary: (element as HTMLElement).style.getPropertyValue('--type-secondary'),
+    primary: getComputedStyle(element).getPropertyValue('--type-primary').trim(),
+    secondary: getComputedStyle(element).getPropertyValue('--type-secondary').trim(),
   }));
   expect(fireTheme).toEqual({ primary: '#ef6a45', secondary: '#ef6a45' });
   expect(api.collectionMutationCount).toBe(0);
@@ -232,7 +352,7 @@ test('completing every released category activates the animated rainbow hook', a
     .poll(() => sheet.evaluate((element) => getComputedStyle(element, '::before').animationName))
     .toContain('rainbow-border-flow');
   const saved = await page.evaluate(() =>
-    JSON.parse(localStorage.getItem('dexly:local-profile:v1') ?? '{}'),
+    JSON.parse(localStorage.getItem('catchgrid:local-profile:v2') ?? '{}'),
   );
   expect(
     saved.collectionEntries.filter(

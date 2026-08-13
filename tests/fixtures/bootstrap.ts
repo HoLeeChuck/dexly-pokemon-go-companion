@@ -1,5 +1,5 @@
-import type { BootstrapResponse } from '../../src/lib/api';
-import type { CatalogItem, Category } from '../../shared/types';
+import type { BootstrapResponse } from '../../src/lib/api.ts';
+import type { CatalogItem, Category } from '../../shared/types.ts';
 
 const categories: Category[] = [
   {
@@ -88,6 +88,11 @@ function catalogItem(
     region,
     types,
     isDefault: true,
+    variantKind: 'standard',
+    collectorGroupId: `species-${dex}`,
+    isReleased: true,
+    isTradeable: true,
+    formSortOrder: 0,
     searchExact: true,
     rules: {
       normal: 'released',
@@ -109,6 +114,67 @@ const catalog: CatalogItem[] = [
   catalogItem(4, 'Charmander', 1, 'kanto', ['fire']),
   catalogItem(7, 'Squirtle', 1, 'kanto', ['water']),
   catalogItem(25, 'Pikachu', 1, 'kanto', ['electric']),
+  catalogItem(38, 'Ninetales', 1, 'kanto', ['fire']),
+  {
+    ...catalogItem(38, 'Ninetales', 1, 'kanto', ['ice', 'fairy']),
+    id: 'form-0038-alola',
+    formName: 'Alolan Ninetales',
+    formKey: 'alola',
+    isDefault: false,
+    variantKind: 'regional',
+    regionalOrigin: 'alola',
+    formSortOrder: 10,
+    rules: {
+      normal: 'released',
+      shiny: 'released',
+      lucky: 'ineligible',
+      hundo: 'ineligible',
+      xxl: 'ineligible',
+      xxs: 'ineligible',
+      shadow: 'ineligible',
+      purified: 'ineligible',
+    },
+  },
+  {
+    ...catalogItem(6, 'Charizard', 1, 'kanto', ['fire', 'flying']),
+    id: 'form-0006-mega-x',
+    formName: 'Mega Charizard X',
+    formKey: 'mega-x',
+    isDefault: false,
+    variantKind: 'mega',
+    transformationGroup: 'mega-charizard',
+    formSortOrder: 100,
+    rules: {
+      normal: 'released',
+      shiny: 'released',
+      lucky: 'ineligible',
+      hundo: 'ineligible',
+      xxl: 'ineligible',
+      xxs: 'ineligible',
+      shadow: 'ineligible',
+      purified: 'ineligible',
+    },
+  },
+  {
+    ...catalogItem(25, 'Pikachu', 1, 'kanto', ['electric']),
+    id: 'form-0025-gigantamax',
+    formName: 'Gigantamax Pikachu',
+    formKey: 'gigantamax',
+    isDefault: false,
+    variantKind: 'gigantamax',
+    transformationGroup: 'gigantamax-pikachu',
+    formSortOrder: 200,
+    rules: {
+      normal: 'released',
+      shiny: 'released',
+      lucky: 'ineligible',
+      hundo: 'ineligible',
+      xxl: 'ineligible',
+      xxs: 'ineligible',
+      shadow: 'ineligible',
+      purified: 'ineligible',
+    },
+  },
   catalogItem(133, 'Eevee', 1, 'kanto', ['normal']),
   catalogItem(152, 'Chikorita', 2, 'johto', ['grass']),
   catalogItem(155, 'Cyndaquil', 2, 'johto', ['fire']),

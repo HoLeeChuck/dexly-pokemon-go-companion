@@ -1,17 +1,10 @@
-import {
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-  type CSSProperties,
-  type FormEvent,
-} from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { deriveCollectionState } from '../shared/domain';
 import type {
   CatalogItem,
   CategoryId,
   CollectionEntry,
+  PublicCatalogPayload,
   TradeRequestTrait,
   TradeSpecimen,
   WantedEntry,
@@ -29,32 +22,50 @@ import {
   storedAccessToken,
   type BootstrapResponse,
 } from './lib/api';
-import { loadLocalProfile, saveLocalProfile } from './lib/localProfile';
+import {
+  applyLocalCsvImport,
+  emptyLocalProfile,
+  listLocalProfileSnapshots,
+  loadLocalProfileResult,
+  removeLocalSavedSearch,
+  resetCorruptLocalProfile,
+  restoreLocalProfileSnapshot,
+  saveLocalProfileSafely,
+  updateLocalProfileSettings,
+  upsertLocalSavedSearch,
+  type LocalProfile,
+  type LocalProfileLoadResult,
+} from './lib/localProfile';
+import { createPortableProfileBackupJson, restorePortableProfileBackup } from './lib/profileBackup';
+import type { SavedSearch } from './lib/savedSearches';
+import { catalogDisplayName } from './lib/catalogDisplay';
 import { previewCanonicalWideCsv } from '../shared/csv';
+import regionMedalPolicy from '../catalog/region-medals.v1.json';
 
 type PublicRouteId = 'home' | 'dex' | 'search' | 'profile';
 type RouteId = PublicRouteId | 'owner';
 type CollectionFilter = 'all' | 'missing' | 'collected';
+type DexView = 'species' | 'mega' | 'gigantamax';
 type MedalTier = 'none' | 'bronze' | 'silver' | 'gold' | 'platinum';
 type StorageMode = 'browser' | 'cloud';
 type Theme = 'light' | 'dark';
 type AccentTheme = 'green' | 'blue' | 'purple' | 'red' | 'orange' | 'pink';
 
-const REGION_MEDAL_REQUIREMENTS: Record<
+const REGION_MEDAL_REQUIREMENTS = Object.fromEntries(
+  regionMedalPolicy.regions.map((region) => [
+    region.label,
+    { categoryThresholds: region.categoryThresholds, mark: region.mark },
+  ]),
+) as Record<
   string,
-  { bronze: number; silver: number; gold: number; platinum: number; mark: string }
-> = {
-  Kanto: { bronze: 20, silver: 50, gold: 100, platinum: 151, mark: 'K' },
-  Johto: { bronze: 5, silver: 30, gold: 70, platinum: 100, mark: 'J' },
-  Hoenn: { bronze: 5, silver: 40, gold: 90, platinum: 135, mark: 'H' },
-  Sinnoh: { bronze: 5, silver: 30, gold: 80, platinum: 107, mark: 'S' },
-  Unova: { bronze: 5, silver: 50, gold: 100, platinum: 156, mark: 'U' },
-  Kalos: { bronze: 5, silver: 20, gold: 50, platinum: 72, mark: 'K' },
-  Alola: { bronze: 5, silver: 25, gold: 50, platinum: 86, mark: 'A' },
-  Galar: { bronze: 5, silver: 25, gold: 50, platinum: 89, mark: 'G' },
-  Hisui: { bronze: 1, silver: 3, gold: 5, platinum: 7, mark: 'H' },
-  Paldea: { bronze: 5, silver: 30, gold: 80, platinum: 104, mark: 'P' },
-};
+  {
+    categoryThresholds: Record<
+      CategoryId,
+      { bronze: number; silver: number; gold: number; platinum: number }
+    >;
+    mark: string;
+  }
+>;
 
 const REGION_MEDAL_ASSET_IDS: Record<string, number> = {
   Kanto: 2,
@@ -68,9 +79,6 @@ const REGION_MEDAL_ASSET_IDS: Record<string, number> = {
   Hisui: 79,
   Paldea: 82,
 };
-const REGION_MEDAL_ASSET_ROOT =
-  'https://raw.githubusercontent.com/PokeMiners/pogo_assets/1a4ad1fc6c39f361ea85d53fc3040ce482ee9d90/Images/Badges/Achievements/';
-
 const routes: Array<{ id: PublicRouteId; label: string; icon: IconName }> = [
   { id: 'home', label: 'Home', icon: 'home' },
   { id: 'dex', label: 'Dex', icon: 'grid' },
@@ -108,9 +116,17 @@ function titleCase(value: string): string {
   return value.toLowerCase().replace(/(^|[\s-])\p{L}/gu, (letter) => letter.toUpperCase());
 }
 
+function readLocalSetting(key: string): string | null {
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
 function medalTier(
   count: number,
-  requirements: (typeof REGION_MEDAL_REQUIREMENTS)[string],
+  requirements: { bronze: number; silver: number; gold: number; platinum: number },
 ): MedalTier {
   if (count >= requirements.platinum) return 'platinum';
   if (count >= requirements.gold) return 'gold';
@@ -121,13 +137,11 @@ function medalTier(
 
 function RegionMedal({ region, tier }: { region?: string; tier: MedalTier | 'all' }) {
   const assetId = region ? REGION_MEDAL_ASSET_IDS[region] : undefined;
-  const style = assetId
-    ? ({
-        '--region-medal-icon': `url("${REGION_MEDAL_ASSET_ROOT}Badge_${assetId}.png")`,
-      } as CSSProperties)
-    : undefined;
   return (
-    <span className={`region-medal region-medal--${tier}`} style={style} aria-hidden="true">
+    <span
+      className={`region-medal region-medal--${tier}${assetId ? ` region-medal--asset-${assetId}` : ''}`}
+      aria-hidden="true"
+    >
       {assetId ? <i /> : '◎'}
     </span>
   );
@@ -186,23 +200,33 @@ function MobileNavigationHeader({
   onNavigate: (route: RouteId) => void;
 }) {
   const [open, setOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
-    if (!open) return;
-    const previousOverflow = document.body.style.overflow;
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setOpen(false);
-    };
-    document.body.style.overflow = 'hidden';
-    window.addEventListener('keydown', closeOnEscape);
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    if (!open) {
+      if (dialog.open) dialog.close();
+      return;
+    }
+    if (!dialog.open) dialog.showModal();
+    document.body.classList.add('scroll-locked');
+    window.requestAnimationFrame(() =>
+      dialog.querySelector<HTMLButtonElement>('nav button')?.focus(),
+    );
     return () => {
-      document.body.style.overflow = previousOverflow;
-      window.removeEventListener('keydown', closeOnEscape);
+      document.body.classList.remove('scroll-locked');
     };
   }, [open]);
 
-  function navigate(nextRoute: RouteId) {
+  function closeMenu() {
     setOpen(false);
+    window.requestAnimationFrame(() => triggerRef.current?.focus());
+  }
+
+  function navigate(nextRoute: RouteId) {
+    closeMenu();
     onNavigate(nextRoute);
   }
 
@@ -211,9 +235,12 @@ function MobileNavigationHeader({
       <header className="mobile-topbar">
         <AppBrand compact onHome={() => navigate('home')} />
         <button
+          ref={triggerRef}
           type="button"
           className="mobile-menu-button"
           aria-label={open ? 'Close navigation menu' : 'Open navigation menu'}
+          aria-hidden={open || undefined}
+          tabIndex={open ? -1 : 0}
           aria-expanded={open}
           aria-controls="mobile-primary-menu"
           onClick={() => setOpen((value) => !value)}
@@ -221,36 +248,57 @@ function MobileNavigationHeader({
           <Icon name={open ? 'close' : 'menu'} />
         </button>
       </header>
-      {open && (
-        <div className="mobile-nav-overlay" onClick={() => setOpen(false)}>
-          <nav
-            id="mobile-primary-menu"
-            className="mobile-nav-panel"
-            aria-label="Primary navigation"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <div className="mobile-nav-panel__heading">
-              <span className="eyebrow">Pokémon GO collection companion</span>
-              <strong>Explore CatchGrid</strong>
-            </div>
-            {routes.map((item) => (
-              <button
-                type="button"
-                key={item.id}
-                className={route === item.id ? 'is-active' : ''}
-                aria-current={route === item.id ? 'page' : undefined}
-                onClick={() => navigate(item.id)}
-              >
-                <span>
-                  <Icon name={item.icon} />
-                </span>
-                <strong>{item.label}</strong>
-                <Icon name="chevron-right" />
-              </button>
-            ))}
-          </nav>
-        </div>
-      )}
+      <dialog
+        ref={dialogRef}
+        className="mobile-nav-overlay"
+        aria-label="CatchGrid navigation"
+        onCancel={(event) => {
+          event.preventDefault();
+          closeMenu();
+        }}
+        onClick={(event) => {
+          if (event.target === dialogRef.current) closeMenu();
+        }}
+      >
+        {open && (
+          <>
+            <button
+              type="button"
+              className="mobile-menu-button mobile-nav-close"
+              aria-label="Close navigation menu"
+              onClick={closeMenu}
+            >
+              <Icon name="close" />
+            </button>
+            <nav
+              id="mobile-primary-menu"
+              className="mobile-nav-panel"
+              aria-label="Primary navigation"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="mobile-nav-panel__heading">
+                <span className="eyebrow">Pokémon GO collection companion</span>
+                <strong>Explore CatchGrid</strong>
+              </div>
+              {routes.map((item) => (
+                <button
+                  type="button"
+                  key={item.id}
+                  className={route === item.id ? 'is-active' : ''}
+                  aria-current={route === item.id ? 'page' : undefined}
+                  onClick={() => navigate(item.id)}
+                >
+                  <span>
+                    <Icon name={item.icon} />
+                  </span>
+                  <strong>{item.label}</strong>
+                  <Icon name="chevron-right" />
+                </button>
+              ))}
+            </nav>
+          </>
+        )}
+      </dialog>
     </>
   );
 }
@@ -310,6 +358,16 @@ function AccessDialog({
             'Enter your private cloud access key. Public browser collections never require this key.'}
         </p>
         <label>
+          <span className="visually-hidden">Username</span>
+          <input
+            className="visually-hidden"
+            type="text"
+            name="username"
+            autoComplete="username"
+            value="cody-cloud-owner"
+            readOnly
+            tabIndex={-1}
+          />
           Cloud access key
           <input
             type="password"
@@ -367,33 +425,155 @@ function ErrorScreen({ message, onRetry }: { message: string; onRetry: () => voi
       <button className="button button--primary" type="button" onClick={onRetry}>
         <Icon name="refresh" /> Try again
       </button>
-      <small>Run the local D1 migrations before the first development start.</small>
+      <small>
+        Your browser collection has not been erased. Retry when the catalog is available.
+      </small>
     </div>
+  );
+}
+
+function downloadText(name: string, value: string, type = 'application/json') {
+  const url = URL.createObjectURL(new Blob([value], { type }));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = name;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+function RecoveryScreen({
+  result,
+  onRestored,
+}: {
+  result: LocalProfileLoadResult;
+  onRestored: () => void;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [message, setMessage] = useState('');
+  const snapshots = listLocalProfileSnapshots();
+
+  async function restore(file: File) {
+    const restored = restorePortableProfileBackup(await file.text());
+    if (!restored.ok) {
+      setMessage(restored.error.message);
+      return;
+    }
+    onRestored();
+  }
+
+  return (
+    <main className="recovery-screen">
+      <AppBrand />
+      <span className="recovery-screen__icon">
+        <Icon name="shield" />
+      </span>
+      <span className="eyebrow">Your data was preserved</span>
+      <h1>CatchGrid found a damaged browser profile.</h1>
+      <p>
+        CatchGrid did not replace it with an empty collection. Download the preserved data for
+        support, or restore a known-good CatchGrid JSON backup.
+      </p>
+      {result.recovery && (
+        <button
+          type="button"
+          className="button button--secondary"
+          onClick={() =>
+            downloadText(
+              `catchgrid-recovery-${new Date().toISOString().slice(0, 10)}.json`,
+              result.recovery!.rawPayload,
+            )
+          }
+        >
+          <Icon name="download" /> Download preserved data
+        </button>
+      )}
+      <input
+        ref={inputRef}
+        type="file"
+        accept="application/json,.json"
+        hidden
+        onChange={(event) => {
+          const file = event.target.files?.[0];
+          if (file) void restore(file);
+        }}
+      />
+      <button
+        type="button"
+        className="button button--primary"
+        onClick={() => inputRef.current?.click()}
+      >
+        <Icon name="upload" /> Restore portable backup
+      </button>
+      {snapshots.length > 0 && (
+        <section className="recovery-screen__snapshots" aria-labelledby="recovery-snapshots-title">
+          <h2 id="recovery-snapshots-title">Browser recovery snapshots</h2>
+          {snapshots.map((snapshot) => (
+            <article key={snapshot.id}>
+              <span>
+                <strong>{new Date(snapshot.createdAt).toLocaleString()}</strong>
+                <small>{snapshot.reason}</small>
+              </span>
+              <button
+                type="button"
+                className="button button--secondary"
+                onClick={() => {
+                  const restored = restoreLocalProfileSnapshot(snapshot.id);
+                  if (!restored.ok) setMessage(restored.error.message);
+                  else onRestored();
+                }}
+              >
+                Restore
+              </button>
+            </article>
+          ))}
+        </section>
+      )}
+      <details className="recovery-reset">
+        <summary>Start over only if recovery is impossible</summary>
+        <p>This permanently replaces the damaged primary profile with an empty collection.</p>
+        <button
+          type="button"
+          className="button button--danger"
+          onClick={() => {
+            const reset = resetCorruptLocalProfile();
+            if (!reset.ok) setMessage(reset.error.message);
+            else onRestored();
+          }}
+        >
+          Reset browser collection
+        </button>
+      </details>
+      {message && <p role="alert">{message}</p>}
+      <small>{result.recovery?.reason}</small>
+    </main>
   );
 }
 
 export default function App() {
   const [route, setRoute] = useState<RouteId>(routeFromLocation);
   const [bootstrap, setBootstrap] = useState<BootstrapResponse | null>(null);
-  const [status, setStatus] = useState<'loading' | 'ready' | 'locked' | 'error'>('loading');
+  const [status, setStatus] = useState<'loading' | 'ready' | 'locked' | 'error' | 'recovery'>(
+    'loading',
+  );
+  const [localLoadResult, setLocalLoadResult] = useState<LocalProfileLoadResult | null>(null);
   const [loadMessage, setLoadMessage] = useState('');
   const [accessDialogOpen, setAccessDialogOpen] = useState(false);
   const [storageMode, setStorageMode] = useState<StorageMode>(() =>
     storedAccessToken() ? 'cloud' : 'browser',
   );
   const [theme, setTheme] = useState<Theme>(() => {
-    const saved = localStorage.getItem('dexly:theme');
+    const saved = readLocalSetting('dexly:theme');
     if (saved === 'light' || saved === 'dark') return saved;
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   });
   const [accentTheme, setAccentTheme] = useState<AccentTheme>(() => {
-    const saved = localStorage.getItem('dexly:accent-theme');
+    const saved = readLocalSetting('dexly:accent-theme');
     return ['green', 'blue', 'purple', 'red', 'orange', 'pink'].includes(saved ?? '')
       ? (saved as AccentTheme)
       : 'green';
   });
   const [activeCategory, setActiveCategory] = useState<CategoryId>(() => {
-    const saved = localStorage.getItem('dexly:active-category') as CategoryId | null;
+    const saved = readLocalSetting('dexly:active-category') as CategoryId | null;
     return saved &&
       ['normal', 'shiny', 'lucky', 'hundo', 'xxl', 'xxs', 'shadow', 'purified'].includes(saved)
       ? saved
@@ -402,12 +582,15 @@ export default function App() {
   const [query, setQuery] = useState('');
   const [region, setRegion] = useState('all');
   const [collectionFilter, setCollectionFilter] = useState<CollectionFilter>('all');
+  const [dexView, setDexView] = useState<DexView>('species');
   const [categoryPickerOpen, setCategoryPickerOpen] = useState(false);
   const [regionPickerOpen, setRegionPickerOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [quickCheck, setQuickCheck] = useState(false);
   const [selected, setSelected] = useState<CatalogItem | null>(null);
   const [collectionEntries, setCollectionEntries] = useState<CollectionEntry[]>([]);
+  const [savedSearches, setSavedSearches] = useState<SavedSearch[]>([]);
+  const [updateReady, setUpdateReady] = useState(false);
   const [wantedEntries, setWantedEntries] = useState<WantedEntry[]>([]);
   const [, setTradeSpecimens] = useState<TradeSpecimen[]>([]);
   const [pendingKeys, setPendingKeys] = useState<Set<string>>(new Set());
@@ -416,6 +599,7 @@ export default function App() {
   const collectionRef = useRef<CollectionEntry[]>([]);
   const wantedRef = useRef<WantedEntry[]>([]);
   const tradeRef = useRef<TradeSpecimen[]>([]);
+  const localProfileRef = useRef<LocalProfile>(emptyLocalProfile());
   const undoRef = useRef(
     new Map<string, { formId: string; categoryId: CategoryId; previous: boolean }>(),
   );
@@ -429,25 +613,45 @@ export default function App() {
     owner: 0,
   });
 
-  function adoptPayload(payload: BootstrapResponse) {
-    const local = loadLocalProfile();
-    const hydrated = {
+  function adoptPayload(payload: PublicCatalogPayload, result = loadLocalProfileResult()) {
+    setLocalLoadResult(result);
+    const local = result.profile;
+    const localEntries = [...local.collectionEntries, ...local.formCollectionEntries];
+    const hydrated: BootstrapResponse = {
       ...payload,
       profileId: 'profile:browser-local',
       authMode: 'browser' as const,
       revision: local.revision,
-      collectionEntries: local.collectionEntries,
+      collectionEntries: localEntries,
       wantedEntries: local.wantedEntries,
       tradeSpecimens: local.tradeSpecimens,
     };
+    if (result.status === 'corrupt') {
+      setBootstrap(hydrated);
+      setStatus('recovery');
+      return;
+    }
     setBootstrap(hydrated);
-    setCollectionEntries([...local.collectionEntries]);
-    collectionRef.current = [...local.collectionEntries];
+    localProfileRef.current = local;
+    setCollectionEntries(localEntries);
+    collectionRef.current = localEntries;
+    setSavedSearches([...local.savedSearches]);
     setWantedEntries([...local.wantedEntries]);
     wantedRef.current = [...local.wantedEntries];
     setTradeSpecimens([...local.tradeSpecimens]);
     tradeRef.current = [...local.tradeSpecimens];
     revisionRef.current = local.revision;
+    if (local.settings.theme) setTheme(local.settings.theme);
+    if (local.settings.accentTheme) setAccentTheme(local.settings.accentTheme);
+    if (local.settings.activeCategory) setActiveCategory(local.settings.activeCategory);
+    if (result.status === 'migrated') {
+      setToast({ tone: 'info', message: 'Your browser collection was upgraded safely.' });
+    } else if (result.status === 'unavailable') {
+      setToast({
+        tone: 'error',
+        message: result.warnings[0] ?? 'Browser storage is unavailable. Changes cannot be saved.',
+      });
+    }
     setStatus('ready');
   }
 
@@ -460,18 +664,46 @@ export default function App() {
     setTradeSpecimens([...payload.tradeSpecimens]);
     tradeRef.current = [...payload.tradeSpecimens];
     revisionRef.current = payload.revision;
+    const local = loadLocalProfileResult();
+    if (local.status !== 'corrupt') {
+      localProfileRef.current = local.profile;
+      setSavedSearches([...local.profile.savedSearches]);
+    }
     setStorageMode('cloud');
     setStatus('ready');
   }
 
-  function persistLocalState(revision = revisionRef.current) {
-    saveLocalProfile({
-      version: 1,
+  function localProfileWithEntries(entries: readonly CollectionEntry[], revision: number) {
+    const defaultFormIds = new Set(
+      bootstrap?.catalog.filter((item) => item.isDefault).map((item) => item.id) ?? [],
+    );
+    return {
+      ...localProfileRef.current,
       revision,
-      collectionEntries: collectionRef.current,
+      catalogVersion: bootstrap?.catalogVersion,
+      collectionEntries: entries.filter((entry) => defaultFormIds.has(entry.formId)),
+      formCollectionEntries: entries
+        .filter((entry) => !defaultFormIds.has(entry.formId))
+        .filter(
+          (entry): entry is typeof entry & { categoryId: 'normal' | 'shiny' } =>
+            entry.categoryId === 'normal' || entry.categoryId === 'shiny',
+        ),
       wantedEntries: wantedRef.current,
       tradeSpecimens: tradeRef.current,
+    } satisfies LocalProfile;
+  }
+
+  function persistLocalState(
+    entries = collectionRef.current,
+    revision = revisionRef.current,
+    reason = 'Before a collection update',
+  ) {
+    const saved = saveLocalProfileSafely(localProfileWithEntries(entries, revision), {
+      snapshotReason: reason,
     });
+    if (!saved.ok) return saved;
+    localProfileRef.current = saved.profile;
+    return saved;
   }
 
   async function load(token = storedAccessToken()) {
@@ -483,27 +715,31 @@ export default function App() {
         return;
       }
       const catalogPayload = await api.catalog();
-      const local = loadLocalProfile();
+      const localResult = loadLocalProfileResult();
+      const local = localResult.profile;
       const hasLocalState =
         local.revision > 0 ||
         local.collectionEntries.length > 0 ||
+        local.formCollectionEntries.length > 0 ||
+        local.savedSearches.length > 0 ||
         local.wantedEntries.length > 0 ||
         local.tradeSpecimens.length > 0;
       if (!hasLocalState && token) {
         try {
           const legacy = await api.bootstrap(token);
-          saveLocalProfile({
-            version: 1,
+          const migrated = {
+            ...local,
             revision: legacy.revision,
             collectionEntries: [...legacy.collectionEntries],
             wantedEntries: [...legacy.wantedEntries],
             tradeSpecimens: [...legacy.tradeSpecimens],
-          });
+          };
+          saveLocalProfileSafely(migrated, { snapshotReason: 'Before Cody Cloud migration' });
         } catch {
           // A stale legacy key must not prevent the browser-local collection from opening.
         }
       }
-      adoptPayload(catalogPayload);
+      adoptPayload(catalogPayload, localResult);
     } catch (error) {
       if (
         error instanceof ApiClientError &&
@@ -543,8 +779,11 @@ export default function App() {
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
-    document.documentElement.style.colorScheme = theme;
-    localStorage.setItem('dexly:theme', theme);
+    try {
+      localStorage.setItem('dexly:theme', theme);
+    } catch {
+      // The profile UI reports storage failures; appearance still works for this session.
+    }
     document
       .querySelector('meta[name="theme-color"]')
       ?.setAttribute('content', theme === 'dark' ? '#071c19' : '#0c2723');
@@ -552,8 +791,18 @@ export default function App() {
 
   useEffect(() => {
     document.documentElement.dataset.accent = accentTheme;
-    localStorage.setItem('dexly:accent-theme', accentTheme);
+    try {
+      localStorage.setItem('dexly:accent-theme', accentTheme);
+    } catch {
+      // The profile UI reports storage failures; appearance still works for this session.
+    }
   }, [accentTheme]);
+
+  useEffect(() => {
+    const onUpdateReady = () => setUpdateReady(true);
+    window.addEventListener('catchgrid:update-ready', onUpdateReady);
+    return () => window.removeEventListener('catchgrid:update-ready', onUpdateReady);
+  }, []);
 
   useEffect(() => {
     const onLocationChange = () => setRoute(routeFromLocation());
@@ -583,9 +832,18 @@ export default function App() {
   }, [searchOpen]);
 
   function changeCategory(value: CategoryId) {
+    if (storageMode === 'browser' && status === 'ready') {
+      const saved = updateLocalProfileSettings(localProfileRef.current, {
+        activeCategory: value,
+      });
+      if (!saved.ok) {
+        setToast({ tone: 'error', message: saved.error.message });
+        return;
+      }
+      localProfileRef.current = saved.profile;
+    }
     setActiveCategory(value);
     setCategoryPickerOpen(false);
-    localStorage.setItem('dexly:active-category', value);
   }
 
   function changeRegion(value: string) {
@@ -593,11 +851,34 @@ export default function App() {
     setRegionPickerOpen(false);
   }
 
+  function changeTheme(value: Theme) {
+    if (storageMode !== 'browser' || status !== 'ready') {
+      setTheme(value);
+      return;
+    }
+    const saved = updateLocalProfileSettings(localProfileRef.current, { theme: value });
+    if (saved.ok) {
+      localProfileRef.current = saved.profile;
+      setTheme(value);
+    } else setToast({ tone: 'error', message: saved.error.message });
+  }
+
+  function changeAccentTheme(value: AccentTheme) {
+    if (storageMode !== 'browser' || status !== 'ready') {
+      setAccentTheme(value);
+      return;
+    }
+    const saved = updateLocalProfileSettings(localProfileRef.current, { accentTheme: value });
+    if (saved.ok) {
+      localProfileRef.current = saved.profile;
+      setAccentTheme(value);
+    } else setToast({ tone: 'error', message: saved.error.message });
+  }
+
   function updateLocalCollection(formId: string, categoryId: CategoryId, collected: boolean) {
     const next = setEntryLocally(collectionRef.current, formId, categoryId, collected);
     collectionRef.current = next;
     setCollectionEntries(next);
-    if (storageMode === 'browser') persistLocalState();
   }
 
   function updateLocalWanted(formId: string, categoryId: TradeRequestTrait, wanted: boolean) {
@@ -607,7 +888,6 @@ export default function App() {
     const next = wanted ? [...rest, { formId, categoryId, wanted: true }] : rest;
     wantedRef.current = next;
     setWantedEntries(next);
-    if (storageMode === 'browser') persistLocalState();
   }
 
   function changeCollection(item: CatalogItem, categoryId: CategoryId, desired: boolean) {
@@ -616,6 +896,40 @@ export default function App() {
     const previous = collectionRef.current.some(
       (entry) => entry.formId === item.id && entry.categoryId === categoryId && entry.collected,
     );
+
+    if (storageMode === 'browser') {
+      setPendingKeys((current) => new Set(current).add(key));
+      mutationQueue.current = mutationQueue.current.then(async () => {
+        const next = setEntryLocally(collectionRef.current, item.id, categoryId, desired);
+        const nextRevision = revisionRef.current + 1;
+        const displayName = catalogDisplayName(item);
+        const saved = persistLocalState(next, nextRevision, `Before changing ${displayName}`);
+        if (!saved.ok) {
+          setToast({ tone: 'error', message: saved.error.message });
+        } else {
+          collectionRef.current = [
+            ...saved.profile.collectionEntries,
+            ...saved.profile.formCollectionEntries,
+          ];
+          setCollectionEntries(collectionRef.current);
+          revisionRef.current = saved.profile.revision;
+          const batchId = `local:${crypto.randomUUID()}`;
+          undoRef.current.set(batchId, { formId: item.id, categoryId, previous });
+          setToast({
+            tone: 'success',
+            message: `${displayName} marked ${desired ? 'collected' : 'missing'} in ${categoryId}.`,
+            batchId,
+          });
+        }
+        setPendingKeys((current) => {
+          const remaining = new Set(current);
+          remaining.delete(key);
+          return remaining;
+        });
+      });
+      return;
+    }
+
     updateLocalCollection(item.id, categoryId, desired);
     setPendingKeys((current) => new Set(current).add(key));
 
@@ -642,29 +956,11 @@ export default function App() {
           }
           setToast({
             tone: 'success',
-            message: `${item.name} synced ${desired ? 'collected' : 'missing'} in ${categoryId}.`,
+            message: `${catalogDisplayName(item)} synced ${desired ? 'collected' : 'missing'} in ${categoryId}.`,
             batchId: result.batchId ?? undefined,
           });
           return;
         }
-        const batchId = `local:${crypto.randomUUID()}`;
-        undoRef.current.set(batchId, { formId: item.id, categoryId, previous });
-        revisionRef.current += 1;
-        if (
-          desired &&
-          (categoryId === 'xxl' || categoryId === 'xxs') &&
-          wantedRef.current.some(
-            (entry) => entry.formId === item.id && entry.categoryId === categoryId && entry.wanted,
-          )
-        ) {
-          updateLocalWanted(item.id, categoryId, false);
-        }
-        persistLocalState();
-        setToast({
-          tone: 'success',
-          message: `${item.name} marked ${desired ? 'collected' : 'missing'} in ${categoryId}.`,
-          batchId,
-        });
       } catch (error) {
         updateLocalCollection(item.id, categoryId, previous);
         setToast({
@@ -711,10 +1007,24 @@ export default function App() {
       });
       return;
     }
-    updateLocalCollection(change.formId, change.categoryId, change.previous);
+    const next = setEntryLocally(
+      collectionRef.current,
+      change.formId,
+      change.categoryId,
+      change.previous,
+    );
+    const saved = persistLocalState(next, revisionRef.current + 1, 'Before undoing a change');
+    if (!saved.ok) {
+      setToast({ tone: 'error', message: saved.error.message });
+      return;
+    }
+    collectionRef.current = [
+      ...saved.profile.collectionEntries,
+      ...saved.profile.formCollectionEntries,
+    ];
+    setCollectionEntries(collectionRef.current);
+    revisionRef.current = saved.profile.revision;
     undoRef.current.delete(batchId);
-    revisionRef.current += 1;
-    persistLocalState();
     setToast({ tone: 'info', message: 'Last checklist change undone.' });
   }
 
@@ -757,15 +1067,20 @@ export default function App() {
           'The import contains unresolved entries.',
       );
     }
-    let next = collectionRef.current;
-    for (const change of preview.changes) {
-      if (change.disposition === 'add' || change.disposition === 'remove')
-        next = setEntryLocally(next, change.formId, change.categoryId, change.after);
-    }
-    collectionRef.current = next;
-    setCollectionEntries(next);
-    revisionRef.current += 1;
-    persistLocalState();
+    const applied = applyLocalCsvImport(
+      localProfileRef.current,
+      preview,
+      bootstrap.catalog,
+      input.fileName,
+    );
+    if (!applied.ok) throw applied.error;
+    localProfileRef.current = applied.profile;
+    collectionRef.current = [
+      ...applied.profile.collectionEntries,
+      ...applied.profile.formCollectionEntries,
+    ];
+    setCollectionEntries(collectionRef.current);
+    revisionRef.current = applied.profile.revision;
     setToast({
       tone: 'success',
       message: `Import applied: ${preview.summary.added} added, ${preview.summary.removed} removed.`,
@@ -784,6 +1099,86 @@ export default function App() {
     setStorageMode('browser');
     adoptPayload(await api.catalog());
     setToast({ tone: 'info', message: "Using this browser's local collection." });
+  }
+
+  function saveSearch(search: SavedSearch) {
+    const saved = upsertLocalSavedSearch(localProfileRef.current, search);
+    if (!saved.ok) {
+      setToast({ tone: 'error', message: saved.error.message });
+      return;
+    }
+    localProfileRef.current = saved.profile;
+    setSavedSearches([...saved.profile.savedSearches]);
+    setToast({ tone: 'success', message: `Saved “${search.name}” in this browser.` });
+  }
+
+  function removeSearch(searchId: string) {
+    const saved = removeLocalSavedSearch(localProfileRef.current, searchId);
+    if (!saved.ok) {
+      setToast({ tone: 'error', message: saved.error.message });
+      return;
+    }
+    localProfileRef.current = saved.profile;
+    setSavedSearches([...saved.profile.savedSearches]);
+  }
+
+  function exportPortableBackup() {
+    if (!bootstrap) return;
+    try {
+      const profile = localProfileWithEntries(collectionRef.current, revisionRef.current);
+      downloadText(
+        `catchgrid-backup-${new Date().toISOString().slice(0, 10)}.json`,
+        createPortableProfileBackupJson(profile, bootstrap.catalogVersion),
+      );
+      setToast({ tone: 'success', message: 'Full portable backup exported.' });
+    } catch (error) {
+      setToast({
+        tone: 'error',
+        message: error instanceof Error ? error.message : 'The backup could not be created.',
+      });
+    }
+  }
+
+  function adoptRestoredLocalProfile(profile: LocalProfile) {
+    localProfileRef.current = profile;
+    collectionRef.current = [...profile.collectionEntries, ...profile.formCollectionEntries];
+    setCollectionEntries(collectionRef.current);
+    setSavedSearches([...profile.savedSearches]);
+    wantedRef.current = [...profile.wantedEntries];
+    setWantedEntries(wantedRef.current);
+    tradeRef.current = [...profile.tradeSpecimens];
+    setTradeSpecimens(tradeRef.current);
+    revisionRef.current = profile.revision;
+    if (profile.settings.theme) setTheme(profile.settings.theme);
+    if (profile.settings.accentTheme) setAccentTheme(profile.settings.accentTheme);
+    if (profile.settings.activeCategory) setActiveCategory(profile.settings.activeCategory);
+  }
+
+  function restorePortableBackup(value: string) {
+    if (storageMode === 'cloud') {
+      setToast({
+        tone: 'error',
+        message: 'Return to this browser before restoring a local JSON backup.',
+      });
+      return;
+    }
+    const restored = restorePortableProfileBackup(value);
+    if (!restored.ok) throw restored.error;
+    adoptRestoredLocalProfile(restored.profile);
+    setToast({
+      tone: 'success',
+      message: 'Portable backup restored. The previous profile was snapshotted.',
+    });
+  }
+
+  function restoreSnapshot(snapshotId: string) {
+    const restored = restoreLocalProfileSnapshot(snapshotId);
+    if (!restored.ok) {
+      setToast({ tone: 'error', message: restored.error.message });
+      return;
+    }
+    adoptRestoredLocalProfile(restored.profile);
+    setToast({ tone: 'success', message: 'Recovery snapshot restored.' });
   }
 
   const collectedKeys = useMemo(
@@ -811,14 +1206,33 @@ export default function App() {
         <AccessDialog open message={loadMessage} onSubmit={unlock} />
       </>
     );
+  if (status === 'recovery' && localLoadResult)
+    return (
+      <RecoveryScreen
+        result={localLoadResult}
+        onRestored={() => {
+          setStatus('loading');
+          void load('');
+        }}
+      />
+    );
   if (status === 'error' || !bootstrap)
     return <ErrorScreen message={loadMessage} onRetry={() => void load()} />;
 
   const defaultCatalog = bootstrap.catalog.filter((item) => item.isDefault);
+  const viewedCatalog =
+    dexView === 'species'
+      ? defaultCatalog
+      : bootstrap.catalog.filter((item) =>
+          dexView === 'mega'
+            ? item.variantKind === 'mega' || item.variantKind === 'primal'
+            : item.variantKind === 'gigantamax',
+        );
   const regions = [...new Set(defaultCatalog.map((item) => titleCase(item.region)))];
   const regionMedals = new Map(
     regions.map((regionName) => {
       const requirements = REGION_MEDAL_REQUIREMENTS[regionName];
+      const categoryRequirements = requirements?.categoryThresholds[activeCategory];
       const regionItems = defaultCatalog.filter((item) => titleCase(item.region) === regionName);
       const collected = new Set(
         regionItems
@@ -829,18 +1243,21 @@ export default function App() {
         regionName,
         {
           collected,
-          total: requirements?.platinum ?? regionItems.length,
-          tier: requirements ? medalTier(collected, requirements) : ('none' as MedalTier),
+          total: categoryRequirements?.platinum ?? regionItems.length,
+          tier: categoryRequirements
+            ? medalTier(collected, categoryRequirements)
+            : ('none' as MedalTier),
           mark: requirements?.mark ?? regionName.slice(0, 1),
         },
       ] as const;
     }),
   );
-  const filtered = defaultCatalog.filter((item) => {
+  const filtered = viewedCatalog.filter((item) => {
     const normalizedQuery = query.trim().toLowerCase();
     if (
       normalizedQuery &&
       !item.name.toLowerCase().includes(normalizedQuery) &&
+      !catalogDisplayName(item).toLowerCase().includes(normalizedQuery) &&
       !String(item.dexNumber).includes(normalizedQuery)
     )
       return false;
@@ -857,6 +1274,8 @@ export default function App() {
     bootstrap.categories.find((category) => category.id === activeCategory)?.label ??
     activeCategory;
   const selectedRegionMedal = region === 'all' ? null : regionMedals.get(region);
+  const legacyOrigin = window.location.hostname.endsWith('.workers.dev');
+  const recoverySnapshots = storageMode === 'browser' ? listLocalProfileSnapshots() : [];
 
   return (
     <div className="app-shell">
@@ -879,7 +1298,7 @@ export default function App() {
         <button
           type="button"
           className="theme-toggle theme-toggle--desktop"
-          onClick={() => setTheme((value) => (value === 'dark' ? 'light' : 'dark'))}
+          onClick={() => changeTheme(theme === 'dark' ? 'light' : 'dark')}
           aria-label={`Use ${theme === 'dark' ? 'light' : 'dark'} mode`}
           aria-pressed={theme === 'dark'}
         >
@@ -895,6 +1314,24 @@ export default function App() {
 
       <div className="app-stage">
         <MobileNavigationHeader route={route} onNavigate={navigate} />
+        {legacyOrigin && (
+          <aside className="origin-migration-banner" role="status">
+            <Icon name="shield" />
+            <div>
+              <strong>CatchGrid has moved to dex.cjdev.app</strong>
+              <p>
+                Browser collections are tied to this web address. Export a full backup here before
+                opening the canonical site so your collection is not stranded.
+              </p>
+            </div>
+            <button type="button" className="button button--primary" onClick={exportPortableBackup}>
+              <Icon name="download" /> Export backup
+            </button>
+            <a className="button button--secondary" href="https://dex.cjdev.app/">
+              Open canonical site
+            </a>
+          </aside>
+        )}
         <main>
           {route === 'home' && (
             <HomeDashboard
@@ -908,6 +1345,9 @@ export default function App() {
               catalog={bootstrap.catalog}
               entries={collectionEntries}
               categories={bootstrap.categories}
+              savedSearches={savedSearches}
+              onSaveSearch={saveSearch}
+              onRemoveSearch={removeSearch}
             />
           )}
           {route === 'dex' && (
@@ -1060,18 +1500,25 @@ export default function App() {
                         role="toolbar"
                         aria-label="Collection category"
                       >
-                        {bootstrap.categories.map((category) => (
-                          <button
-                            type="button"
-                            key={category.id}
-                            className={activeCategory === category.id ? 'is-active' : ''}
-                            aria-pressed={activeCategory === category.id}
-                            onClick={() => changeCategory(category.id)}
-                          >
-                            <span>{categoryGlyphs[category.id]}</span>
-                            {category.shortLabel ?? category.label}
-                          </button>
-                        ))}
+                        {bootstrap.categories
+                          .filter(
+                            (category) =>
+                              dexView === 'species' ||
+                              category.id === 'normal' ||
+                              category.id === 'shiny',
+                          )
+                          .map((category) => (
+                            <button
+                              type="button"
+                              key={category.id}
+                              className={activeCategory === category.id ? 'is-active' : ''}
+                              aria-pressed={activeCategory === category.id}
+                              onClick={() => changeCategory(category.id)}
+                            >
+                              <span>{categoryGlyphs[category.id]}</span>
+                              {category.shortLabel ?? category.label}
+                            </button>
+                          ))}
                       </div>
                     </div>
                   </div>
@@ -1113,9 +1560,37 @@ export default function App() {
                 )}
 
                 <div className="dex-results">
+                  <div className="dex-view-switcher" role="group" aria-label="Pokédex view">
+                    {(
+                      [
+                        ['species', 'National Dex'],
+                        ['mega', 'Mega & Primal'],
+                        ['gigantamax', 'Gigantamax'],
+                      ] as const
+                    ).map(([value, label]) => (
+                      <button
+                        type="button"
+                        key={value}
+                        aria-pressed={dexView === value}
+                        onClick={() => {
+                          setDexView(value);
+                          if (value !== 'species' && !['normal', 'shiny'].includes(activeCategory))
+                            changeCategory('normal');
+                        }}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
                   <div className="grid-heading">
                     <div>
-                      <h2>{activeCategoryLabel} collection</h2>
+                      <h2>
+                        {dexView === 'species'
+                          ? `${activeCategoryLabel} collection`
+                          : dexView === 'mega'
+                            ? `Mega & Primal · ${activeCategoryLabel}`
+                            : `Gigantamax · ${activeCategoryLabel}`}
+                      </h2>
                       <span>{filtered.length} shown</span>
                     </div>
                     <div className="state-legend">
@@ -1156,11 +1631,15 @@ export default function App() {
               theme={theme}
               accentTheme={accentTheme}
               showCloudAccess={route === 'owner'}
-              onThemeChange={setTheme}
-              onAccentThemeChange={setAccentTheme}
+              onThemeChange={changeTheme}
+              onAccentThemeChange={changeAccentTheme}
               onUnlock={() => setAccessDialogOpen(true)}
               onLeaveCloud={() => void leaveCloud()}
               onImport={applyImport}
+              onExportBackup={exportPortableBackup}
+              onRestoreBackup={restorePortableBackup}
+              snapshots={recoverySnapshots}
+              onRestoreSnapshot={restoreSnapshot}
             />
           )}
         </main>
@@ -1208,6 +1687,30 @@ export default function App() {
         onClose={() => setAccessDialogOpen(false)}
         onSubmit={unlock}
       />
+      {updateReady && (
+        <aside className="update-prompt" role="status" aria-live="polite">
+          <Icon name="refresh" />
+          <div>
+            <strong>A CatchGrid update is ready</strong>
+            <p>Apply it now to use the newest catalog and app fixes.</p>
+          </div>
+          <button
+            type="button"
+            className="button button--primary"
+            onClick={() => window.dispatchEvent(new Event('catchgrid:apply-update'))}
+          >
+            Update now
+          </button>
+          <button
+            type="button"
+            className="icon-button"
+            aria-label="Dismiss update"
+            onClick={() => setUpdateReady(false)}
+          >
+            <Icon name="close" />
+          </button>
+        </aside>
+      )}
     </div>
   );
 }
