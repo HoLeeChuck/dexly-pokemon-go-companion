@@ -7,11 +7,17 @@ enablement and delivery were not verified and are not claimed here.
 
 ## Reviewed source and required checks
 
-- Pull request: [#2](https://github.com/HoLeeChuck/dexly-pokemon-go-companion/pull/2)
-- Protected `main` merge commit: `9eb839e3c971bfee8dd3d972a6803e3a90a8dae1`
+- Application release pull request:
+  [#2](https://github.com/HoLeeChuck/dexly-pokemon-go-companion/pull/2)
+- Application release merge commit: `9eb839e3c971bfee8dd3d972a6803e3a90a8dae1`
 - Merge timestamp: `2026-08-13T09:13:08Z`
 - Required-check run:
   [31685587736](https://github.com/HoLeeChuck/dexly-pokemon-go-companion/actions/runs/31685587736)
+- Release-record and bounded-smoke follow-up:
+  [#3](https://github.com/HoLeeChuck/dexly-pokemon-go-companion/pull/3), merged as
+  `977909729578040ac236219c71aa3b56bfd58c8a`
+- Follow-up exact-main check run:
+  [31687512908](https://github.com/HoLeeChuck/dexly-pokemon-go-companion/actions/runs/31687512908)
 - Catalog: `2026-08-13.1`
 
 All six required checks were green for the exact merge commit:
@@ -83,16 +89,24 @@ blindly choosing the immediately preceding historical version.
 - First fully smoked Phase B production version:
   `5d008ae6-711e-4098-b6bf-80e15f1ccfd2`
 - First Phase B deployment timestamp: `2026-08-13T09:18:03Z`
-- Final anchor deployment ID: `3e7d987c-57dd-4912-8c6a-22df0a0ded37`
-- Final duplicate anchor and current production version:
+- Second application-release deployment ID: `3e7d987c-57dd-4912-8c6a-22df0a0ded37`
+- Second application-release version:
   `0f533154-80ca-44c0-9edb-cd7be4ad4ab5`
-- Final anchor deployment timestamp: `2026-08-13T09:26:37Z`
-- Deployed Git SHA: `9eb839e3c971bfee8dd3d972a6803e3a90a8dae1`
+- Second application-release timestamp: `2026-08-13T09:26:37Z`
+- First release-record follow-up version: `5c91b3f5-35de-4e57-b916-97af0071d5ca`
+- First release-record follow-up source: `977909729578040ac236219c71aa3b56bfd58c8a`
+- Traffic reassertion deployment: `478fe4a1-e3f5-4eb0-8185-cc3085089886` at
+  `2026-08-13T09:44:08Z`
 
 The first Phase B version passed the complete production smoke sequence and is retained as the
-known migrations-0008/0009-compatible Worker rollback target. The final duplicate deployment
-created a current production anchor with the same reviewed source; its exact Git SHA, build
-metadata, Worker runtime version, and `environment: production` value were verified.
+known migrations-0008/0009-compatible Worker rollback target. The second application deployment
+created another compatible anchor. The later release-record/smoke follow-up was explicitly
+reasserted at 100 percent traffic after Cloudflare's control plane initially reported it active
+before edge traffic changed. Its exact Git SHA, build metadata, Worker runtime version, and
+`environment: production` value were then verified on both origins. Because later reviewed
+documentation-only descendants receive new version IDs, `/api/health` plus `wrangler deployments
+status` are the authoritative current identity; the IDs above are historical release evidence,
+not a permanently current pointer.
 
 ### Database migration and verification
 

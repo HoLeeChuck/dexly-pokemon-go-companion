@@ -19,10 +19,11 @@ Both environments bind D1 as `DB`, but the UUIDs are deliberately different. Eac
 have a different `APP_ACCESS_TOKEN` Worker secret; values never belong in Git, shell
 arguments, screenshots, logs, or documentation. The public app does not need either token.
 
-Catalog `2026-08-13.1` is deployed from protected `main` SHA
+Catalog `2026-08-13.1` was first deployed from protected `main` application-release SHA
 `9eb839e3c971bfee8dd3d972a6803e3a90a8dae1`: National Dex #1-1025, 949 released standard
-species, 177 reviewed collector forms, and 1,202 form rows total. Unreleased standard
-placeholders remain in denominators. Exact staging and production evidence is retained in
+species, 177 reviewed collector forms, and 1,202 form rows total. Later reviewed documentation
+and operations descendants preserve those application assets while receiving their own release
+metadata. Unreleased standard placeholders remain in denominators. Exact staging and production evidence is retained in
 [`RELEASE_EVIDENCE_2026-08-13.md`](RELEASE_EVIDENCE_2026-08-13.md); repeat the runbook for every
 later release rather than treating that evidence as permanent.
 
@@ -165,9 +166,11 @@ protected `main` revision.
 
 `pnpm deploy:production` runs preflight, bookmark, migration, deployment, and smoke in that
 order. The named steps above are preferred when producing auditable release evidence. The
-August 13 release completed those production gates for exact protected-`main` SHA
-`9eb839e3c971bfee8dd3d972a6803e3a90a8dae1`; its current version is
-`0f533154-80ca-44c0-9edb-cd7be4ad4ab5`, with detailed evidence linked above.
+August 13 application release completed those gates for protected-`main` SHA
+`9eb839e3c971bfee8dd3d972a6803e3a90a8dae1`; later release-record and smoke-runner descendants
+also passed all six required checks. Use `/api/health` and `wrangler deployments status` for the
+current exact SHA/version rather than treating a historical version ID in the evidence record as
+a permanent pointer.
 
 ## Probes and caching
 
