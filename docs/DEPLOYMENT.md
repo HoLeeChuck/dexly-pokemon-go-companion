@@ -54,8 +54,10 @@ immutable.
 
 ## Staging release
 
-The staging D1 resource has been provisioned and is configured with its real UUID. It remains
-an open release gate until the reviewed revision is migrated, deployed, and smoke-tested.
+The staging D1 resource is provisioned with its real UUID. The August 13 Phase B candidate was
+migrated, deployed, smoke-tested, and rollback-rehearsed; see
+[`RELEASE_EVIDENCE_2026-08-13.md`](RELEASE_EVIDENCE_2026-08-13.md). Repeat the same gates for every
+new release candidate rather than treating historical evidence as permanent.
 Never substitute the production UUID.
 
 1. Confirm account, branch, exact revision, and pending staging migrations:
