@@ -32,7 +32,8 @@ import {
 import { loadLocalProfile, saveLocalProfile } from './lib/localProfile';
 import { previewCanonicalWideCsv } from '../shared/csv';
 
-type RouteId = 'home' | 'dex' | 'search' | 'profile';
+type PublicRouteId = 'home' | 'dex' | 'search' | 'profile';
+type RouteId = PublicRouteId | 'owner';
 type CollectionFilter = 'all' | 'missing' | 'collected';
 type MedalTier = 'none' | 'bronze' | 'silver' | 'gold' | 'platinum';
 type StorageMode = 'browser' | 'cloud';
@@ -70,7 +71,7 @@ const REGION_MEDAL_ASSET_IDS: Record<string, number> = {
 const REGION_MEDAL_ASSET_ROOT =
   'https://raw.githubusercontent.com/PokeMiners/pogo_assets/1a4ad1fc6c39f361ea85d53fc3040ce482ee9d90/Images/Badges/Achievements/';
 
-const routes: Array<{ id: RouteId; label: string; icon: IconName }> = [
+const routes: Array<{ id: PublicRouteId; label: string; icon: IconName }> = [
   { id: 'home', label: 'Home', icon: 'home' },
   { id: 'dex', label: 'Dex', icon: 'grid' },
   { id: 'search', label: 'Search Lab', icon: 'flask' },
@@ -88,9 +89,15 @@ const categoryGlyphs: Record<CategoryId, string> = {
   purified: '◇',
 };
 
-function routeFromHash(): RouteId {
+function routeFromLocation(): RouteId {
+  const path = window.location.pathname.replace(/\/+$/, '') || '/';
+  if (path === '/cody') return 'owner';
   const value = window.location.hash.replace(/^#\/?/, '');
   return routes.some((route) => route.id === value) ? (value as RouteId) : 'home';
+}
+
+function urlForRoute(route: RouteId): string {
+  return route === 'owner' ? '/cody' : `/#/${route}`;
 }
 
 function collectionKey(formId: string, categoryId: CategoryId): string {
@@ -151,7 +158,7 @@ function AppBrand({ compact = false, onHome }: { compact?: boolean; onHome?: () 
         <span />
       </span>
       <span>
-        <strong>dexly</strong>
+        <strong>CatchGrid</strong>
         {!compact && <small>collection companion</small>}
       </span>
     </>
@@ -247,8 +254,8 @@ function MobileNavigationHeader({
             onClick={(event) => event.stopPropagation()}
           >
             <div className="mobile-nav-panel__heading">
-              <span className="eyebrow">South Minneapolis Nokomis Area</span>
-              <strong>Explore Dexly</strong>
+              <span className="eyebrow">Pokémon GO collection companion</span>
+              <strong>Explore CatchGrid</strong>
             </div>
             {routes.map((item) => (
               <button
@@ -379,7 +386,7 @@ function ErrorScreen({ message, onRetry }: { message: string; onRetry: () => voi
       <span>
         <Icon name="wifi-off" />
       </span>
-      <h1>Dexly couldn’t load your collection.</h1>
+      <h1>CatchGrid couldn’t load your collection.</h1>
       <p>{message}</p>
       <button className="button button--primary" type="button" onClick={onRetry}>
         <Icon name="refresh" /> Try again
@@ -390,7 +397,7 @@ function ErrorScreen({ message, onRetry }: { message: string; onRetry: () => voi
 }
 
 export default function App() {
-  const [route, setRoute] = useState<RouteId>(routeFromHash);
+  const [route, setRoute] = useState<RouteId>(routeFromLocation);
   const [bootstrap, setBootstrap] = useState<BootstrapResponse | null>(null);
   const [status, setStatus] = useState<'loading' | 'ready' | 'locked' | 'error'>('loading');
   const [loadMessage, setLoadMessage] = useState('');
@@ -443,6 +450,7 @@ export default function App() {
     dex: 0,
     search: 0,
     profile: 0,
+    owner: 0,
   });
 
   function adoptPayload(payload: BootstrapResponse) {
@@ -572,15 +580,19 @@ export default function App() {
   }, [accentTheme]);
 
   useEffect(() => {
-    const onHashChange = () => setRoute(routeFromHash());
-    window.addEventListener('hashchange', onHashChange);
-    return () => window.removeEventListener('hashchange', onHashChange);
+    const onLocationChange = () => setRoute(routeFromLocation());
+    window.addEventListener('hashchange', onLocationChange);
+    window.addEventListener('popstate', onLocationChange);
+    return () => {
+      window.removeEventListener('hashchange', onLocationChange);
+      window.removeEventListener('popstate', onLocationChange);
+    };
   }, []);
 
   function navigate(next: RouteId) {
     scrollPositions.current[route] = window.scrollY;
     setRoute(next);
-    window.history.pushState(null, '', `#/${next}`);
+    window.history.pushState(null, '', urlForRoute(next));
   }
 
   useLayoutEffect(() => {
@@ -898,19 +910,6 @@ export default function App() {
           <Icon name={theme === 'dark' ? 'sun' : 'moon'} />
           <span>{theme === 'dark' ? 'Light mode' : 'Dark mode'}</span>
         </button>
-        <div className="sidebar-card">
-          <span>
-            <Icon name="shield" />
-          </span>
-          <strong>Private by default</strong>
-          <p>
-            {bootstrap.authMode === 'browser'
-              ? 'Saved on this browser'
-              : bootstrap.authMode === 'local'
-                ? 'Local D1 session'
-                : 'Access-key session'}
-          </p>
-        </div>
         <p className="sidebar-foot">
           Unofficial fan project
           <br />
@@ -1178,7 +1177,7 @@ export default function App() {
               </section>
             </section>
           )}
-          {route === 'profile' && (
+          {(route === 'profile' || route === 'owner') && (
             <DataPage
               catalog={bootstrap.catalog}
               collectionEntries={collectionEntries}
@@ -1186,6 +1185,7 @@ export default function App() {
               storageMode={storageMode}
               theme={theme}
               accentTheme={accentTheme}
+              showCloudAccess={route === 'owner'}
               onThemeChange={setTheme}
               onAccentThemeChange={setAccentTheme}
               onUnlock={() => setAccessDialogOpen(true)}

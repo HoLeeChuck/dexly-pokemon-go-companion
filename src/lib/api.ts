@@ -92,7 +92,7 @@ async function requestJson<T>(
     throw new ApiClientError(
       0,
       'NETWORK_ERROR',
-      'Dexly could not reach the local collection service. Your collection was not changed.',
+      'CatchGrid could not reach the local collection service. Your collection was not changed.',
     );
   }
 

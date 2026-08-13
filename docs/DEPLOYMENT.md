@@ -2,12 +2,13 @@
 
 ## Current production
 
-Dexly is deployed. These values are intentional and are not placeholders:
+CatchGrid is deployed. These values are intentional and are not placeholders:
 
 | Resource           | Current production value                                                                              |
 | ------------------ | ----------------------------------------------------------------------------------------------------- |
 | Public source      | [HoLeeChuck/dexly-pokemon-go-companion](https://github.com/HoLeeChuck/dexly-pokemon-go-companion)     |
-| Worker             | [dexly-companion.codyleejohnson26.workers.dev](https://dexly-companion.codyleejohnson26.workers.dev/) |
+| Primary domain     | [dex.cjdev.app](https://dex.cjdev.app/)                                                               |
+| Worker fallback    | [dexly-companion.codyleejohnson26.workers.dev](https://dexly-companion.codyleejohnson26.workers.dev/) |
 | Worker name        | `dexly-companion`                                                                                     |
 | D1 binding         | `DB`                                                                                                  |
 | D1 database        | `dexly-db`                                                                                            |
@@ -83,7 +84,7 @@ revision, SQL migrations, and Wrangler account before continuing.
 5. Verify the deployed service:
 
    ```powershell
-   Invoke-RestMethod https://dexly-companion.codyleejohnson26.workers.dev/api/health
+   Invoke-RestMethod https://dex.cjdev.app/api/health
    ```
 
    Then open the UI, enter the application access key, confirm bootstrap succeeds, make
@@ -132,7 +133,7 @@ same authentication smoke tests before directing users to it.
 - Cloudflare D1 records migration state and remote migration application creates a
   backup/restore point as documented by Cloudflare. A failed migration is rolled back,
   but that is not a substitute for testing or an application recovery plan.
-- Application CSV imports create a backup snapshot, but Dexly does not expose a restore
+- Application CSV imports create a backup snapshot, but CatchGrid does not expose a restore
   button or endpoint. This does not replace a D1 database backup.
 - If deployment fails after a successful migration, assess schema compatibility before
   rolling the Worker back. Do not blindly reverse data migrations.

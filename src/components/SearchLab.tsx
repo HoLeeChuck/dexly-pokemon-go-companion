@@ -198,7 +198,7 @@ export function SearchLab({
           <Icon name="clipboard" />
         </div>
         <p className="discord-share-panel__intro">
-          Choose the lists to share. Dexly formats copyable code blocks and splits long posts
+          Choose the lists to share. CatchGrid formats copyable code blocks and splits long posts
           safely.
         </p>
         <div className="discord-category-picker" role="group" aria-label="Lists to share">

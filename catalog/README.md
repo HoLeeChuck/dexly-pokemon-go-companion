@@ -13,7 +13,7 @@
 - `tradeable` describes the form itself. A trade specimen can still be blocked by traits or game rules; for example, Shadow Pokémon cannot be traded.
 - `assets.*.upstreamPath` is a relative PokeMiners path. The commit-pinned `source.rawBaseUrl` turns it into a deterministic URL.
 
-Normal releases, Shiny releases, Shadow eligibility, types, and names are generated from a hash-pinned PoGoAPI snapshot. Twelve recent 2026 debuts that its release file currently omits are maintained as an explicit reviewed delta based on the dated Pokémon GO availability chronology. Purified eligibility follows Shadow eligibility. Normal, Lucky, Hundo, XXL, and XXS are enabled for every released species. A mined sprite is evidence that an asset exists, not proof that a form or Shiny is released in Pokémon GO.
+Normal releases, Shiny releases, Shadow eligibility, types, rarity, and names are generated from a hash-pinned PoGoAPI snapshot. Twelve recent 2026 debuts that its release file currently omits are maintained as an explicit reviewed delta based on the dated Pokémon GO availability chronology. Purified eligibility follows Shadow eligibility. Normal, Hundo, XXL, and XXS are enabled for every released species. Lucky follows trade eligibility: Mythical Pokémon are ineligible except for Meltan and Melmetal. A mined sprite is evidence that an asset exists, not proof that a form or Shiny is released in Pokémon GO.
 
 This version intentionally models the main National Dex checklist, not every costume, regional appearance, battle transformation, or letter/pattern form. Those variants require separate stable form IDs and release audits and can be added without changing these species IDs.
 

@@ -4,12 +4,13 @@ import { fileURLToPath } from 'node:url';
 import { format } from 'prettier';
 
 const ROOT = fileURLToPath(new URL('../', import.meta.url));
-const VERSION = '2026-08-11.2';
-const DATE = '2026-08-11';
+const VERSION = '2026-08-12.1';
+const DATE = '2026-08-12';
 const ASSET_COMMIT = '1a4ad1fc6c39f361ea85d53fc3040ce482ee9d90';
 const RAW_BASE = `https://raw.githubusercontent.com/PokeMiners/pogo_assets/${ASSET_COMMIT}/Images/Pokemon%20-%20256x256/Addressable%20Assets/`;
 const API = 'https://pogoapi.net/api/v1';
 const KEYS = ['normal', 'shiny', 'lucky', 'hundo', 'xxl', 'xxs', 'shadow', 'purified'];
+const TRADEABLE_MYTHICAL_EXCEPTIONS = new Set([808, 809]); // Meltan and Melmetal
 
 async function get(name) {
   const response = await fetch(`${API}/${name}.json`);
@@ -21,7 +22,7 @@ async function getAssetFilenames() {
   async function tree(sha) {
     const response = await fetch(
       `https://api.github.com/repos/PokeMiners/pogo_assets/git/trees/${sha}`,
-      { headers: { 'User-Agent': 'Dexly catalog sync' } },
+      { headers: { 'User-Agent': 'CatchGrid catalog sync' } },
     );
     if (!response.ok) throw new Error(`PokeMiners asset tree: HTTP ${response.status}`);
     return response.json();
@@ -105,14 +106,17 @@ function values(rows, columns, conflict) {
   return groups.join('\n\n');
 }
 
-const [released, types, shiny, shadow, hashes, assetFilenames] = await Promise.all([
+const [released, types, shiny, shadow, rarity, hashes, assetFilenames] = await Promise.all([
   get('released_pokemon'),
   get('pokemon_types'),
   get('shiny_pokemon'),
   get('shadow_pokemon'),
+  get('pokemon_rarity'),
   get('api_hashes'),
   getAssetFilenames(),
 ]);
+
+const mythicalDexNumbers = new Set(rarity.Mythic.map((entry) => entry.pokemon_id));
 
 function chooseAssets(dex, isShiny) {
   const exactNormal = `pm${dex}.icon.png`;
@@ -172,6 +176,7 @@ const forms = Object.values(released)
     const gen = generation(dex);
     const isShiny = Boolean(shiny[dex]);
     const isShadow = Boolean(shadow[dex]);
+    const isTradeable = !mythicalDexNumbers.has(dex) || TRADEABLE_MYTHICAL_EXCEPTIONS.has(dex);
     const pokemonTypes = normalTypes.get(dex);
     if (!pokemonTypes?.length) throw new Error(`Missing Normal type metadata for #${dex} ${name}`);
     return {
@@ -188,14 +193,14 @@ const forms = Object.values(released)
       eligibility: {
         normal: true,
         shiny: isShiny,
-        lucky: true,
+        lucky: isTradeable,
         hundo: true,
         xxl: true,
         xxs: true,
         shadow: isShadow,
         purified: isShadow,
       },
-      tradeable: true,
+      tradeable: isTradeable,
       assets: chooseAssets(dex, isShiny),
     };
   });
@@ -212,6 +217,8 @@ const manifest = {
     rawBaseUrl: RAW_BASE,
     releaseApiUrl: `${API}/released_pokemon.json`,
     releaseApiSha256: hashes['released_pokemon.json'].hash_sha256,
+    rarityApiUrl: `${API}/pokemon_rarity.json`,
+    rarityApiSha256: hashes['pokemon_rarity.json'].hash_sha256,
   },
   eligibilityKeys: KEYS,
   forms,
@@ -219,7 +226,7 @@ const manifest = {
 const json = await format(JSON.stringify(manifest), { parser: 'json', printWidth: 100 });
 await writeFile(`${ROOT}catalog/catalog.v1.json`, json);
 
-const catalogId = 'catalog-2026-08-11-2';
+const catalogId = 'catalog-2026-08-12-1';
 const upstream = `PokeMiners/pogo_assets@${ASSET_COMMIT}; PoGoAPI released_pokemon@${hashes['released_pokemon.json'].hash_sha256}`;
 const sourceHash = createHash('sha256').update(json).digest('hex');
 const spriteRows = forms.map((f) => [

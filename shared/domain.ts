@@ -49,7 +49,7 @@ export type SizeCategoryId = Extract<MissingSearchCategoryId, 'xxl' | 'xxs'>;
 
 /**
  * Maps a Pokedex number to catch candidates that can satisfy that size goal after evolution.
- * Dexly's bundled mapping contains the target and its earlier stages. Missing or empty entries
+ * CatchGrid's bundled mapping contains the target and its earlier stages. Missing or empty entries
  * deliberately fall back to the requested Pokemon itself.
  */
 export type EvolutionFamilyMap =

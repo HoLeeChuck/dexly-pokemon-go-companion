@@ -77,7 +77,7 @@ async function handleApi(request: Request, env: AppEnv): Promise<Response> {
     return jsonResponse(
       {
         ok: database?.ok === 1,
-        service: 'dexly-companion',
+        service: 'catchgrid',
         runtime: 'cloudflare-workers',
       },
       { cache: 'public' },

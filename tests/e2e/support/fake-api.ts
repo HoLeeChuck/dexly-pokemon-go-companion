@@ -47,8 +47,29 @@ async function fulfillJson(route: Route, value: unknown, status = 200): Promise<
  * Installs an in-memory API before navigation. E2E runs never reach D1, so a
  * failed test cannot leave collection state or mutation audit rows behind.
  */
-export async function installFakeApi(page: Page): Promise<ApiHarness> {
-  const state = createBootstrapFixture();
+export async function installFakeApi(
+  page: Page,
+  options: { catalogCopies?: number } = {},
+): Promise<ApiHarness> {
+  let state = createBootstrapFixture();
+  if ((options.catalogCopies ?? 1) > 1) {
+    const original = [...state.catalog];
+    state = {
+      ...state,
+      catalog: Array.from({ length: options.catalogCopies ?? 1 }, (_, copyIndex) =>
+        original.map((item) =>
+          copyIndex === 0
+            ? item
+            : {
+                ...item,
+                id: `${item.id}-copy-${copyIndex}`,
+                speciesId: `${item.speciesId}-copy-${copyIndex}`,
+                dexNumber: item.dexNumber + copyIndex * 2_000,
+              },
+        ),
+      ).flat(),
+    };
+  }
   const batches = new Map<string, MutationBatch>();
   let revision = state.revision;
   let collectionMutationCount = 0;

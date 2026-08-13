@@ -1,6 +1,6 @@
 # Architecture
 
-Dexly is a local-first Cloudflare Worker application: Vite builds the React single-page
+CatchGrid is a local-first Cloudflare Worker application: Vite builds the React single-page
 app and Worker module, D1 provides the shared catalog, and each browser stores its own
 trainer state under the versioned `dexly:local-profile:v1` local-storage key.
 
@@ -120,8 +120,9 @@ Unknown `/api/*` routes return JSON errors rather than falling through to the SP
 ## Security and authentication
 
 The current production model has no user accounts. Each browser is an independent local
-profile. The public Worker is
-[dexly-companion.codyleejohnson26.workers.dev](https://dexly-companion.codyleejohnson26.workers.dev/).
+profile. The primary public domain is [dex.cjdev.app](https://dex.cjdev.app/). The legacy
+`dexly-companion` Worker name and `workers.dev` address remain in place so the rename
+does not replace the deployed resource or break existing bookmarks.
 
 - Loopback hosts use the seeded local actor for frictionless offline development.
 - `GET /api/v1/catalog` is public and contains no trainer state.
@@ -136,7 +137,7 @@ profile. The public Worker is
   headers. Unexpected errors return a request ID without exposing internal details.
 - Static assets receive a restrictive CSP from `public/_headers`; sprite images are
   allowed only from the pinned GitHub asset host.
-- D1 is never exposed to browser code, and Dexly never accepts Pokémon GO credentials.
+- D1 is never exposed to browser code, and CatchGrid never accepts Pokémon GO credentials.
 
 Local profiles naturally support many independent users without server-side trainer
 rows, but they do not sync or support public profiles. Export/import is the portability

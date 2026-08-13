@@ -45,14 +45,55 @@ test('appearance settings combine a persistent color theme with light and dark m
     .evaluate((element) => getComputedStyle(element).getPropertyValue('--brand-700').trim());
   expect(purpleAccent).toBe('#a17bd1');
 
+  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(17, 12, 22)');
+  await page.goto('/#/home');
+  await expect(page.locator('.regional-progress')).toHaveCSS('background-color', 'rgb(32, 24, 39)');
+
+  await page.goto('/#/profile');
+  await colorThemes.getByRole('radio', { name: 'Blue' }).click();
+  await expect(page.locator('html')).toHaveAttribute('data-accent', 'blue');
+  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(8, 18, 23)');
+  await page.goto('/#/home');
+  await expect(page.locator('.regional-progress')).toHaveCSS('background-color', 'rgb(17, 30, 37)');
+
   await page.reload();
-  await expect(page.locator('html')).toHaveAttribute('data-accent', 'purple');
+  await expect(page.locator('html')).toHaveAttribute('data-accent', 'blue');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await page.goto('/#/profile');
-  await expect(colorThemes.getByRole('radio', { name: 'Purple' })).toHaveAttribute(
+  await expect(colorThemes.getByRole('radio', { name: 'Blue' })).toHaveAttribute(
     'aria-checked',
     'true',
   );
+});
+
+test('profile layout starts both columns together and keeps Cody Cloud access unlisted', async ({
+  page,
+}) => {
+  await installFakeApi(page);
+  await page.goto('/#/profile');
+
+  await expect(page.getByRole('heading', { name: 'Cody Cloud' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Sign in to Cody Cloud' })).toHaveCount(0);
+  await expect(page.getByText('Private by default')).toHaveCount(0);
+
+  const layout = await page.locator('.page--data').evaluate((element) => {
+    const appearance = element.querySelector('.appearance-panel')!.getBoundingClientRect();
+    const importPanel = element.querySelector('.import-panel')!.getBoundingClientRect();
+    return {
+      appearanceTop: Math.round(appearance.top),
+      importTop: Math.round(importPanel.top),
+    };
+  });
+  expect(Math.abs(layout.appearanceTop - layout.importTop)).toBeLessThanOrEqual(2);
+
+  await page.goto('/cody');
+  await expect(page.getByRole('heading', { name: 'Cody Cloud' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Sign in to Cody Cloud' })).toBeVisible();
+  const navigation = page.getByRole('navigation', { name: 'Primary navigation' });
+  await expect(navigation.getByRole('button')).toHaveCount(4);
+  await expect(navigation.getByText('Cody Cloud')).toHaveCount(0);
+  await navigation.getByRole('button', { name: 'Home' }).click();
+  await expect(page).toHaveURL(/\/#\/home$/);
 });
 
 test('first launch opens the all-in-one Home without exposing the unfinished Trade page', async ({
@@ -95,9 +136,8 @@ test('desktop shell shows its sidebar and navigates without the mobile bar', asy
   expect(page.viewportSize()).toEqual({ width: 1440, height: 900 });
   const sidebar = page.locator('.desktop-sidebar');
   await expect(sidebar).toBeVisible();
-  await expect(sidebar.getByText('dexly')).toBeVisible();
-  await expect(sidebar.getByText('Private by default')).toBeVisible();
-  await expect(sidebar.getByText('Saved on this browser')).toBeVisible();
+  await expect(sidebar.getByText('CatchGrid')).toBeVisible();
+  await expect(sidebar.getByText('Private by default')).toHaveCount(0);
   await expect(page.locator('.bottom-nav')).toHaveCount(0);
 
   const navigation = sidebar.getByRole('navigation', { name: 'Primary navigation' });

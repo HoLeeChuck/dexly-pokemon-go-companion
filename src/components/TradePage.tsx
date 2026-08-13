@@ -212,8 +212,8 @@ export function TradePage({
         <div>
           <strong>Trade requests stay practical</strong>
           <p>
-            IVs reroll, Lucky status is not transferred, and Shadow Pokémon cannot be traded. Dexly
-            keeps this list focused on Normal, Shiny, XXL, XXS, and costume requests.
+            IVs reroll, Lucky status is not transferred, and Shadow Pokémon cannot be traded.
+            CatchGrid keeps this list focused on Normal, Shiny, XXL, XXS, and costume requests.
           </p>
         </div>
       </div>

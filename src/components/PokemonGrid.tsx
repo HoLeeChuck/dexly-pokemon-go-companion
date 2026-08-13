@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { deriveCollectionState } from '../../shared/domain';
 import type { CatalogItem, CategoryId, CollectionState } from '../../shared/types';
 import { typeTheme } from '../lib/typeTheme';
@@ -41,11 +41,9 @@ export function PokemonGrid({
   onOpen: (item: CatalogItem) => void;
   onToggle: (item: CatalogItem, collected: boolean) => void;
 }) {
-  const [renderWindow, setRenderWindow] = useState({ signature: '', count: BATCH_SIZE });
+  const [renderCount, setRenderCount] = useState(BATCH_SIZE);
   const sentinelRef = useRef<HTMLDivElement>(null);
-  const signature = useMemo(() => items.map((item) => item.id).join('|'), [items]);
-
-  const visibleCount = renderWindow.signature === signature ? renderWindow.count : BATCH_SIZE;
+  const visibleCount = Math.min(renderCount, items.length);
 
   useEffect(() => {
     const sentinel = sentinelRef.current;
@@ -53,20 +51,14 @@ export function PokemonGrid({
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry?.isIntersecting) {
-          setRenderWindow((current) => ({
-            signature,
-            count: Math.min(
-              items.length,
-              (current.signature === signature ? current.count : BATCH_SIZE) + BATCH_SIZE,
-            ),
-          }));
+          setRenderCount((current) => Math.min(items.length, current + BATCH_SIZE));
         }
       },
       { rootMargin: '500px 0px' },
     );
     observer.observe(sentinel);
     return () => observer.disconnect();
-  }, [items.length, signature, visibleCount]);
+  }, [items.length, visibleCount]);
 
   if (items.length === 0) {
     return (

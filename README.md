@@ -1,16 +1,16 @@
-# Dexly
+# CatchGrid
 
-Dexly is a visual Pokémon GO collection companion built with React, TypeScript, Vite,
+CatchGrid is a visual Pokémon GO collection companion built with React, TypeScript, Vite,
 Cloudflare Workers, browser local storage, and D1. It tracks collection categories, realistic wanted entries,
 actual trade specimens, CSV imports, undoable changes, and Pokémon GO search strings.
 
-> **Production:** [Open Dexly](https://dexly-companion.codyleejohnson26.workers.dev/)
+> **Production:** [Open CatchGrid](https://dex.cjdev.app/)
 > or view the public source at
 > [HoLeeChuck/dexly-pokemon-go-companion](https://github.com/HoLeeChuck/dexly-pokemon-go-companion).
 > The catalog is public. Each browser keeps its own private collection, wanted entries,
 > and trade notes locally; no account or access key is required.
 
-Dexly is an unofficial fan project. It is not affiliated with or endorsed by Niantic,
+CatchGrid is an unofficial fan project. It is not affiliated with or endorsed by Niantic,
 The Pokémon Company, or Nintendo. It never asks for Pokémon GO account credentials.
 
 ## Local setup

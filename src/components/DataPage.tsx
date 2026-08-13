@@ -14,6 +14,7 @@ export function DataPage({
   storageMode,
   theme,
   accentTheme,
+  showCloudAccess = false,
   onThemeChange,
   onAccentThemeChange,
   onUnlock,
@@ -26,6 +27,7 @@ export function DataPage({
   storageMode: 'browser' | 'cloud';
   theme: 'light' | 'dark';
   accentTheme: 'green' | 'blue' | 'purple' | 'red' | 'orange' | 'pink';
+  showCloudAccess?: boolean;
   onThemeChange: (theme: 'light' | 'dark') => void;
   onAccentThemeChange: (theme: 'green' | 'blue' | 'purple' | 'red' | 'orange' | 'pink') => void;
   onUnlock: () => void;
@@ -61,7 +63,7 @@ export function DataPage({
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `dexly-collection-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.download = `catchgrid-collection-${new Date().toISOString().slice(0, 10)}.csv`;
     link.click();
     URL.revokeObjectURL(url);
     setMessage('Collection CSV exported.');
@@ -127,7 +129,7 @@ export function DataPage({
       <section className="panel appearance-panel">
         <div className="panel-heading">
           <div>
-            <span className="eyebrow">Personalize Dexly</span>
+            <span className="eyebrow">Personalize CatchGrid</span>
             <h2>Appearance</h2>
           </div>
           <Icon name={theme === 'dark' ? 'moon' : 'sun'} />
@@ -300,8 +302,8 @@ export function DataPage({
               <Icon name="shield" />
               <div>
                 <p>
-                  Dexly previews every change before saving it to this browser. Export a CSV first
-                  when you want a separate backup.
+                  CatchGrid previews every change before saving it to this browser. Export a CSV
+                  first when you want a separate backup.
                 </p>
               </div>
             </div>
@@ -318,35 +320,37 @@ export function DataPage({
         )}
       </section>
 
-      <section className="panel security-panel">
-        <div className="panel-heading">
-          <div>
-            <span className="eyebrow">Private by default</span>
-            <h2>Collection access</h2>
+      {showCloudAccess && (
+        <section className="panel security-panel">
+          <div className="panel-heading">
+            <div>
+              <span className="eyebrow">Owner access</span>
+              <h2>Cody Cloud</h2>
+            </div>
+            <span className={`connection-pill connection-pill--${storageMode}`}>
+              <Icon name={storageMode === 'cloud' ? 'database' : 'user'} />
+              {storageMode === 'cloud' ? 'Connected' : 'This browser'}
+            </span>
           </div>
-          <span className={`connection-pill connection-pill--${storageMode}`}>
-            <Icon name={storageMode === 'cloud' ? 'database' : 'user'} />
-            {storageMode === 'cloud' ? 'Cody Cloud' : 'This browser'}
-          </span>
-        </div>
-        <p>
-          {storageMode === 'cloud'
-            ? 'Cody Cloud is active. Collection changes sync through the private D1 profile on this device.'
-            : 'Collection, wanted, and trade data are stored only in this browser. They do not sync to another phone or computer and can be removed when browser data is cleared.'}
-        </p>
-        {storageMode === 'cloud' ? (
-          <button type="button" className="button button--secondary" onClick={onLeaveCloud}>
-            <Icon name="user" /> Return to this browser
-          </button>
-        ) : (
-          <button type="button" className="button button--secondary" onClick={onUnlock}>
-            <Icon name="lock" /> Sign in to Cody Cloud
-          </button>
-        )}
-      </section>
+          <p>
+            {storageMode === 'cloud'
+              ? 'Cody Cloud is active. Collection changes sync through the private D1 profile on this device.'
+              : 'This unlisted page only exposes the sign-in form. The private access key still protects Cody Cloud.'}
+          </p>
+          {storageMode === 'cloud' ? (
+            <button type="button" className="button button--secondary" onClick={onLeaveCloud}>
+              <Icon name="user" /> Return to this browser
+            </button>
+          ) : (
+            <button type="button" className="button button--secondary" onClick={onUnlock}>
+              <Icon name="lock" /> Sign in to Cody Cloud
+            </button>
+          )}
+        </section>
+      )}
 
       <footer className="attribution">
-        <strong>Dexly is an unofficial fan project.</strong>
+        <strong>CatchGrid is an unofficial fan project.</strong>
         <p>
           Pokémon and Pokémon GO are property of their respective owners. Sprite mappings reference
           PokeMiners’ educational-use repository at pinned commit metadata; no affiliation or

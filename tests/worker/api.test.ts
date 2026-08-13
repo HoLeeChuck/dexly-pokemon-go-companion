@@ -38,6 +38,11 @@ beforeEach(async () => {
          ELSE 'unknown'
        END`,
     ),
+    env.DB.prepare(
+      `UPDATE form_category_rules
+       SET state = 'ineligible'
+       WHERE form_id = 'form-0151-standard' AND category_id = 'lucky'`,
+    ),
   ]);
 });
 
@@ -166,6 +171,7 @@ describe('Worker bootstrap and authentication boundary', () => {
     expect(response.headers.get('cache-control')).toContain('no-store');
     expect(payload.authMode).toBe('local');
     expect(payload.profileId).toBe(PROFILE_ID);
+    expect(payload.catalogVersion).toBe('2026-08-12.1');
     expect(payload.revision).toBe(0);
     expect(payload.categories.map((category) => category.id)).toEqual([
       'normal',
@@ -201,6 +207,13 @@ describe('Worker bootstrap and authentication boundary', () => {
       shinySpriteUrl: expect.stringContaining('pm791.s.icon.png'),
     });
     expect(solgaleo?.rules.shiny).toBe('released');
+
+    const mew = payload.catalog.find((item) => item.id === 'form-0151-standard');
+    const cosmog = payload.catalog.find((item) => item.id === 'form-0789-standard');
+    const meltan = payload.catalog.find((item) => item.id === 'form-0808-standard');
+    expect(mew?.rules.lucky).toBe('ineligible');
+    expect(cosmog?.rules.lucky).toBe('released');
+    expect(meltan?.rules.lucky).toBe('released');
 
     const regieleki = payload.catalog.find((item) => item.id === 'form-0894-standard');
     const wyrdeer = payload.catalog.find((item) => item.id === 'form-0899-standard');

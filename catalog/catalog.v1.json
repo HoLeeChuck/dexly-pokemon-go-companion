@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "catalogVersion": "2026-08-11.2",
-  "releaseMetadataAsOf": "2026-08-11",
+  "catalogVersion": "2026-08-12.1",
+  "releaseMetadataAsOf": "2026-08-12",
   "source": {
     "name": "PokeMiners pogo_assets + PoGoAPI release metadata",
     "repositoryUrl": "https://github.com/PokeMiners/pogo_assets",
@@ -9,7 +9,9 @@
     "assetRoot": "Images/Pokemon - 256x256/Addressable Assets",
     "rawBaseUrl": "https://raw.githubusercontent.com/PokeMiners/pogo_assets/1a4ad1fc6c39f361ea85d53fc3040ce482ee9d90/Images/Pokemon%20-%20256x256/Addressable%20Assets/",
     "releaseApiUrl": "https://pogoapi.net/api/v1/released_pokemon.json",
-    "releaseApiSha256": "740d9a03ed6853023e89912cc31b2c3fa513582b091ee301cdf31a35794cc58d"
+    "releaseApiSha256": "740d9a03ed6853023e89912cc31b2c3fa513582b091ee301cdf31a35794cc58d",
+    "rarityApiUrl": "https://pogoapi.net/api/v1/pokemon_rarity.json",
+    "rarityApiSha256": "257f0f9e27b0d763bf85bf91c864df86fa37e1ebd3000e92713c7398bb99a874"
   },
   "eligibilityKeys": ["normal", "shiny", "lucky", "hundo", "xxl", "xxs", "shadow", "purified"],
   "forms": [
@@ -4077,14 +4079,14 @@
       "eligibility": {
         "normal": true,
         "shiny": true,
-        "lucky": true,
+        "lucky": false,
         "hundo": true,
         "xxl": true,
         "xxs": true,
         "shadow": false,
         "purified": false
       },
-      "tradeable": true,
+      "tradeable": false,
       "assets": {
         "normal": { "upstreamPath": "pm151.icon.png" },
         "shiny": { "upstreamPath": "pm151.s.icon.png" }
@@ -6777,14 +6779,14 @@
       "eligibility": {
         "normal": true,
         "shiny": true,
-        "lucky": true,
+        "lucky": false,
         "hundo": true,
         "xxl": true,
         "xxs": true,
         "shadow": false,
         "purified": false
       },
-      "tradeable": true,
+      "tradeable": false,
       "assets": {
         "normal": { "upstreamPath": "pm251.icon.png" },
         "shiny": { "upstreamPath": "pm251.s.icon.png" }
@@ -10395,14 +10397,14 @@
       "eligibility": {
         "normal": true,
         "shiny": true,
-        "lucky": true,
+        "lucky": false,
         "hundo": true,
         "xxl": true,
         "xxs": true,
         "shadow": false,
         "purified": false
       },
-      "tradeable": true,
+      "tradeable": false,
       "assets": {
         "normal": { "upstreamPath": "pm385.icon.png" },
         "shiny": { "upstreamPath": "pm385.s.icon.png" }
@@ -10422,14 +10424,14 @@
       "eligibility": {
         "normal": true,
         "shiny": true,
-        "lucky": true,
+        "lucky": false,
         "hundo": true,
         "xxl": true,
         "xxs": true,
         "shadow": false,
         "purified": false
       },
-      "tradeable": true,
+      "tradeable": false,
       "assets": {
         "normal": { "upstreamPath": "pm386.icon.png" },
         "shiny": { "upstreamPath": "pm386.s.icon.png" }
@@ -13203,14 +13205,14 @@
       "eligibility": {
         "normal": true,
         "shiny": true,
-        "lucky": true,
+        "lucky": false,
         "hundo": true,
         "xxl": true,
         "xxs": true,
         "shadow": false,
         "purified": false
       },
-      "tradeable": true,
+      "tradeable": false,
       "assets": {
         "normal": { "upstreamPath": "pm491.icon.png" },
         "shiny": { "upstreamPath": "pm491.s.icon.png" }
@@ -13230,14 +13232,14 @@
       "eligibility": {
         "normal": true,
         "shiny": true,
-        "lucky": true,
+        "lucky": false,
         "hundo": true,
         "xxl": true,
         "xxs": true,
         "shadow": false,
         "purified": false
       },
-      "tradeable": true,
+      "tradeable": false,
       "assets": {
         "normal": { "upstreamPath": "pm492.icon.png" },
         "shiny": { "upstreamPath": "pm492.s.icon.png" }
@@ -13257,14 +13259,14 @@
       "eligibility": {
         "normal": true,
         "shiny": false,
-        "lucky": true,
+        "lucky": false,
         "hundo": true,
         "xxl": true,
         "xxs": true,
         "shadow": false,
         "purified": false
       },
-      "tradeable": true,
+      "tradeable": false,
       "assets": { "normal": { "upstreamPath": "pm494.icon.png" } }
     },
     {
@@ -17385,14 +17387,14 @@
       "eligibility": {
         "normal": true,
         "shiny": true,
-        "lucky": true,
+        "lucky": false,
         "hundo": true,
         "xxl": true,
         "xxs": true,
         "shadow": false,
         "purified": false
       },
-      "tradeable": true,
+      "tradeable": false,
       "assets": {
         "normal": { "upstreamPath": "pm647.fORDINARY.icon.png" },
         "shiny": { "upstreamPath": "pm647.fORDINARY.s.icon.png" }
@@ -17412,14 +17414,14 @@
       "eligibility": {
         "normal": true,
         "shiny": true,
-        "lucky": true,
+        "lucky": false,
         "hundo": true,
         "xxl": true,
         "xxs": true,
         "shadow": false,
         "purified": false
       },
-      "tradeable": true,
+      "tradeable": false,
       "assets": {
         "normal": { "upstreamPath": "pm648.icon.png" },
         "shiny": { "upstreamPath": "pm648.fARIA.s.icon.png" }
@@ -17439,14 +17441,14 @@
       "eligibility": {
         "normal": true,
         "shiny": true,
-        "lucky": true,
+        "lucky": false,
         "hundo": true,
         "xxl": true,
         "xxs": true,
         "shadow": false,
         "purified": false
       },
-      "tradeable": true,
+      "tradeable": false,
       "assets": {
         "normal": { "upstreamPath": "pm649.fBURN.icon.png" },
         "shiny": { "upstreamPath": "pm649.fBURN.s.icon.png" }
@@ -19311,14 +19313,14 @@
       "eligibility": {
         "normal": true,
         "shiny": false,
-        "lucky": true,
+        "lucky": false,
         "hundo": true,
         "xxl": true,
         "xxs": true,
         "shadow": false,
         "purified": false
       },
-      "tradeable": true,
+      "tradeable": false,
       "assets": { "normal": { "upstreamPath": "pm719.icon.png" } }
     },
     {
@@ -19335,14 +19337,14 @@
       "eligibility": {
         "normal": true,
         "shiny": false,
-        "lucky": true,
+        "lucky": false,
         "hundo": true,
         "xxl": true,
         "xxs": true,
         "shadow": false,
         "purified": false
       },
-      "tradeable": true,
+      "tradeable": false,
       "assets": { "normal": { "upstreamPath": "pm720.icon.png" } }
     },
     {
@@ -19359,14 +19361,14 @@
       "eligibility": {
         "normal": true,
         "shiny": false,
-        "lucky": true,
+        "lucky": false,
         "hundo": true,
         "xxl": true,
         "xxs": true,
         "shadow": false,
         "purified": false
       },
-      "tradeable": true,
+      "tradeable": false,
       "assets": { "normal": { "upstreamPath": "pm721.icon.png" } }
     },
     {
@@ -21366,14 +21368,14 @@
       "eligibility": {
         "normal": true,
         "shiny": false,
-        "lucky": true,
+        "lucky": false,
         "hundo": true,
         "xxl": true,
         "xxs": true,
         "shadow": false,
         "purified": false
       },
-      "tradeable": true,
+      "tradeable": false,
       "assets": { "normal": { "upstreamPath": "pm802.icon.png" } }
     },
     {
@@ -21492,14 +21494,14 @@
       "eligibility": {
         "normal": true,
         "shiny": false,
-        "lucky": true,
+        "lucky": false,
         "hundo": true,
         "xxl": true,
         "xxs": true,
         "shadow": false,
         "purified": false
       },
-      "tradeable": true,
+      "tradeable": false,
       "assets": { "normal": { "upstreamPath": "pm807.icon.png" } }
     },
     {
@@ -23238,14 +23240,14 @@
       "eligibility": {
         "normal": true,
         "shiny": false,
-        "lucky": true,
+        "lucky": false,
         "hundo": true,
         "xxl": true,
         "xxs": true,
         "shadow": false,
         "purified": false
       },
-      "tradeable": true,
+      "tradeable": false,
       "assets": { "normal": { "upstreamPath": "pm893.icon.png" } }
     },
     {
