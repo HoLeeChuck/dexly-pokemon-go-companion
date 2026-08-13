@@ -1,4 +1,11 @@
-import { CATEGORY_IDS, type CategoryId } from '../shared/types';
+import {
+  CATEGORY_IDS,
+  TRADE_OFFER_TRAIT_IDS,
+  TRADE_REQUEST_TRAIT_IDS,
+  type CategoryId,
+  type TradeOfferTrait,
+  type TradeRequestTrait,
+} from '../shared/types';
 import { type AppEnv, resolveActor } from './auth';
 import {
   ApiError,
@@ -12,11 +19,13 @@ import {
   stringField,
 } from './http';
 import { applyImport, previewImport } from './imports';
+import { enforceOwnerBoundary } from './rateLimit';
 import {
   addTradeSpecimen,
   deleteTradeSpecimen,
   getBootstrap,
   getCollectionRevision,
+  getPublicCatalog,
   setCollectionEntry,
   setWantedEntry,
   undoMutation,
@@ -26,6 +35,48 @@ const FORM_ID_PATTERN = /^form-[a-z0-9-]{3,80}$/;
 const OPERATION_ID_PATTERN = /^[a-zA-Z0-9:_-]{8,120}$/;
 const MUTATION_ID_PATTERN = /^mutation:[0-9a-f-]{36}$/;
 const TRADE_ID_PATTERN = /^trade:[0-9a-f-]{36}$/;
+const PUBLIC_CATALOG_CACHE_CONTROL =
+  'public, max-age=300, s-maxage=3600, stale-while-revalidate=86400';
+
+function releaseMetadata(env: AppEnv) {
+  const gitSha =
+    typeof __BUILD_SHA__ === 'undefined' || !__BUILD_SHA__
+      ? env.BUILD_SHA || 'development'
+      : __BUILD_SHA__;
+  const buildTime =
+    typeof __BUILD_TIME__ === 'undefined' || !__BUILD_TIME__
+      ? env.BUILD_TIME || null
+      : __BUILD_TIME__;
+  const environment =
+    typeof __BUILD_ENVIRONMENT__ === 'undefined' || !__BUILD_ENVIRONMENT__
+      ? env.ENVIRONMENT || 'development'
+      : __BUILD_ENVIRONMENT__;
+  return {
+    gitSha,
+    buildTime,
+    environment,
+    workerVersionId: env.CF_VERSION_METADATA.id,
+    workerVersionTag: env.CF_VERSION_METADATA.tag,
+    workerVersionTime: env.CF_VERSION_METADATA.timestamp,
+  };
+}
+
+function headResponse(response: Response): Response {
+  return new Response(null, {
+    status: response.status,
+    statusText: response.statusText,
+    headers: response.headers,
+  });
+}
+
+function publicCatalogCacheKey(request: Request, env: AppEnv): Request {
+  const url = new URL(request.url);
+  url.pathname = '/api/v1/catalog';
+  // A deployment that changes catalog data receives a new cache namespace without
+  // putting an implementation-only version parameter in the public response URL.
+  url.search = new URLSearchParams({ release: env.CF_VERSION_METADATA.id }).toString();
+  return new Request(url.toString(), { method: 'GET' });
+}
 
 function categoryField(body: Record<string, unknown>): CategoryId {
   const value = body.categoryId;
@@ -39,6 +90,14 @@ function categoryField(body: Record<string, unknown>): CategoryId {
   return value as CategoryId;
 }
 
+function tradeRequestTraitField(body: Record<string, unknown>): TradeRequestTrait {
+  const value = body.traitId;
+  if (typeof value !== 'string' || !TRADE_REQUEST_TRAIT_IDS.includes(value as TradeRequestTrait)) {
+    throw new ApiError(400, 'INVALID_TRADE_TRAIT', 'traitId is not a supported trade request.');
+  }
+  return value as TradeRequestTrait;
+}
+
 function expectedRevisionField(body: Record<string, unknown>): number | undefined {
   const value = body.expectedRevision;
   if (value === undefined) return undefined;
@@ -48,7 +107,7 @@ function expectedRevisionField(body: Record<string, unknown>): number | undefine
   return value as number;
 }
 
-async function handleApi(request: Request, env: AppEnv): Promise<Response> {
+async function handleApi(request: Request, env: AppEnv, ctx: ExecutionContext): Promise<Response> {
   const url = new URL(request.url);
   let path: string;
   try {
@@ -57,18 +116,106 @@ async function handleApi(request: Request, env: AppEnv): Promise<Response> {
     throw new ApiError(400, 'INVALID_REQUEST_PATH', 'The request path contains invalid encoding.');
   }
 
-  if (request.method === 'GET' && path === '/api/health') {
-    const database = await env.DB.prepare('SELECT 1 AS ok').first<{ ok: number }>();
-    return jsonResponse(
+  if ((request.method === 'GET' || request.method === 'HEAD') && path === '/api/health') {
+    const response = jsonResponse(
       {
-        ok: database?.ok === 1,
-        service: 'dexly-companion',
+        ok: true,
+        service: 'catchgrid',
         runtime: 'cloudflare-workers',
+        ...releaseMetadata(env),
       },
-      { cache: 'public' },
+      { cache: 'public', headers: { 'Cache-Control': 'no-store' } },
     );
+    return request.method === 'HEAD' ? headResponse(response) : response;
   }
 
+  if ((request.method === 'GET' || request.method === 'HEAD') && path === '/api/ready') {
+    let catalogVersion = 'unknown';
+    let ready = false;
+    try {
+      const database = await env.DB.prepare(
+        `SELECT
+           (SELECT version FROM catalog_versions ORDER BY imported_at DESC LIMIT 1) AS catalog_version,
+           1 AS ok`,
+      ).first<{ catalog_version: string | null; ok: number }>();
+      catalogVersion = database?.catalog_version ?? 'unknown';
+      ready = database?.ok === 1 && catalogVersion !== 'unknown';
+    } catch (error) {
+      console.error({
+        event: 'readiness_check_failed',
+        requestId: requestId(request),
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+    const response = jsonResponse(
+      {
+        ok: ready,
+        service: 'catchgrid',
+        database: ready ? 'ready' : 'unavailable',
+        catalogVersion,
+        ...releaseMetadata(env),
+      },
+      { status: ready ? 200 : 503 },
+    );
+    return request.method === 'HEAD' ? headResponse(response) : response;
+  }
+
+  if (
+    (request.method === 'GET' || request.method === 'HEAD') &&
+    path === '/api/v1/catalog/version'
+  ) {
+    const row = await env.DB.prepare(
+      'SELECT version, imported_at FROM catalog_versions ORDER BY imported_at DESC LIMIT 1',
+    ).first<{ version: string; imported_at: string }>();
+    if (!row) throw new ApiError(503, 'CATALOG_NOT_READY', 'The catalog is not available yet.');
+    const response = jsonResponse(
+      { catalogVersion: row.version, importedAt: row.imported_at },
+      {
+        cache: 'public',
+        headers: { 'Cache-Control': 'public, max-age=60, s-maxage=300' },
+      },
+    );
+    return request.method === 'HEAD' ? headResponse(response) : response;
+  }
+
+  if ((request.method === 'GET' || request.method === 'HEAD') && path === '/api/v1/catalog') {
+    const cacheKey = publicCatalogCacheKey(request, env);
+    const cached = await caches.default.match(cacheKey);
+    if (cached) {
+      console.log({
+        event: 'catalog_cache',
+        requestId: requestId(request),
+        method: request.method,
+        outcome: 'hit',
+        workerVersionId: env.CF_VERSION_METADATA.id,
+      });
+      const headers = new Headers(cached.headers);
+      headers.set('X-CatchGrid-Cache', 'HIT');
+      const cachedResponse = new Response(cached.body, { status: cached.status, headers });
+      return request.method === 'HEAD' ? headResponse(cachedResponse) : cachedResponse;
+    }
+
+    const payload = await getPublicCatalog(env.DB);
+    const response = jsonResponse(payload, {
+      cache: 'public',
+      headers: {
+        'Cache-Control': PUBLIC_CATALOG_CACHE_CONTROL,
+        ETag: `"catalog-${payload.catalogVersion}"`,
+        'X-CatchGrid-Cache': 'MISS',
+      },
+    });
+    console.log({
+      event: 'catalog_cache',
+      requestId: requestId(request),
+      method: request.method,
+      outcome: 'miss',
+      workerVersionId: env.CF_VERSION_METADATA.id,
+    });
+    ctx.waitUntil(caches.default.put(cacheKey, response.clone()));
+    return request.method === 'HEAD' ? headResponse(response) : response;
+  }
+
+  await enforceOwnerBoundary(request, env);
   const actor = await resolveActor(request, env);
 
   if (request.method === 'GET' && path === '/api/v1/bootstrap') {
@@ -112,7 +259,7 @@ async function handleApi(request: Request, env: AppEnv): Promise<Response> {
         env.DB,
         actor.profileId,
         stringField(body, 'formId', { min: 8, max: 90, pattern: FORM_ID_PATTERN }),
-        categoryField(body),
+        tradeRequestTraitField(body),
         booleanField(body, 'wanted'),
       ),
     );
@@ -146,18 +293,19 @@ async function handleApi(request: Request, env: AppEnv): Promise<Response> {
     const traitsValue = body.traits;
     if (
       !Array.isArray(traitsValue) ||
-      traitsValue.length > CATEGORY_IDS.length ||
+      traitsValue.length > TRADE_OFFER_TRAIT_IDS.length ||
       traitsValue.some(
-        (trait) => typeof trait !== 'string' || !CATEGORY_IDS.includes(trait as CategoryId),
+        (trait) =>
+          typeof trait !== 'string' || !TRADE_OFFER_TRAIT_IDS.includes(trait as TradeOfferTrait),
       )
     ) {
       throw new ApiError(
         400,
         'INVALID_TRAITS',
-        'traits must be a list of supported category identifiers.',
+        'traits may contain only shiny, XXL, XXS, or costume.',
       );
     }
-    const traits = [...new Set(traitsValue as CategoryId[])];
+    const traits = [...new Set(traitsValue as TradeOfferTrait[])];
     const notesValue = body.notes ?? '';
     if (typeof notesValue !== 'string' || notesValue.length > 1000) {
       throw new ApiError(400, 'INVALID_FIELD', 'notes must be 1,000 characters or fewer.');
@@ -185,7 +333,11 @@ async function handleApi(request: Request, env: AppEnv): Promise<Response> {
       status: 204,
       headers: {
         'Cache-Control': 'no-store',
+        'Cross-Origin-Opener-Policy': 'same-origin',
+        'Referrer-Policy': 'no-referrer',
+        'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
         'X-Content-Type-Options': 'nosniff',
+        'X-Frame-Options': 'DENY',
       },
     });
   }
@@ -194,12 +346,34 @@ async function handleApi(request: Request, env: AppEnv): Promise<Response> {
 }
 
 export default {
-  async fetch(request: Request, env: AppEnv): Promise<Response> {
+  async fetch(request: Request, env: AppEnv, ctx: ExecutionContext): Promise<Response> {
     const id = requestId(request);
+    const startedAt = Date.now();
     try {
-      return await handleApi(request, env);
+      const response = await handleApi(request, env, ctx);
+      console.log({
+        event: 'api_request',
+        requestId: id,
+        method: request.method,
+        path: new URL(request.url).pathname,
+        status: response.status,
+        durationMs: Date.now() - startedAt,
+        environment: releaseMetadata(env).environment,
+        gitSha: releaseMetadata(env).gitSha,
+      });
+      return response;
     } catch (error) {
-      return errorResponse(error, id);
+      const response = errorResponse(error, id);
+      console.warn({
+        event: 'api_request_failed',
+        requestId: id,
+        method: request.method,
+        path: new URL(request.url).pathname,
+        status: response.status,
+        durationMs: Date.now() - startedAt,
+        code: error instanceof ApiError ? error.code : 'INTERNAL_ERROR',
+      });
+      return response;
     }
   },
 } satisfies ExportedHandler<AppEnv>;

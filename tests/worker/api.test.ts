@@ -1,7 +1,17 @@
 import { env, SELF } from 'cloudflare:test';
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import type { BootstrapPayload, RuleState } from '../../shared/types';
+import { ApiError } from '../../worker/http';
+import { enforceOwnerBoundary, type OwnerRateLimitEnv } from '../../worker/rateLimit';
+
+import type {
+  BootstrapPayload,
+  RuleState,
+  TradeOfferTrait,
+  TradeRequestTrait,
+  TradeSpecimen,
+  WantedEntry,
+} from '../../shared/types';
 
 const LOCAL_ORIGIN = 'http://localhost';
 const PROFILE_ID = 'profile:local-development';
@@ -11,6 +21,7 @@ beforeEach(async () => {
     env.DB.prepare('DELETE FROM import_jobs'),
     env.DB.prepare('DELETE FROM backup_snapshots'),
     env.DB.prepare('DELETE FROM mutation_batches'),
+    env.DB.prepare('DELETE FROM trade_wanted_entries'),
     env.DB.prepare('DELETE FROM collection_entries'),
     env.DB.prepare('DELETE FROM wanted_entries'),
     env.DB.prepare('DELETE FROM trade_specimens'),
@@ -29,6 +40,11 @@ beforeEach(async () => {
            THEN 'released'
          ELSE 'unknown'
        END`,
+    ),
+    env.DB.prepare(
+      `UPDATE form_category_rules
+       SET state = 'ineligible'
+       WHERE form_id = 'form-0151-standard' AND category_id = 'lucky'`,
     ),
   ]);
 });
@@ -126,7 +142,80 @@ async function putCollection(input: {
   });
 }
 
+function putWanted(input: {
+  formId: string;
+  traitId: unknown;
+  wanted: boolean;
+}): Promise<Response> {
+  return localApi('/api/v1/wanted', {
+    method: 'PUT',
+    body: JSON.stringify(input),
+  });
+}
+
+function postTrade(input: {
+  formId: string;
+  traits: unknown;
+  quantity: number;
+  notes?: string;
+}): Promise<Response> {
+  return localApi('/api/v1/trades', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  });
+}
+
 describe('Worker bootstrap and authentication boundary', () => {
+  it('serves separate GET and HEAD liveness/readiness probes with release metadata', async () => {
+    for (const path of ['/api/health', '/api/ready']) {
+      const getResponse = await localApi(path, {}, null);
+      const payload = await responseJson<{
+        ok: boolean;
+        gitSha: string;
+        environment: string;
+        catalogVersion?: string;
+      }>(getResponse);
+      expect(getResponse.status).toBe(200);
+      expect(payload.ok).toBe(true);
+      expect(payload.gitSha).toBeTruthy();
+      expect(payload.environment).toBeTruthy();
+      expect(getResponse.headers.get('cache-control')).toContain('no-store');
+
+      const headResponse = await localApi(path, { method: 'HEAD' }, null);
+      expect(headResponse.status).toBe(200);
+      expect(await headResponse.text()).toBe('');
+    }
+  });
+
+  it('serves public catalog HEAD and a profile-free cacheable payload', async () => {
+    const versionResponse = await localApi('/api/v1/catalog/version', {}, null);
+    expect(versionResponse.status).toBe(200);
+    const versionPayload = await responseJson<{ catalogVersion: string }>(versionResponse);
+    expect(versionPayload.catalogVersion).toMatch(/^\d{4}-\d{2}-\d{2}\.\d+$/);
+    const versionHead = await localApi('/api/v1/catalog/version', { method: 'HEAD' }, null);
+    expect(versionHead.status).toBe(200);
+    expect(await versionHead.text()).toBe('');
+
+    const headResponse = await localApi('/api/v1/catalog', { method: 'HEAD' }, null);
+    expect(headResponse.status).toBe(200);
+    expect(headResponse.headers.get('cache-control')).toContain('s-maxage=3600');
+    expect(await headResponse.text()).toBe('');
+
+    const getResponse = await localApi('/api/v1/catalog', {}, null);
+    const payload = await responseJson<Record<string, unknown> & { catalog: unknown[] }>(
+      getResponse,
+    );
+    expect(getResponse.status).toBe(200);
+    expect(getResponse.headers.get('x-catchgrid-cache')).toBe('HIT');
+    expect(payload.catalog.length).toBeGreaterThan(0);
+    expect(payload).not.toHaveProperty('profileId');
+    expect(payload).not.toHaveProperty('collectionEntries');
+    expect(payload).not.toHaveProperty('wantedEntries');
+    expect(payload).not.toHaveProperty('tradeSpecimens');
+    expect(payload).not.toHaveProperty('revision');
+    expect(JSON.stringify(payload)).not.toContain('profile:local-development');
+  });
+
   it('serves the seeded catalog to the localhost development actor', async () => {
     const response = await localApi('/api/v1/bootstrap', {}, null);
     const payload = await responseJson<BootstrapResponse>(response);
@@ -135,6 +224,7 @@ describe('Worker bootstrap and authentication boundary', () => {
     expect(response.headers.get('cache-control')).toContain('no-store');
     expect(payload.authMode).toBe('local');
     expect(payload.profileId).toBe(PROFILE_ID);
+    expect(payload.catalogVersion).toBe('2026-08-13.1');
     expect(payload.revision).toBe(0);
     expect(payload.categories.map((category) => category.id)).toEqual([
       'normal',
@@ -162,6 +252,26 @@ describe('Worker bootstrap and authentication boundary', () => {
       shadow: 'released',
       purified: 'released',
     });
+
+    const solgaleo = payload.catalog.find((item) => item.id === 'form-0791-standard');
+    expect(solgaleo).toMatchObject({
+      dexNumber: 791,
+      name: 'Solgaleo',
+      shinySpriteUrl: expect.stringContaining('pm791.s.icon.png'),
+    });
+    expect(solgaleo?.rules.shiny).toBe('released');
+
+    const mew = payload.catalog.find((item) => item.id === 'form-0151-standard');
+    const cosmog = payload.catalog.find((item) => item.id === 'form-0789-standard');
+    const meltan = payload.catalog.find((item) => item.id === 'form-0808-standard');
+    expect(mew?.rules.lucky).toBe('ineligible');
+    expect(cosmog?.rules.lucky).toBe('released');
+    expect(meltan?.rules.lucky).toBe('released');
+
+    const regieleki = payload.catalog.find((item) => item.id === 'form-0894-standard');
+    const wyrdeer = payload.catalog.find((item) => item.id === 'form-0899-standard');
+    expect(regieleki?.region).toBe('galar');
+    expect(wyrdeer?.region).toBe('hisui');
   });
 
   it('fails closed on a production hostname when no access token is configured', async () => {
@@ -171,6 +281,60 @@ describe('Worker bootstrap and authentication boundary', () => {
     expect(response.status).toBe(503);
     expect(payload.error.code).toBe('PRIVATE_API_NOT_CONFIGURED');
     expect(payload.error.requestId).toBeTruthy();
+  });
+});
+
+describe('owner boundary rate limits', () => {
+  function limiter(success: boolean): RateLimit {
+    return { limit: async () => ({ success }) };
+  }
+
+  it('fails a rate-limited unauthenticated owner attempt before authentication', async () => {
+    const env = {
+      APP_ACCESS_TOKEN: 'expected-secret',
+      OWNER_AUTH_LIMITER: limiter(false),
+    } satisfies OwnerRateLimitEnv;
+
+    await expect(
+      enforceOwnerBoundary(
+        new Request('https://dex.cjdev.app/api/v1/bootstrap', {
+          headers: { 'cf-connecting-ip': '192.0.2.10', authorization: 'Bearer wrong-secret' },
+        }),
+        env,
+      ),
+    ).rejects.toMatchObject({ status: 429, code: 'RATE_LIMITED' } satisfies Partial<ApiError>);
+  });
+
+  it('rate-limits authenticated mutations by a token-derived key', async () => {
+    const env = {
+      APP_ACCESS_TOKEN: 'expected-secret',
+      OWNER_AUTH_LIMITER: limiter(true),
+      OWNER_MUTATION_LIMITER: limiter(false),
+    } satisfies OwnerRateLimitEnv;
+
+    await expect(
+      enforceOwnerBoundary(
+        new Request('https://dex.cjdev.app/api/v1/collection', {
+          method: 'PUT',
+          headers: { authorization: 'Bearer expected-secret' },
+        }),
+        env,
+      ),
+    ).rejects.toMatchObject({ status: 429, code: 'RATE_LIMITED' } satisfies Partial<ApiError>);
+  });
+
+  it('does not invoke production limiters for loopback development', async () => {
+    const rejectingLimiter: RateLimit = {
+      limit: async () => {
+        throw new Error('Limiter should not run on loopback');
+      },
+    };
+    await expect(
+      enforceOwnerBoundary(new Request('http://localhost/api/v1/collection'), {
+        OWNER_AUTH_LIMITER: rejectingLimiter,
+        OWNER_MUTATION_LIMITER: rejectingLimiter,
+      }),
+    ).resolves.toBeUndefined();
   });
 });
 
@@ -409,7 +573,265 @@ describe('sparse collection mutations', () => {
   });
 });
 
+describe('trade requests and specimens', () => {
+  it('persists every supported wanted trait and maps trait_id into bootstrap entries', async () => {
+    const traits: TradeRequestTrait[] = ['normal', 'shiny', 'xxl', 'xxs', 'costume'];
+
+    for (const traitId of traits) {
+      const response = await putWanted({
+        formId: 'form-0001-standard',
+        traitId,
+        wanted: true,
+      });
+      const payload = await responseJson<WantedEntry>(response);
+
+      expect(response.status).toBe(200);
+      expect(payload).toMatchObject({
+        profileId: PROFILE_ID,
+        formId: 'form-0001-standard',
+        categoryId: traitId,
+        wanted: true,
+      });
+    }
+
+    const state = await bootstrap();
+    expect(
+      state.wantedEntries.map((entry) => `${entry.formId}:${entry.categoryId}`).sort(),
+    ).toEqual(traits.map((traitId) => `form-0001-standard:${traitId}`).sort());
+
+    const stored = await env.DB.prepare(
+      `SELECT trait_id
+       FROM trade_wanted_entries
+       WHERE profile_id = ? AND form_id = ?
+       ORDER BY trait_id`,
+    )
+      .bind(PROFILE_ID, 'form-0001-standard')
+      .all<{ trait_id: TradeRequestTrait }>();
+    expect(stored.results.map((row) => row.trait_id)).toEqual([...traits].sort());
+  });
+
+  it.each(['hundo', 'lucky', 'shadow', 'purified', 'party', null] as const)(
+    'rejects unsupported wanted trait %s without persisting a row',
+    async (traitId) => {
+      const response = await putWanted({
+        formId: 'form-0001-standard',
+        traitId,
+        wanted: true,
+      });
+      const payload = await responseJson<ErrorResponse>(response);
+
+      expect(response.status).toBe(400);
+      expect(payload.error.code).toBe('INVALID_TRADE_TRAIT');
+      expect((await bootstrap()).wantedEntries).toEqual([]);
+    },
+  );
+
+  it('rejects wanted and offered traits that are not released for the selected form', async () => {
+    await env.DB.prepare(
+      `UPDATE form_category_rules
+       SET state = 'unreleased'
+       WHERE form_id = 'form-0001-standard' AND category_id = 'shiny'`,
+    ).run();
+
+    const wantedResponse = await putWanted({
+      formId: 'form-0001-standard',
+      traitId: 'shiny',
+      wanted: true,
+    });
+    const wantedPayload = await responseJson<ErrorResponse>(wantedResponse);
+    expect(wantedResponse.status).toBe(422);
+    expect(wantedPayload.error.code).toBe('TRAIT_NOT_AVAILABLE');
+
+    const offerResponse = await postTrade({
+      formId: 'form-0001-standard',
+      traits: ['shiny'],
+      quantity: 1,
+    });
+    const offerPayload = await responseJson<ErrorResponse>(offerResponse);
+    expect(offerResponse.status).toBe(422);
+    expect(offerPayload.error.code).toBe('TRAIT_NOT_AVAILABLE');
+
+    const state = await bootstrap();
+    expect(state.wantedEntries).toEqual([]);
+    expect(state.tradeSpecimens).toEqual([]);
+  });
+
+  it.each(['xxl', 'xxs'] as const)(
+    'rejects an active %s request when that size is already collected',
+    async (traitId) => {
+      const collectionResponse = await putCollection({
+        formId: 'form-0001-standard',
+        categoryId: traitId,
+        collected: true,
+        operationId: `op:test:owned-size:${traitId}`,
+        expectedRevision: 0,
+      });
+      expect(collectionResponse.status).toBe(200);
+
+      const response = await putWanted({
+        formId: 'form-0001-standard',
+        traitId,
+        wanted: true,
+      });
+      const payload = await responseJson<ErrorResponse>(response);
+
+      expect(response.status).toBe(409);
+      expect(payload.error.code).toBe('SIZE_ALREADY_OWNED');
+      expect((await bootstrap()).wantedEntries).toEqual([]);
+    },
+  );
+
+  it.each(['xxl', 'xxs'] as const)(
+    'clears an active %s request when that size is marked collected',
+    async (traitId) => {
+      const wantedResponse = await putWanted({
+        formId: 'form-0001-standard',
+        traitId,
+        wanted: true,
+      });
+      expect(wantedResponse.status).toBe(200);
+      expect((await bootstrap()).wantedEntries).toHaveLength(1);
+
+      const collectionResponse = await putCollection({
+        formId: 'form-0001-standard',
+        categoryId: traitId,
+        collected: true,
+        operationId: `op:test:complete-size-goal:${traitId}`,
+        expectedRevision: 0,
+      });
+      expect(collectionResponse.status).toBe(200);
+
+      const state = await bootstrap();
+      expect(state.wantedEntries).toEqual([]);
+      expect(
+        state.collectionEntries.some(
+          (entry) =>
+            entry.formId === 'form-0001-standard' &&
+            entry.categoryId === traitId &&
+            entry.collected,
+        ),
+      ).toBe(true);
+
+      const stored = await env.DB.prepare(
+        `SELECT count(*) AS count
+         FROM trade_wanted_entries
+         WHERE profile_id = ? AND form_id = ? AND trait_id = ?`,
+      )
+        .bind(PROFILE_ID, 'form-0001-standard', traitId)
+        .first<{ count: number }>();
+      expect(stored?.count).toBe(0);
+    },
+  );
+
+  it('accepts normal and combined special offers, including costume, in bootstrap', async () => {
+    const combinedTraits: TradeOfferTrait[] = ['shiny', 'xxl', 'xxs', 'costume'];
+    const combinedResponse = await postTrade({
+      formId: 'form-0001-standard',
+      traits: combinedTraits,
+      quantity: 2,
+      notes: 'Event spare',
+    });
+    const combined = await responseJson<TradeSpecimen>(combinedResponse);
+
+    expect(combinedResponse.status).toBe(201);
+    expect(combined).toMatchObject({
+      profileId: PROFILE_ID,
+      formId: 'form-0001-standard',
+      traits: combinedTraits,
+      quantity: 2,
+      notes: 'Event spare',
+    });
+    expect(combined.id).toMatch(/^trade:[0-9a-f-]{36}$/);
+
+    const normalResponse = await postTrade({
+      formId: 'form-0004-standard',
+      traits: [],
+      quantity: 1,
+    });
+    const normal = await responseJson<TradeSpecimen>(normalResponse);
+    expect(normalResponse.status).toBe(201);
+    expect(normal.traits).toEqual([]);
+
+    const state = await bootstrap();
+    expect(state.tradeSpecimens).toHaveLength(2);
+    expect(state.tradeSpecimens.find((entry) => entry.id === combined.id)).toMatchObject({
+      traits: combinedTraits,
+      quantity: 2,
+      notes: 'Event spare',
+    });
+    expect(state.tradeSpecimens.find((entry) => entry.id === normal.id)).toMatchObject({
+      formId: 'form-0004-standard',
+      traits: [],
+      quantity: 1,
+    });
+  });
+
+  it.each(['normal', 'hundo', 'lucky', 'shadow', 'purified', 'party'] as const)(
+    'rejects forbidden or unsupported offer trait %s',
+    async (trait) => {
+      const response = await postTrade({
+        formId: 'form-0001-standard',
+        traits: [trait],
+        quantity: 1,
+      });
+      const payload = await responseJson<ErrorResponse>(response);
+
+      expect(response.status).toBe(400);
+      expect(payload.error.code).toBe('INVALID_TRAITS');
+      expect((await bootstrap()).tradeSpecimens).toEqual([]);
+    },
+  );
+
+  it('rejects a malformed offer trait list', async () => {
+    const response = await postTrade({
+      formId: 'form-0001-standard',
+      traits: ['shiny', 42],
+      quantity: 1,
+    });
+    const payload = await responseJson<ErrorResponse>(response);
+
+    expect(response.status).toBe(400);
+    expect(payload.error.code).toBe('INVALID_TRAITS');
+    expect((await bootstrap()).tradeSpecimens).toEqual([]);
+  });
+});
+
 describe('authoritative CSV import', () => {
+  it('allows cleanup removals when a formerly collected category is now ineligible', async () => {
+    await env.DB.prepare(
+      `INSERT INTO collection_entries (profile_id, form_id, category_id)
+       VALUES (?, 'form-0151-standard', 'lucky')`,
+    )
+      .bind(PROFILE_ID)
+      .run();
+
+    const previewResponse = await localApi('/api/v1/imports/preview', {
+      method: 'POST',
+      body: JSON.stringify({
+        csv: ['form_id,lucky', 'form-0151-standard,false'].join('\n'),
+        sourceName: 'cleanup.csv',
+        policy: 'update',
+      }),
+    });
+    const preview = await responseJson<ImportPreviewResponse>(previewResponse);
+    expect(previewResponse.status).toBe(200);
+    expect(preview.preview.summary).toMatchObject({ removed: 1, rejected: 0 });
+    if (!preview.jobId) throw new Error('Expected a cleanup import job');
+
+    const applyResponse = await localApi(`/api/v1/imports/${preview.jobId}/apply`, {
+      method: 'POST',
+      body: JSON.stringify({}),
+    });
+    const applied = await responseJson<ImportApplyResponse>(applyResponse);
+    expect(applyResponse.status).toBe(200);
+    expect(applied.removed).toBe(1);
+    expect(
+      (await bootstrap()).collectionEntries.some(
+        (entry) => entry.formId === 'form-0151-standard' && entry.categoryId === 'lucky',
+      ),
+    ).toBe(false);
+  });
+
   it('previews without collection writes, then atomically creates backup and mutation', async () => {
     const csv = [
       'dex_number,form_id,name,normal,shiny',
@@ -526,11 +948,12 @@ describe('authoritative CSV import', () => {
     expect(appliedJob).toEqual({ status: 'applied', backup_id: applied.backupId });
   });
 
-  it('applies a catalog-wide 138-cell import with a bounded D1 query count', async () => {
+  it('applies a 138-cell import with a bounded D1 query count', async () => {
     const state = await bootstrap();
+    const importSlice = state.catalog.slice(0, 23);
     const csv = [
       'form_id,normal,shiny,lucky,hundo,xxl,xxs',
-      ...state.catalog.map((item) => `${item.id},true,true,true,true,true,true`),
+      ...importSlice.map((item) => `${item.id},true,true,true,true,true,true`),
     ].join('\n');
 
     const previewResponse = await localApi('/api/v1/imports/preview', {
@@ -539,7 +962,7 @@ describe('authoritative CSV import', () => {
     });
     const preview = await responseJson<ImportPreviewResponse>(previewResponse);
     expect(previewResponse.status).toBe(200);
-    expect(preview.preview.summary.added).toBe(state.catalog.length * 6);
+    expect(preview.preview.summary.added).toBe(importSlice.length * 6);
     if (!preview.jobId) throw new Error('Expected a valid catalog-wide import job');
 
     const applyResponse = await localApi(`/api/v1/imports/${preview.jobId}/apply`, {
@@ -548,8 +971,8 @@ describe('authoritative CSV import', () => {
     });
     const applied = await responseJson<ImportApplyResponse>(applyResponse);
     expect(applyResponse.status).toBe(200);
-    expect(applied.added).toBe(state.catalog.length * 6);
-    expect((await bootstrap()).collectionEntries).toHaveLength(state.catalog.length * 6);
+    expect(applied.added).toBe(importSlice.length * 6);
+    expect((await bootstrap()).collectionEntries).toHaveLength(importSlice.length * 6);
   });
 
   it('claims a no-change import exactly once under concurrent apply requests', async () => {

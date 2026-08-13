@@ -1,148 +1,160 @@
 # Architecture
 
-Dexly is one Cloudflare Worker application: Vite builds the React single-page app and
-the Worker module, Cloudflare serves the static bundle, `/api/*` runs through the
-Worker first, and the Worker is the only component with a D1 binding.
+CatchGrid is a local-first Cloudflare Worker application. Vite builds the React SPA and
+Worker module, D1 holds the shared catalog and one optional owner profile, and normal
+trainer state remains in the browser under the validated
+`catchgrid:local-profile:v2` schema.
 
 ```mermaid
 flowchart LR
-  B["React + TypeScript browser app"] -->|"same-origin /api/*"| W["Cloudflare Worker"]
-  W --> A["Auth, validation, HTTP policy"]
-  A --> R["Direct typed D1 repository"]
-  R --> D[("Cloudflare D1")]
-  B -->|"other paths"| S["Workers static assets + SPA fallback"]
+  B["React + TypeScript PWA"] -->|"profile-free catalog GET"| W["Cloudflare Worker"]
+  B --> L[("Local profile v2 + recovery snapshots")]
+  W --> C["Cloudflare Cache API"]
+  C -->|"cache miss"| R["Typed D1 repository"]
+  R --> D[("Shared catalog in D1")]
+  O["Unlisted owner route"] -->|"separate bearer secret"| W
+  W --> P[("Legacy owner profile in D1")]
+  B --> S["Service worker + static assets"]
 ```
 
 ## Runtime boundaries
 
-- `src/` owns presentation, interaction, transient UI state, and the typed API client.
-- `shared/` owns transport/domain types plus deterministic collection, search, and CSV
-  rules used by more than one runtime.
-- `worker/index.ts` owns routing; `worker/auth.ts` and `worker/http.ts` own the security
-  boundary; `worker/repository.ts` and `worker/imports.ts` own persistence workflows.
-- `migrations/` is the source of truth for D1 schema and seed data.
-- `catalog/catalog.v1.json` is the reviewed source manifest; the seed migration is what
-  the running application actually reads from D1.
+- `src/` owns presentation, accessible interaction, local profile coordination, PWA update
+  prompts, CSV/full-profile portability, and the typed API client.
+- `shared/` owns transport/domain types and deterministic catalog, collection, CSV, and
+  search rules used by browser and Worker runtimes.
+- `worker/index.ts` owns routing and cache orchestration; `worker/auth.ts`,
+  `worker/http.ts`, and `worker/rateLimit.ts` own the private security boundary;
+  `worker/repository.ts` and `worker/imports.ts` own D1 workflows.
+- `migrations/` is the immutable D1 schema/data history. New catalog snapshots generate a
+  new additive migration; an existing migration is never rewritten.
+- `catalog/catalog.v1.json`, `catalog/catalog-overrides.v1.json`, and
+  `catalog/region-medals.v1.json` are the reviewed catalog inputs.
+- `catalog/evolution-families.v1.json` is a dated search aid bundled at build time; the app
+  does not fetch it at runtime.
+- `public/sw.js`, `public/app-bootstrap.js`, the web manifest, and static headers define
+  install, safe caching, controlled updates, and offline behavior.
 
-The generated `Env`/binding declarations come from `wrangler types` and the checked-in
-Wrangler configuration. The project does not depend on a separately versioned
-`@cloudflare/workers-types` package.
+Wrangler generates binding declarations from `wrangler.jsonc`. The project does not carry
+a separately versioned `@cloudflare/workers-types` package.
 
-## Why the repository uses direct typed D1
+## Public profile model
 
-The current persistence layer deliberately uses D1 prepared statements directly:
+Normal users need no account. `LocalProfile` schema version 2 contains:
 
-```ts
-db.prepare('SELECT ... WHERE profile_id = ?').bind(profileId);
-```
+- standard collection entries for every supported category;
+- separate collector-form entries for Regular and Shiny;
+- saved visual searches;
+- appearance and active-category settings;
+- catalog and migration metadata; and
+- legacy wanted/specimen arrays retained only so upgrading from v1 never deletes data.
 
-Each result shape has a narrow TypeScript row interface and is mapped at the repository
-boundary into shared domain types. This keeps the MVP's SQL, transactions, indexes,
-conflict rules, and D1 batch behavior visible and auditable. It also avoids a second
-schema abstraction while the data model is still small.
+Writes are durable-first: React adopts a change only after validated serialization succeeds.
+Storage-disabled, quota, serialization, validation, snapshot, and corrupt-data failures are
+typed and displayed rather than converted into an apparent success. Automatic snapshots
+rotate, CSV imports require a pre-import snapshot, corrupt raw payloads are preserved under
+recovery keys, and full JSON backups can restore the entire profile. CSV and JSON restore
+are explicit operations; they do not merge unseen state silently.
 
-The MVP intentionally has no ORM dependency. Adopting one later should be an explicit
-architecture change with generated migrations reviewed into `migrations/`; it should
-not create a second, competing schema source.
+Browser storage is origin-scoped. The application detects the legacy `workers.dev` origin,
+explains that `dex.cjdev.app` cannot read that storage, and offers an export plus canonical
+link without redirecting before the user can save their collection. The v2 loader also
+supports one-way migration from `dexly:local-profile:v1` and legacy appearance keys.
 
-## Data model and consistency
+## Catalog model
 
-The key separation is:
+Catalog version `2026-08-13.1` contains 1,025 stable National Dex representatives and 177
+reviewed collector forms, or 1,202 form records total. Of the standard representatives, 949
+are released in the dated snapshot; unreleased placeholders remain so completion and medal
+denominators never scale down to whatever happens to be available today.
 
-- catalog facts: species, forms, types, assets, categories, and per-form category rules;
-- trainer state: collected and wanted rows, trade specimens, and profile revision;
-- safety/audit state: mutation batches/items, import previews, and backup snapshots.
-
-Collection and wanted tables are sparse: a row means `true`; no row means the trainer
-has not marked that form/category. This is separate from eligibility. A missing
-collection row does not mean a form is valid or released.
+Stable form metadata includes `variantKind`, `collectorGroupId`, release/tradeability,
+display ordering, form-specific types, optional regional/costume/gender/transformation
+metadata, and per-category rule state. Supported groups include regional, costume, gender,
+alternate, Mega, Primal, Gigantamax, and fusion forms. Species progress counts only standard
+representatives. Collector-form panels track only Regular and Shiny, preventing alternate
+forms from inflating the main Dex.
 
 `form_category_rules.state` distinguishes `released`, `unreleased`, `ineligible`, and
-`unknown`. The Worker rejects collection writes unless the selected rule is `released`.
-Collection mutations include a client operation ID for retry idempotency and an
-expected profile revision for optimistic concurrency. Undo is accepted only while the
-mutation is still the latest revision.
+`unknown`. Missing state is therefore not confused with eligibility. Sprite mappings use
+stable form IDs and a pinned upstream commit, but sprite presence is never release evidence.
+The verifier checks source hashes, stable IDs, National Dex continuity, collector families,
+medal denominators, sprite paths, and the dated Nickit decision.
 
-CSV import is a preview/apply workflow. The preview resolves and validates rows before
-any collection change, then stores only a bounded action plan and source hash—not the
-raw CSV. Apply rechecks the catalog version, collection revision, rules, and prior cell
-states. It uses `json_each` set operations so the D1 query count stays constant as the
-number of changed cells grows. The same atomic batch records a bounded backup and
-mutation history. The backup is an auditable rollback artifact; a user-facing restore
-workflow is not part of this vertical slice.
+## Profile-free edge catalog
 
-## API surface
+The public application uses only these profile-free endpoints:
 
-| Method/path                       | Responsibility                                               |
-| --------------------------------- | ------------------------------------------------------------ |
-| `GET /api/health`                 | Public, cacheable Worker/D1 liveness check.                  |
-| `GET /api/v1/bootstrap`           | Private catalog, rules, collection, wanted, and trade state. |
-| `PUT /api/v1/collection`          | Idempotent, revision-checked collection mutation.            |
-| `POST /api/v1/mutations/:id/undo` | Undo the latest compatible mutation.                         |
-| `PUT /api/v1/wanted`              | Mark or clear a wanted form/category.                        |
-| `POST /api/v1/imports/preview`    | Parse and stage a bounded CSV import.                        |
-| `POST /api/v1/imports/:id/apply`  | Apply a previously staged import.                            |
-| `POST /api/v1/trades`             | Add a private trade specimen.                                |
-| `DELETE /api/v1/trades/:id`       | Remove a private trade specimen.                             |
+| Method/path                        | Responsibility                                         |
+| ---------------------------------- | ------------------------------------------------------ |
+| `GET/HEAD /api/health`             | Worker/release liveness; does not access D1.           |
+| `GET/HEAD /api/ready`              | Uncached D1/catalog readiness.                         |
+| `GET/HEAD /api/v1/catalog/version` | Small release/catalog version check.                   |
+| `GET/HEAD /api/v1/catalog`         | Cacheable catalog and categories; never trainer state. |
 
-Unknown `/api/*` routes return JSON errors rather than falling through to the SPA.
+`getPublicCatalog` performs a dedicated catalog-only query. The Worker Cache API keys the
+response by release, publishes explicit cache metadata, and uses `waitUntil` for cache
+writes. The browser does not receive a D1 binding. Unknown `/api/*` paths return JSON errors
+instead of falling through to SPA HTML.
 
-## Security and authentication
+## Owner compatibility surface
 
-The present model protects one private collection; it is not a user-account system.
+The unlisted owner route preserves an older D1-backed personal workflow across devices.
+`/api/v1/bootstrap`, collection/undo, import preview/apply, and retained wanted/specimen
+endpoints are private compatibility APIs, not public navigation or a multi-user service.
+Outside loopback they require a constant-time checked `APP_ACCESS_TOKEN`, same-origin
+mutations, validated bodies, and scoped authentication/mutation rate limits. If the secret
+is absent, they fail closed with `503 PRIVATE_API_NOT_CONFIGURED`.
 
-- Loopback hosts use the seeded local actor for frictionless offline development.
-- Every non-loopback private API request requires `Authorization: Bearer <token>`.
-- If `APP_ACCESS_TOKEN` is absent outside localhost, the private API fails closed with
-  `503 PRIVATE_API_NOT_CONFIGURED`.
-- The UI retains the access key only in `sessionStorage`, not durable local storage.
-- Mutating requests reject a mismatched `Origin`; JSON bodies, identifiers, enums,
-  lengths, and upload size are validated at the Worker boundary.
-- Private responses are `no-store` and receive defensive content/frame/referrer
-  headers. Unexpected errors return a request ID without exposing internal details.
-- Static assets receive a restrictive CSP and browser security policy from
-  `public/_headers`; sprite images are allowed only from the pinned GitHub asset host.
-- D1 is never exposed to browser code, and the application never accepts Pokémon GO
-  credentials.
+Private responses are `no-store` and receive defensive content, frame, referrer, and HSTS
+headers. Logs include request/release identifiers but not the secret. Production and staging
+must use distinct secrets and distinct D1 databases.
 
-The shared token maps every request to the same seeded profile. Before supporting
-multiple people, public profiles, or sharing, replace it with real identity and session
-management, per-profile authorization checks, account recovery, rate limiting, and an
-abuse/privacy review. Do not describe the shared token as OAuth, password login, or
-multi-user authentication.
+## Search Lab
 
-## Catalog boundaries
+The visual search builder models include/exclude clauses joined with AND or OR, validates
+term-specific values, produces plain-language interpretation, and persists saved searches in
+local profile v2. Generated collection-gap queries use the reviewed Pokémon GO inventory
+grammar and preserve the `!traded&` guard, including on OR branches. Output is labeled
+`exact` or `candidate`; incomplete metadata never becomes a silent exact claim.
 
-Catalog version `2026-08-11.1` contains 23 standard forms across Kanto through Alola.
-It is a representative vertical slice, not a complete or automatically current game
-catalog. Release/eligibility assertions are dated `2026-08-11`; `null` means “not
-asserted,” not `false`.
+Missing Normal, Shiny, XXL, and XXS strings remain collection helpers. Evolution-family
+data can add an eligible earlier stage when evolving it could
+fill a later XXL/XXS gap, while true targets remain present if family metadata is incomplete.
 
-Sprite mappings are explicit, stable internal form IDs point to a PokeMiners repository
-commit, and moving branch URLs are not used. The catalog verifier checks identifiers,
-uniqueness, metadata shape, pinned URLs, and safe asset paths. Network checks are
-opt-in. Sprite presence alone is never used as gameplay evidence. See
-[`catalog/README.md`](../catalog/README.md) for the update and rights-review process.
+## PWA and failure behavior
 
-Generated search strings also have a hard boundary: some game filters are exact, while
-others can only narrow results. Shared domain logic reports `exact` or `candidate`
-quality and the UI must preserve that distinction.
+The service worker versions shell/runtime/catalog caches, serves a controlled offline
+navigation fallback, and excludes private `/api` responses. A waiting worker is activated
+only after the user accepts the update prompt. Hashed build assets are immutable; HTML,
+bootstrap, manifest, and service-worker files revalidate. Failed sprites use a same-origin
+rendered placeholder rather than another third-party request.
+
+A failed catalog request displays a retryable preservation message. It does not render
+`0 shown` or otherwise imply that the browser collection was erased.
 
 ## Test architecture
 
-Tests are intentionally split by runtime:
+- `vitest.config.ts` runs pure unit tests for domain rules, catalog invariants, local-profile
+  recovery, CSV parity, search building, Discord output, and PWA cache/update safety.
+- `vitest.worker.config.ts` runs API integration tests in Cloudflare's workerd pool;
+  `tests/setup-worker.ts` applies all checked-in D1 migrations to isolated storage.
+- `scripts/verify-catalog-generation.mjs` proves the catalog generator rejects an existing
+  migration before network access; `pnpm catalog:verify` runs it with the catalog verifier.
+- Playwright runs mobile and desktop Chromium and WebKit projects. It covers responsive
+  layout, 44-pixel targets, semantic theme assertions, modal focus, form tracking, catalog
+  downtime recovery, and axe checks across public pages.
 
-- `vitest.config.ts` runs pure/unit tests in Node and excludes Worker tests.
-- `vitest.worker.config.ts` runs API integration tests in Cloudflare's workerd-based
-  pool. `tests/setup-worker.ts` applies the checked-in D1 migrations to isolated test
-  storage before the suite.
-- Playwright is a separate end-to-end command and is not part of either Vitest pool. It
-  covers mobile grid/Quick Check/undo/search/CSV flows and the desktop shell with an
-  intercepted, isolated API; Worker tests remain responsible for real D1 behavior.
+Automated checks do not replace the still-open real-device VoiceOver, keyboard, 200% zoom,
+all-theme contrast/reduced-motion review, production Core Web Vitals, or live release checks.
 
-This separation keeps fast domain tests simple while exercising Worker bindings,
-request handling, auth failure, D1 constraints, imports, and revision behavior in the
-Cloudflare runtime.
+## Names retained for continuity
+
+CatchGrid is the product name and `dex.cjdev.app` is canonical. The Worker name
+`dexly-companion`, fallback origin, D1 names `dexly-db`/`dexly-db-staging`, repository slug,
+and legacy `dexly:*` storage keys remain intentionally because renaming them would replace
+deployed resources, break bookmarks, or impede safe data migration. They are infrastructure
+history, not current public branding.
 
 ## Platform references
 

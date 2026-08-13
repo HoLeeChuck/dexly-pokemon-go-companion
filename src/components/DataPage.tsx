@@ -11,18 +11,39 @@ export function DataPage({
   catalog,
   collectionEntries,
   catalogVersion,
-  authMode,
+  storageMode,
+  theme,
+  accentTheme,
+  showCloudAccess = false,
+  onThemeChange,
+  onAccentThemeChange,
   onUnlock,
+  onLeaveCloud,
   onImport,
+  onExportBackup,
+  onRestoreBackup,
+  snapshots,
+  onRestoreSnapshot,
 }: {
   catalog: readonly CatalogItem[];
   collectionEntries: readonly CollectionEntry[];
   catalogVersion: string;
-  authMode: 'local' | 'token';
+  storageMode: 'browser' | 'cloud';
+  theme: 'light' | 'dark';
+  accentTheme: 'green' | 'blue' | 'purple' | 'red' | 'orange' | 'pink';
+  showCloudAccess?: boolean;
+  onThemeChange: (theme: 'light' | 'dark') => void;
+  onAccentThemeChange: (theme: 'green' | 'blue' | 'purple' | 'red' | 'orange' | 'pink') => void;
   onUnlock: () => void;
+  onLeaveCloud: () => void;
   onImport: (input: { csv: string; fileName: string; policy: CsvImportPolicy }) => Promise<void>;
+  onExportBackup: () => void;
+  onRestoreBackup: (json: string) => void;
+  snapshots: readonly { id: string; createdAt: string; reason: string }[];
+  onRestoreSnapshot: (id: string) => void;
 }) {
   const fileRef = useRef<HTMLInputElement>(null);
+  const backupRef = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState('');
   const [csv, setCsv] = useState('');
   const [policy, setPolicy] = useState<CsvImportPolicy>('merge');
@@ -51,7 +72,7 @@ export function DataPage({
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `dexly-collection-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.download = `catchgrid-collection-${new Date().toISOString().slice(0, 10)}.csv`;
     link.click();
     URL.revokeObjectURL(url);
     setMessage('Collection CSV exported.');
@@ -97,7 +118,7 @@ export function DataPage({
           </span>
           <h1>Your collection stays portable.</h1>
           <p>
-            Import with a preview, export at any time, and keep private state locked by default.
+            Import with a preview, export at any time, and keep this browser's collection portable.
           </p>
         </div>
         <span className="data-hero__icon" aria-hidden="true">
@@ -114,6 +135,51 @@ export function DataPage({
         </div>
       )}
 
+      <section className="panel appearance-panel">
+        <div className="panel-heading">
+          <div>
+            <span className="eyebrow">Personalize CatchGrid</span>
+            <h2>Appearance</h2>
+          </div>
+          <Icon name={theme === 'dark' ? 'moon' : 'sun'} />
+        </div>
+        <p>
+          Choose a color family and brightness. Every color includes a tuned light and dark mode.
+        </p>
+        <div className="appearance-mode" role="group" aria-label="Brightness mode">
+          {(['light', 'dark'] as const).map((mode) => (
+            <button
+              type="button"
+              key={mode}
+              aria-pressed={theme === mode}
+              onClick={() => onThemeChange(mode)}
+            >
+              <Icon name={mode === 'dark' ? 'moon' : 'sun'} />
+              {mode === 'dark' ? 'Dark' : 'Light'}
+            </button>
+          ))}
+        </div>
+        <div className="theme-choice-grid" role="radiogroup" aria-label="Color theme">
+          {(['green', 'blue', 'purple', 'red', 'orange', 'pink'] as const).map((color) => (
+            <button
+              type="button"
+              role="radio"
+              aria-checked={accentTheme === color}
+              className={`theme-choice theme-choice--${color}`}
+              key={color}
+              onClick={() => onAccentThemeChange(color)}
+            >
+              <span aria-hidden="true">
+                <i />
+                <i />
+              </span>
+              <strong>{color.charAt(0).toUpperCase() + color.slice(1)}</strong>
+              {accentTheme === color && <Icon name="check" />}
+            </button>
+          ))}
+        </div>
+      </section>
+
       <section className="panel data-actions">
         <div className="panel-heading">
           <div>
@@ -129,6 +195,62 @@ export function DataPage({
         <button type="button" className="button button--primary button--full" onClick={exportCsv}>
           <Icon name="download" /> Export collection CSV
         </button>
+        <div className="portable-backup-actions">
+          <button type="button" className="button button--secondary" onClick={onExportBackup}>
+            <Icon name="shield" /> Export full JSON backup
+          </button>
+          <input
+            ref={backupRef}
+            type="file"
+            accept="application/json,.json"
+            hidden
+            disabled={storageMode === 'cloud'}
+            onChange={(event) => {
+              const file = event.target.files?.[0];
+              if (!file) return;
+              void file
+                .text()
+                .then(onRestoreBackup)
+                .catch(() => setMessage('The backup file could not be read.'));
+              event.currentTarget.value = '';
+            }}
+          />
+          <button
+            type="button"
+            className="button button--secondary"
+            disabled={storageMode === 'cloud'}
+            aria-describedby={storageMode === 'cloud' ? 'backup-restore-help' : undefined}
+            onClick={() => backupRef.current?.click()}
+          >
+            <Icon name="upload" />
+            {storageMode === 'cloud' ? 'Switch to browser to restore' : 'Restore JSON backup'}
+          </button>
+        </div>
+        <p className="backup-help" id="backup-restore-help">
+          {storageMode === 'cloud'
+            ? 'Local JSON restore is disabled while Cody Cloud is connected. Return to this browser first so a local backup cannot overwrite or diverge from cloud data.'
+            : 'Full backups include default and alternate-form collection state, wanted and trade data, saved searches, appearance settings, catalog version, and migration history.'}
+        </p>
+        {snapshots.length > 0 && (
+          <details className="snapshot-list">
+            <summary>Browser recovery snapshots ({snapshots.length})</summary>
+            {snapshots.map((snapshot) => (
+              <article key={snapshot.id}>
+                <span>
+                  <strong>{new Date(snapshot.createdAt).toLocaleString()}</strong>
+                  <small>{snapshot.reason}</small>
+                </span>
+                <button
+                  type="button"
+                  className="button button--secondary"
+                  onClick={() => onRestoreSnapshot(snapshot.id)}
+                >
+                  Restore
+                </button>
+              </article>
+            ))}
+          </details>
+        )}
       </section>
 
       <section className="panel import-panel">
@@ -148,6 +270,7 @@ export function DataPage({
             ref={fileRef}
             type="file"
             accept=".csv,text/csv"
+            aria-label="Choose a CSV file to preview"
             onChange={(event) => {
               const file = event.target.files?.[0];
               if (file) void readFile(file);
@@ -245,8 +368,8 @@ export function DataPage({
               <Icon name="shield" />
               <div>
                 <p>
-                  Dexly creates a D1 backup and re-validates this CSV on the Worker before applying
-                  it.
+                  CatchGrid previews every change before saving it to this browser. Export a CSV
+                  first when you want a separate backup.
                 </p>
               </div>
             </div>
@@ -263,28 +386,37 @@ export function DataPage({
         )}
       </section>
 
-      <section className="panel security-panel">
-        <div className="panel-heading">
-          <div>
-            <span className="eyebrow">Private by default</span>
-            <h2>Collection access</h2>
+      {showCloudAccess && (
+        <section className="panel security-panel">
+          <div className="panel-heading">
+            <div>
+              <span className="eyebrow">Owner access</span>
+              <h2>Cody Cloud</h2>
+            </div>
+            <span className={`connection-pill connection-pill--${storageMode}`}>
+              <Icon name={storageMode === 'cloud' ? 'database' : 'user'} />
+              {storageMode === 'cloud' ? 'Connected' : 'This browser'}
+            </span>
           </div>
-          <span className={`connection-pill connection-pill--${authMode}`}>
-            <Icon name={authMode === 'local' ? 'database' : 'lock'} />
-            {authMode === 'local' ? 'Local session' : 'Access key'}
-          </span>
-        </div>
-        <p>
-          Localhost uses the development trainer abstraction. A deployed Worker fails closed until{' '}
-          <code>APP_ACCESS_TOKEN</code> is configured as a Cloudflare secret.
-        </p>
-        <button type="button" className="button button--secondary" onClick={onUnlock}>
-          <Icon name="lock" /> Change access key
-        </button>
-      </section>
+          <p>
+            {storageMode === 'cloud'
+              ? 'Cody Cloud is active. Collection changes sync through the private D1 profile on this device.'
+              : 'This unlisted page only exposes the sign-in form. The private access key still protects Cody Cloud.'}
+          </p>
+          {storageMode === 'cloud' ? (
+            <button type="button" className="button button--secondary" onClick={onLeaveCloud}>
+              <Icon name="user" /> Return to this browser
+            </button>
+          ) : (
+            <button type="button" className="button button--secondary" onClick={onUnlock}>
+              <Icon name="lock" /> Sign in to Cody Cloud
+            </button>
+          )}
+        </section>
+      )}
 
       <footer className="attribution">
-        <strong>Dexly is an unofficial fan project.</strong>
+        <strong>CatchGrid is an unofficial fan project.</strong>
         <p>
           Pokémon and Pokémon GO are property of their respective owners. Sprite mappings reference
           PokeMiners’ educational-use repository at pinned commit metadata; no affiliation or
@@ -293,6 +425,11 @@ export function DataPage({
         <span>
           Catalog {catalogVersion} · {catalog.length} representative forms
         </span>
+        <nav aria-label="Legal and project policies">
+          <a href="/privacy/">Privacy</a>
+          <a href="/security/">Security</a>
+          <a href="/notices/">Third-party notices</a>
+        </nav>
       </footer>
     </section>
   );

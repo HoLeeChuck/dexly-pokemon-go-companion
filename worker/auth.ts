@@ -1,7 +1,6 @@
 import { ApiError } from './http';
 
-export interface AppEnv {
-  DB: D1Database;
+export interface AppEnv extends Env {
   /** Production secret set with `wrangler secret put APP_ACCESS_TOKEN`. */
   APP_ACCESS_TOKEN?: string;
 }
@@ -22,19 +21,13 @@ function isLoopback(hostname: string): boolean {
   return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '[::1]';
 }
 
-async function securelyEqual(actual: string, expected: string): Promise<boolean> {
+export async function securelyEqual(actual: string, expected: string): Promise<boolean> {
   const encoder = new TextEncoder();
   const [actualHash, expectedHash] = await Promise.all([
     crypto.subtle.digest('SHA-256', encoder.encode(actual)),
     crypto.subtle.digest('SHA-256', encoder.encode(expected)),
   ]);
-  const left = new Uint8Array(actualHash);
-  const right = new Uint8Array(expectedHash);
-  let different = left.length ^ right.length;
-  for (let index = 0; index < Math.max(left.length, right.length); index += 1) {
-    different |= (left[index] ?? 0) ^ (right[index] ?? 0);
-  }
-  return different === 0;
+  return crypto.subtle.timingSafeEqual(actualHash, expectedHash);
 }
 
 export async function resolveActor(request: Request, env: AppEnv): Promise<Actor> {

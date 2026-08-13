@@ -1,17 +1,29 @@
-import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { deriveCollectionState } from '../../shared/domain';
-import type {
-  CatalogItem,
-  Category,
-  CategoryId,
-  CollectionEntry,
-  TradeSpecimen,
-  WantedEntry,
-} from '../../shared/types';
+import type { CatalogItem, Category, CategoryId, CollectionEntry } from '../../shared/types';
+import { catalogDisplayName } from '../lib/catalogDisplay';
 import { Icon } from './Icon';
 import { PokemonSprite } from './PokemonSprite';
 
-type DetailTab = 'collection' | 'wanted' | 'trade';
+interface SwipeOrigin {
+  startX: number;
+  startY: number;
+  lastX: number;
+  lastY: number;
+}
+
+const SWIPE_DISTANCE_PX = 52;
+const SWIPE_AXIS_RATIO = 1.25;
+
+function typeHook(type: string | undefined): string | undefined {
+  if (!type) return undefined;
+  return (
+    type
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '') || undefined
+  );
+}
 
 function categoryKey(formId: string, categoryId: CategoryId): string {
   return `${formId}:${categoryId}`;
@@ -21,47 +33,33 @@ export function DetailSheet({
   item,
   categories,
   collectionEntries,
-  wantedEntries,
-  tradeSpecimens,
   pendingKeys,
+  catalog,
   onClose,
+  onNavigate,
   onCollectionChange,
-  onWantedChange,
-  onAddTrade,
-  onDeleteTrade,
 }: {
   item: CatalogItem;
   categories: readonly Category[];
   collectionEntries: readonly CollectionEntry[];
-  wantedEntries: readonly WantedEntry[];
-  tradeSpecimens: readonly TradeSpecimen[];
   pendingKeys: ReadonlySet<string>;
+  catalog?: readonly CatalogItem[];
   onClose: () => void;
+  onNavigate?: (item: CatalogItem) => void;
   onCollectionChange: (item: CatalogItem, categoryId: CategoryId, collected: boolean) => void;
-  onWantedChange: (item: CatalogItem, categoryId: CategoryId, wanted: boolean) => void;
-  onAddTrade: (input: {
-    formId: string;
-    traits: CategoryId[];
-    quantity: number;
-    notes: string;
-  }) => Promise<void>;
-  onDeleteTrade: (tradeId: string) => Promise<void>;
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const [tab, setTab] = useState<DetailTab>('collection');
-  const [traits, setTraits] = useState<CategoryId[]>([]);
-  const [quantity, setQuantity] = useState(1);
-  const [notes, setNotes] = useState('');
-  const [tradeSaving, setTradeSaving] = useState(false);
+  const swipeOriginRef = useRef<SwipeOrigin | null>(null);
+  const suppressClickUntilRef = useRef(0);
+  const [section, setSection] = useState<'collection' | 'forms'>('collection');
 
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
     dialog.showModal();
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
+    document.body.classList.add('scroll-locked');
     return () => {
-      document.body.style.overflow = previousOverflow;
+      document.body.classList.remove('scroll-locked');
       if (dialog.open) dialog.close();
     };
   }, []);
@@ -75,30 +73,79 @@ export function DetailSheet({
       ),
     [collectionEntries, item.id],
   );
-  const wanted = useMemo(
-    () =>
-      new Set(
-        wantedEntries
-          .filter((entry) => entry.formId === item.id && entry.wanted && entry.categoryId)
-          .map((entry) => entry.categoryId as CategoryId),
-      ),
-    [wantedEntries, item.id],
+  const speciesCatalog = useMemo(
+    () => catalog?.filter((catalogItem) => catalogItem.isDefault) ?? [],
+    [catalog],
   );
-  const itemTrades = tradeSpecimens.filter((trade) => trade.formId === item.id);
+  const speciesIndex = speciesCatalog.findIndex(
+    (catalogItem) => catalogItem.speciesId === item.speciesId,
+  );
+  const previousItem = speciesIndex > 0 ? speciesCatalog[speciesIndex - 1] : undefined;
+  const nextItem = speciesIndex >= 0 ? speciesCatalog[speciesIndex + 1] : undefined;
+  const collectorForms = useMemo(
+    () =>
+      (catalog?.filter((catalogItem) => catalogItem.speciesId === item.speciesId) ?? []).sort(
+        (left, right) =>
+          left.formSortOrder - right.formSortOrder ||
+          (left.formName ?? left.name).localeCompare(right.formName ?? right.name),
+      ),
+    [catalog, item.speciesId],
+  );
+  const activeSection = collectorForms.length > 1 ? section : 'collection';
+  const releasedCategories = categories.filter(
+    (category) => item.rules[category.id] === 'released',
+  );
+  const isCollectionComplete =
+    releasedCategories.length > 0 &&
+    releasedCategories.every((category) => collected.has(category.id));
+  const primaryType = typeHook(item.types[0]);
+  const secondaryType = typeHook(item.types[1]);
 
-  async function submitTrade(event: FormEvent) {
-    event.preventDefault();
-    setTradeSaving(true);
-    try {
-      await onAddTrade({ formId: item.id, traits, quantity, notes: notes.trim() });
-      setTraits([]);
-      setQuantity(1);
-      setNotes('');
-    } catch {
-      // The parent keeps the form intact and presents the API error in the global toast.
-    } finally {
-      setTradeSaving(false);
+  function navigateTo(destination: CatalogItem | undefined) {
+    if (destination && onNavigate) {
+      setSection('collection');
+      onNavigate(destination);
     }
+  }
+
+  function startSwipe(event: React.TouchEvent<HTMLElement>) {
+    const touch = event.touches[0];
+    suppressClickUntilRef.current = 0;
+    swipeOriginRef.current =
+      event.touches.length === 1 && touch
+        ? {
+            startX: touch.clientX,
+            startY: touch.clientY,
+            lastX: touch.clientX,
+            lastY: touch.clientY,
+          }
+        : null;
+  }
+
+  function trackSwipe(event: React.TouchEvent<HTMLElement>) {
+    const origin = swipeOriginRef.current;
+    const touch = event.touches[0];
+    if (!origin || !touch || event.touches.length !== 1) return;
+    origin.lastX = touch.clientX;
+    origin.lastY = touch.clientY;
+    const horizontalDistance = Math.abs(origin.lastX - origin.startX);
+    const verticalDistance = Math.abs(origin.lastY - origin.startY);
+    if (horizontalDistance > 12 && horizontalDistance > verticalDistance) event.preventDefault();
+  }
+
+  function finishSwipe(event: React.TouchEvent<HTMLElement>) {
+    const origin = swipeOriginRef.current;
+    const touch = event.changedTouches[0];
+    swipeOriginRef.current = null;
+    if (!origin) return;
+    const deltaX = (touch?.clientX ?? origin.lastX) - origin.startX;
+    const deltaY = (touch?.clientY ?? origin.lastY) - origin.startY;
+    const isHorizontalSwipe =
+      Math.abs(deltaX) >= SWIPE_DISTANCE_PX &&
+      Math.abs(deltaX) > Math.abs(deltaY) * SWIPE_AXIS_RATIO;
+    if (!isHorizontalSwipe) return;
+    suppressClickUntilRef.current = Date.now() + 450;
+    navigateTo(deltaX < 0 ? nextItem : previousItem);
   }
 
   return (
@@ -114,9 +161,63 @@ export function DetailSheet({
         if (event.target === dialogRef.current) onClose();
       }}
     >
-      <section className="detail-sheet">
+      <section
+        className={`detail-sheet${isCollectionComplete ? ' detail-sheet--complete is-collection-complete' : ''}`}
+        data-form-id={item.id}
+        data-dex-number={item.dexNumber}
+        data-collection-complete={isCollectionComplete ? 'true' : 'false'}
+        data-primary-type={primaryType}
+        data-secondary-type={secondaryType}
+        onTouchStart={startSwipe}
+        onTouchMove={trackSwipe}
+        onTouchEnd={finishSwipe}
+        onTouchCancel={() => {
+          swipeOriginRef.current = null;
+        }}
+        onClickCapture={(event) => {
+          if (Date.now() <= suppressClickUntilRef.current) {
+            event.preventDefault();
+            event.stopPropagation();
+            suppressClickUntilRef.current = 0;
+          }
+        }}
+      >
+        {speciesIndex >= 0 && onNavigate && (
+          <>
+            <button
+              type="button"
+              className="icon-button detail-nav detail-nav--previous"
+              disabled={!previousItem}
+              onClick={() => navigateTo(previousItem)}
+              aria-label={
+                previousItem
+                  ? `Previous Pokémon: ${catalogDisplayName(previousItem)}`
+                  : 'No previous Pokémon'
+              }
+              title={previousItem ? `Previous: ${catalogDisplayName(previousItem)}` : undefined}
+            >
+              <Icon name="arrow-left" />
+            </button>
+            <button
+              type="button"
+              className="icon-button detail-nav detail-nav--next"
+              disabled={!nextItem}
+              onClick={() => navigateTo(nextItem)}
+              aria-label={
+                nextItem ? `Next Pokémon: ${catalogDisplayName(nextItem)}` : 'No next Pokémon'
+              }
+              title={nextItem ? `Next: ${catalogDisplayName(nextItem)}` : undefined}
+            >
+              <Icon name="chevron-right" />
+            </button>
+          </>
+        )}
         <div className="detail-sheet__handle" aria-hidden="true" />
-        <header className="detail-hero">
+        <header
+          className={`detail-hero${primaryType ? ` detail-hero--${primaryType}` : ''}${secondaryType ? ` detail-hero--${primaryType}-${secondaryType}` : ''}`}
+          data-primary-type={primaryType}
+          data-secondary-type={secondaryType}
+        >
           <button
             type="button"
             className="icon-button detail-hero__close"
@@ -133,10 +234,10 @@ export function DetailSheet({
             <span className="eyebrow">
               #{String(item.dexNumber).padStart(4, '0')} · {item.region}
             </span>
-            <h2 id="detail-title">{item.name}</h2>
+            <h2 id="detail-title">{catalogDisplayName(item)}</h2>
             <div className="type-row">
               {item.types.map((type) => (
-                <span key={type} className={`type-chip type-chip--${type}`}>
+                <span key={type} className={`type-chip type-chip--${typeHook(type) ?? 'unknown'}`}>
                   {type}
                 </span>
               ))}
@@ -144,25 +245,30 @@ export function DetailSheet({
           </div>
         </header>
 
-        <nav className="detail-tabs" aria-label="Pokémon details">
-          {(
-            [
-              ['collection', 'Collection'],
-              ['wanted', 'Wanted'],
-              ['trade', 'For trade'],
-            ] as const
-          ).map(([id, label]) => (
-            <button key={id} type="button" aria-pressed={tab === id} onClick={() => setTab(id)}>
-              {label}
-              {id === 'wanted' && wanted.size > 0 && <span>{wanted.size}</span>}
-              {id === 'trade' && itemTrades.length > 0 && <span>{itemTrades.length}</span>}
+        {collectorForms.length > 1 && (
+          <div className="detail-section-tabs" role="tablist" aria-label="Pokémon detail sections">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeSection === 'collection'}
+              onClick={() => setSection('collection')}
+            >
+              Collection
             </button>
-          ))}
-        </nav>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeSection === 'forms'}
+              onClick={() => setSection('forms')}
+            >
+              Forms <span>{collectorForms.length}</span>
+            </button>
+          </div>
+        )}
 
         <div className="detail-sheet__body">
-          {tab === 'collection' && (
-            <div>
+          {activeSection === 'collection' ? (
+            <>
               <div className="section-heading">
                 <div>
                   <span className="eyebrow">Your history</span>
@@ -180,175 +286,119 @@ export function DetailSheet({
                     <button
                       type="button"
                       key={category.id}
-                      className={`category-tile category-tile--${state}`}
+                      className={`category-tile category-tile--collection category-tile--${state}`}
                       aria-pressed={rule === 'released' ? isCollected : undefined}
                       disabled={rule !== 'released' || pending}
                       onClick={() => onCollectionChange(item, category.id, !isCollected)}
                     >
-                      <span className="category-tile__mark">
+                      <span className="category-tile__status" aria-hidden="true">
                         <Icon
-                          name={isCollected ? 'check' : rule === 'released' ? 'plus' : 'lock'}
+                          name={rule === 'released' ? (isCollected ? 'check' : 'plus') : 'lock'}
                         />
                       </span>
-                      <strong>{category.label}</strong>
-                      <small>
-                        {state === 'collected'
-                          ? 'Collected'
-                          : state === 'missing'
-                            ? 'Not yet'
-                            : state === 'unknown'
-                              ? 'Not cataloged'
-                              : state}
-                      </small>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {tab === 'wanted' && (
-            <div>
-              <div className="section-heading">
-                <div>
-                  <span className="eyebrow">Trade planning</span>
-                  <h3>Wanted list</h3>
-                </div>
-                <Icon name="heart" />
-              </div>
-              <p className="section-intro">
-                Wanted is separate from collection history. Choose the traits you would accept in a
-                trade.
-              </p>
-              <div className="category-tile-grid category-tile-grid--wanted">
-                {categories.map((category) => {
-                  const rule = item.rules[category.id] ?? 'unknown';
-                  const isWanted = wanted.has(category.id);
-                  const misleading = ['hundo', 'lucky', 'shadow'].includes(category.id);
-                  return (
-                    <button
-                      type="button"
-                      key={category.id}
-                      className={`category-tile category-tile--wanted${isWanted ? ' is-active' : ''}`}
-                      aria-pressed={isWanted}
-                      disabled={rule === 'ineligible' || category.id === 'shadow'}
-                      onClick={() => onWantedChange(item, category.id, !isWanted)}
-                    >
-                      <span className="category-tile__mark">
-                        <Icon name={isWanted ? 'heart' : 'plus'} />
+                      <span className="category-tile__copy">
+                        <strong>{category.label}</strong>
+                        <small>
+                          {pending
+                            ? 'Saving…'
+                            : state === 'collected'
+                              ? 'Collected'
+                              : state === 'missing'
+                                ? 'Not yet'
+                                : state === 'unknown'
+                                  ? 'Not cataloged'
+                                  : state}
+                        </small>
                       </span>
-                      <strong>{category.label}</strong>
-                      <small>
-                        {misleading
-                          ? category.id === 'shadow'
-                            ? 'Cannot trade'
-                            : 'Not transferable'
-                          : isWanted
-                            ? 'Wanted'
-                            : 'Add to list'}
-                      </small>
                     </button>
                   );
                 })}
               </div>
-            </div>
-          )}
-
-          {tab === 'trade' && (
-            <div>
+            </>
+          ) : (
+            <section className="forms-gallery" aria-labelledby="forms-title">
               <div className="section-heading">
                 <div>
-                  <span className="eyebrow">Real specimens</span>
-                  <h3>For trade</h3>
+                  <span className="eyebrow">Collector forms</span>
+                  <h3 id="forms-title">Regular & Shiny</h3>
                 </div>
-                <Icon name="swap" />
+                <span>{collectorForms.length} forms</span>
               </div>
               <p className="section-intro">
-                Record combined traits on one actual Pokémon. IVs reroll, Lucky status does not
-                transfer, and Shadow Pokémon cannot be traded.
+                Alternate forms are separate collector entries. They do not add to National or
+                regional species totals.
               </p>
-              <form className="trade-form" onSubmit={submitTrade}>
-                <fieldset>
-                  <legend>Traits on this specimen</legend>
-                  <div className="trait-picker">
-                    {categories
-                      .filter((category) => category.id !== 'normal' && category.id !== 'shadow')
-                      .map((category) => (
-                        <button
-                          type="button"
-                          key={category.id}
-                          aria-pressed={traits.includes(category.id)}
-                          onClick={() =>
-                            setTraits((current) =>
-                              current.includes(category.id)
-                                ? current.filter((value) => value !== category.id)
-                                : [...current, category.id],
-                            )
-                          }
-                        >
-                          {category.label}
-                        </button>
-                      ))}
-                  </div>
-                </fieldset>
-                <div className="trade-form__row">
-                  <label>
-                    Quantity
-                    <input
-                      type="number"
-                      min="1"
-                      max="999"
-                      value={quantity}
-                      onChange={(event) => setQuantity(Number(event.target.value))}
-                    />
-                  </label>
-                  <label className="trade-form__notes">
-                    Note
-                    <input
-                      type="text"
-                      maxLength={1000}
-                      placeholder="Event, costume, meetup…"
-                      value={notes}
-                      onChange={(event) => setNotes(event.target.value)}
-                    />
-                  </label>
-                </div>
-                <button
-                  className="button button--primary button--full"
-                  type="submit"
-                  disabled={tradeSaving}
-                >
-                  <Icon name="plus" /> {tradeSaving ? 'Saving…' : 'Add trade specimen'}
-                </button>
-              </form>
-
-              {itemTrades.length > 0 && (
-                <div className="trade-list">
-                  <h4>Recorded offers</h4>
-                  {itemTrades.map((trade) => (
-                    <article key={trade.id}>
-                      <div>
-                        <strong>
-                          {trade.quantity}× {item.name}
-                        </strong>
-                        <span>
-                          {trade.traits.length ? trade.traits.join(' · ') : 'Normal'}
-                          {trade.notes ? ` · ${trade.notes}` : ''}
-                        </span>
+              <div className="forms-gallery__grid">
+                {collectorForms.map((form) => {
+                  const regularRule =
+                    form.rules.normal ?? (form.isReleased ? 'released' : 'unreleased');
+                  const shinyRule = form.rules.shiny ?? 'unknown';
+                  const regularCollected = collectionEntries.some(
+                    (entry) =>
+                      entry.formId === form.id && entry.categoryId === 'normal' && entry.collected,
+                  );
+                  const shinyCollected = collectionEntries.some(
+                    (entry) =>
+                      entry.formId === form.id && entry.categoryId === 'shiny' && entry.collected,
+                  );
+                  return (
+                    <article
+                      key={form.id}
+                      className="form-card"
+                      data-variant-kind={form.variantKind}
+                    >
+                      <div className="form-card__art">
+                        <PokemonSprite item={form} />
+                        <span>{form.variantKind}</span>
                       </div>
-                      <button
-                        type="button"
-                        className="icon-button"
-                        aria-label={`Remove ${item.name} trade specimen`}
-                        onClick={() => void onDeleteTrade(trade.id)}
-                      >
-                        <Icon name="close" />
-                      </button>
+                      <div className="form-card__heading">
+                        <strong>{form.formName ?? form.name}</strong>
+                        <small>{form.isReleased ? 'Released' : 'Not released'}</small>
+                      </div>
+                      <div className="form-card__states">
+                        {(
+                          [
+                            ['normal', 'Regular', regularRule, regularCollected],
+                            ['shiny', 'Shiny', shinyRule, shinyCollected],
+                          ] as const
+                        ).map(([categoryId, label, rule, isCollected]) => {
+                          const pending = pendingKeys.has(categoryKey(form.id, categoryId));
+                          return (
+                            <button
+                              type="button"
+                              key={categoryId}
+                              aria-pressed={rule === 'released' ? isCollected : undefined}
+                              className={isCollected ? 'is-collected' : ''}
+                              disabled={rule !== 'released' || pending}
+                              onClick={() => onCollectionChange(form, categoryId, !isCollected)}
+                              aria-label={`${form.formName ?? form.name} ${label}: ${rule === 'released' ? (isCollected ? 'collected' : 'missing') : rule}`}
+                            >
+                              <Icon
+                                name={
+                                  rule === 'released' ? (isCollected ? 'check' : 'plus') : 'lock'
+                                }
+                              />
+                              <span>
+                                <strong>{label}</strong>
+                                <small>
+                                  {pending
+                                    ? 'Saving…'
+                                    : rule === 'released'
+                                      ? isCollected
+                                        ? 'Collected'
+                                        : 'Missing'
+                                      : rule}
+                                </small>
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
                     </article>
-                  ))}
-                </div>
-              )}
-            </div>
+                  );
+                })}
+              </div>
+            </section>
           )}
         </div>
       </section>

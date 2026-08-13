@@ -1,4 +1,5 @@
 import {
+  applyCsvRuleValidation,
   previewCanonicalWideCsv,
   type CsvPreviewChange,
   type CsvImportPolicy,
@@ -102,41 +103,6 @@ function parseStoredPreview(value: string): StoredPreview {
   return { changes: changes as CsvPreviewChange[] };
 }
 
-function withRuleIssues(
-  preview: CsvImportPreview,
-  catalogById: ReadonlyMap<string, Awaited<ReturnType<typeof getBootstrap>>['catalog'][number]>,
-): CsvImportPreview {
-  const issues = [...preview.issues];
-  const changes = preview.changes.map((change) => {
-    if (change.disposition === 'ignored' || change.disposition === 'unchanged') return change;
-    const rule = catalogById.get(change.formId)?.rules[change.categoryId] ?? 'unknown';
-    if (rule !== 'released') {
-      issues.push({
-        severity: 'error',
-        code: 'category_not_collectible',
-        row: change.row,
-        column: change.categoryId,
-        message: `This ${change.categoryId} entry is ${rule} and cannot be imported.`,
-      });
-      return { ...change, after: change.before, disposition: 'ignored' as const };
-    }
-    return change;
-  });
-  return {
-    ...preview,
-    changes,
-    issues,
-    summary: {
-      ...preview.summary,
-      added: changes.filter((change) => change.disposition === 'add').length,
-      removed: changes.filter((change) => change.disposition === 'remove').length,
-      unchanged: changes.filter((change) => change.disposition === 'unchanged').length,
-      ignored: changes.filter((change) => change.disposition === 'ignored').length,
-      rejected: issues.filter((issue) => issue.severity === 'error').length,
-    },
-  };
-}
-
 export async function previewImport(
   db: D1Database,
   profileId: string,
@@ -176,7 +142,7 @@ export async function previewImport(
       error instanceof Error ? error.message : 'The CSV could not be parsed.',
     );
   }
-  preview = withRuleIssues(preview, new Map(bootstrap.catalog.map((item) => [item.id, item])));
+  preview = applyCsvRuleValidation(preview, bootstrap.catalog);
 
   if (preview.summary.rejected > 0) {
     return { jobId: null, preview, expiresAt: null };
@@ -274,7 +240,9 @@ export async function applyImport(
     const rule = catalogById.get(change.formId)?.rules[change.categoryId] ?? 'unknown';
     const currentlyCollected = collectedKeys.has(`${change.formId}\u0000${change.categoryId}`);
     return (
-      rule !== 'released' || currentlyCollected !== change.before || change.before === change.after
+      (change.after && rule !== 'released') ||
+      currentlyCollected !== change.before ||
+      change.before === change.after
     );
   });
   if (invalidChange) {

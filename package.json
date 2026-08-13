@@ -1,5 +1,5 @@
 {
-  "name": "dexly-pokemon-go-companion",
+  "name": "catchgrid-pokemon-go-companion",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -8,7 +8,7 @@
     "dev": "vite",
     "build": "pnpm run cf-typegen && tsc -b && vite build",
     "preview": "vite preview",
-    "deploy:production": "pnpm run build && pnpm run db:migrate:production && wrangler deploy",
+    "deploy:production": "pnpm run release:preflight && pnpm run release:bookmark:production && pnpm run release:migrate:production && pnpm run release:deploy:production && pnpm run release:smoke:production",
     "cf-typegen": "wrangler types node_modules/.worker-configuration.d.ts",
     "cf-typegen:check": "wrangler types node_modules/.worker-configuration.d.ts --check",
     "db:migrate:local": "wrangler d1 migrations apply dexly-db --local",
@@ -19,16 +19,28 @@
     "test:worker": "vitest run --config vitest.worker.config.ts",
     "test:worker:watch": "vitest --config vitest.worker.config.ts",
     "test:e2e": "playwright test",
+    "test:e2e:chromium": "playwright test --project=mobile-chromium --project=desktop-chromium",
+    "test:e2e:webkit": "playwright test --project=mobile-webkit --project=desktop-webkit",
     "lint": "eslint .",
     "format": "prettier --check .",
     "format:write": "prettier --write .",
-    "check": "pnpm lint && pnpm format && pnpm test && pnpm build"
+    "catalog:sync": "node scripts/sync-catalog.mjs",
+    "catalog:sync:evolutions": "node scripts/sync-evolution-families.mjs",
+    "catalog:verify": "node scripts/verify-sprites.mjs && node scripts/verify-catalog-generation.mjs",
+    "check": "pnpm lint && pnpm format && pnpm test && pnpm build",
+    "release:preflight": "pnpm run check && pnpm run catalog:verify && pnpm run test:e2e && wrangler deploy --dry-run --strict",
+    "release:bookmark:production": "wrangler d1 time-travel info dexly-db --json",
+    "release:migrate:production": "wrangler d1 migrations apply dexly-db --remote",
+    "release:deploy:production": "pnpm run build && wrangler deploy --strict --message CatchGrid-production-release",
+    "release:smoke:production": "node --input-type=module -e \"const base=process.argv[1];for(const [method,path] of [['GET','/api/health'],['HEAD','/api/health'],['GET','/api/ready'],['HEAD','/api/ready'],['GET','/api/v1/catalog/version'],['HEAD','/api/v1/catalog/version'],['GET','/api/v1/catalog'],['HEAD','/api/v1/catalog'],['GET','/manifest.webmanifest'],['GET','/robots.txt']]){const response=await fetch(base+path,{method});if(!response.ok)throw new Error(method+' '+path+' returned '+response.status)}const health=await(await fetch(base+'/api/health')).json();if(!health.gitSha||health.gitSha==='unknown'||health.gitSha==='development')throw new Error('Release Git SHA is missing');console.log(JSON.stringify({ok:true,gitSha:health.gitSha,workerVersionId:health.workerVersionId}))\" https://dex.cjdev.app",
+    "release:rollback:production": "wrangler rollback --message CatchGrid-operator-rollback"
   },
   "dependencies": {
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.12.1",
     "@cloudflare/vite-plugin": "1.51.2",
     "@cloudflare/vitest-pool-workers": "0.21.0",
     "@eslint/js": "10.0.1",

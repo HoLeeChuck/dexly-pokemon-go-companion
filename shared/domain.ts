@@ -1,4 +1,12 @@
-import type { CatalogItem, CategoryId, CollectionEntry, CollectionState, RuleState } from './types';
+import type {
+  CatalogItem,
+  CategoryId,
+  CollectionEntry,
+  CollectionState,
+  RuleState,
+  TradeRequestTrait,
+  WantedEntry,
+} from './types';
 
 export interface CategoryProgress {
   categoryId: CategoryId;
@@ -24,6 +32,38 @@ export interface MissingSearchOptions {
   maxLength?: number;
 }
 
+const TRADE_REQUEST_SEARCH_KEYWORDS: Readonly<Record<TradeRequestTrait, string | null>> = {
+  normal: null,
+  shiny: 'shiny',
+  xxl: 'xxl',
+  xxs: 'xxs',
+  costume: 'costume',
+};
+
+const UNTRADED_SEARCH_TERM = '!traded';
+
+export const MISSING_SEARCH_CATEGORY_IDS = ['normal', 'shiny', 'xxl', 'xxs'] as const;
+
+export type MissingSearchCategoryId = (typeof MISSING_SEARCH_CATEGORY_IDS)[number];
+export type SizeCategoryId = Extract<MissingSearchCategoryId, 'xxl' | 'xxs'>;
+
+/**
+ * Maps a Pokedex number to catch candidates that can satisfy that size goal after evolution.
+ * CatchGrid's bundled mapping contains the target and its earlier stages. Missing or empty entries
+ * deliberately fall back to the requested Pokemon itself.
+ */
+export type EvolutionFamilyMap =
+  ReadonlyMap<number, readonly number[]> | Readonly<Record<number, readonly number[]>>;
+
+export interface PersonalSizeSearchOptions extends MissingSearchOptions {
+  evolutionFamilies?: EvolutionFamilyMap;
+}
+
+export interface GeneratedPersonalSizeSearchStrings extends GeneratedSearchStrings {
+  /** The actual collection gaps, before catch candidates from an evolution family are added. */
+  missingDexNumbers: readonly number[];
+}
+
 export type SparseCollectionAction = 'insert' | 'delete' | 'noop';
 
 export interface SparseCollectionUpdatePlan {
@@ -43,7 +83,7 @@ const CATEGORY_SEARCH_KEYWORDS: Readonly<Record<CategoryId, string | null>> = {
   purified: 'purified',
 };
 
-const TRADE_UNSUPPORTED_CATEGORIES = new Set<CategoryId>(['hundo', 'lucky', 'shadow']);
+const MISSING_SEARCH_CATEGORIES = new Set<CategoryId>(MISSING_SEARCH_CATEGORY_IDS);
 
 function collectionKey(formId: string, categoryId: CategoryId): string {
   return `${formId}\u0000${categoryId}`;
@@ -138,14 +178,13 @@ export function compressDexNumbers(numbers: readonly number[]): string {
   return ranges.join(',');
 }
 
-function withCategoryKeyword(categoryId: CategoryId, body: string): string {
-  const keyword = CATEGORY_SEARCH_KEYWORDS[categoryId];
-  return keyword === null ? body : `${keyword}&${body}`;
+function searchPrefix(keyword: string | null): string {
+  return keyword === null ? `${UNTRADED_SEARCH_TERM}&` : `${UNTRADED_SEARCH_TERM}&${keyword}&`;
 }
 
-function chunkDexNumbers(
+function chunkDexNumbersWithPrefix(
   numbers: readonly number[],
-  categoryId: CategoryId,
+  prefix: string,
   maxLength: number,
 ): string[] {
   const chunks: string[] = [];
@@ -153,7 +192,7 @@ function chunkDexNumbers(
 
   for (const dexNumber of numbers) {
     const candidate = [...current, dexNumber];
-    const candidateString = withCategoryKeyword(categoryId, compressDexNumbers(candidate));
+    const candidateString = `${prefix}${compressDexNumbers(candidate)}`;
 
     if (candidateString.length <= maxLength) {
       current = candidate;
@@ -164,20 +203,70 @@ function chunkDexNumbers(
       throw new RangeError(`maxLength ${maxLength} cannot contain Pokedex number ${dexNumber}`);
     }
 
-    chunks.push(withCategoryKeyword(categoryId, compressDexNumbers(current)));
+    chunks.push(`${prefix}${compressDexNumbers(current)}`);
     current = [dexNumber];
 
-    const single = withCategoryKeyword(categoryId, compressDexNumbers(current));
+    const single = `${prefix}${compressDexNumbers(current)}`;
     if (single.length > maxLength) {
       throw new RangeError(`maxLength ${maxLength} cannot contain Pokedex number ${dexNumber}`);
     }
   }
 
   if (current.length > 0) {
-    chunks.push(withCategoryKeyword(categoryId, compressDexNumbers(current)));
+    chunks.push(`${prefix}${compressDexNumbers(current)}`);
   }
 
   return chunks;
+}
+
+function chunkDexNumbers(
+  numbers: readonly number[],
+  categoryId: CategoryId,
+  maxLength: number,
+): string[] {
+  return chunkDexNumbersWithPrefix(
+    numbers,
+    searchPrefix(CATEGORY_SEARCH_KEYWORDS[categoryId]),
+    maxLength,
+  );
+}
+
+export function generateWantedTradeSearchStrings(
+  catalog: readonly CatalogItem[],
+  wantedEntries: readonly WantedEntry[],
+  traitId: TradeRequestTrait,
+  options: MissingSearchOptions = {},
+): GeneratedSearchStrings {
+  const maxLength = options.maxLength ?? 4500;
+  if (!Number.isSafeInteger(maxLength) || maxLength <= 0) {
+    throw new RangeError('maxLength must be a positive integer');
+  }
+
+  const wantedIds = new Set(
+    wantedEntries
+      .filter((entry) => entry.wanted && entry.categoryId === traitId)
+      .map((entry) => entry.formId),
+  );
+  const targets = catalog.filter((item) => wantedIds.has(item.id));
+  const dexNumbers = sortedUniqueDexNumbers(targets.map((item) => item.dexNumber));
+  const keyword = TRADE_REQUEST_SEARCH_KEYWORDS[traitId];
+  const prefix = searchPrefix(keyword);
+  const quality: SearchQuality =
+    traitId === 'costume' ||
+    targets.some((item) => !item.searchExact) ||
+    dexNumbers.length < targets.length
+      ? 'candidate'
+      : 'exact';
+
+  return {
+    strings: chunkDexNumbersWithPrefix(dexNumbers, prefix, maxLength),
+    dexNumbers,
+    quality,
+    explanation:
+      traitId === 'costume'
+        ? 'Finds costume candidates for requested species; review the exact costume visually.'
+        : `Matches the ${traitId} species on your active trade wanted list.`,
+  };
 }
 
 export function generateMissingSearchStrings(
@@ -186,9 +275,18 @@ export function generateMissingSearchStrings(
   categoryId: CategoryId,
   options: MissingSearchOptions = {},
 ): GeneratedSearchStrings {
-  const maxLength = options.maxLength ?? 250;
+  const maxLength = options.maxLength ?? 4500;
   if (!Number.isSafeInteger(maxLength) || maxLength <= 0) {
     throw new RangeError('maxLength must be a positive integer');
+  }
+
+  if (!isMissingSearchSupported(categoryId)) {
+    return {
+      strings: [],
+      dexNumbers: [],
+      quality: 'exact',
+      explanation: `${categoryId} is not supported by trade-oriented missing searches. Choose normal, shiny, XXL, or XXS.`,
+    };
   }
 
   const collectedKeys = collectedEntryKeys(entries);
@@ -223,8 +321,82 @@ export function generateMissingSearchStrings(
   return { strings, dexNumbers, quality, explanation };
 }
 
-export function isTradeSearchSupported(categoryId: CategoryId): boolean {
-  return !TRADE_UNSUPPORTED_CATEGORIES.has(categoryId);
+export function isMissingSearchSupported(
+  categoryId: CategoryId,
+): categoryId is MissingSearchCategoryId {
+  return MISSING_SEARCH_CATEGORIES.has(categoryId);
+}
+
+export function isTradeSearchSupported(
+  categoryId: CategoryId,
+): categoryId is MissingSearchCategoryId {
+  return isMissingSearchSupported(categoryId);
+}
+
+function evolutionFamilyForDexNumber(
+  evolutionFamilies: EvolutionFamilyMap | undefined,
+  dexNumber: number,
+): readonly number[] | undefined {
+  if (evolutionFamilies === undefined) {
+    return undefined;
+  }
+
+  if ('get' in evolutionFamilies && typeof evolutionFamilies.get === 'function') {
+    return evolutionFamilies.get(dexNumber);
+  }
+
+  return (evolutionFamilies as Readonly<Record<number, readonly number[]>>)[dexNumber];
+}
+
+export function generatePersonalSizeCatchSearchStrings(
+  catalog: readonly CatalogItem[],
+  entries: readonly CollectionEntry[],
+  categoryId: SizeCategoryId,
+  options: PersonalSizeSearchOptions = {},
+): GeneratedPersonalSizeSearchStrings {
+  const base = generateMissingSearchStrings(catalog, entries, categoryId, options);
+  const missingDexNumbers = base.dexNumbers;
+
+  if (missingDexNumbers.length === 0) {
+    return { ...base, missingDexNumbers };
+  }
+
+  const eligibleDexNumbers = new Set(
+    catalog
+      .filter((item) => (item.rules[categoryId] ?? 'unknown') === 'released')
+      .map((item) => item.dexNumber),
+  );
+  const catchCandidates = new Set<number>();
+
+  for (const missingDexNumber of missingDexNumbers) {
+    // Always retain the real missing target. A partial or stale mapping must not hide it.
+    catchCandidates.add(missingDexNumber);
+
+    const family = evolutionFamilyForDexNumber(options.evolutionFamilies, missingDexNumber);
+    if (family === undefined || family.length === 0) {
+      continue;
+    }
+
+    for (const familyDexNumber of family) {
+      if (Number.isSafeInteger(familyDexNumber) && eligibleDexNumbers.has(familyDexNumber)) {
+        catchCandidates.add(familyDexNumber);
+      }
+    }
+  }
+
+  const dexNumbers = sortedUniqueDexNumbers([...catchCandidates]);
+  const includesFamilyCatchCandidates = dexNumbers.some(
+    (dexNumber) => !missingDexNumbers.includes(dexNumber),
+  );
+  const quality: SearchQuality =
+    base.quality === 'candidate' || includesFamilyCatchCandidates ? 'candidate' : 'exact';
+  const maxLength = options.maxLength ?? 4500;
+  const strings = chunkDexNumbers(dexNumbers, categoryId, maxLength);
+  const explanation = includesFamilyCatchCandidates
+    ? `Includes earlier evolution-family catches that can evolve into a later stage still missing in ${categoryId.toUpperCase()}.`
+    : base.explanation;
+
+  return { strings, dexNumbers, missingDexNumbers, quality, explanation };
 }
 
 export function planSparseCollectionUpdate(

@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { deriveCollectionState } from '../../shared/domain';
 import type { CatalogItem, CategoryId, CollectionState } from '../../shared/types';
+import { catalogDisplayName } from '../lib/catalogDisplay';
 import { Icon } from './Icon';
 import { PokemonSprite } from './PokemonSprite';
 
@@ -40,11 +41,9 @@ export function PokemonGrid({
   onOpen: (item: CatalogItem) => void;
   onToggle: (item: CatalogItem, collected: boolean) => void;
 }) {
-  const [renderWindow, setRenderWindow] = useState({ signature: '', count: BATCH_SIZE });
+  const [renderCount, setRenderCount] = useState(BATCH_SIZE);
   const sentinelRef = useRef<HTMLDivElement>(null);
-  const signature = useMemo(() => items.map((item) => item.id).join('|'), [items]);
-
-  const visibleCount = renderWindow.signature === signature ? renderWindow.count : BATCH_SIZE;
+  const visibleCount = Math.min(renderCount, items.length);
 
   useEffect(() => {
     const sentinel = sentinelRef.current;
@@ -52,20 +51,14 @@ export function PokemonGrid({
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry?.isIntersecting) {
-          setRenderWindow((current) => ({
-            signature,
-            count: Math.min(
-              items.length,
-              (current.signature === signature ? current.count : BATCH_SIZE) + BATCH_SIZE,
-            ),
-          }));
+          setRenderCount((current) => Math.min(items.length, current + BATCH_SIZE));
         }
       },
       { rootMargin: '500px 0px' },
     );
     observer.observe(sentinel);
     return () => observer.disconnect();
-  }, [items.length, signature, visibleCount]);
+  }, [items.length, visibleCount]);
 
   if (items.length === 0) {
     return (
@@ -74,7 +67,7 @@ export function PokemonGrid({
           <Icon name="search" />
         </span>
         <h3>No Pokémon found</h3>
-        <p>Try another name, generation, type, or collection state.</p>
+        <p>Try another name, region, collection form, or collection state.</p>
       </div>
     );
   }
@@ -83,6 +76,7 @@ export function PokemonGrid({
     <>
       <div className="pokemon-grid" data-testid="pokemon-grid">
         {items.slice(0, visibleCount).map((item) => {
+          const displayName = catalogDisplayName(item);
           const key = `${item.id}:${categoryId}`;
           const collected = collectedKeys.has(key);
           const rule = item.rules[categoryId] ?? 'unknown';
@@ -90,19 +84,33 @@ export function PokemonGrid({
           const canToggle = rule === 'released';
           const pending = pendingKeys.has(key);
           const shiny = categoryId === 'shiny';
+          const releasedCategories = Object.entries(item.rules)
+            .filter(([, value]) => value === 'released')
+            .map(([value]) => value as CategoryId);
+          const collectionComplete =
+            releasedCategories.length > 0 &&
+            releasedCategories.every((value) => collectedKeys.has(`${item.id}:${value}`));
 
           return (
             <button
               type="button"
               key={item.id}
-              className={`pokemon-card pokemon-card--${state}${quickCheck ? ' pokemon-card--quick' : ''}`}
+              className={`pokemon-card pokemon-card--${state}${quickCheck ? ' pokemon-card--quick' : ''}${collectionComplete ? ' pokemon-card--complete' : ''}`}
+              data-category={categoryId}
               data-state={state}
-              data-testid={`pokemon-card-${item.dexNumber}`}
+              data-collection-complete={collectionComplete || undefined}
+              data-primary-type={item.types[0]}
+              data-secondary-type={item.types[1]}
+              data-testid={
+                item.isDefault
+                  ? `pokemon-card-${item.dexNumber}`
+                  : `pokemon-card-${item.dexNumber}-${item.formKey}`
+              }
               aria-pressed={quickCheck && canToggle ? collected : undefined}
               aria-label={
                 quickCheck && canToggle
-                  ? `${collected ? 'Mark' : 'Mark'} ${item.name} as ${collected ? 'missing' : 'collected'} in ${categoryId}`
-                  : `Open ${item.name} details. ${stateLabel(state)} in ${categoryId}.`
+                  ? `Mark ${displayName} as ${collected ? 'missing' : 'collected'} in ${categoryId}`
+                  : `Open ${displayName} details. ${stateLabel(state)} in ${categoryId}.`
               }
               disabled={quickCheck && !canToggle}
               onClick={() => {
@@ -117,7 +125,7 @@ export function PokemonGrid({
                 <span className="pokemon-card__halo" />
                 <PokemonSprite item={item} shiny={shiny} className="pokemon-card__sprite" />
               </span>
-              <span className="pokemon-card__name">{item.name}</span>
+              <span className="pokemon-card__name">{displayName}</span>
               <span className={`state-pill state-pill--${state}`}>
                 {state === 'collected' && <Icon name="check" />}
                 {state === 'unreleased' && <Icon name="lock" />}

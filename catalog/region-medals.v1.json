@@ -1,0 +1,200 @@
+{
+  "schemaVersion": 2,
+  "version": "2026-08-13.2",
+  "nationalDexMax": 1025,
+  "effectiveAt": "2026-08-13T00:00:00.000Z",
+  "categoryIds": ["normal", "shiny", "lucky", "hundo", "xxl", "xxs", "shadow", "purified"],
+  "policy": "Each category earns an independent CatchGrid regional medal from collected default species only. Collector forms never add to progress. Every category's platinum target is the region's complete National Pokédex allocation, including unreleased and currently ineligible species; targets are never rescaled to current availability. Bronze, silver, and gold use the reviewed regional species milestones for every category so categories remain comparable.",
+  "sources": [
+    {
+      "kind": "official",
+      "url": "https://niantic.helpshift.com/hc/en/6-pokemon-go/faq/101-how-do-i-level-up-and-earn-medals/",
+      "note": "Pokémon GO documents the bronze, silver, gold, and platinum medal tier model. CatchGrid's per-category medals are an explicitly labeled product extension of that model."
+    },
+    {
+      "kind": "secondary",
+      "url": "https://pogoapi.net/api/v1/pokemon_names.json",
+      "sha256": "0db52f1125a7493ceb4a89d08cf049b98637939d7cf4ae25feb091fe57f5bd7b",
+      "note": "Versioned National Pokédex number and species-name baseline through #1025."
+    }
+  ],
+  "regions": [
+    {
+      "id": "kanto",
+      "label": "Kanto",
+      "mark": "K",
+      "dexRanges": [[1, 151]],
+      "thresholds": { "bronze": 20, "silver": 50, "gold": 100, "platinum": 151 },
+      "categoryThresholds": {
+        "normal": { "bronze": 20, "silver": 50, "gold": 100, "platinum": 151 },
+        "shiny": { "bronze": 20, "silver": 50, "gold": 100, "platinum": 151 },
+        "lucky": { "bronze": 20, "silver": 50, "gold": 100, "platinum": 151 },
+        "hundo": { "bronze": 20, "silver": 50, "gold": 100, "platinum": 151 },
+        "xxl": { "bronze": 20, "silver": 50, "gold": 100, "platinum": 151 },
+        "xxs": { "bronze": 20, "silver": 50, "gold": 100, "platinum": 151 },
+        "shadow": { "bronze": 20, "silver": 50, "gold": 100, "platinum": 151 },
+        "purified": { "bronze": 20, "silver": 50, "gold": 100, "platinum": 151 }
+      }
+    },
+    {
+      "id": "johto",
+      "label": "Johto",
+      "mark": "J",
+      "dexRanges": [[152, 251]],
+      "thresholds": { "bronze": 5, "silver": 30, "gold": 70, "platinum": 100 },
+      "categoryThresholds": {
+        "normal": { "bronze": 5, "silver": 30, "gold": 70, "platinum": 100 },
+        "shiny": { "bronze": 5, "silver": 30, "gold": 70, "platinum": 100 },
+        "lucky": { "bronze": 5, "silver": 30, "gold": 70, "platinum": 100 },
+        "hundo": { "bronze": 5, "silver": 30, "gold": 70, "platinum": 100 },
+        "xxl": { "bronze": 5, "silver": 30, "gold": 70, "platinum": 100 },
+        "xxs": { "bronze": 5, "silver": 30, "gold": 70, "platinum": 100 },
+        "shadow": { "bronze": 5, "silver": 30, "gold": 70, "platinum": 100 },
+        "purified": { "bronze": 5, "silver": 30, "gold": 70, "platinum": 100 }
+      }
+    },
+    {
+      "id": "hoenn",
+      "label": "Hoenn",
+      "mark": "H",
+      "dexRanges": [[252, 386]],
+      "thresholds": { "bronze": 5, "silver": 40, "gold": 90, "platinum": 135 },
+      "categoryThresholds": {
+        "normal": { "bronze": 5, "silver": 40, "gold": 90, "platinum": 135 },
+        "shiny": { "bronze": 5, "silver": 40, "gold": 90, "platinum": 135 },
+        "lucky": { "bronze": 5, "silver": 40, "gold": 90, "platinum": 135 },
+        "hundo": { "bronze": 5, "silver": 40, "gold": 90, "platinum": 135 },
+        "xxl": { "bronze": 5, "silver": 40, "gold": 90, "platinum": 135 },
+        "xxs": { "bronze": 5, "silver": 40, "gold": 90, "platinum": 135 },
+        "shadow": { "bronze": 5, "silver": 40, "gold": 90, "platinum": 135 },
+        "purified": { "bronze": 5, "silver": 40, "gold": 90, "platinum": 135 }
+      }
+    },
+    {
+      "id": "sinnoh",
+      "label": "Sinnoh",
+      "mark": "S",
+      "dexRanges": [[387, 493]],
+      "thresholds": { "bronze": 5, "silver": 30, "gold": 80, "platinum": 107 },
+      "categoryThresholds": {
+        "normal": { "bronze": 5, "silver": 30, "gold": 80, "platinum": 107 },
+        "shiny": { "bronze": 5, "silver": 30, "gold": 80, "platinum": 107 },
+        "lucky": { "bronze": 5, "silver": 30, "gold": 80, "platinum": 107 },
+        "hundo": { "bronze": 5, "silver": 30, "gold": 80, "platinum": 107 },
+        "xxl": { "bronze": 5, "silver": 30, "gold": 80, "platinum": 107 },
+        "xxs": { "bronze": 5, "silver": 30, "gold": 80, "platinum": 107 },
+        "shadow": { "bronze": 5, "silver": 30, "gold": 80, "platinum": 107 },
+        "purified": { "bronze": 5, "silver": 30, "gold": 80, "platinum": 107 }
+      }
+    },
+    {
+      "id": "unova",
+      "label": "Unova",
+      "mark": "U",
+      "dexRanges": [[494, 649]],
+      "thresholds": { "bronze": 5, "silver": 50, "gold": 100, "platinum": 156 },
+      "categoryThresholds": {
+        "normal": { "bronze": 5, "silver": 50, "gold": 100, "platinum": 156 },
+        "shiny": { "bronze": 5, "silver": 50, "gold": 100, "platinum": 156 },
+        "lucky": { "bronze": 5, "silver": 50, "gold": 100, "platinum": 156 },
+        "hundo": { "bronze": 5, "silver": 50, "gold": 100, "platinum": 156 },
+        "xxl": { "bronze": 5, "silver": 50, "gold": 100, "platinum": 156 },
+        "xxs": { "bronze": 5, "silver": 50, "gold": 100, "platinum": 156 },
+        "shadow": { "bronze": 5, "silver": 50, "gold": 100, "platinum": 156 },
+        "purified": { "bronze": 5, "silver": 50, "gold": 100, "platinum": 156 }
+      }
+    },
+    {
+      "id": "kalos",
+      "label": "Kalos",
+      "mark": "K",
+      "dexRanges": [[650, 721]],
+      "thresholds": { "bronze": 5, "silver": 20, "gold": 50, "platinum": 72 },
+      "categoryThresholds": {
+        "normal": { "bronze": 5, "silver": 20, "gold": 50, "platinum": 72 },
+        "shiny": { "bronze": 5, "silver": 20, "gold": 50, "platinum": 72 },
+        "lucky": { "bronze": 5, "silver": 20, "gold": 50, "platinum": 72 },
+        "hundo": { "bronze": 5, "silver": 20, "gold": 50, "platinum": 72 },
+        "xxl": { "bronze": 5, "silver": 20, "gold": 50, "platinum": 72 },
+        "xxs": { "bronze": 5, "silver": 20, "gold": 50, "platinum": 72 },
+        "shadow": { "bronze": 5, "silver": 20, "gold": 50, "platinum": 72 },
+        "purified": { "bronze": 5, "silver": 20, "gold": 50, "platinum": 72 }
+      }
+    },
+    {
+      "id": "alola",
+      "label": "Alola",
+      "mark": "A",
+      "dexRanges": [[722, 807]],
+      "thresholds": { "bronze": 5, "silver": 25, "gold": 50, "platinum": 86 },
+      "categoryThresholds": {
+        "normal": { "bronze": 5, "silver": 25, "gold": 50, "platinum": 86 },
+        "shiny": { "bronze": 5, "silver": 25, "gold": 50, "platinum": 86 },
+        "lucky": { "bronze": 5, "silver": 25, "gold": 50, "platinum": 86 },
+        "hundo": { "bronze": 5, "silver": 25, "gold": 50, "platinum": 86 },
+        "xxl": { "bronze": 5, "silver": 25, "gold": 50, "platinum": 86 },
+        "xxs": { "bronze": 5, "silver": 25, "gold": 50, "platinum": 86 },
+        "shadow": { "bronze": 5, "silver": 25, "gold": 50, "platinum": 86 },
+        "purified": { "bronze": 5, "silver": 25, "gold": 50, "platinum": 86 }
+      }
+    },
+    {
+      "id": "galar",
+      "label": "Galar",
+      "mark": "G",
+      "dexRanges": [[810, 898]],
+      "thresholds": { "bronze": 5, "silver": 25, "gold": 50, "platinum": 89 },
+      "categoryThresholds": {
+        "normal": { "bronze": 5, "silver": 25, "gold": 50, "platinum": 89 },
+        "shiny": { "bronze": 5, "silver": 25, "gold": 50, "platinum": 89 },
+        "lucky": { "bronze": 5, "silver": 25, "gold": 50, "platinum": 89 },
+        "hundo": { "bronze": 5, "silver": 25, "gold": 50, "platinum": 89 },
+        "xxl": { "bronze": 5, "silver": 25, "gold": 50, "platinum": 89 },
+        "xxs": { "bronze": 5, "silver": 25, "gold": 50, "platinum": 89 },
+        "shadow": { "bronze": 5, "silver": 25, "gold": 50, "platinum": 89 },
+        "purified": { "bronze": 5, "silver": 25, "gold": 50, "platinum": 89 }
+      }
+    },
+    {
+      "id": "hisui",
+      "label": "Hisui",
+      "mark": "H",
+      "dexRanges": [[899, 905]],
+      "thresholds": { "bronze": 1, "silver": 3, "gold": 5, "platinum": 7 },
+      "categoryThresholds": {
+        "normal": { "bronze": 1, "silver": 3, "gold": 5, "platinum": 7 },
+        "shiny": { "bronze": 1, "silver": 3, "gold": 5, "platinum": 7 },
+        "lucky": { "bronze": 1, "silver": 3, "gold": 5, "platinum": 7 },
+        "hundo": { "bronze": 1, "silver": 3, "gold": 5, "platinum": 7 },
+        "xxl": { "bronze": 1, "silver": 3, "gold": 5, "platinum": 7 },
+        "xxs": { "bronze": 1, "silver": 3, "gold": 5, "platinum": 7 },
+        "shadow": { "bronze": 1, "silver": 3, "gold": 5, "platinum": 7 },
+        "purified": { "bronze": 1, "silver": 3, "gold": 5, "platinum": 7 }
+      }
+    },
+    {
+      "id": "paldea",
+      "label": "Paldea",
+      "mark": "P",
+      "dexRanges": [[906, 1025]],
+      "thresholds": { "bronze": 5, "silver": 30, "gold": 80, "platinum": 120 },
+      "categoryThresholds": {
+        "normal": { "bronze": 5, "silver": 30, "gold": 80, "platinum": 120 },
+        "shiny": { "bronze": 5, "silver": 30, "gold": 80, "platinum": 120 },
+        "lucky": { "bronze": 5, "silver": 30, "gold": 80, "platinum": 120 },
+        "hundo": { "bronze": 5, "silver": 30, "gold": 80, "platinum": 120 },
+        "xxl": { "bronze": 5, "silver": 30, "gold": 80, "platinum": 120 },
+        "xxs": { "bronze": 5, "silver": 30, "gold": 80, "platinum": 120 },
+        "shadow": { "bronze": 5, "silver": 30, "gold": 80, "platinum": 120 },
+        "purified": { "bronze": 5, "silver": 30, "gold": 80, "platinum": 120 }
+      }
+    }
+  ],
+  "unassignedNationalSpecies": [
+    {
+      "dexNumbers": [808, 809],
+      "label": "Unknown region",
+      "note": "Meltan and Melmetal are not assigned to Alola for regional medal totals."
+    }
+  ]
+}

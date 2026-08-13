@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="How CatchGrid stores and processes information." />
+    <link rel="canonical" href="https://dex.cjdev.app/privacy/" />
+    <link rel="stylesheet" href="/legal.css" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>Privacy · CatchGrid</title>
+  </head>
+  <body>
+    <main class="legal-shell">
+      <a class="legal-brand" href="/">CatchGrid</a>
+      <article>
+        <p class="eyebrow">LAST UPDATED AUGUST 13, 2026</p>
+        <h1>Privacy notice</h1>
+        <p>
+          CatchGrid is private by default. Public users do not create an account, and their
+          collection, settings, saved searches, and recovery snapshots are stored in that browser's
+          site storage. This information does not automatically sync to another device.
+        </p>
+        <h2>Information CatchGrid handles</h2>
+        <ul>
+          <li>Your collection and preferences remain in your browser unless you export them.</li>
+          <li>
+            CSV and backup files are processed only for the import or export you choose. Public
+            browser imports are not uploaded to a CatchGrid account.
+          </li>
+          <li>
+            The unlisted owner mode stores one private administrator collection in Cloudflare D1. It
+            is separate from public browser collections and protected by an access secret.
+          </li>
+          <li>
+            Cloudflare processes normal request information needed to deliver and secure the site,
+            such as IP address, request path, browser information, diagnostic identifiers, and
+            timestamps. CatchGrid's Worker logs do not intentionally record collection bodies or
+            access secrets.
+          </li>
+          <li>
+            Cloudflare Web Analytics may collect privacy-focused aggregate usage and performance
+            measurements. CatchGrid does not use advertising cookies or sell personal information.
+          </li>
+        </ul>
+        <h2>Control and deletion</h2>
+        <p>
+          Use CatchGrid's export tools before changing browsers or clearing site data. Removing this
+          site's stored data in your browser deletes its local collection from that browser. An
+          exported file is controlled by you and must be deleted from your own files separately.
+        </p>
+        <h2>Third-party images</h2>
+        <p>
+          Pokémon sprite requests may be served from GitHub's raw-content service. Those requests
+          are governed by GitHub's privacy practices. See CatchGrid's
+          <a href="/notices/">third-party notices</a> for the asset-source limitations.
+        </p>
+        <h2>Questions</h2>
+        <p>
+          Use the project's
+          <a href="https://github.com/HoLeeChuck/dexly-pokemon-go-companion/issues"
+            >public issue tracker</a
+          >
+          for privacy questions that do not contain sensitive information. Report security issues
+          privately through the <a href="/security/">security channel</a>.
+        </p>
+      </article>
+    </main>
+  </body>
+</html>

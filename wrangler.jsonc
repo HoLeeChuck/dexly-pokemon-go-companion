@@ -2,7 +2,16 @@
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "dexly-companion",
   "main": "./worker/index.ts",
-  "compatibility_date": "2026-08-10",
+  "compatibility_date": "2026-08-11",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "routes": [{ "pattern": "dex.cjdev.app", "custom_domain": true }],
+  "vars": {
+    "ENVIRONMENT": "production",
+    "BUILD_SHA": "",
+    "BUILD_TIME": "",
+  },
+  "version_metadata": { "binding": "CF_VERSION_METADATA" },
   "assets": {
     "not_found_handling": "single-page-application",
     "run_worker_first": ["/api/*"],
@@ -11,11 +20,62 @@
     {
       "binding": "DB",
       "database_name": "dexly-db",
-      "database_id": "00000000-0000-0000-0000-000000000001",
+      "database_id": "154ac34c-cdfc-4a98-a0c4-f159153a6e2e",
       "migrations_dir": "migrations",
     },
   ],
+  "ratelimits": [
+    {
+      "name": "OWNER_AUTH_LIMITER",
+      "namespace_id": "41001",
+      "simple": { "limit": 10, "period": 60 },
+    },
+    {
+      "name": "OWNER_MUTATION_LIMITER",
+      "namespace_id": "41002",
+      "simple": { "limit": 120, "period": 60 },
+    },
+  ],
+  "cache": {
+    "enabled": true,
+  },
   "observability": {
     "enabled": true,
+    "logs": { "enabled": true, "head_sampling_rate": 1 },
+    "traces": { "enabled": true, "head_sampling_rate": 0.05 },
+  },
+  // Staging owns a separate D1 database. Never substitute the production UUID.
+  "env": {
+    "staging": {
+      "name": "dexly-companion-staging",
+      "workers_dev": true,
+      "routes": [],
+      "vars": {
+        "ENVIRONMENT": "staging",
+        "BUILD_SHA": "",
+        "BUILD_TIME": "",
+      },
+      "version_metadata": { "binding": "CF_VERSION_METADATA" },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "dexly-db-staging",
+          "database_id": "1f8ee380-b50d-4620-88ce-66fee539c10c",
+          "migrations_dir": "migrations",
+        },
+      ],
+      "ratelimits": [
+        {
+          "name": "OWNER_AUTH_LIMITER",
+          "namespace_id": "41101",
+          "simple": { "limit": 10, "period": 60 },
+        },
+        {
+          "name": "OWNER_MUTATION_LIMITER",
+          "namespace_id": "41102",
+          "simple": { "limit": 120, "period": 60 },
+        },
+      ],
+    },
   },
 }

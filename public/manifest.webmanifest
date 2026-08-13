@@ -1,0 +1,31 @@
+{
+  "id": "/",
+  "name": "CatchGrid · Pokémon GO Collection Companion",
+  "short_name": "CatchGrid",
+  "description": "A private-by-default visual Pokémon GO collection tracker and Search Lab.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0c2723",
+  "theme_color": "#0c2723",
+  "orientation": "any",
+  "categories": ["games", "utilities"],
+  "icons": [
+    {
+      "src": "/icons/catchgrid-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/catchgrid-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    { "name": "Open Pokédex", "short_name": "Dex", "url": "/#/dex" },
+    { "name": "Open Search Lab", "short_name": "Search Lab", "url": "/#/search" }
+  ]
+}

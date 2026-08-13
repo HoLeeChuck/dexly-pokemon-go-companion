@@ -38,6 +38,11 @@ function catalogItem(
     region: 'kanto',
     types: ['grass'],
     isDefault: true,
+    variantKind: 'standard',
+    collectorGroupId: `species:${dexNumber}`,
+    isReleased: true,
+    isTradeable: true,
+    formSortOrder: 0,
     searchExact: true,
     rules: allReleased,
     ...overrides,
@@ -177,7 +182,7 @@ describe('previewCanonicalWideCsv', () => {
     expect(conflict.summary.rejected).toBe(1);
   });
 
-  it('resolves a default form by dex number and rejects conflicting identity fields', () => {
+  it('requires form_id when a dex number could silently select the wrong form', () => {
     const costume = catalogItem('001_PARTY', 1, 'Bulbasaur', {
       formKey: 'party',
       formName: 'Party Hat',
@@ -192,7 +197,16 @@ describe('previewCanonicalWideCsv', () => {
       [],
       'merge',
     );
-    expect(byDex.changes[0]?.formId).toBe('001_STANDARD');
+    expect(byDex.changes).toEqual([]);
+    expect(byDex.issues[0]?.code).toBe('ambiguous_pokemon');
+
+    const byForm = previewCanonicalWideCsv(
+      ['form_id,dex_number,normal', '001_STANDARD,1,x'].join('\n'),
+      expandedCatalog,
+      [],
+      'merge',
+    );
+    expect(byForm.changes[0]?.formId).toBe('001_STANDARD');
 
     const conflict = previewCanonicalWideCsv(
       ['form_id,dex_number,name,normal', '001_STANDARD,4,Charmander,x'].join('\n'),
@@ -202,6 +216,55 @@ describe('previewCanonicalWideCsv', () => {
     );
     expect(conflict.changes).toEqual([]);
     expect(conflict.issues[0]?.code).toBe('identity_conflict');
+  });
+
+  it('applies the same release and eligibility rules during every preview', () => {
+    const restricted = catalogItem('150_STANDARD', 150, 'Mewtwo', {
+      rules: {
+        normal: 'released',
+        shiny: 'unreleased',
+        lucky: 'ineligible',
+        hundo: 'released',
+        xxl: 'released',
+        xxs: 'released',
+        shadow: 'unknown',
+        purified: 'released',
+      },
+    });
+    const preview = previewCanonicalWideCsv(
+      ['form_id,normal,shiny,lucky,shadow', '150_STANDARD,true,true,true,true'].join('\n'),
+      [restricted],
+      [],
+      'merge',
+    );
+
+    expect(preview.changes).toEqual([
+      expect.objectContaining({ categoryId: 'normal', disposition: 'add', after: true }),
+      expect.objectContaining({ categoryId: 'shiny', disposition: 'ignored', after: false }),
+      expect.objectContaining({ categoryId: 'lucky', disposition: 'ignored', after: false }),
+      expect.objectContaining({ categoryId: 'shadow', disposition: 'ignored', after: false }),
+    ]);
+    expect(preview.issues.map((issue) => [issue.code, issue.column])).toEqual([
+      ['category_not_collectible', 'shiny'],
+      ['category_not_collectible', 'lucky'],
+      ['category_not_collectible', 'shadow'],
+    ]);
+    expect(preview.summary).toMatchObject({ added: 1, ignored: 3, rejected: 3 });
+  });
+
+  it('allows an import to remove a stale collected state after eligibility changes', () => {
+    const mythical = catalogItem('151_STANDARD', 151, 'Mew', {
+      rules: { normal: 'released', lucky: 'ineligible' },
+    });
+    const preview = previewCanonicalWideCsv(
+      'form_id,lucky\n151_STANDARD,false',
+      [mythical],
+      [entry('151_STANDARD', 'lucky')],
+      'update',
+    );
+
+    expect(preview.issues).toEqual([]);
+    expect(preview.changes[0]).toMatchObject({ disposition: 'remove', after: false });
   });
 
   it('returns actionable header and empty-file errors', () => {

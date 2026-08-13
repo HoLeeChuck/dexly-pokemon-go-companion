@@ -1,9 +1,17 @@
-import type { BootstrapPayload, CategoryId, TradeSpecimen, WantedEntry } from '../../shared/types';
+import type {
+  BootstrapPayload,
+  CategoryId,
+  PublicCatalogPayload,
+  TradeOfferTrait,
+  TradeRequestTrait,
+  TradeSpecimen,
+  WantedEntry,
+} from '../../shared/types';
 import type { CsvImportPolicy, CsvImportPreview } from '../../shared/csv';
 
 export interface BootstrapResponse extends BootstrapPayload {
   revision: number;
-  authMode: 'local' | 'token';
+  authMode: 'local' | 'token' | 'browser';
 }
 
 export interface CollectionMutationResponse {
@@ -60,12 +68,20 @@ export class ApiClientError extends Error {
 const ACCESS_TOKEN_KEY = 'dexly:access-token';
 
 export function storedAccessToken(): string {
-  return sessionStorage.getItem(ACCESS_TOKEN_KEY) ?? '';
+  try {
+    return globalThis.sessionStorage?.getItem(ACCESS_TOKEN_KEY) ?? '';
+  } catch {
+    return '';
+  }
 }
 
 export function saveAccessToken(value: string): void {
-  if (value) sessionStorage.setItem(ACCESS_TOKEN_KEY, value);
-  else sessionStorage.removeItem(ACCESS_TOKEN_KEY);
+  try {
+    if (value) globalThis.sessionStorage?.setItem(ACCESS_TOKEN_KEY, value);
+    else globalThis.sessionStorage?.removeItem(ACCESS_TOKEN_KEY);
+  } catch {
+    // Private browsing and hardened environments may expose Storage but reject every operation.
+  }
 }
 
 async function requestJson<T>(
@@ -85,7 +101,7 @@ async function requestJson<T>(
     throw new ApiClientError(
       0,
       'NETWORK_ERROR',
-      'Dexly could not reach the local collection service. Your collection was not changed.',
+      'CatchGrid could not reach the local collection service. Your collection was not changed.',
     );
   }
 
@@ -109,6 +125,10 @@ async function requestJson<T>(
 }
 
 export const api = {
+  catalog(): Promise<PublicCatalogPayload> {
+    return requestJson('/api/v1/catalog');
+  },
+
   bootstrap(token = storedAccessToken()): Promise<BootstrapResponse> {
     return requestJson('/api/v1/bootstrap', {}, token);
   },
@@ -132,7 +152,7 @@ export const api = {
 
   setWanted(input: {
     formId: string;
-    categoryId: CategoryId;
+    traitId: TradeRequestTrait;
     wanted: boolean;
   }): Promise<WantedEntry> {
     return requestJson('/api/v1/wanted', { method: 'PUT', body: JSON.stringify(input) });
@@ -140,7 +160,7 @@ export const api = {
 
   addTrade(input: {
     formId: string;
-    traits: CategoryId[];
+    traits: TradeOfferTrait[];
     quantity: number;
     notes: string;
   }): Promise<TradeSpecimen> {

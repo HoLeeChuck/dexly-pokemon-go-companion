@@ -1,0 +1,1696 @@
+{
+  "schemaVersion": 1,
+  "catalogVersion": "2026-08-13.1",
+  "releaseMetadataAsOf": "2026-08-13",
+  "nextMigration": "0009_phase_b_catalog_data.sql",
+  "assetCommit": "1a4ad1fc6c39f361ea85d53fc3040ce482ee9d90",
+  "nationalDexMax": 1025,
+  "expectedApiHashes": {
+    "released_pokemon.json": "740d9a03ed6853023e89912cc31b2c3fa513582b091ee301cdf31a35794cc58d",
+    "shiny_pokemon.json": "6697d100d4f941c1ddf542f2c3468d94a801ee93b2af621ca37a59a415fa62d4",
+    "shadow_pokemon.json": "5e8f7aa3c731678fd03c20a2f08b60b77e592f19891c4dabe2e59446b1523b8d",
+    "pokemon_rarity.json": "257f0f9e27b0d763bf85bf91c864df86fa37e1ebd3000e92713c7398bb99a874",
+    "pokemon_types.json": "298d1f24fb162e496bfadad97e3cd0713bc1400f2606ce64e42a91ccb2ddc54a",
+    "pokemon_forms.json": "3813b468dc6e5122096911f577152824c8019e4d15864648fb1dfa3a726dea11",
+    "pokemon_evolutions.json": "2ae1757dd611ff7140fd62308cc3a8f0244004e6be68cc956e559c3250aab78d",
+    "pokemon_names.json": "0db52f1125a7493ceb4a89d08cf049b98637939d7cf4ae25feb091fe57f5bd7b"
+  },
+  "sources": {
+    "official-medal-model": {
+      "kind": "official",
+      "url": "https://niantic.helpshift.com/hc/en/6-pokemon-go/faq/101-how-do-i-level-up-and-earn-medals/",
+      "effectiveAt": "2026-08-13",
+      "note": "Official help confirms the bronze, silver, gold, and platinum medal model."
+    },
+    "official-shiny-forms": {
+      "kind": "official",
+      "url": "https://niantic.helpshift.com/hc/en/6-pokemon-go/faq/2678-what-are-shiny-pokemon/",
+      "effectiveAt": "2026-08-13",
+      "note": "Official help distinguishes regional forms from Shinies and documents event-limited Shiny Unown."
+    },
+    "official-mega-2026": {
+      "kind": "official",
+      "url": "https://pokemongo.com/en/news/mega-evolution-2026-update?game_client=android",
+      "effectiveAt": "2026-03-01",
+      "note": "Confirms the 2026 Mega system and Mega Victreebel and Mega Malamar debuts."
+    },
+    "official-mega-kalos": {
+      "kind": "official",
+      "url": "https://pokemongo.com/gotour/global",
+      "effectiveAt": "2026-03-01",
+      "note": "Confirms Mega Dragonite, Mega Victreebel, and Mega Malamar globally."
+    },
+    "official-mega-mewtwo": {
+      "kind": "official",
+      "url": "https://pokemongo.com/news/mega-mewtwo-gofest-2026?hl=en_us",
+      "effectiveAt": "2026-07-12",
+      "note": "Confirms Mega Mewtwo X and Mega Mewtwo Y debuts."
+    },
+    "official-mega-falinks": {
+      "kind": "official",
+      "url": "https://pokemongo.com/news/falinks-super-mega-raid-day-2026?hl=en",
+      "effectiveAt": "2026-05-23",
+      "note": "Confirms the Mega Falinks debut."
+    },
+    "official-gmax-rillaboom": {
+      "kind": "official",
+      "url": "https://pokemongo.com/en/news/gigantamax-rillaboom-max-battle-day-2026",
+      "effectiveAt": "2026-08-01",
+      "note": "Confirms regular and Shiny Gigantamax Rillaboom."
+    },
+    "official-max-mechanics": {
+      "kind": "official",
+      "url": "https://niantic.helpshift.com/hc/en/6-pokemon-go/faq/4792-collecting-max-particles-and-dynamaxing-or-gigantamaxing-pokemon/",
+      "effectiveAt": "2026-08-13",
+      "note": "Official Max Pokémon and Gigantamax mechanics reference."
+    },
+    "official-go-fest-2026": {
+      "kind": "official",
+      "url": "https://pokemongo.com/en/news/go-fest-2026-global-final-details",
+      "effectiveAt": "2026-07-12",
+      "note": "Confirms current GO Fest 2026 forms and transformations."
+    },
+    "official-nickit-schedule": {
+      "kind": "official",
+      "url": "https://pokemongo.com/en/news/communityday-august-2026-nickit",
+      "effectiveAt": "2026-08-16T14:00:00",
+      "note": "Nickit remains non-Shiny in this August 13 snapshot; its local-time debut requires a later reviewed update."
+    },
+    "reviewed-go-form-inventory": {
+      "kind": "secondary",
+      "url": "https://pogoapi.net/api/v1/pokemon_types.json",
+      "effectiveAt": "2026-08-13",
+      "note": "Selected forms were manually reviewed; this feed supplies form-specific types but an entry alone is not release proof."
+    },
+    "reviewed-unown-history": {
+      "kind": "secondary",
+      "url": "https://raids.fyi/unown.html",
+      "effectiveAt": "2026-07-25",
+      "note": "Current event history reports all 28 regular and Shiny Unown forms; official help documents their event-limited Shiny behavior."
+    },
+    "official-news-index": {
+      "kind": "official",
+      "url": "https://pokemongo.com/news",
+      "effectiveAt": "2026-08-13",
+      "note": "Reviewer cross-check point for the dated release delta and historical form debuts."
+    }
+  },
+  "reviewedRecentReleases": [
+    { "dex": 778, "name": "Mimikyu", "sourceIds": ["official-news-index"] },
+    { "dex": 807, "name": "Zeraora", "sourceIds": ["official-go-fest-2026"] },
+    { "dex": 824, "name": "Blipbug", "sourceIds": ["official-news-index"] },
+    { "dex": 825, "name": "Dottler", "sourceIds": ["official-news-index"] },
+    { "dex": 826, "name": "Orbeetle", "sourceIds": ["official-news-index"] },
+    { "dex": 843, "name": "Silicobra", "sourceIds": ["official-news-index"] },
+    { "dex": 844, "name": "Sandaconda", "sourceIds": ["official-news-index"] },
+    { "dex": 931, "name": "Squawkabilly", "sourceIds": ["official-news-index"] },
+    { "dex": 955, "name": "Flittle", "sourceIds": ["official-news-index"] },
+    { "dex": 956, "name": "Espathra", "sourceIds": ["official-news-index"] },
+    { "dex": 968, "name": "Orthworm", "sourceIds": ["official-news-index"] },
+    { "dex": 973, "name": "Flamigo", "sourceIds": ["official-news-index"] }
+  ],
+  "defaultReleaseOverrides": [
+    {
+      "dex": 791,
+      "shinyState": "released",
+      "shinyAsset": "pm791.s.icon.png",
+      "sourceIds": ["official-go-fest-2026"]
+    }
+  ],
+  "regionOverrides": {
+    "808": "Unknown",
+    "809": "Unknown",
+    "899": "Hisui",
+    "900": "Hisui",
+    "901": "Hisui",
+    "902": "Hisui",
+    "903": "Hisui",
+    "904": "Hisui",
+    "905": "Hisui"
+  },
+  "defaultFormAssets": [
+    { "dex": 201, "metadataForm": "A", "normalAsset": "pm201.fUNOWN_A.icon.png" },
+    { "dex": 327, "metadataForm": "00", "normalAsset": "pm327.f00.icon.png" },
+    { "dex": 412, "metadataForm": "Plant", "normalAsset": "pm412.fBURMY_PLANT.icon.png" },
+    { "dex": 413, "metadataForm": "Plant", "normalAsset": "pm413.fWORMADAM_PLANT.icon.png" },
+    { "dex": 421, "metadataForm": "Overcast", "normalAsset": "pm421.fOVERCAST.icon.png" },
+    { "dex": 487, "metadataForm": "Altered", "normalAsset": "pm487.fALTERED.icon.png" },
+    { "dex": 492, "metadataForm": "Land", "normalAsset": "pm492.fLAND.icon.png" },
+    { "dex": 422, "metadataForm": "West_sea", "normalAsset": "pm422.fWEST_SEA.icon.png" },
+    { "dex": 423, "metadataForm": "West_sea", "normalAsset": "pm423.fWEST_SEA.icon.png" },
+    { "dex": 550, "metadataForm": "Red_striped", "normalAsset": "pm550.fRED_STRIPED.icon.png" },
+    { "dex": 555, "metadataForm": "Standard", "normalAsset": "pm555.fSTANDARD.icon.png" },
+    { "dex": 585, "metadataForm": "Spring", "normalAsset": "pm585.fSPRING.icon.png" },
+    { "dex": 586, "metadataForm": "Spring", "normalAsset": "pm586.fSPRING.icon.png" },
+    { "dex": 641, "metadataForm": "Incarnate", "normalAsset": "pm641.fINCARNATE.icon.png" },
+    { "dex": 642, "metadataForm": "Incarnate", "normalAsset": "pm642.fINCARNATE.icon.png" },
+    { "dex": 645, "metadataForm": "Incarnate", "normalAsset": "pm645.fINCARNATE.icon.png" },
+    { "dex": 646, "metadataForm": "Normal", "normalAsset": "pm646.fNORMAL.icon.png" },
+    { "dex": 647, "metadataForm": "Ordinary", "normalAsset": "pm647.fORDINARY.icon.png" },
+    { "dex": 648, "metadataForm": "Aria", "normalAsset": "pm648.fARIA.icon.png" },
+    { "dex": 649, "metadataForm": "Normal", "normalAsset": "pm649.fNORMAL.icon.png" },
+    { "dex": 666, "metadataForm": "Meadow", "normalAsset": "pm666.fMEADOW.icon.png" },
+    { "dex": 670, "metadataForm": "Red", "normalAsset": "pm670.fRED.icon.png" },
+    { "dex": 671, "metadataForm": "Red", "normalAsset": "pm671.fRED.icon.png" },
+    { "dex": 676, "metadataForm": "Natural", "normalAsset": "pm676.fNATURAL.icon.png" },
+    { "dex": 681, "metadataForm": "Shield", "normalAsset": "pm681.fSHIELD.icon.png" },
+    { "dex": 718, "metadataForm": "Fifty_percent", "normalAsset": "pm718.fFIFTY_PERCENT.icon.png" },
+    { "dex": 720, "metadataForm": "Confined", "normalAsset": "pm720.fCONFINED.icon.png" },
+    { "dex": 741, "metadataForm": "Baile", "normalAsset": "pm741.fBAILE.icon.png" },
+    { "dex": 745, "metadataForm": "Midday", "normalAsset": "pm745.fMIDDAY.icon.png" },
+    { "dex": 778, "metadataForm": "Disguised", "normalAsset": "pm778.fDISGUISED.icon.png" },
+    { "dex": 876, "metadataForm": "Male", "normalAsset": "pm876.fMALE.icon.png" },
+    { "dex": 877, "metadataForm": "Full_belly", "normalAsset": "pm877.fFULL_BELLY.icon.png" },
+    { "dex": 888, "metadataForm": "Hero", "normalAsset": "pm888.fHERO.icon.png" },
+    { "dex": 889, "metadataForm": "Hero", "normalAsset": "pm889.fHERO.icon.png" },
+    { "dex": 892, "metadataForm": "Single_strike", "normalAsset": "pm892.fSINGLE_STRIKE.icon.png" },
+    { "dex": 902, "metadataForm": "Standard", "types": ["water", "ghost"] },
+    { "dex": 905, "metadataForm": "Incarnate", "normalAsset": "pm905.fINCARNATE.icon.png" },
+    {
+      "dex": 925,
+      "metadataForm": "Family_of_four",
+      "normalAsset": "pm925.fFAMILY_OF_FOUR.icon.png"
+    },
+    { "dex": 931, "metadataForm": "Green", "normalAsset": "pm931.fGREEN.icon.png" },
+    { "dex": 978, "metadataForm": "Curly", "normalAsset": "pm978.fCURLY.icon.png" },
+    { "dex": 1007, "metadataForm": "Apex" },
+    { "dex": 1008, "metadataForm": "Ultimate" }
+  ],
+  "formGroups": [
+    {
+      "id": "regional-alola",
+      "variantKind": "regional",
+      "regionalOrigin": "Alola",
+      "releaseState": "released",
+      "shinyState": "released",
+      "tradeable": true,
+      "sortOrder": 100,
+      "sourceIds": ["reviewed-go-form-inventory", "official-shiny-forms"],
+      "members": [
+        {
+          "dex": 19,
+          "formKey": "alola",
+          "displayName": "Alolan Rattata",
+          "metadataForm": "Alola",
+          "normalAsset": "pm19.fALOLA.icon.png",
+          "shinyAsset": "pm19.fALOLA.s.icon.png"
+        },
+        {
+          "dex": 20,
+          "formKey": "alola",
+          "displayName": "Alolan Raticate",
+          "metadataForm": "Alola",
+          "normalAsset": "pm20.fALOLA.icon.png",
+          "shinyAsset": "pm20.fALOLA.s.icon.png"
+        },
+        {
+          "dex": 26,
+          "formKey": "alola",
+          "displayName": "Alolan Raichu",
+          "metadataForm": "Alola",
+          "normalAsset": "pm26.fALOLA.icon.png",
+          "shinyAsset": "pm26.fALOLA.s.icon.png"
+        },
+        {
+          "dex": 27,
+          "formKey": "alola",
+          "displayName": "Alolan Sandshrew",
+          "metadataForm": "Alola",
+          "normalAsset": "pm27.fALOLA.icon.png",
+          "shinyAsset": "pm27.fALOLA.s.icon.png"
+        },
+        {
+          "dex": 28,
+          "formKey": "alola",
+          "displayName": "Alolan Sandslash",
+          "metadataForm": "Alola",
+          "normalAsset": "pm28.fALOLA.icon.png",
+          "shinyAsset": "pm28.fALOLA.s.icon.png"
+        },
+        {
+          "dex": 37,
+          "formKey": "alola",
+          "displayName": "Alolan Vulpix",
+          "metadataForm": "Alola",
+          "normalAsset": "pm37.fALOLA.icon.png",
+          "shinyAsset": "pm37.fALOLA.s.icon.png"
+        },
+        {
+          "dex": 38,
+          "formKey": "alola",
+          "displayName": "Alolan Ninetales",
+          "metadataForm": "Alola",
+          "normalAsset": "pm38.fALOLA.icon.png",
+          "shinyAsset": "pm38.fALOLA.s.icon.png"
+        },
+        {
+          "dex": 50,
+          "formKey": "alola",
+          "displayName": "Alolan Diglett",
+          "metadataForm": "Alola",
+          "normalAsset": "pm50.fALOLA.icon.png",
+          "shinyAsset": "pm50.fALOLA.s.icon.png"
+        },
+        {
+          "dex": 51,
+          "formKey": "alola",
+          "displayName": "Alolan Dugtrio",
+          "metadataForm": "Alola",
+          "normalAsset": "pm51.fALOLA.icon.png",
+          "shinyAsset": "pm51.fALOLA.s.icon.png"
+        },
+        {
+          "dex": 52,
+          "formKey": "alola",
+          "displayName": "Alolan Meowth",
+          "metadataForm": "Alola",
+          "normalAsset": "pm52.fALOLA.icon.png",
+          "shinyAsset": "pm52.fALOLA.s.icon.png"
+        },
+        {
+          "dex": 53,
+          "formKey": "alola",
+          "displayName": "Alolan Persian",
+          "metadataForm": "Alola",
+          "normalAsset": "pm53.fALOLA.icon.png",
+          "shinyAsset": "pm53.fALOLA.s.icon.png"
+        },
+        {
+          "dex": 74,
+          "formKey": "alola",
+          "displayName": "Alolan Geodude",
+          "metadataForm": "Alola",
+          "normalAsset": "pm74.fALOLA.icon.png",
+          "shinyAsset": "pm74.fALOLA.s.icon.png"
+        },
+        {
+          "dex": 75,
+          "formKey": "alola",
+          "displayName": "Alolan Graveler",
+          "metadataForm": "Alola",
+          "normalAsset": "pm75.fALOLA.icon.png",
+          "shinyAsset": "pm75.fALOLA.s.icon.png"
+        },
+        {
+          "dex": 76,
+          "formKey": "alola",
+          "displayName": "Alolan Golem",
+          "metadataForm": "Alola",
+          "normalAsset": "pm76.fALOLA.icon.png",
+          "shinyAsset": "pm76.fALOLA.s.icon.png"
+        },
+        {
+          "dex": 88,
+          "formKey": "alola",
+          "displayName": "Alolan Grimer",
+          "metadataForm": "Alola",
+          "normalAsset": "pm88.fALOLA.icon.png",
+          "shinyAsset": "pm88.fALOLA.s.icon.png"
+        },
+        {
+          "dex": 89,
+          "formKey": "alola",
+          "displayName": "Alolan Muk",
+          "metadataForm": "Alola",
+          "normalAsset": "pm89.fALOLA.icon.png",
+          "shinyAsset": "pm89.fALOLA.s.icon.png"
+        },
+        {
+          "dex": 103,
+          "formKey": "alola",
+          "displayName": "Alolan Exeggutor",
+          "metadataForm": "Alola",
+          "normalAsset": "pm103.fALOLA.icon.png",
+          "shinyAsset": "pm103.fALOLA.s.icon.png"
+        },
+        {
+          "dex": 105,
+          "formKey": "alola",
+          "displayName": "Alolan Marowak",
+          "metadataForm": "Alola",
+          "normalAsset": "pm105.fALOLA.icon.png",
+          "shinyAsset": "pm105.fALOLA.s.icon.png"
+        }
+      ]
+    },
+    {
+      "id": "regional-galar",
+      "variantKind": "regional",
+      "regionalOrigin": "Galar",
+      "releaseState": "released",
+      "shinyState": "released",
+      "tradeable": true,
+      "sortOrder": 120,
+      "sourceIds": ["reviewed-go-form-inventory", "official-shiny-forms"],
+      "members": [
+        {
+          "dex": 52,
+          "formKey": "galar",
+          "displayName": "Galarian Meowth",
+          "metadataForm": "Galarian",
+          "normalAsset": "pm52.fGALARIAN.icon.png",
+          "shinyAsset": "pm52.fGALARIAN.s.icon.png"
+        },
+        {
+          "dex": 77,
+          "formKey": "galar",
+          "displayName": "Galarian Ponyta",
+          "metadataForm": "Galarian",
+          "normalAsset": "pm77.fGALARIAN.icon.png",
+          "shinyAsset": "pm77.fGALARIAN.s.icon.png"
+        },
+        {
+          "dex": 78,
+          "formKey": "galar",
+          "displayName": "Galarian Rapidash",
+          "metadataForm": "Galarian",
+          "normalAsset": "pm78.fGALARIAN.icon.png",
+          "shinyAsset": "pm78.fGALARIAN.s.icon.png"
+        },
+        {
+          "dex": 79,
+          "formKey": "galar",
+          "displayName": "Galarian Slowpoke",
+          "metadataForm": "Galarian",
+          "normalAsset": "pm79.fGALARIAN.icon.png",
+          "shinyAsset": "pm79.fGALARIAN.s.icon.png"
+        },
+        {
+          "dex": 80,
+          "formKey": "galar",
+          "displayName": "Galarian Slowbro",
+          "metadataForm": "Galarian",
+          "normalAsset": "pm80.fGALARIAN.icon.png",
+          "shinyAsset": "pm80.fGALARIAN.s.icon.png"
+        },
+        {
+          "dex": 83,
+          "formKey": "galar",
+          "displayName": "Galarian Farfetch’d",
+          "metadataForm": "Galarian",
+          "normalAsset": "pm83.fGALARIAN.icon.png",
+          "shinyAsset": "pm83.fGALARIAN.s.icon.png"
+        },
+        {
+          "dex": 110,
+          "formKey": "galar",
+          "displayName": "Galarian Weezing",
+          "metadataForm": "Galarian",
+          "normalAsset": "pm110.fGALARIAN.icon.png",
+          "shinyAsset": "pm110.fGALARIAN.s.icon.png"
+        },
+        {
+          "dex": 122,
+          "formKey": "galar",
+          "displayName": "Galarian Mr. Mime",
+          "metadataForm": "Galarian",
+          "normalAsset": "pm122.fGALARIAN.icon.png",
+          "shinyAsset": "pm122.fGALARIAN.s.icon.png"
+        },
+        {
+          "dex": 144,
+          "formKey": "galar",
+          "displayName": "Galarian Articuno",
+          "metadataForm": "Galarian",
+          "normalAsset": "pm144.fGALARIAN.icon.png",
+          "shinyAsset": "pm144.fGALARIAN.s.icon.png"
+        },
+        {
+          "dex": 145,
+          "formKey": "galar",
+          "displayName": "Galarian Zapdos",
+          "metadataForm": "Galarian",
+          "normalAsset": "pm145.fGALARIAN.icon.png",
+          "shinyAsset": "pm145.fGALARIAN.s.icon.png"
+        },
+        {
+          "dex": 146,
+          "formKey": "galar",
+          "displayName": "Galarian Moltres",
+          "metadataForm": "Galarian",
+          "normalAsset": "pm146.fGALARIAN.icon.png",
+          "shinyAsset": "pm146.fGALARIAN.s.icon.png"
+        },
+        {
+          "dex": 199,
+          "formKey": "galar",
+          "displayName": "Galarian Slowking",
+          "metadataForm": "Galarian",
+          "normalAsset": "pm199.fGALARIAN.icon.png",
+          "shinyAsset": "pm199.fGALARIAN.s.icon.png"
+        },
+        {
+          "dex": 222,
+          "formKey": "galar",
+          "displayName": "Galarian Corsola",
+          "metadataForm": "Galarian",
+          "normalAsset": "pm222.fGALARIAN.icon.png",
+          "shinyAsset": "pm222.fGALARIAN.s.icon.png"
+        },
+        {
+          "dex": 263,
+          "formKey": "galar",
+          "displayName": "Galarian Zigzagoon",
+          "metadataForm": "Galarian",
+          "normalAsset": "pm263.fGALARIAN.icon.png",
+          "shinyAsset": "pm263.fGALARIAN.s.icon.png"
+        },
+        {
+          "dex": 264,
+          "formKey": "galar",
+          "displayName": "Galarian Linoone",
+          "metadataForm": "Galarian",
+          "normalAsset": "pm264.fGALARIAN.icon.png",
+          "shinyAsset": "pm264.fGALARIAN.s.icon.png"
+        },
+        {
+          "dex": 554,
+          "formKey": "galar",
+          "displayName": "Galarian Darumaka",
+          "metadataForm": "Galarian",
+          "normalAsset": "pm554.fGALARIAN.icon.png",
+          "shinyAsset": "pm554.fGALARIAN.s.icon.png"
+        },
+        {
+          "dex": 555,
+          "formKey": "galar-standard",
+          "displayName": "Galarian Darmanitan",
+          "metadataForm": "Galarian_standard",
+          "normalAsset": "pm555.fGALARIAN_STANDARD.icon.png",
+          "shinyAsset": "pm555.fGALARIAN_STANDARD.s.icon.png"
+        },
+        {
+          "dex": 562,
+          "formKey": "galar",
+          "displayName": "Galarian Yamask",
+          "metadataForm": "Galarian",
+          "normalAsset": "pm562.fGALARIAN.icon.png",
+          "shinyAsset": "pm562.fGALARIAN.s.icon.png"
+        },
+        {
+          "dex": 618,
+          "formKey": "galar",
+          "displayName": "Galarian Stunfisk",
+          "metadataForm": "Galarian",
+          "normalAsset": "pm618.fGALARIAN.icon.png",
+          "shinyAsset": "pm618.fGALARIAN.s.icon.png"
+        }
+      ]
+    },
+    {
+      "id": "regional-hisui",
+      "variantKind": "regional",
+      "regionalOrigin": "Hisui",
+      "releaseState": "released",
+      "shinyState": "released",
+      "tradeable": true,
+      "sortOrder": 140,
+      "sourceIds": ["reviewed-go-form-inventory", "official-shiny-forms"],
+      "members": [
+        {
+          "dex": 58,
+          "formKey": "hisui",
+          "displayName": "Hisuian Growlithe",
+          "metadataForm": "Hisuian",
+          "normalAsset": "pm58.fHISUIAN.icon.png",
+          "shinyAsset": "pm58.fHISUIAN.s.icon.png"
+        },
+        {
+          "dex": 59,
+          "formKey": "hisui",
+          "displayName": "Hisuian Arcanine",
+          "metadataForm": "Hisuian",
+          "normalAsset": "pm59.fHISUIAN.icon.png",
+          "shinyAsset": "pm59.fHISUIAN.s.icon.png"
+        },
+        {
+          "dex": 100,
+          "formKey": "hisui",
+          "displayName": "Hisuian Voltorb",
+          "metadataForm": "Hisuian",
+          "normalAsset": "pm100.fHISUIAN.icon.png",
+          "shinyAsset": "pm100.fHISUIAN.s.icon.png"
+        },
+        {
+          "dex": 101,
+          "formKey": "hisui",
+          "displayName": "Hisuian Electrode",
+          "metadataForm": "Hisuian",
+          "normalAsset": "pm101.fHISUIAN.icon.png",
+          "shinyAsset": "pm101.fHISUIAN.s.icon.png"
+        },
+        {
+          "dex": 157,
+          "formKey": "hisui",
+          "displayName": "Hisuian Typhlosion",
+          "metadataForm": "Hisuian",
+          "normalAsset": "pm157.fHISUIAN.icon.png",
+          "shinyAsset": "pm157.fHISUIAN.s.icon.png"
+        },
+        {
+          "dex": 211,
+          "formKey": "hisui",
+          "displayName": "Hisuian Qwilfish",
+          "metadataForm": "Hisuian",
+          "normalAsset": "pm211.fHISUIAN.icon.png",
+          "shinyAsset": "pm211.fHISUIAN.s.icon.png"
+        },
+        {
+          "dex": 215,
+          "formKey": "hisui",
+          "displayName": "Hisuian Sneasel",
+          "metadataForm": "Hisuian",
+          "normalAsset": "pm215.fHISUIAN.icon.png",
+          "shinyAsset": "pm215.fHISUIAN.s.icon.png"
+        },
+        {
+          "dex": 503,
+          "formKey": "hisui",
+          "displayName": "Hisuian Samurott",
+          "metadataForm": "Hisuian",
+          "normalAsset": "pm503.fHISUIAN.icon.png",
+          "shinyAsset": "pm503.fHISUIAN.s.icon.png"
+        },
+        {
+          "dex": 549,
+          "formKey": "hisui",
+          "displayName": "Hisuian Lilligant",
+          "metadataForm": "Hisuian",
+          "normalAsset": "pm549.fHISUIAN.icon.png",
+          "shinyAsset": "pm549.fHISUIAN.s.icon.png"
+        },
+        {
+          "dex": 570,
+          "formKey": "hisui",
+          "displayName": "Hisuian Zorua",
+          "metadataForm": "Hisuian",
+          "normalAsset": "pm570.fHISUIAN.icon.png",
+          "shinyAsset": "pm570.fHISUIAN.s.icon.png"
+        },
+        {
+          "dex": 571,
+          "formKey": "hisui",
+          "displayName": "Hisuian Zoroark",
+          "metadataForm": "Hisuian",
+          "normalAsset": "pm571.fHISUIAN.icon.png",
+          "shinyAsset": "pm571.fHISUIAN.s.icon.png"
+        },
+        {
+          "dex": 628,
+          "formKey": "hisui",
+          "displayName": "Hisuian Braviary",
+          "metadataForm": "Hisuian",
+          "normalAsset": "pm628.fHISUIAN.icon.png",
+          "shinyAsset": "pm628.fHISUIAN.s.icon.png"
+        },
+        {
+          "dex": 705,
+          "formKey": "hisui",
+          "displayName": "Hisuian Sliggoo",
+          "metadataForm": "Hisuian",
+          "normalAsset": "pm705.fHISUIAN.icon.png",
+          "shinyAsset": "pm705.fHISUIAN.s.icon.png"
+        },
+        {
+          "dex": 706,
+          "formKey": "hisui",
+          "displayName": "Hisuian Goodra",
+          "metadataForm": "Hisuian",
+          "normalAsset": "pm706.fHISUIAN.icon.png",
+          "shinyAsset": "pm706.fHISUIAN.s.icon.png"
+        },
+        {
+          "dex": 713,
+          "formKey": "hisui",
+          "displayName": "Hisuian Avalugg",
+          "metadataForm": "Hisuian",
+          "normalAsset": "pm713.fHISUIAN.icon.png",
+          "shinyAsset": "pm713.fHISUIAN.s.icon.png"
+        },
+        {
+          "dex": 724,
+          "formKey": "hisui",
+          "displayName": "Hisuian Decidueye",
+          "metadataForm": "Hisuian",
+          "normalAsset": "pm724.fHISUIAN.icon.png",
+          "shinyAsset": "pm724.fHISUIAN.s.icon.png"
+        }
+      ]
+    },
+    {
+      "id": "regional-paldea",
+      "variantKind": "regional",
+      "regionalOrigin": "Paldea",
+      "releaseState": "released",
+      "shinyState": "unknown",
+      "tradeable": true,
+      "sortOrder": 160,
+      "sourceIds": ["reviewed-go-form-inventory", "official-shiny-forms"],
+      "members": [
+        {
+          "dex": 128,
+          "formKey": "paldea-combat",
+          "displayName": "Paldean Tauros (Combat Breed)",
+          "metadataForm": "Paldea_combat",
+          "normalAsset": "pm128.fPALDEA_COMBAT.icon.png",
+          "shinyAsset": "pm128.fPALDEA_COMBAT.s.icon.png",
+          "shinyState": "released"
+        },
+        {
+          "dex": 128,
+          "formKey": "paldea-blaze",
+          "displayName": "Paldean Tauros (Blaze Breed)",
+          "metadataForm": "Paldea_blaze",
+          "normalAsset": "pm128.fPALDEA_BLAZE.icon.png",
+          "shinyAsset": "pm128.fPALDEA_BLAZE.s.icon.png"
+        },
+        {
+          "dex": 128,
+          "formKey": "paldea-aqua",
+          "displayName": "Paldean Tauros (Aqua Breed)",
+          "metadataForm": "Paldea_aqua",
+          "normalAsset": "pm128.fPALDEA_AQUA.icon.png",
+          "shinyAsset": "pm128.fPALDEA_AQUA.s.icon.png"
+        },
+        {
+          "dex": 194,
+          "formKey": "paldea",
+          "displayName": "Paldean Wooper",
+          "metadataForm": "Paldea",
+          "normalAsset": "pm194.fPALDEA.icon.png",
+          "shinyAsset": "pm194.fPALDEA.s.icon.png",
+          "shinyState": "released"
+        }
+      ]
+    },
+    {
+      "id": "unown",
+      "variantKind": "alternate",
+      "releaseState": "released",
+      "shinyState": "released",
+      "tradeable": true,
+      "sortOrder": 200,
+      "sourceIds": ["reviewed-unown-history", "official-shiny-forms"],
+      "members": [
+        {
+          "dex": 201,
+          "formKey": "unown-a",
+          "displayName": "Unown A",
+          "metadataForm": "A",
+          "normalAsset": "pm201.fUNOWN_A.icon.png",
+          "shinyAsset": "pm201.fUNOWN_A.s.icon.png"
+        },
+        {
+          "dex": 201,
+          "formKey": "unown-b",
+          "displayName": "Unown B",
+          "metadataForm": "B",
+          "normalAsset": "pm201.fUNOWN_B.icon.png",
+          "shinyAsset": "pm201.fUNOWN_B.s.icon.png"
+        },
+        {
+          "dex": 201,
+          "formKey": "unown-c",
+          "displayName": "Unown C",
+          "metadataForm": "C",
+          "normalAsset": "pm201.fUNOWN_C.icon.png",
+          "shinyAsset": "pm201.fUNOWN_C.s.icon.png"
+        },
+        {
+          "dex": 201,
+          "formKey": "unown-d",
+          "displayName": "Unown D",
+          "metadataForm": "D",
+          "normalAsset": "pm201.fUNOWN_D.icon.png",
+          "shinyAsset": "pm201.fUNOWN_D.s.icon.png"
+        },
+        {
+          "dex": 201,
+          "formKey": "unown-e",
+          "displayName": "Unown E",
+          "metadataForm": "E",
+          "normalAsset": "pm201.fUNOWN_E.icon.png",
+          "shinyAsset": "pm201.fUNOWN_E.s.icon.png"
+        },
+        {
+          "dex": 201,
+          "formKey": "unown-f",
+          "displayName": "Unown F",
+          "metadataForm": "F",
+          "normalAsset": "pm201.fUNOWN_F.icon.png",
+          "shinyAsset": "pm201.fUNOWN_F.s.icon.png"
+        },
+        {
+          "dex": 201,
+          "formKey": "unown-g",
+          "displayName": "Unown G",
+          "metadataForm": "G",
+          "normalAsset": "pm201.fUNOWN_G.icon.png",
+          "shinyAsset": "pm201.fUNOWN_G.s.icon.png"
+        },
+        {
+          "dex": 201,
+          "formKey": "unown-h",
+          "displayName": "Unown H",
+          "metadataForm": "H",
+          "normalAsset": "pm201.fUNOWN_H.icon.png",
+          "shinyAsset": "pm201.fUNOWN_H.s.icon.png"
+        },
+        {
+          "dex": 201,
+          "formKey": "unown-i",
+          "displayName": "Unown I",
+          "metadataForm": "I",
+          "normalAsset": "pm201.fUNOWN_I.icon.png",
+          "shinyAsset": "pm201.fUNOWN_I.s.icon.png"
+        },
+        {
+          "dex": 201,
+          "formKey": "unown-j",
+          "displayName": "Unown J",
+          "metadataForm": "J",
+          "normalAsset": "pm201.fUNOWN_J.icon.png",
+          "shinyAsset": "pm201.fUNOWN_J.s.icon.png"
+        },
+        {
+          "dex": 201,
+          "formKey": "unown-k",
+          "displayName": "Unown K",
+          "metadataForm": "K",
+          "normalAsset": "pm201.fUNOWN_K.icon.png",
+          "shinyAsset": "pm201.fUNOWN_K.s.icon.png"
+        },
+        {
+          "dex": 201,
+          "formKey": "unown-l",
+          "displayName": "Unown L",
+          "metadataForm": "L",
+          "normalAsset": "pm201.fUNOWN_L.icon.png",
+          "shinyAsset": "pm201.fUNOWN_L.s.icon.png"
+        },
+        {
+          "dex": 201,
+          "formKey": "unown-m",
+          "displayName": "Unown M",
+          "metadataForm": "M",
+          "normalAsset": "pm201.fUNOWN_M.icon.png",
+          "shinyAsset": "pm201.fUNOWN_M.s.icon.png"
+        },
+        {
+          "dex": 201,
+          "formKey": "unown-n",
+          "displayName": "Unown N",
+          "metadataForm": "N",
+          "normalAsset": "pm201.fUNOWN_N.icon.png",
+          "shinyAsset": "pm201.fUNOWN_N.s.icon.png"
+        },
+        {
+          "dex": 201,
+          "formKey": "unown-o",
+          "displayName": "Unown O",
+          "metadataForm": "O",
+          "normalAsset": "pm201.fUNOWN_O.icon.png",
+          "shinyAsset": "pm201.fUNOWN_O.s.icon.png"
+        },
+        {
+          "dex": 201,
+          "formKey": "unown-p",
+          "displayName": "Unown P",
+          "metadataForm": "P",
+          "normalAsset": "pm201.fUNOWN_P.icon.png",
+          "shinyAsset": "pm201.fUNOWN_P.s.icon.png"
+        },
+        {
+          "dex": 201,
+          "formKey": "unown-q",
+          "displayName": "Unown Q",
+          "metadataForm": "Q",
+          "normalAsset": "pm201.fUNOWN_Q.icon.png",
+          "shinyAsset": "pm201.fUNOWN_Q.s.icon.png"
+        },
+        {
+          "dex": 201,
+          "formKey": "unown-r",
+          "displayName": "Unown R",
+          "metadataForm": "R",
+          "normalAsset": "pm201.fUNOWN_R.icon.png",
+          "shinyAsset": "pm201.fUNOWN_R.s.icon.png"
+        },
+        {
+          "dex": 201,
+          "formKey": "unown-s",
+          "displayName": "Unown S",
+          "metadataForm": "S",
+          "normalAsset": "pm201.fUNOWN_S.icon.png",
+          "shinyAsset": "pm201.fUNOWN_S.s.icon.png"
+        },
+        {
+          "dex": 201,
+          "formKey": "unown-t",
+          "displayName": "Unown T",
+          "metadataForm": "T",
+          "normalAsset": "pm201.fUNOWN_T.icon.png",
+          "shinyAsset": "pm201.fUNOWN_T.s.icon.png"
+        },
+        {
+          "dex": 201,
+          "formKey": "unown-u",
+          "displayName": "Unown U",
+          "metadataForm": "U",
+          "normalAsset": "pm201.fUNOWN_U.icon.png",
+          "shinyAsset": "pm201.fUNOWN_U.s.icon.png"
+        },
+        {
+          "dex": 201,
+          "formKey": "unown-v",
+          "displayName": "Unown V",
+          "metadataForm": "V",
+          "normalAsset": "pm201.fUNOWN_V.icon.png",
+          "shinyAsset": "pm201.fUNOWN_V.s.icon.png"
+        },
+        {
+          "dex": 201,
+          "formKey": "unown-w",
+          "displayName": "Unown W",
+          "metadataForm": "W",
+          "normalAsset": "pm201.fUNOWN_W.icon.png",
+          "shinyAsset": "pm201.fUNOWN_W.s.icon.png"
+        },
+        {
+          "dex": 201,
+          "formKey": "unown-x",
+          "displayName": "Unown X",
+          "metadataForm": "X",
+          "normalAsset": "pm201.fUNOWN_X.icon.png",
+          "shinyAsset": "pm201.fUNOWN_X.s.icon.png"
+        },
+        {
+          "dex": 201,
+          "formKey": "unown-y",
+          "displayName": "Unown Y",
+          "metadataForm": "Y",
+          "normalAsset": "pm201.fUNOWN_Y.icon.png",
+          "shinyAsset": "pm201.fUNOWN_Y.s.icon.png"
+        },
+        {
+          "dex": 201,
+          "formKey": "unown-z",
+          "displayName": "Unown Z",
+          "metadataForm": "Z",
+          "normalAsset": "pm201.fUNOWN_Z.icon.png",
+          "shinyAsset": "pm201.fUNOWN_Z.s.icon.png"
+        },
+        {
+          "dex": 201,
+          "formKey": "unown-exclamation",
+          "displayName": "Unown !",
+          "metadataForm": "Exclamation_point",
+          "normalAsset": "pm201.fUNOWN_EXCLAMATION_POINT.icon.png",
+          "shinyAsset": "pm201.fUNOWN_EXCLAMATION_POINT.s.icon.png"
+        },
+        {
+          "dex": 201,
+          "formKey": "unown-question",
+          "displayName": "Unown ?",
+          "metadataForm": "Question_mark",
+          "normalAsset": "pm201.fUNOWN_QUESTION_MARK.icon.png",
+          "shinyAsset": "pm201.fUNOWN_QUESTION_MARK.s.icon.png"
+        }
+      ]
+    },
+    {
+      "id": "mega",
+      "variantKind": "mega",
+      "releaseState": "released",
+      "shinyState": "released",
+      "tradeable": false,
+      "sortOrder": 400,
+      "transformationGroup": "mega",
+      "sourceIds": [
+        "official-mega-2026",
+        "official-mega-kalos",
+        "official-mega-mewtwo",
+        "official-mega-falinks",
+        "official-news-index"
+      ],
+      "members": [
+        {
+          "dex": 3,
+          "formKey": "mega",
+          "displayName": "Mega Venusaur",
+          "normalAsset": "pm3.fMEGA.icon.png",
+          "shinyAsset": "pm3.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 6,
+          "formKey": "mega-x",
+          "displayName": "Mega Charizard X",
+          "types": ["fire", "dragon"],
+          "normalAsset": "pm6.fMEGA_X.icon.png",
+          "shinyAsset": "pm6.fMEGA_X.s.icon.png"
+        },
+        {
+          "dex": 6,
+          "formKey": "mega-y",
+          "displayName": "Mega Charizard Y",
+          "normalAsset": "pm6.fMEGA_Y.icon.png",
+          "shinyAsset": "pm6.fMEGA_Y.s.icon.png"
+        },
+        {
+          "dex": 9,
+          "formKey": "mega",
+          "displayName": "Mega Blastoise",
+          "normalAsset": "pm9.fMEGA.icon.png",
+          "shinyAsset": "pm9.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 15,
+          "formKey": "mega",
+          "displayName": "Mega Beedrill",
+          "normalAsset": "pm15.fMEGA.icon.png",
+          "shinyAsset": "pm15.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 18,
+          "formKey": "mega",
+          "displayName": "Mega Pidgeot",
+          "normalAsset": "pm18.fMEGA.icon.png",
+          "shinyAsset": "pm18.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 65,
+          "formKey": "mega",
+          "displayName": "Mega Alakazam",
+          "normalAsset": "pm65.fMEGA.icon.png",
+          "shinyAsset": "pm65.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 71,
+          "formKey": "mega",
+          "displayName": "Mega Victreebel",
+          "normalAsset": "pm71.fMEGA.icon.png",
+          "shinyAsset": "pm71.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 80,
+          "formKey": "mega",
+          "displayName": "Mega Slowbro",
+          "normalAsset": "pm80.fMEGA.icon.png",
+          "shinyAsset": "pm80.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 94,
+          "formKey": "mega",
+          "displayName": "Mega Gengar",
+          "normalAsset": "pm94.fMEGA.icon.png",
+          "shinyAsset": "pm94.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 115,
+          "formKey": "mega",
+          "displayName": "Mega Kangaskhan",
+          "normalAsset": "pm115.fMEGA.icon.png",
+          "shinyAsset": "pm115.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 127,
+          "formKey": "mega",
+          "displayName": "Mega Pinsir",
+          "types": ["bug", "flying"],
+          "normalAsset": "pm127.fMEGA.icon.png",
+          "shinyAsset": "pm127.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 130,
+          "formKey": "mega",
+          "displayName": "Mega Gyarados",
+          "types": ["water", "dark"],
+          "normalAsset": "pm130.fMEGA.icon.png",
+          "shinyAsset": "pm130.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 142,
+          "formKey": "mega",
+          "displayName": "Mega Aerodactyl",
+          "normalAsset": "pm142.fMEGA.icon.png",
+          "shinyAsset": "pm142.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 149,
+          "formKey": "mega",
+          "displayName": "Mega Dragonite",
+          "normalAsset": "pm149.fMEGA.icon.png",
+          "shinyAsset": "pm149.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 150,
+          "formKey": "mega-x",
+          "displayName": "Mega Mewtwo X",
+          "types": ["psychic", "fighting"],
+          "normalAsset": "pm150.fMEGA_X.icon.png",
+          "shinyAsset": "pm150.fMEGA_X.s.icon.png"
+        },
+        {
+          "dex": 150,
+          "formKey": "mega-y",
+          "displayName": "Mega Mewtwo Y",
+          "normalAsset": "pm150.fMEGA_Y.icon.png",
+          "shinyAsset": "pm150.fMEGA_Y.s.icon.png"
+        },
+        {
+          "dex": 181,
+          "formKey": "mega",
+          "displayName": "Mega Ampharos",
+          "types": ["electric", "dragon"],
+          "normalAsset": "pm181.fMEGA.icon.png",
+          "shinyAsset": "pm181.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 208,
+          "formKey": "mega",
+          "displayName": "Mega Steelix",
+          "normalAsset": "pm208.fMEGA.icon.png",
+          "shinyAsset": "pm208.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 212,
+          "formKey": "mega",
+          "displayName": "Mega Scizor",
+          "normalAsset": "pm212.fMEGA.icon.png",
+          "shinyAsset": "pm212.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 214,
+          "formKey": "mega",
+          "displayName": "Mega Heracross",
+          "normalAsset": "pm214.fMEGA.icon.png",
+          "shinyAsset": "pm214.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 229,
+          "formKey": "mega",
+          "displayName": "Mega Houndoom",
+          "normalAsset": "pm229.fMEGA.icon.png",
+          "shinyAsset": "pm229.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 248,
+          "formKey": "mega",
+          "displayName": "Mega Tyranitar",
+          "normalAsset": "pm248.fMEGA.icon.png",
+          "shinyAsset": "pm248.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 254,
+          "formKey": "mega",
+          "displayName": "Mega Sceptile",
+          "types": ["grass", "dragon"],
+          "normalAsset": "pm254.fMEGA.icon.png",
+          "shinyAsset": "pm254.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 257,
+          "formKey": "mega",
+          "displayName": "Mega Blaziken",
+          "normalAsset": "pm257.fMEGA.icon.png",
+          "shinyAsset": "pm257.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 260,
+          "formKey": "mega",
+          "displayName": "Mega Swampert",
+          "normalAsset": "pm260.fMEGA.icon.png",
+          "shinyAsset": "pm260.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 282,
+          "formKey": "mega",
+          "displayName": "Mega Gardevoir",
+          "normalAsset": "pm282.fMEGA.icon.png",
+          "shinyAsset": "pm282.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 302,
+          "formKey": "mega",
+          "displayName": "Mega Sableye",
+          "normalAsset": "pm302.fMEGA.icon.png",
+          "shinyAsset": "pm302.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 303,
+          "formKey": "mega",
+          "displayName": "Mega Mawile",
+          "normalAsset": "pm303.fMEGA.icon.png",
+          "shinyAsset": "pm303.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 306,
+          "formKey": "mega",
+          "displayName": "Mega Aggron",
+          "types": ["steel"],
+          "normalAsset": "pm306.fMEGA.icon.png",
+          "shinyAsset": "pm306.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 308,
+          "formKey": "mega",
+          "displayName": "Mega Medicham",
+          "normalAsset": "pm308.fMEGA.icon.png",
+          "shinyAsset": "pm308.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 310,
+          "formKey": "mega",
+          "displayName": "Mega Manectric",
+          "normalAsset": "pm310.fMEGA.icon.png",
+          "shinyAsset": "pm310.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 319,
+          "formKey": "mega",
+          "displayName": "Mega Sharpedo",
+          "normalAsset": "pm319.fMEGA.icon.png",
+          "shinyAsset": "pm319.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 323,
+          "formKey": "mega",
+          "displayName": "Mega Camerupt",
+          "normalAsset": "pm323.fMEGA.icon.png",
+          "shinyAsset": "pm323.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 334,
+          "formKey": "mega",
+          "displayName": "Mega Altaria",
+          "types": ["dragon", "fairy"],
+          "normalAsset": "pm334.fMEGA.icon.png",
+          "shinyAsset": "pm334.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 354,
+          "formKey": "mega",
+          "displayName": "Mega Banette",
+          "normalAsset": "pm354.fMEGA.icon.png",
+          "shinyAsset": "pm354.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 359,
+          "formKey": "mega",
+          "displayName": "Mega Absol",
+          "normalAsset": "pm359.fMEGA.icon.png",
+          "shinyAsset": "pm359.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 362,
+          "formKey": "mega",
+          "displayName": "Mega Glalie",
+          "normalAsset": "pm362.fMEGA.icon.png",
+          "shinyAsset": "pm362.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 373,
+          "formKey": "mega",
+          "displayName": "Mega Salamence",
+          "normalAsset": "pm373.fMEGA.icon.png",
+          "shinyAsset": "pm373.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 376,
+          "formKey": "mega",
+          "displayName": "Mega Metagross",
+          "normalAsset": "pm376.fMEGA.icon.png",
+          "shinyAsset": "pm376.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 380,
+          "formKey": "mega",
+          "displayName": "Mega Latias",
+          "normalAsset": "pm380.fMEGA.icon.png",
+          "shinyAsset": "pm380.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 381,
+          "formKey": "mega",
+          "displayName": "Mega Latios",
+          "normalAsset": "pm381.fMEGA.icon.png",
+          "shinyAsset": "pm381.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 384,
+          "formKey": "mega",
+          "displayName": "Mega Rayquaza",
+          "normalAsset": "pm384.fMEGA.icon.png",
+          "shinyAsset": "pm384.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 428,
+          "formKey": "mega",
+          "displayName": "Mega Lopunny",
+          "normalAsset": "pm428.fMEGA.icon.png",
+          "shinyAsset": "pm428.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 445,
+          "formKey": "mega",
+          "displayName": "Mega Garchomp",
+          "normalAsset": "pm445.fMEGA.icon.png",
+          "shinyAsset": "pm445.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 448,
+          "formKey": "mega",
+          "displayName": "Mega Lucario",
+          "normalAsset": "pm448.fMEGA.icon.png",
+          "shinyAsset": "pm448.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 460,
+          "formKey": "mega",
+          "displayName": "Mega Abomasnow",
+          "normalAsset": "pm460.fMEGA.icon.png",
+          "shinyAsset": "pm460.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 475,
+          "formKey": "mega",
+          "displayName": "Mega Gallade",
+          "normalAsset": "pm475.fMEGA.icon.png",
+          "shinyAsset": "pm475.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 531,
+          "formKey": "mega",
+          "displayName": "Mega Audino",
+          "normalAsset": "pm531.fMEGA.icon.png",
+          "shinyAsset": "pm531.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 687,
+          "formKey": "mega",
+          "displayName": "Mega Malamar",
+          "normalAsset": "pm687.fMEGA.icon.png",
+          "shinyAsset": "pm687.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 719,
+          "formKey": "mega",
+          "displayName": "Mega Diancie",
+          "normalAsset": "pm719.fMEGA.icon.png",
+          "shinyAsset": "pm719.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 870,
+          "formKey": "mega",
+          "displayName": "Mega Falinks",
+          "normalAsset": "pm870.fMEGA.icon.png",
+          "shinyAsset": "pm870.fMEGA.s.icon.png"
+        }
+      ]
+    },
+    {
+      "id": "primal",
+      "variantKind": "primal",
+      "releaseState": "released",
+      "shinyState": "released",
+      "tradeable": false,
+      "sortOrder": 500,
+      "transformationGroup": "primal",
+      "sourceIds": ["official-news-index"],
+      "members": [
+        {
+          "dex": 382,
+          "formKey": "primal",
+          "displayName": "Primal Kyogre",
+          "normalAsset": "pm382.fPRIMAL.icon.png",
+          "shinyAsset": "pm382.fPRIMAL.s.icon.png"
+        },
+        {
+          "dex": 383,
+          "formKey": "primal",
+          "displayName": "Primal Groudon",
+          "types": ["ground", "fire"],
+          "normalAsset": "pm383.fPRIMAL.icon.png",
+          "shinyAsset": "pm383.fPRIMAL.s.icon.png"
+        }
+      ]
+    },
+    {
+      "id": "gigantamax",
+      "variantKind": "gigantamax",
+      "releaseState": "released",
+      "shinyState": "released",
+      "tradeable": true,
+      "sortOrder": 600,
+      "transformationGroup": "gigantamax",
+      "sourceIds": ["official-max-mechanics", "official-gmax-rillaboom", "official-news-index"],
+      "members": [
+        {
+          "dex": 3,
+          "formKey": "gigantamax",
+          "displayName": "Gigantamax Venusaur",
+          "normalAsset": "pm3.fGIGANTAMAX.icon.png",
+          "shinyAsset": "pm3.fGIGANTAMAX.s.icon.png"
+        },
+        {
+          "dex": 6,
+          "formKey": "gigantamax",
+          "displayName": "Gigantamax Charizard",
+          "normalAsset": "pm6.fGIGANTAMAX.icon.png",
+          "shinyAsset": "pm6.fGIGANTAMAX.s.icon.png"
+        },
+        {
+          "dex": 9,
+          "formKey": "gigantamax",
+          "displayName": "Gigantamax Blastoise",
+          "normalAsset": "pm9.fGIGANTAMAX.icon.png",
+          "shinyAsset": "pm9.fGIGANTAMAX.s.icon.png"
+        },
+        {
+          "dex": 12,
+          "formKey": "gigantamax",
+          "displayName": "Gigantamax Butterfree",
+          "normalAsset": "pm12.fGIGANTAMAX.icon.png",
+          "shinyAsset": "pm12.fGIGANTAMAX.s.icon.png"
+        },
+        {
+          "dex": 25,
+          "formKey": "gigantamax",
+          "displayName": "Gigantamax Pikachu",
+          "normalAsset": "pm25.fGIGANTAMAX.icon.png",
+          "shinyAsset": "pm25.fGIGANTAMAX.s.icon.png"
+        },
+        {
+          "dex": 52,
+          "formKey": "gigantamax",
+          "displayName": "Gigantamax Meowth",
+          "normalAsset": "pm52.fGIGANTAMAX.icon.png",
+          "shinyAsset": "pm52.fGIGANTAMAX.s.icon.png"
+        },
+        {
+          "dex": 68,
+          "formKey": "gigantamax",
+          "displayName": "Gigantamax Machamp",
+          "normalAsset": "pm68.fGIGANTAMAX.icon.png",
+          "shinyAsset": "pm68.fGIGANTAMAX.s.icon.png"
+        },
+        {
+          "dex": 94,
+          "formKey": "gigantamax",
+          "displayName": "Gigantamax Gengar",
+          "normalAsset": "pm94.fGIGANTAMAX.icon.png",
+          "shinyAsset": "pm94.fGIGANTAMAX.s.icon.png"
+        },
+        {
+          "dex": 99,
+          "formKey": "gigantamax",
+          "displayName": "Gigantamax Kingler",
+          "normalAsset": "pm99.fGIGANTAMAX.icon.png",
+          "shinyAsset": "pm99.fGIGANTAMAX.s.icon.png"
+        },
+        {
+          "dex": 131,
+          "formKey": "gigantamax",
+          "displayName": "Gigantamax Lapras",
+          "normalAsset": "pm131.fGIGANTAMAX.icon.png",
+          "shinyAsset": "pm131.fGIGANTAMAX.s.icon.png"
+        },
+        {
+          "dex": 143,
+          "formKey": "gigantamax",
+          "displayName": "Gigantamax Snorlax",
+          "normalAsset": "pm143.fGIGANTAMAX.icon.png",
+          "shinyAsset": "pm143.fGIGANTAMAX.s.icon.png"
+        },
+        {
+          "dex": 569,
+          "formKey": "gigantamax",
+          "displayName": "Gigantamax Garbodor",
+          "normalAsset": "pm569.fGIGANTAMAX.icon.png",
+          "shinyAsset": "pm569.fGIGANTAMAX.s.icon.png"
+        },
+        {
+          "dex": 812,
+          "formKey": "gigantamax",
+          "displayName": "Gigantamax Rillaboom",
+          "normalAsset": "pm812.fGIGANTAMAX.icon.png",
+          "shinyAsset": "pm812.fGIGANTAMAX.s.icon.png"
+        },
+        {
+          "dex": 815,
+          "formKey": "gigantamax",
+          "displayName": "Gigantamax Cinderace",
+          "normalAsset": "pm815.fGIGANTAMAX.icon.png",
+          "shinyAsset": "pm815.fGIGANTAMAX.s.icon.png"
+        },
+        {
+          "dex": 818,
+          "formKey": "gigantamax",
+          "displayName": "Gigantamax Inteleon",
+          "normalAsset": "pm818.fGIGANTAMAX.icon.png",
+          "shinyAsset": "pm818.fGIGANTAMAX.s.icon.png"
+        },
+        {
+          "dex": 849,
+          "formKey": "gigantamax",
+          "displayName": "Gigantamax Toxtricity",
+          "normalAsset": "pm849.fGIGANTAMAX.icon.png",
+          "shinyAsset": "pm849.fGIGANTAMAX.s.icon.png"
+        },
+        {
+          "dex": 861,
+          "formKey": "gigantamax",
+          "displayName": "Gigantamax Grimmsnarl",
+          "normalAsset": "pm861.fGIGANTAMAX.icon.png",
+          "shinyAsset": "pm861.fGIGANTAMAX.s.icon.png"
+        }
+      ]
+    },
+    {
+      "id": "rotom",
+      "variantKind": "alternate",
+      "releaseState": "released",
+      "shinyState": "released",
+      "tradeable": true,
+      "sortOrder": 300,
+      "sourceIds": ["reviewed-go-form-inventory", "official-shiny-forms"],
+      "members": [
+        {
+          "dex": 479,
+          "formKey": "heat",
+          "displayName": "Heat Rotom",
+          "metadataForm": "Heat",
+          "normalAsset": "pm479.fHEAT.icon.png",
+          "shinyAsset": "pm479.fHEAT.s.icon.png"
+        },
+        {
+          "dex": 479,
+          "formKey": "wash",
+          "displayName": "Wash Rotom",
+          "metadataForm": "Wash",
+          "normalAsset": "pm479.fWASH.icon.png",
+          "shinyAsset": "pm479.fWASH.s.icon.png"
+        },
+        {
+          "dex": 479,
+          "formKey": "frost",
+          "displayName": "Frost Rotom",
+          "metadataForm": "Frost",
+          "normalAsset": "pm479.fFROST.icon.png",
+          "shinyAsset": "pm479.fFROST.s.icon.png"
+        },
+        {
+          "dex": 479,
+          "formKey": "fan",
+          "displayName": "Fan Rotom",
+          "metadataForm": "Fan",
+          "normalAsset": "pm479.fFAN.icon.png",
+          "shinyAsset": "pm479.fFAN.s.icon.png"
+        },
+        {
+          "dex": 479,
+          "formKey": "mow",
+          "displayName": "Mow Rotom",
+          "metadataForm": "Mow",
+          "normalAsset": "pm479.fMOW.icon.png",
+          "shinyAsset": "pm479.fMOW.s.icon.png"
+        }
+      ]
+    },
+    {
+      "id": "fusion",
+      "variantKind": "fusion",
+      "releaseState": "released",
+      "shinyState": "released",
+      "tradeable": false,
+      "sortOrder": 350,
+      "transformationGroup": "fusion",
+      "sourceIds": ["official-news-index"],
+      "members": [
+        {
+          "dex": 646,
+          "formKey": "black",
+          "displayName": "Black Kyurem",
+          "types": ["dragon", "ice"],
+          "normalAsset": "pm646.fBLACK.icon.png",
+          "shinyAsset": "pm646.fBLACK.s.icon.png"
+        },
+        {
+          "dex": 646,
+          "formKey": "white",
+          "displayName": "White Kyurem",
+          "types": ["dragon", "ice"],
+          "normalAsset": "pm646.fWHITE.icon.png",
+          "shinyAsset": "pm646.fWHITE.s.icon.png"
+        },
+        {
+          "dex": 800,
+          "formKey": "dusk-mane",
+          "displayName": "Dusk Mane Necrozma",
+          "types": ["psychic", "steel"],
+          "normalAsset": "pm800.fDUSK_MANE.icon.png",
+          "shinyAsset": "pm800.fDUSK_MANE.s.icon.png"
+        },
+        {
+          "dex": 800,
+          "formKey": "dawn-wings",
+          "displayName": "Dawn Wings Necrozma",
+          "types": ["psychic", "ghost"],
+          "normalAsset": "pm800.fDAWN_WINGS.icon.png",
+          "shinyAsset": "pm800.fDAWN_WINGS.s.icon.png"
+        }
+      ]
+    },
+    {
+      "id": "gender",
+      "variantKind": "gender",
+      "releaseState": "released",
+      "shinyState": "released",
+      "tradeable": true,
+      "sortOrder": 250,
+      "sourceIds": ["reviewed-go-form-inventory"],
+      "members": [
+        {
+          "dex": 678,
+          "formKey": "female",
+          "displayName": "Female Meowstic",
+          "metadataForm": "Female",
+          "genderCode": "female",
+          "normalAsset": "pm678.fFEMALE.icon.png",
+          "shinyAsset": "pm678.fFEMALE.s.icon.png"
+        },
+        {
+          "dex": 916,
+          "formKey": "female",
+          "displayName": "Female Oinkologne",
+          "metadataForm": "Female",
+          "genderCode": "female",
+          "normalAsset": "pm916.fFEMALE.icon.png",
+          "shinyAsset": "pm916.fFEMALE.s.icon.png"
+        }
+      ]
+    },
+    {
+      "id": "pikachu-costumes",
+      "variantKind": "costume",
+      "costumeFamily": "pikachu-event-costumes",
+      "releaseState": "released",
+      "shinyState": "released",
+      "tradeable": true,
+      "sortOrder": 700,
+      "sourceIds": ["official-news-index", "official-go-fest-2026"],
+      "members": [
+        {
+          "dex": 25,
+          "formKey": "party-hat-2017",
+          "displayName": "Pikachu with Party Hat (2017)",
+          "normalAsset": "pm25.cONE_YEAR_ANNIVERSARY.icon.png",
+          "shinyAsset": "pm25.cONE_YEAR_ANNIVERSARY.s.icon.png"
+        },
+        {
+          "dex": 25,
+          "formKey": "witch-hat-2017",
+          "displayName": "Pikachu with Witch Hat",
+          "normalAsset": "pm25.cHALLOWEEN_2017.icon.png",
+          "shinyAsset": "pm25.cHALLOWEEN_2017.s.icon.png"
+        },
+        {
+          "dex": 25,
+          "formKey": "summer-style-2018",
+          "displayName": "Summer Style Pikachu",
+          "normalAsset": "pm25.cSUMMER_2018.icon.png",
+          "shinyAsset": "pm25.cSUMMER_2018.s.icon.png"
+        },
+        {
+          "dex": 25,
+          "formKey": "mimikyu-costume-2019",
+          "displayName": "Pikachu in Mimikyu Costume",
+          "normalAsset": "pm25.fFALL_2019.icon.png",
+          "shinyAsset": "pm25.fFALL_2019.s.icon.png"
+        },
+        {
+          "dex": 25,
+          "formKey": "world-championships-2022",
+          "displayName": "World Championships 2022 Pikachu",
+          "normalAsset": "pm25.fWCS_2022.icon.png",
+          "shinyAsset": "pm25.fWCS_2022.s.icon.png"
+        },
+        {
+          "dex": 25,
+          "formKey": "go-fest-2026-red-cap",
+          "displayName": "GO Fest 2026 Pikachu (Red Cap)",
+          "normalAsset": "pm25.fGOFEST_2026_CAP_RED.icon.png",
+          "shinyAsset": "pm25.fGOFEST_2026_CAP_RED.s.icon.png"
+        }
+      ]
+    },
+    {
+      "id": "clone-costumes",
+      "variantKind": "costume",
+      "costumeFamily": "clone-2020",
+      "releaseState": "released",
+      "shinyState": "unreleased",
+      "tradeable": true,
+      "sortOrder": 720,
+      "sourceIds": ["official-news-index"],
+      "members": [
+        {
+          "dex": 3,
+          "formKey": "clone-2020",
+          "displayName": "Clone Venusaur",
+          "normalAsset": "pm3.fCOPY_2019.icon.png"
+        },
+        {
+          "dex": 6,
+          "formKey": "clone-2020",
+          "displayName": "Clone Charizard",
+          "normalAsset": "pm6.fCOPY_2019.icon.png"
+        },
+        {
+          "dex": 9,
+          "formKey": "clone-2020",
+          "displayName": "Clone Blastoise",
+          "normalAsset": "pm9.fCOPY_2019.icon.png"
+        }
+      ]
+    },
+    {
+      "id": "mewtwo-costumes",
+      "variantKind": "costume",
+      "costumeFamily": "mewtwo-special",
+      "releaseState": "released",
+      "shinyState": "unreleased",
+      "tradeable": true,
+      "sortOrder": 740,
+      "sourceIds": ["official-news-index"],
+      "members": [
+        {
+          "dex": 150,
+          "formKey": "armored",
+          "displayName": "Armored Mewtwo",
+          "normalAsset": "pm150.fA.icon.png"
+        }
+      ]
+    }
+  ]
+}
