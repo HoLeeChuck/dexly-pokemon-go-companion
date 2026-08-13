@@ -12,7 +12,6 @@ import type {
   CatalogItem,
   CategoryId,
   CollectionEntry,
-  TradeOfferTrait,
   TradeRequestTrait,
   TradeSpecimen,
   WantedEntry,
@@ -427,7 +426,7 @@ export default function App() {
   const [selected, setSelected] = useState<CatalogItem | null>(null);
   const [collectionEntries, setCollectionEntries] = useState<CollectionEntry[]>([]);
   const [wantedEntries, setWantedEntries] = useState<WantedEntry[]>([]);
-  const [tradeSpecimens, setTradeSpecimens] = useState<TradeSpecimen[]>([]);
+  const [, setTradeSpecimens] = useState<TradeSpecimen[]>([]);
   const [pendingKeys, setPendingKeys] = useState<Set<string>>(new Set());
   const [toast, setToast] = useState<ToastState | null>(null);
   const revisionRef = useRef(0);
@@ -438,7 +437,6 @@ export default function App() {
     new Map<string, { formId: string; categoryId: CategoryId; previous: boolean }>(),
   );
   const mutationQueue = useRef<Promise<void>>(Promise.resolve());
-  const wantedMutationQueue = useRef<Promise<void>>(Promise.resolve());
   const searchInputRef = useRef<HTMLInputElement>(null);
   const scrollPositions = useRef<Record<RouteId, number>>({
     home: 0,
@@ -732,85 +730,6 @@ export default function App() {
     setToast({ tone: 'info', message: 'Last checklist change undone.' });
   }
 
-  async function changeWanted(item: CatalogItem, categoryId: TradeRequestTrait, wanted: boolean) {
-    const previous = wantedRef.current.some(
-      (entry) => entry.formId === item.id && entry.categoryId === categoryId && entry.wanted,
-    );
-    updateLocalWanted(item.id, categoryId, wanted);
-    const operation = wantedMutationQueue.current.then(async () => {
-      if (storageMode === 'cloud') {
-        try {
-          await api.setWanted({ formId: item.id, traitId: categoryId, wanted });
-        } catch (error) {
-          const current = wantedRef.current.some(
-            (entry) => entry.formId === item.id && entry.categoryId === categoryId && entry.wanted,
-          );
-          if (current === wanted) updateLocalWanted(item.id, categoryId, previous);
-          setToast({
-            tone: 'error',
-            message: error instanceof Error ? error.message : 'Cloud wanted list was not changed.',
-          });
-        }
-        return;
-      }
-      revisionRef.current += previous === wanted ? 0 : 1;
-      persistLocalState();
-    });
-    wantedMutationQueue.current = operation;
-    await operation;
-  }
-
-  async function addTrade(input: {
-    formId: string;
-    traits: TradeOfferTrait[];
-    quantity: number;
-    notes: string;
-  }) {
-    try {
-      if (storageMode === 'cloud') {
-        const saved = await api.addTrade(input);
-        tradeRef.current = [saved, ...tradeRef.current];
-        setTradeSpecimens(tradeRef.current);
-        setToast({ tone: 'success', message: 'Trade specimen synced to Cody Cloud.' });
-        return;
-      }
-      const saved: TradeSpecimen = { ...input, id: `trade:local-${crypto.randomUUID()}` };
-      tradeRef.current = [saved, ...tradeRef.current];
-      setTradeSpecimens(tradeRef.current);
-      revisionRef.current += 1;
-      persistLocalState();
-      setToast({ tone: 'success', message: 'Trade specimen saved with its combined traits.' });
-    } catch (error) {
-      setToast({
-        tone: 'error',
-        message: error instanceof Error ? error.message : 'Trade specimen was not saved.',
-      });
-      throw error;
-    }
-  }
-
-  async function deleteTrade(id: string) {
-    try {
-      if (storageMode === 'cloud') {
-        await api.deleteTrade(id);
-        tradeRef.current = tradeRef.current.filter((trade) => trade.id !== id);
-        setTradeSpecimens(tradeRef.current);
-        setToast({ tone: 'info', message: 'Cloud trade specimen removed.' });
-        return;
-      }
-      tradeRef.current = tradeRef.current.filter((trade) => trade.id !== id);
-      setTradeSpecimens(tradeRef.current);
-      revisionRef.current += 1;
-      persistLocalState();
-      setToast({ tone: 'info', message: 'Trade specimen removed.' });
-    } catch (error) {
-      setToast({
-        tone: 'error',
-        message: error instanceof Error ? error.message : 'Trade specimen was not removed.',
-      });
-    }
-  }
-
   async function applyImport(input: {
     csv: string;
     fileName: string;
@@ -1019,9 +938,7 @@ export default function App() {
             <SearchLab
               catalog={bootstrap.catalog}
               entries={collectionEntries}
-              wantedEntries={wantedEntries}
               categories={bootstrap.categories}
-              showAllCategories
             />
           )}
           {route === 'dex' && (
@@ -1285,15 +1202,10 @@ export default function App() {
           catalog={bootstrap.catalog}
           categories={bootstrap.categories}
           collectionEntries={collectionEntries}
-          wantedEntries={wantedEntries}
-          tradeSpecimens={tradeSpecimens}
           pendingKeys={pendingKeys}
           onClose={() => setSelected(null)}
           onNavigate={setSelected}
           onCollectionChange={changeCollection}
-          onWantedChange={changeWanted}
-          onAddTrade={addTrade}
-          onDeleteTrade={deleteTrade}
         />
       )}
       {toast && (

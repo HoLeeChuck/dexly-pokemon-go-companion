@@ -2820,12 +2820,27 @@ p {
 }
 
 .category-tile--collection {
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: 38px minmax(0, 1fr);
   min-height: 66px;
   gap: 0.6rem;
   padding: 0.65rem 0.7rem;
   border-color: #d7ddda;
   background: #f1f3f2;
+}
+
+.category-tile__status {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 11px;
+  color: var(--muted);
+  background: color-mix(in srgb, var(--line) 70%, var(--paper));
+}
+
+.category-tile__status svg {
+  width: 1rem;
+  height: 1rem;
 }
 
 .category-tile__copy {
@@ -2872,13 +2887,19 @@ p {
 
 .category-tile--collection.category-tile--collected {
   border-color: var(--brand-700);
-  color: white;
-  background: var(--brand-700);
-  box-shadow: 0 6px 16px rgb(17 93 76 / 20%);
+  color: var(--ink);
+  background: color-mix(in srgb, var(--brand-100) 70%, var(--paper));
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--brand-700) 18%, transparent);
 }
 
 .category-tile--collection.category-tile--collected small {
-  color: rgb(255 255 255 / 76%);
+  color: var(--brand-700);
+  font-weight: 750;
+}
+
+.category-tile--collection.category-tile--collected .category-tile__status {
+  color: white;
+  background: var(--brand-700);
 }
 
 .category-tile--collection.category-tile--collected .category-toggle-switch {
@@ -3069,8 +3090,12 @@ p {
 
 .lab-hero {
   background:
-    radial-gradient(circle at 90% 15%, rgb(185 228 109 / 22%), transparent 11rem),
-    linear-gradient(140deg, #12483f, #082b25);
+    radial-gradient(
+      circle at 90% 15%,
+      color-mix(in srgb, var(--lime) 24%, transparent),
+      transparent 11rem
+    ),
+    linear-gradient(140deg, var(--brand-800), var(--brand-950));
 }
 
 .lab-hero__orb {
@@ -3812,8 +3837,12 @@ p {
 
 .data-hero {
   background:
-    radial-gradient(circle at 88% 15%, rgb(116 180 161 / 22%), transparent 11rem),
-    linear-gradient(140deg, #173f38, #092d27);
+    radial-gradient(
+      circle at 88% 15%,
+      color-mix(in srgb, var(--lime) 22%, transparent),
+      transparent 11rem
+    ),
+    linear-gradient(140deg, var(--brand-800), var(--brand-950));
 }
 
 .data-hero__icon {
@@ -5105,4 +5134,211 @@ p {
 :root[data-theme='dark'] .notice--subtle {
   color: var(--muted);
   background: color-mix(in srgb, var(--paper) 88%, white);
+}
+
+/* Release A: compact search sharing and whole-card collection controls. */
+.page--lab,
+.page--lab > *,
+.generator-panel,
+.all-category-searches,
+.search-output,
+.search-string,
+.recommended-list article,
+.recommended-list article > div {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.page--lab .generator-panel {
+  grid-column: 1 / -1;
+}
+
+.page--lab .discord-share-panel {
+  grid-column: 1 / -1;
+}
+
+.page--lab .recommended-panel {
+  grid-column: 1 / -1;
+}
+
+.discord-share-panel__intro {
+  margin: -0.25rem 0 0.9rem;
+  color: var(--muted);
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
+.discord-category-picker {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.discord-category-picker button {
+  display: flex;
+  min-width: 0;
+  min-height: 62px;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.55rem;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  color: var(--muted);
+  background: color-mix(in srgb, var(--paper) 92%, var(--line));
+  text-align: left;
+}
+
+.discord-category-picker button > svg {
+  width: 1rem;
+  flex: 0 0 auto;
+}
+
+.discord-category-picker button > span {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.discord-category-picker button strong {
+  color: var(--ink);
+  font-size: 0.7rem;
+}
+
+.discord-category-picker button small {
+  color: var(--muted);
+  font-size: 0.56rem;
+}
+
+.discord-category-picker button[aria-pressed='true'] {
+  border-color: var(--brand-700);
+  color: white;
+  background: var(--brand-700);
+  box-shadow: 0 5px 14px color-mix(in srgb, var(--brand-700) 20%, transparent);
+}
+
+.discord-category-picker button[aria-pressed='true'] strong,
+.discord-category-picker button[aria-pressed='true'] small {
+  color: white;
+}
+
+.discord-message-list {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 0.85rem;
+}
+
+.discord-message-list article {
+  min-width: 0;
+  padding: 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: color-mix(in srgb, var(--paper) 92%, var(--line));
+}
+
+.discord-message-list article > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.55rem;
+}
+
+.discord-message-list article > div strong {
+  font-size: 0.7rem;
+}
+
+.discord-message-list article > div small {
+  color: var(--muted);
+  font-size: 0.57rem;
+}
+
+.discord-message-list pre {
+  width: 100%;
+  max-height: 260px;
+  margin: 0 0 0.65rem;
+  padding: 0.75rem;
+  overflow: auto;
+  border: 1px solid color-mix(in srgb, var(--brand-500) 30%, var(--line));
+  border-radius: 11px;
+  color: var(--ink);
+  background: var(--paper);
+  font:
+    0.62rem/1.5 'SFMono-Regular',
+    Consolas,
+    monospace;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.recommended-list code {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.category-tile--collection strong {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+}
+
+:root[data-theme='dark'] .category-tile--collection {
+  border-color: var(--line);
+  background: color-mix(in srgb, var(--paper) 92%, white);
+}
+
+:root[data-theme='dark'] .category-tile--collection.category-tile--collected {
+  border-color: var(--brand-700);
+  background: color-mix(in srgb, var(--brand-100) 64%, var(--paper));
+}
+
+:root[data-theme='dark'] .discord-category-picker button,
+:root[data-theme='dark'] .discord-message-list article {
+  border-color: var(--line);
+  background: color-mix(in srgb, var(--paper) 90%, white);
+}
+
+:root[data-theme='dark'] .discord-category-picker button[aria-pressed='true'] {
+  border-color: var(--brand-700);
+  background: var(--brand-800);
+}
+
+@media (max-width: 620px) {
+  .page--lab {
+    overflow-x: clip;
+  }
+
+  .all-category-searches,
+  .discord-category-picker {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .search-string {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .search-string code {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    text-overflow: clip;
+  }
+
+  .search-string .button--copy {
+    width: 100%;
+  }
+
+  .recommended-list article {
+    align-items: flex-end;
+  }
+}
+
+@media (max-width: 380px) {
+  .discord-category-picker {
+    grid-template-columns: 1fr;
+  }
 }

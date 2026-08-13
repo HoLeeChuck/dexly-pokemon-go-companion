@@ -31,6 +31,14 @@ test('appearance settings combine a persistent color theme with light and dark m
     .click();
   await expect(page.locator('html')).toHaveAttribute('data-accent', 'purple');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await page
+    .getByRole('navigation', { name: 'Primary navigation' })
+    .getByRole('button', { name: 'Search Lab' })
+    .click();
+  await expect(page.locator('.lab-hero')).toHaveCSS(
+    'background-image',
+    /rgb\(84, 51, 126\).*rgb\(26, 16, 40\)/,
+  );
 
   const purpleAccent = await page
     .locator('html')
@@ -40,6 +48,7 @@ test('appearance settings combine a persistent color theme with light and dark m
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-accent', 'purple');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await page.goto('/#/profile');
   await expect(colorThemes.getByRole('radio', { name: 'Purple' })).toHaveAttribute(
     'aria-checked',
     'true',
@@ -173,7 +182,7 @@ test('completing every released category activates the animated rainbow hook', a
     const tile = page.getByRole('button', { name: new RegExp(`^${category}`) });
     await tile.click();
     await expect(tile).toHaveAttribute('aria-pressed', 'true');
-    await expect(tile.locator('.category-toggle-switch')).toBeVisible();
+    await expect(tile.locator('.category-tile__status')).toBeVisible();
     await expect(tile).toHaveClass(/category-tile--collected/);
   }
 
@@ -215,39 +224,21 @@ test('Shadow collection uses the standard card treatment without an aura', async
   expect(api.unexpectedWriteCount).toBe(0);
 });
 
-test('Wanted details expose only realistic trade requests and recognize owned sizes', async ({
-  page,
-}) => {
+test('Pokémon details open directly to whole-card collection controls', async ({ page }) => {
   const api = await installFakeApi(page);
   await page.goto('/#/dex');
   await page.getByTestId('pokemon-card-1').click();
-  await page.getByRole('button', { name: 'Wanted' }).click();
 
-  const requestGrid = page.locator('.category-tile-grid--wanted');
-  await expect(requestGrid.getByRole('button')).toHaveCount(5);
-  for (const request of ['Normal', 'Shiny', 'XXL', 'XXS', 'Costume']) {
-    await expect(
-      requestGrid.getByRole('button', { name: new RegExp(`^${request}`) }),
-    ).toBeVisible();
-  }
-  await expect(requestGrid.getByRole('button', { name: /^XXL/ })).toBeDisabled();
-  await expect(requestGrid.getByRole('button', { name: /^XXL/ })).toContainText(
-    'Owned · no trade needed',
-  );
-  await expect(requestGrid.getByText('Hundo')).toHaveCount(0);
-  await expect(requestGrid.getByText('Shadow')).toHaveCount(0);
-
-  const costume = requestGrid.getByRole('button', { name: /^Costume/ });
-  await costume.click();
-  await expect(costume).toHaveAttribute('aria-pressed', 'true');
-  const savedWanted = await page.evaluate(() =>
-    JSON.parse(localStorage.getItem('dexly:local-profile:v1') ?? '{}'),
-  );
-  expect(
-    savedWanted.wantedEntries.some(
-      (entry: { formId: string; categoryId: string; wanted: boolean }) =>
-        entry.formId === 'form-0001-standard' && entry.categoryId === 'costume' && entry.wanted,
-    ),
-  ).toBe(true);
+  await expect(page.locator('.detail-tabs')).toHaveCount(0);
+  await expect(page.getByText('Wanted list')).toHaveCount(0);
+  await expect(page.getByText('For trade')).toHaveCount(0);
+  const grid = page.locator('.category-tile-grid');
+  await expect(grid.getByRole('button')).toHaveCount(8);
+  const shiny = grid.getByRole('button', { name: /^Shiny/ });
+  await expect(shiny.locator('.category-tile__status')).toBeVisible();
+  await shiny.click();
+  await expect(shiny).toHaveAttribute('aria-pressed', 'true');
+  await expect(shiny).toHaveClass(/category-tile--collected/);
+  await expect(shiny).toContainText('Collected');
   expect(api.unexpectedWriteCount).toBe(0);
 });

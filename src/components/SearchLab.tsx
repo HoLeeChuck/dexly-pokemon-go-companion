@@ -3,27 +3,17 @@ import evolutionFamilyData from '../../catalog/evolution-families.v1.json';
 import {
   generateMissingSearchStrings,
   generatePersonalSizeCatchSearchStrings,
-  generateWantedTradeSearchStrings,
-  isMissingSearchSupported,
 } from '../../shared/domain';
-import type {
-  CatalogItem,
-  Category,
-  CategoryId,
-  CollectionEntry,
-  TradeRequestTrait,
-  WantedEntry,
-} from '../../shared/types';
+import type { CatalogItem, Category, CategoryId, CollectionEntry } from '../../shared/types';
+import { buildDiscordMessages } from '../lib/discordShare';
 import { Icon } from './Icon';
 
-const tradeTraits: ReadonlyArray<{ id: TradeRequestTrait; label: string }> = [
-  { id: 'normal', label: 'Normal' },
-  { id: 'shiny', label: 'Shiny' },
-  { id: 'xxl', label: 'XXL' },
-  { id: 'xxs', label: 'XXS' },
-  { id: 'costume', label: 'Costume' },
-];
-
+const SEARCH_CATEGORY_IDS = [
+  'normal',
+  'shiny',
+  'xxl',
+  'xxs',
+] as const satisfies readonly CategoryId[];
 async function copyText(value: string): Promise<boolean> {
   try {
     await navigator.clipboard.writeText(value);
@@ -44,47 +34,45 @@ async function copyText(value: string): Promise<boolean> {
 export function SearchLab({
   catalog,
   entries,
-  wantedEntries,
   categories,
-  activeCategory,
-  onCategoryChange,
-  showAllCategories = false,
 }: {
   catalog: readonly CatalogItem[];
   entries: readonly CollectionEntry[];
-  wantedEntries: readonly WantedEntry[];
   categories: readonly Category[];
-  activeCategory?: CategoryId;
-  onCategoryChange?: (value: CategoryId) => void;
-  showAllCategories?: boolean;
 }) {
-  const [workflow, setWorkflow] = useState<'reconcile' | 'trade'>('reconcile');
-  const [tradeTrait, setTradeTrait] = useState<TradeRequestTrait>('normal');
-  const [region, setRegion] = useState('all');
   const [copied, setCopied] = useState<string | null>(null);
   const [copyFailure, setCopyFailure] = useState(false);
-
-  const filteredCatalog = useMemo(
-    () => catalog.filter((item) => region === 'all' || item.region === region),
-    [catalog, region],
+  const [sharedCategories, setSharedCategories] = useState<Set<CategoryId>>(
+    () => new Set(SEARCH_CATEGORY_IDS),
   );
-  const missingCategory =
-    activeCategory && isMissingSearchSupported(activeCategory) ? activeCategory : 'normal';
-  const generated = useMemo(
+
+  const labels = useMemo(
+    () => new Map(categories.map((category) => [category.id, category.label])),
+    [categories],
+  );
+  const results = useMemo(
     () =>
-      workflow === 'trade'
-        ? generateWantedTradeSearchStrings(filteredCatalog, wantedEntries, tradeTrait, {
-            maxLength: 4500,
-          })
-        : generateMissingSearchStrings(filteredCatalog, entries, missingCategory, {
-            maxLength: 4500,
-          }),
-    [entries, filteredCatalog, missingCategory, tradeTrait, wantedEntries, workflow],
+      SEARCH_CATEGORY_IDS.map((categoryId) => ({
+        categoryId,
+        label: labels.get(categoryId) ?? categoryId.toUpperCase(),
+        generated: generateMissingSearchStrings(catalog, entries, categoryId, { maxLength: 4_500 }),
+        discord: generateMissingSearchStrings(catalog, entries, categoryId, { maxLength: 1_500 }),
+      })),
+    [catalog, entries, labels],
+  );
+  const discordMessages = useMemo(
+    () =>
+      buildDiscordMessages(
+        results
+          .filter((result) => sharedCategories.has(result.categoryId))
+          .map((result) => ({ label: result.label, strings: result.discord.strings })),
+      ),
+    [results, sharedCategories],
   );
   const personalXXL = useMemo(
     () =>
       generatePersonalSizeCatchSearchStrings(catalog, entries, 'xxl', {
-        maxLength: 4500,
+        maxLength: 4_500,
         evolutionFamilies: evolutionFamilyData.families,
       }),
     [catalog, entries],
@@ -92,25 +80,11 @@ export function SearchLab({
   const personalXXS = useMemo(
     () =>
       generatePersonalSizeCatchSearchStrings(catalog, entries, 'xxs', {
-        maxLength: 4500,
+        maxLength: 4_500,
         evolutionFamilies: evolutionFamilyData.families,
       }),
     [catalog, entries],
   );
-  const collectionSearchCategories = categories.filter((category) =>
-    isMissingSearchSupported(category.id),
-  );
-  const allCategoryResults = useMemo(
-    () =>
-      collectionSearchCategories.map((category) => ({
-        category,
-        generated: generateMissingSearchStrings(filteredCatalog, entries, category.id, {
-          maxLength: 4500,
-        }),
-      })),
-    [collectionSearchCategories, entries, filteredCatalog],
-  );
-  const regions = [...new Set(catalog.map((item) => item.region))];
   const recommendations = [
     {
       name: 'Recent shinies',
@@ -138,10 +112,19 @@ export function SearchLab({
     if (await copyText(value)) {
       setCopyFailure(false);
       setCopied(id);
-      window.setTimeout(() => setCopied((current) => (current === id ? null : current)), 1800);
+      window.setTimeout(() => setCopied((current) => (current === id ? null : current)), 1_800);
     } else {
       setCopyFailure(true);
     }
+  }
+
+  function toggleSharedCategory(categoryId: CategoryId) {
+    setSharedCategories((current) => {
+      const next = new Set(current);
+      if (next.has(categoryId)) next.delete(categoryId);
+      else next.add(categoryId);
+      return next;
+    });
   }
 
   return (
@@ -152,7 +135,7 @@ export function SearchLab({
             <Icon name="flask" /> Search Lab
           </span>
           <h1>Turn gaps into useful searches.</h1>
-          <p>Build untraded catch and trade searches from your actual collection.</p>
+          <p>Build untraded Pokémon GO searches from your actual collection.</p>
         </div>
         <div className="lab-hero__orb" aria-hidden="true">
           <Icon name="search" />
@@ -160,152 +143,116 @@ export function SearchLab({
         </div>
       </header>
 
-      <div className="segmented-control segmented-control--workflow" aria-label="Search workflow">
-        <button
-          type="button"
-          aria-pressed={workflow === 'reconcile'}
-          onClick={() => setWorkflow('reconcile')}
-        >
-          <Icon name="refresh" /> My missing collection
-        </button>
-        <button
-          type="button"
-          aria-pressed={workflow === 'trade'}
-          onClick={() => setWorkflow('trade')}
-        >
-          <Icon name="swap" /> My wanted trades
-        </button>
-      </div>
-
       <section className="panel generator-panel">
         <div className="panel-heading">
           <div>
-            <span className="eyebrow">{workflow === 'trade' ? 'My requests' : 'My missing'}</span>
-            <h2>{workflow === 'trade' ? 'Wanted-trade generator' : 'Missing-Dex generator'}</h2>
+            <span className="eyebrow">My missing</span>
+            <h2>Missing-Dex generator</h2>
           </div>
-          <span className={`quality-badge quality-badge--${generated.quality}`}>
-            {generated.quality === 'exact' ? <Icon name="check" /> : <Icon name="filter" />}
-            {generated.quality === 'exact' ? 'Exact' : 'Candidate list'}
-          </span>
         </div>
-
-        <div className="lab-fields">
-          <label>
-            {workflow === 'trade' ? 'Request' : 'Category'}
-            {workflow === 'trade' ? (
-              <select
-                value={tradeTrait}
-                onChange={(event) => setTradeTrait(event.target.value as TradeRequestTrait)}
-              >
-                {tradeTraits.map((trait) => (
-                  <option value={trait.id} key={trait.id}>
-                    {trait.label}
-                  </option>
-                ))}
-              </select>
-            ) : !showAllCategories ? (
-              <select
-                value={missingCategory}
-                onChange={(event) => onCategoryChange?.(event.target.value as CategoryId)}
-              >
-                {collectionSearchCategories.map((category) => (
-                  <option value={category.id} key={category.id}>
-                    {category.label}
-                  </option>
-                ))}
-              </select>
-            ) : (
-              <span className="lab-field-summary">All collection categories</span>
-            )}
-          </label>
-          <label>
-            Region
-            <select value={region} onChange={(event) => setRegion(event.target.value)}>
-              <option value="all">All regions</option>
-              {regions.map((value) => (
-                <option value={value} key={value}>
-                  {value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
-
-        {workflow === 'reconcile' && showAllCategories ? (
-          <div className="all-category-searches">
-            {allCategoryResults.map(({ category, generated: categoryResult }) => (
-              <section className="search-output" key={category.id}>
-                <div className="search-output__meta">
-                  <strong>{category.label}</strong>
-                  <span>{categoryResult.dexNumbers.length} missing</span>
-                </div>
-                {categoryResult.strings.length ? (
-                  categoryResult.strings.map((value, index) => (
-                    <div className="search-string" key={value}>
-                      <code>{value}</code>
-                      <button
-                        type="button"
-                        className="button button--copy"
-                        onClick={() => void handleCopy(value, `${category.id}-${index}`)}
-                      >
-                        <Icon name={copied === `${category.id}-${index}` ? 'check' : 'clipboard'} />
-                        {copied === `${category.id}-${index}` ? 'Copied' : 'Copy'}
-                      </button>
-                    </div>
-                  ))
-                ) : (
-                  <div className="search-empty">
-                    <Icon name="sparkles" />
-                    <strong>Nothing missing here</strong>
+        <div className="all-category-searches">
+          {results.map((result) => (
+            <section className="search-output" key={result.categoryId}>
+              <div className="search-output__meta">
+                <strong>{result.label}</strong>
+                <span>{result.generated.dexNumbers.length} missing</span>
+              </div>
+              {result.generated.strings.length ? (
+                result.generated.strings.map((value, index) => (
+                  <div className="search-string" key={value}>
+                    <code tabIndex={0}>{value}</code>
+                    <button
+                      type="button"
+                      className="button button--copy"
+                      onClick={() => void handleCopy(value, `${result.categoryId}-${index}`)}
+                    >
+                      <Icon
+                        name={copied === `${result.categoryId}-${index}` ? 'check' : 'clipboard'}
+                      />
+                      {copied === `${result.categoryId}-${index}` ? 'Copied' : 'Copy'}
+                    </button>
                   </div>
-                )}
-              </section>
+                ))
+              ) : (
+                <div className="search-empty">
+                  <Icon name="sparkles" />
+                  <strong>Nothing missing here</strong>
+                </div>
+              )}
+            </section>
+          ))}
+        </div>
+        {copyFailure && (
+          <p className="copy-failure" role="alert">
+            Clipboard access is blocked in this browser. Select the string and copy it manually.
+          </p>
+        )}
+      </section>
+
+      <section className="panel discord-share-panel">
+        <div className="panel-heading">
+          <div>
+            <span className="eyebrow">Share with friends</span>
+            <h2>Discord-ready message</h2>
+          </div>
+          <Icon name="clipboard" />
+        </div>
+        <p className="discord-share-panel__intro">
+          Choose the lists to share. Dexly formats copyable code blocks and splits long posts
+          safely.
+        </p>
+        <div className="discord-category-picker" role="group" aria-label="Lists to share">
+          {results.map((result) => {
+            const selected = sharedCategories.has(result.categoryId);
+            const available = result.discord.strings.length > 0;
+            return (
+              <button
+                type="button"
+                key={result.categoryId}
+                aria-pressed={selected}
+                disabled={!available}
+                onClick={() => toggleSharedCategory(result.categoryId)}
+              >
+                <Icon name={selected ? 'check' : 'plus'} />
+                <span>
+                  <strong>{result.label}</strong>
+                  <small>
+                    {available ? `${result.discord.dexNumbers.length} missing` : 'Complete'}
+                  </small>
+                </span>
+              </button>
+            );
+          })}
+        </div>
+        {discordMessages.length > 0 ? (
+          <div className="discord-message-list">
+            {discordMessages.map((message, index) => (
+              <article key={`${message.slice(0, 32)}-${index}`}>
+                <div>
+                  <strong>
+                    Discord message {index + 1} of {discordMessages.length}
+                  </strong>
+                  <small>{message.length}/2,000 characters</small>
+                </div>
+                <pre>{message}</pre>
+                <button
+                  type="button"
+                  className="button button--primary button--full"
+                  onClick={() => void handleCopy(message, `discord-${index}`)}
+                >
+                  <Icon name={copied === `discord-${index}` ? 'check' : 'clipboard'} />
+                  {copied === `discord-${index}` ? 'Copied' : 'Copy Discord message'}
+                </button>
+              </article>
             ))}
           </div>
         ) : (
-          <div className="search-output">
-            <div className="search-output__meta">
-              <span>
-                {generated.dexNumbers.length} {workflow === 'trade' ? 'requested' : 'missing'}{' '}
-                {generated.dexNumbers.length === 1 ? 'entry' : 'entries'}
-              </span>
-              <span>
-                {generated.strings.length || 1}{' '}
-                {generated.strings.length === 1 ? 'search string' : 'search strings'}
-              </span>
+          <div className="inline-empty">
+            <Icon name="clipboard" />
+            <div>
+              <strong>Choose at least one missing list</strong>
+              <p>Your Discord preview will appear here.</p>
             </div>
-            {generated.strings.length ? (
-              generated.strings.map((value, index) => (
-                <div className="search-string" key={value}>
-                  <code>{value}</code>
-                  <button
-                    type="button"
-                    className="button button--copy"
-                    onClick={() => void handleCopy(value, `generated-${index}`)}
-                  >
-                    <Icon name={copied === `generated-${index}` ? 'check' : 'clipboard'} />
-                    {copied === `generated-${index}` ? 'Copied' : 'Copy'}
-                  </button>
-                </div>
-              ))
-            ) : (
-              <div className="search-empty">
-                <Icon name="sparkles" />
-                <strong>
-                  {workflow === 'trade' ? 'No active requests here' : 'Nothing missing here'}
-                </strong>
-                <span>Try another request, category, or filter.</span>
-              </div>
-            )}
-            <p className="search-explanation">
-              <Icon name="shield" />
-              {generated.explanation} Every string begins with <code>!traded</code>.
-            </p>
-            {copyFailure && (
-              <p className="copy-failure" role="alert">
-                Clipboard access is blocked in this browser. Select the string and press Ctrl/Cmd+C.
-              </p>
-            )}
           </div>
         )}
       </section>
