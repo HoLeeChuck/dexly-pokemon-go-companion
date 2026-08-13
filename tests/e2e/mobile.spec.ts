@@ -337,6 +337,7 @@ test.describe('mobile collection experience', () => {
     const quickCheck = page.getByRole('button', { name: /^Quick Check/ });
     await quickCheck.click();
     await expect(quickCheck).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.getByText('Quick Check is on')).toHaveCount(0);
 
     const card = page.getByTestId('pokemon-card-1');
     const baselinePressed = await card.getAttribute('aria-pressed');
@@ -352,6 +353,14 @@ test.describe('mobile collection experience', () => {
 
     const toast = page.locator('.toast');
     await expect(toast).toContainText(/Bulbasaur marked (collected|missing) in normal\./);
+    const [headerBox, toastBox] = await Promise.all([
+      page.locator('.mobile-topbar').boundingBox(),
+      toast.boundingBox(),
+    ]);
+    expect(headerBox).not.toBeNull();
+    expect(toastBox).not.toBeNull();
+    expect(toastBox!.y).toBeGreaterThanOrEqual(headerBox!.y + headerBox!.height);
+    expect(toastBox!.y).toBeLessThan(160);
     await toast.getByRole('button', { name: 'Undo' }).click();
 
     await expect(card).toHaveAttribute('aria-pressed', baselinePressed ?? '');
