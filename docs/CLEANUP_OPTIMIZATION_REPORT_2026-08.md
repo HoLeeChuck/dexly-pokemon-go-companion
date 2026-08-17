@@ -19,8 +19,8 @@ worker precached both generated assets.
 - Added one memoized catalog index and one category-aware regional-medal utility shared by
   Home and Dex.
 - Split public catalog, collection, private owner/import, and retained legacy-trade clients.
-- Lazy-loaded Dex, Search, Profile/Data, detail, sprite, and owner API chunks. Search,
-  Profile, and detail styles load with their features.
+- Lazy-loaded Dex, Search, Profile/Data, detail, sprite, owner API, and Cody Cloud sign-in
+  chunks. Search, Profile, and detail styles load with their features.
 - Replaced redundant manual `public/` copying with Vite's native behavior while preserving
   custom service-worker release/asset injection.
 
@@ -28,18 +28,19 @@ worker precached both generated assets.
 
 | Metric                     |    Before |     After |       Change |
 | -------------------------- | --------: | --------: | -----------: |
-| Initial JavaScript raw     | 307,210 B | 263,295 B |       -14.3% |
-| Initial JavaScript gzip    |  94,345 B |  80,423 B |       -14.8% |
-| Total JavaScript raw       | 307,210 B | 310,999 B |        +1.2% |
+| Initial JavaScript raw     | 307,210 B | 262,037 B |       -14.7% |
+| Initial JavaScript gzip    |  94,345 B |  80,061 B |       -15.1% |
+| Total JavaScript raw       | 307,210 B | 311,496 B |        +1.4% |
 | Initial CSS raw            |  99,394 B |  60,276 B |       -39.4% |
 | Initial CSS gzip           |  19,548 B |  12,464 B |       -36.2% |
 | Total CSS raw              |  99,394 B |  82,309 B |       -17.2% |
-| Generated JS/CSS chunks    |         2 |        11 |  route split |
+| Generated JS/CSS chunks    |         2 |        12 |  route split |
 | Precached generated assets |         2 |         2 | initial only |
 
-Lazy raw/gzip JavaScript: Dex 9,615/3,217 B; Search 18,991/7,594 B; Profile
-10,904/3,511 B; detail 7,360/2,488 B; owner API 357/240 B. `pnpm bundle:report`
-recomputes the inventory and writes it to the GitHub Actions summary.
+Lazy raw/gzip JavaScript: Dex 9,615/3,218 B; Search 18,991/7,590 B; Profile
+10,904/3,511 B; detail 7,360/2,490 B; Cody Cloud sign-in 1,755/854 B; owner API
+357/242 B. `pnpm bundle:report` recomputes the inventory and writes it to the GitHub
+Actions summary.
 
 No render-time benchmark was claimed: the catalog optimization removes repeated full scans
 by construction and is unit-tested, but no stable browser microbenchmark existed.
