@@ -38,14 +38,10 @@ pnpm db:migrate:local
 pnpm release:preflight
 ```
 
-`release:preflight` runs, in order:
-
-1. `pnpm check` - ESLint, Prettier, unit tests, Worker/D1 tests, binding generation,
-   TypeScript, and the production build;
-2. `pnpm catalog:verify` - dated catalog/provenance/form verification plus the immutable
-   migration refusal regression;
-3. `pnpm test:e2e` - mobile/desktop Chromium and WebKit, resilience, and axe flows; and
-4. `wrangler deploy --dry-run --strict` - non-mutating package validation.
+`release:preflight` validates source and catalog, builds one final artifact with release
+metadata, reports its bundle sizes, runs browser tests, and dry-runs that exact artifact.
+`release:deploy:production` intentionally does not rebuild, so the reviewed/dry-run output is
+the output Wrangler deploys after the bookmark and migration steps.
 
 The compatibility date remains `2026-08-11`, the newest date accepted by the checked-in
 workerd test runtime. Advance Wrangler, the Cloudflare Vitest pool, and the compatibility
@@ -244,16 +240,15 @@ Authoritative references:
 
 ## GitHub checks and protection
 
-`.github/workflows/ci.yml` exposes exactly these required checks:
+This cleanup pull request changes `.github/workflows/ci.yml` to expose exactly these checks:
 
 - `quality`
-- `browser-mobile-chromium`
-- `browser-desktop-chromium`
-- `browser-mobile-webkit`
-- `browser-desktop-webkit`
-- `browser-pwa-chromium`
+- `browser-chromium`
+- `browser-webkit`
 
-Protected `main` requires a pull request and strict/current completion of all six contexts.
+After merge, protected `main` must replace the five former browser contexts with the two
+consolidated contexts above. Do not make that branch-protection change until the new contexts
+have completed successfully on the pull request; `quality` remains unchanged.
 Force pushes and branch deletion are disabled; required approving reviews are set to zero and
 administrators retain bypass authority. PR #2 merged SHA
 `9eb839e3c971bfee8dd3d972a6803e3a90a8dae1` at `2026-08-13T09:13:08Z`, and exact-main run

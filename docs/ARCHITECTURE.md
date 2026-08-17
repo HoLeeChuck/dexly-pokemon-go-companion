@@ -21,6 +21,12 @@ flowchart LR
 
 - `src/` owns presentation, accessible interaction, local profile coordination, PWA update
   prompts, CSV/full-profile portability, and the typed API client.
+- `src/app/` owns custom hash/`/cody` routing and PWA updates; `src/catalog/` owns the
+  memoized catalog index and shared regional-medal calculations.
+- Dex, Search, Profile/Data, Pokémon detail, and owner API code are lazy boundaries. Their
+  feature styles load with the route instead of the initial Home shell.
+- `src/lib/api/` separates public catalog, collection, private owner/import, and retained
+  legacy-trade calls. Normal public visitors do not download owner/import clients.
 - `shared/` owns transport/domain types and deterministic catalog, collection, CSV, and
   search rules used by browser and Worker runtimes.
 - `worker/index.ts` owns routing and cache orchestration; `worker/auth.ts`,
@@ -123,8 +129,9 @@ fill a later XXL/XXS gap, while true targets remain present if family metadata i
 
 ## PWA and failure behavior
 
-The service worker versions shell/runtime/catalog caches, serves a controlled offline
-navigation fallback, and excludes private `/api` responses. A waiting worker is activated
+The service worker versions shell/runtime/catalog caches, precaches only initial hashed
+JavaScript/CSS, runtime-caches lazy chunks after a visit, serves a controlled offline
+navigation fallback, and excludes private `/api` responses and `/cody`. A waiting worker is activated
 only after the user accepts the update prompt. Hashed build assets are immutable; HTML,
 bootstrap, manifest, and service-worker files revalidate. Failed sprites use a same-origin
 rendered placeholder rather than another third-party request.
@@ -140,7 +147,8 @@ A failed catalog request displays a retryable preservation message. It does not 
   `tests/setup-worker.ts` applies all checked-in D1 migrations to isolated storage.
 - `scripts/verify-catalog-generation.mjs` proves the catalog generator rejects an existing
   migration before network access; `pnpm catalog:verify` runs it with the catalog verifier.
-- Playwright runs mobile and desktop Chromium and WebKit projects. It covers responsive
+- CI groups Playwright into a Chromium job (mobile, desktop, PWA) and a WebKit job (mobile,
+  desktop). The projects cover responsive
   layout, 44-pixel targets, semantic theme assertions, modal focus, form tracking, catalog
   downtime recovery, and axe checks across public pages.
 

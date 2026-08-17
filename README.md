@@ -67,8 +67,10 @@ from staging and production. `.dev.vars` is ignored by Git; never commit an
 | `pnpm test:unit`         | Run domain, catalog, local-profile, PWA, and search unit tests.         |
 | `pnpm test:worker`       | Run Worker/API integration tests against isolated migrated D1.          |
 | `pnpm test:e2e`          | Run mobile/desktop Chromium and WebKit flows, including axe checks.     |
-| `pnpm build`             | Generate binding types, type-check, and create the production bundle.   |
-| `pnpm check`             | Run lint, formatting, unit/Worker tests, and a production build.        |
+| `pnpm build`             | Generate binding types, type-check, and create a development artifact.  |
+| `pnpm build:artifact`    | Build and measure the exact release artifact without regenerating it.   |
+| `pnpm bundle:report`     | Report initial/total JavaScript and CSS raw/gzip sizes by chunk.        |
+| `pnpm check`             | Validate source, build once, and report the resulting artifact.         |
 | `pnpm catalog:verify`    | Verify catalog provenance, forms, sprites, and immutable generation.    |
 | `pnpm release:preflight` | Run every local release gate plus Wrangler's strict deployment dry run. |
 | `pnpm deploy:production` | Preflight, bookmark, migrate, deploy, and smoke production in order.    |
@@ -98,13 +100,13 @@ not public multi-user authentication and is separate from normal browser-local p
 
 ## Search and PWA behavior
 
-The Search Lab has a visual include/exclude and AND/OR builder, plain-language
-interpretation, saved searches, copy/share actions, and generated collection-gap strings.
+The Search Lab provides copy/share actions and generated collection-gap strings.
 Generated inventory queries preserve the `!traded&` guard. Exact and candidate output are
 labeled rather than presented as equivalent.
 
-The installable PWA caches the application shell and safe public catalog responses, never
-private API responses. Updates require an explicit refresh action. Catalog downtime is
+The installable PWA precaches only the initial application shell and safe public catalog
+response. Lazy route chunks are runtime-cached after a visit; private API responses and
+`/cody` navigation are never cached. Updates require an explicit refresh action. Catalog downtime is
 shown as a recoverable error and is never rendered as an empty collection.
 
 ## Legacy infrastructure names
