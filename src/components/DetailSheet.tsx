@@ -4,6 +4,7 @@ import type { CatalogItem, Category, CategoryId, CollectionEntry } from '../../s
 import { catalogDisplayName } from '../lib/catalogDisplay';
 import { Icon } from './Icon';
 import { PokemonSprite } from './PokemonSprite';
+import './detail.css';
 
 interface SwipeOrigin {
   startX: number;

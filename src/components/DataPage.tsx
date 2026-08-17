@@ -7,6 +7,7 @@ import {
 import type { CatalogItem, CollectionEntry } from '../../shared/types';
 import { ACCENT_THEMES, type AccentTheme } from '../lib/theme';
 import { Icon } from './Icon';
+import '../routes/profile.css';
 
 export function DataPage({
   catalog,
