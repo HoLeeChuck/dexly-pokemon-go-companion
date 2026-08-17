@@ -608,3 +608,14 @@
   color: white;
   background: var(--brand-700);
 }
+
+/* Lazy route CSS loads after the global shell, so repeat the desktop visibility override here. */
+@media (min-width: 920px) {
+  .detail-nav {
+    display: grid;
+  }
+
+  .detail-nav:disabled {
+    visibility: hidden;
+  }
+}
