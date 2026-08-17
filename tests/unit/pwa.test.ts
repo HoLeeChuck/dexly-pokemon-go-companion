@@ -1,8 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import bootstrap from '../../public/app-bootstrap.js?raw';
 import serviceWorker from '../../public/sw.js?raw';
+import { ACCENT_THEMES } from '../../src/lib/theme';
 
 describe('offline and update safety', () => {
+  it('keeps the pre-React bootstrap accent allowlist aligned with the application', () => {
+    const bootstrapAllowlist = bootstrap.match(/const allowedAccents = \[([^\]]+)]/)?.[1];
+    expect(bootstrapAllowlist).toBeDefined();
+    expect(bootstrapAllowlist?.split(',').map((value) => value.trim().replaceAll("'", ''))).toEqual(
+      [...ACCENT_THEMES],
+    );
+  });
+
   it('versions shell caches and provides an offline navigation fallback', () => {
     expect(serviceWorker).toContain(
       "const CACHE_VERSION = 'catchgrid-__CATCHGRID_BUILD_VERSION__'",

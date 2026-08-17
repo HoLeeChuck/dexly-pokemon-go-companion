@@ -36,6 +36,7 @@ import {
 } from './lib/localProfile';
 import { createPortableProfileBackupJson, restorePortableProfileBackup } from './lib/profileBackup';
 import { catalogDisplayName } from './lib/catalogDisplay';
+import type { AccentTheme } from './lib/theme';
 import { previewCanonicalWideCsv } from '../shared/csv';
 import regionMedalPolicy from '../catalog/region-medals.v1.json';
 
@@ -46,7 +47,6 @@ type DexView = 'species' | 'mega' | 'gigantamax';
 type MedalTier = 'none' | 'bronze' | 'silver' | 'gold' | 'platinum';
 type StorageMode = 'browser' | 'cloud';
 type Theme = 'light' | 'dark';
-type AccentTheme = 'green' | 'blue' | 'purple' | 'red' | 'orange' | 'pink';
 
 const REGION_MEDAL_REQUIREMENTS = Object.fromEntries(
   regionMedalPolicy.regions.map((region) => [
@@ -588,7 +588,6 @@ export default function App() {
   const [collectionEntries, setCollectionEntries] = useState<CollectionEntry[]>([]);
   const [updateReady, setUpdateReady] = useState(false);
   const [wantedEntries, setWantedEntries] = useState<WantedEntry[]>([]);
-  const [, setTradeSpecimens] = useState<TradeSpecimen[]>([]);
   const [pendingKeys, setPendingKeys] = useState<Set<string>>(new Set());
   const [toast, setToast] = useState<ToastState | null>(null);
   const revisionRef = useRef(0);
@@ -633,7 +632,6 @@ export default function App() {
     collectionRef.current = localEntries;
     setWantedEntries([...local.wantedEntries]);
     wantedRef.current = [...local.wantedEntries];
-    setTradeSpecimens([...local.tradeSpecimens]);
     tradeRef.current = [...local.tradeSpecimens];
     revisionRef.current = local.revision;
     if (local.settings.theme) setTheme(local.settings.theme);
@@ -656,7 +654,6 @@ export default function App() {
     collectionRef.current = [...payload.collectionEntries];
     setWantedEntries([...payload.wantedEntries]);
     wantedRef.current = [...payload.wantedEntries];
-    setTradeSpecimens([...payload.tradeSpecimens]);
     tradeRef.current = [...payload.tradeSpecimens];
     revisionRef.current = payload.revision;
     const local = loadLocalProfileResult();
@@ -1119,7 +1116,6 @@ export default function App() {
     wantedRef.current = [...profile.wantedEntries];
     setWantedEntries(wantedRef.current);
     tradeRef.current = [...profile.tradeSpecimens];
-    setTradeSpecimens(tradeRef.current);
     revisionRef.current = profile.revision;
     if (profile.settings.theme) setTheme(profile.settings.theme);
     if (profile.settings.accentTheme) setAccentTheme(profile.settings.accentTheme);
