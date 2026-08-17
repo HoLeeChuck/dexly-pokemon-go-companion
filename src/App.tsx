@@ -1,12 +1,4 @@
-import {
-  lazy,
-  Suspense,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-  type FormEvent,
-} from 'react';
+import { lazy, Suspense, useEffect, useRef, useState, type FormEvent } from 'react';
 import type {
   CatalogItem,
   CategoryId,
@@ -16,7 +8,7 @@ import type {
   TradeSpecimen,
   WantedEntry,
 } from '../shared/types';
-import { Icon, type IconName } from './components/Icon';
+import { Icon } from './components/Icon';
 import { HomeDashboard } from './components/HomeDashboard';
 import { ApiClientError, saveAccessToken, storedAccessToken } from './lib/api/request';
 import { fetchPublicCatalog } from './lib/api/publicCatalogApi';
@@ -38,17 +30,12 @@ import { createPortableProfileBackupJson, restorePortableProfileBackup } from '.
 import { catalogDisplayName } from './lib/catalogDisplay';
 import type { AccentTheme } from './lib/theme';
 import { previewCanonicalWideCsv } from '../shared/csv';
+import { PUBLIC_ROUTES as routes, type RouteId } from './app/routing';
+import { useAppNavigation } from './app/useAppNavigation';
+import { usePwaUpdates } from './app/usePwaUpdates';
 
-type PublicRouteId = 'home' | 'dex' | 'search' | 'profile';
-type RouteId = PublicRouteId | 'owner';
 type StorageMode = 'browser' | 'cloud';
 type Theme = 'light' | 'dark';
-const routes: Array<{ id: PublicRouteId; label: string; icon: IconName }> = [
-  { id: 'home', label: 'Home', icon: 'home' },
-  { id: 'dex', label: 'Dex', icon: 'grid' },
-  { id: 'search', label: 'Search Lab', icon: 'flask' },
-  { id: 'profile', label: 'Profile', icon: 'user' },
-];
 
 const DexRoute = lazy(() => import('./routes/DexRoute'));
 const SearchLab = lazy(() =>
@@ -60,17 +47,6 @@ const DataPage = lazy(() =>
 const DetailSheet = lazy(() =>
   import('./components/DetailSheet').then((module) => ({ default: module.DetailSheet })),
 );
-
-function routeFromLocation(): RouteId {
-  const path = window.location.pathname.replace(/\/+$/, '') || '/';
-  if (path === '/cody') return 'owner';
-  const value = window.location.hash.replace(/^#\/?/, '');
-  return routes.some((route) => route.id === value) ? (value as RouteId) : 'home';
-}
-
-function urlForRoute(route: RouteId): string {
-  return route === 'owner' ? '/cody' : `/#/${route}`;
-}
 
 function collectionKey(formId: string, categoryId: CategoryId): string {
   return `${formId}:${categoryId}`;
@@ -487,7 +463,8 @@ function RecoveryScreen({
 }
 
 export default function App() {
-  const [route, setRoute] = useState<RouteId>(routeFromLocation);
+  const { route, navigate } = useAppNavigation();
+  const { updateReady, dismissUpdate, applyUpdate } = usePwaUpdates();
   const [bootstrap, setBootstrap] = useState<BootstrapResponse | null>(null);
   const [status, setStatus] = useState<'loading' | 'ready' | 'locked' | 'error' | 'recovery'>(
     'loading',
@@ -518,7 +495,6 @@ export default function App() {
   });
   const [selected, setSelected] = useState<CatalogItem | null>(null);
   const [collectionEntries, setCollectionEntries] = useState<CollectionEntry[]>([]);
-  const [updateReady, setUpdateReady] = useState(false);
   const [wantedEntries, setWantedEntries] = useState<WantedEntry[]>([]);
   const [pendingKeys, setPendingKeys] = useState<Set<string>>(new Set());
   const [toast, setToast] = useState<ToastState | null>(null);
@@ -531,13 +507,6 @@ export default function App() {
     new Map<string, { formId: string; categoryId: CategoryId; previous: boolean }>(),
   );
   const mutationQueue = useRef<Promise<void>>(Promise.resolve());
-  const scrollPositions = useRef<Record<RouteId, number>>({
-    home: 0,
-    dex: 0,
-    search: 0,
-    profile: 0,
-    owner: 0,
-  });
 
   function adoptPayload(payload: PublicCatalogPayload, result = loadLocalProfileResult()) {
     setLocalLoadResult(result);
@@ -721,35 +690,6 @@ export default function App() {
       // The profile UI reports storage failures; appearance still works for this session.
     }
   }, [accentTheme]);
-
-  useEffect(() => {
-    const onUpdateReady = () => setUpdateReady(true);
-    window.addEventListener('catchgrid:update-ready', onUpdateReady);
-    return () => window.removeEventListener('catchgrid:update-ready', onUpdateReady);
-  }, []);
-
-  useEffect(() => {
-    const onLocationChange = () => setRoute(routeFromLocation());
-    window.addEventListener('hashchange', onLocationChange);
-    window.addEventListener('popstate', onLocationChange);
-    return () => {
-      window.removeEventListener('hashchange', onLocationChange);
-      window.removeEventListener('popstate', onLocationChange);
-    };
-  }, []);
-
-  function navigate(next: RouteId) {
-    scrollPositions.current[route] = window.scrollY;
-    setRoute(next);
-    window.history.pushState(null, '', urlForRoute(next));
-  }
-
-  useLayoutEffect(() => {
-    const frame = window.requestAnimationFrame(() =>
-      window.scrollTo({ top: scrollPositions.current[route], behavior: 'auto' }),
-    );
-    return () => window.cancelAnimationFrame(frame);
-  }, [route]);
 
   function changeCategory(value: CategoryId) {
     if (storageMode === 'browser' && status === 'ready') {
@@ -1264,18 +1204,14 @@ export default function App() {
             <strong>A CatchGrid update is ready</strong>
             <p>Apply it now to use the newest catalog and app fixes.</p>
           </div>
-          <button
-            type="button"
-            className="button button--primary"
-            onClick={() => window.dispatchEvent(new Event('catchgrid:apply-update'))}
-          >
+          <button type="button" className="button button--primary" onClick={applyUpdate}>
             Update now
           </button>
           <button
             type="button"
             className="icon-button"
             aria-label="Dismiss update"
-            onClick={() => setUpdateReady(false)}
+            onClick={dismissUpdate}
           >
             <Icon name="close" />
           </button>
