@@ -1,20 +1,8 @@
+import { useMemo } from 'react';
 import { progressForCategory } from '../../shared/domain';
 import type { CatalogItem, Category, CollectionEntry } from '../../shared/types';
-import regionMedalPolicy from '../../catalog/region-medals.v1.json';
-
-type MedalTier = 'None' | 'Bronze' | 'Silver' | 'Gold' | 'Platinum';
-
-function medalTier(
-  count: number,
-  thresholds?: { bronze: number; silver: number; gold: number; platinum: number },
-): MedalTier {
-  if (!thresholds) return 'None';
-  if (count >= thresholds.platinum) return 'Platinum';
-  if (count >= thresholds.gold) return 'Gold';
-  if (count >= thresholds.silver) return 'Silver';
-  if (count >= thresholds.bronze) return 'Bronze';
-  return 'None';
-}
+import { createCatalogIndex } from '../catalog/catalogIndex';
+import { defaultRegionCatalog, regionMedalProgress } from '../catalog/regionMedals';
 
 export function HomeDashboard({
   catalog,
@@ -25,8 +13,9 @@ export function HomeDashboard({
   categories: readonly Category[];
   entries: readonly CollectionEntry[];
 }) {
-  const defaultCatalog = catalog.filter((item) => item.isDefault);
-  const regions = [...new Set(defaultCatalog.map((item) => item.region))];
+  const catalogIndex = useMemo(() => createCatalogIndex(catalog), [catalog]);
+  const defaultCatalog = catalogIndex.defaultForms;
+  const regions = catalogIndex.regions;
   const normalProgress = progressForCategory(defaultCatalog, entries, 'normal');
   const unavailable =
     normalProgress.unreleased + normalProgress.ineligible + normalProgress.unknown;
@@ -79,10 +68,7 @@ export function HomeDashboard({
         </div>
         <div className="region-progress-grid">
           {regions.map((region) => {
-            const regionCatalog = defaultCatalog.filter((item) => item.region === region);
-            const medalPolicy = regionMedalPolicy.regions.find(
-              (entry) => entry.id === region.toLowerCase(),
-            );
+            const regionCatalog = defaultRegionCatalog(catalogIndex, region);
             return (
               <article className="region-progress-card" key={region}>
                 <header>
@@ -90,7 +76,9 @@ export function HomeDashboard({
                     <span className="eyebrow">Region</span>
                     <h3>{region.charAt(0).toUpperCase() + region.slice(1).toLowerCase()}</h3>
                   </div>
-                  <strong>{medalPolicy?.thresholds.platinum ?? regionCatalog.length}</strong>
+                  <strong>
+                    {regionMedalProgress(catalogIndex, entries, region, 'normal').total}
+                  </strong>
                 </header>
                 <div className="region-category-grid">
                   {categories.map((category) => {
@@ -98,17 +86,17 @@ export function HomeDashboard({
                     const collected = regionCatalog.filter((item) =>
                       collectedKeys.has(`${item.id}:${category.id}`),
                     ).length;
-                    const thresholds = medalPolicy?.categoryThresholds[category.id];
-                    const fullDexTotal = thresholds?.platinum ?? regionCatalog.length;
+                    const medal = regionMedalProgress(catalogIndex, entries, region, category.id);
+                    const fullDexTotal = medal.total;
                     const percentage =
                       fullDexTotal === 0 ? 0 : Math.round((collected / fullDexTotal) * 100);
-                    const tier = medalTier(collected, thresholds);
+                    const tier = medal.tier;
                     return (
                       <div className="region-category-progress" key={category.id}>
                         <span>
                           <strong>{category.shortLabel ?? category.label}</strong>
                           <small>
-                            {tier} · {percentage}%
+                            {tier.charAt(0).toUpperCase() + tier.slice(1)} · {percentage}%
                           </small>
                         </span>
                         <progress
