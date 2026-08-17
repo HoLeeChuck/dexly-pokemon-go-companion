@@ -85,7 +85,9 @@ jobs:
   browser-webkit:
     name: browser-webkit
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    # WebKit's Ubuntu dependency set is substantially larger than Chromium's and
+    # can exceed 25 minutes when an Actions package mirror is slow.
+    timeout-minutes: 45
     steps:
       - name: Check out reviewed source
         uses: actions/checkout@v4
