@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { deriveCollectionState } from '../../shared/domain';
 import type { CatalogItem, Category, CategoryId, CollectionEntry } from '../../shared/types';
 import { catalogDisplayName } from '../lib/catalogDisplay';
+import { collectorFormsForSpecies } from '../catalog/collectorForms';
 import { Icon } from './Icon';
 import { PokemonSprite } from './PokemonSprite';
 import './detail.css';
@@ -52,7 +53,6 @@ export function DetailSheet({
   const dialogRef = useRef<HTMLDialogElement>(null);
   const swipeOriginRef = useRef<SwipeOrigin | null>(null);
   const suppressClickUntilRef = useRef(0);
-  const [section, setSection] = useState<'collection' | 'forms'>('collection');
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -83,16 +83,7 @@ export function DetailSheet({
   );
   const previousItem = speciesIndex > 0 ? speciesCatalog[speciesIndex - 1] : undefined;
   const nextItem = speciesIndex >= 0 ? speciesCatalog[speciesIndex + 1] : undefined;
-  const collectorForms = useMemo(
-    () =>
-      (catalog?.filter((catalogItem) => catalogItem.speciesId === item.speciesId) ?? []).sort(
-        (left, right) =>
-          left.formSortOrder - right.formSortOrder ||
-          (left.formName ?? left.name).localeCompare(right.formName ?? right.name),
-      ),
-    [catalog, item.speciesId],
-  );
-  const activeSection = collectorForms.length > 1 ? section : 'collection';
+  const collectorForms = collectorFormsForSpecies(catalog ?? [], item);
   const releasedCategories = categories.filter(
     (category) => item.rules[category.id] === 'released',
   );
@@ -104,7 +95,6 @@ export function DetailSheet({
 
   function navigateTo(destination: CatalogItem | undefined) {
     if (destination && onNavigate) {
-      setSection('collection');
       onNavigate(destination);
     }
   }
@@ -246,29 +236,17 @@ export function DetailSheet({
           </div>
         </header>
 
-        {collectorForms.length > 1 && (
-          <div className="detail-section-tabs" role="tablist" aria-label="Pokémon detail sections">
-            <button
-              type="button"
-              role="tab"
-              aria-selected={activeSection === 'collection'}
-              onClick={() => setSection('collection')}
-            >
-              Collection
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={activeSection === 'forms'}
-              onClick={() => setSection('forms')}
-            >
-              Forms <span>{collectorForms.length}</span>
-            </button>
-          </div>
-        )}
+        <div className="detail-section-tabs" role="tablist" aria-label="Pokémon detail sections">
+          <button type="button" role="tab" aria-selected="true">
+            Collection
+          </button>
+          <button type="button" role="tab" aria-selected="false" disabled>
+            Costumes <span>Coming soon</span>
+          </button>
+        </div>
 
         <div className="detail-sheet__body">
-          {activeSection === 'collection' ? (
+          {
             <>
               <div className="section-heading">
                 <div>
@@ -315,92 +293,70 @@ export function DetailSheet({
                   );
                 })}
               </div>
-            </>
-          ) : (
-            <section className="forms-gallery" aria-labelledby="forms-title">
-              <div className="section-heading">
-                <div>
-                  <span className="eyebrow">Collector forms</span>
-                  <h3 id="forms-title">Regular & Shiny</h3>
-                </div>
-                <span>{collectorForms.length} forms</span>
-              </div>
-              <p className="section-intro">
-                Alternate forms are separate collector entries. They do not add to National or
-                regional species totals.
-              </p>
-              <div className="forms-gallery__grid">
-                {collectorForms.map((form) => {
-                  const regularRule =
-                    form.rules.normal ?? (form.isReleased ? 'released' : 'unreleased');
-                  const shinyRule = form.rules.shiny ?? 'unknown';
-                  const regularCollected = collectionEntries.some(
-                    (entry) =>
-                      entry.formId === form.id && entry.categoryId === 'normal' && entry.collected,
-                  );
-                  const shinyCollected = collectionEntries.some(
-                    (entry) =>
-                      entry.formId === form.id && entry.categoryId === 'shiny' && entry.collected,
-                  );
-                  return (
-                    <article
-                      key={form.id}
-                      className="form-card"
-                      data-variant-kind={form.variantKind}
-                    >
-                      <div className="form-card__art">
+              {collectorForms.length > 0 && (
+                <section className="compact-form-sections" aria-labelledby="alternate-forms-title">
+                  <div className="section-heading">
+                    <div>
+                      <span className="eyebrow">Collector forms</span>
+                      <h3 id="alternate-forms-title">Alternate forms & transformations</h3>
+                    </div>
+                    <span>{collectorForms.length} forms</span>
+                  </div>
+                  <p className="section-intro">
+                    Track Regular and Shiny versions without leaving this Collection view.
+                  </p>
+                  <div className="compact-form-list">
+                    {collectorForms.map((form) => (
+                      <article
+                        key={form.id}
+                        className="compact-form-row"
+                        data-variant-kind={form.variantKind}
+                      >
                         <PokemonSprite item={form} />
-                        <span>{form.variantKind}</span>
-                      </div>
-                      <div className="form-card__heading">
-                        <strong>{form.formName ?? form.name}</strong>
-                        <small>{form.isReleased ? 'Released' : 'Not released'}</small>
-                      </div>
-                      <div className="form-card__states">
-                        {(
-                          [
-                            ['normal', 'Regular', regularRule, regularCollected],
-                            ['shiny', 'Shiny', shinyRule, shinyCollected],
-                          ] as const
-                        ).map(([categoryId, label, rule, isCollected]) => {
+                        <div>
+                          <strong>{form.formName ?? form.name}</strong>
+                          <small>
+                            {form.variantKind === 'gigantamax'
+                              ? 'Gigantamax'
+                              : form.variantKind === 'mega' || form.variantKind === 'primal'
+                                ? 'Mega / Primal'
+                                : 'Alternate form'}
+                          </small>
+                        </div>
+                        {(['normal', 'shiny'] as const).map((categoryId) => {
+                          const rule = form.rules[categoryId] ?? 'unknown';
+                          const isCollected = collectionEntries.some(
+                            (entry) =>
+                              entry.formId === form.id &&
+                              entry.categoryId === categoryId &&
+                              entry.collected,
+                          );
                           const pending = pendingKeys.has(categoryKey(form.id, categoryId));
                           return (
                             <button
                               type="button"
                               key={categoryId}
-                              aria-pressed={rule === 'released' ? isCollected : undefined}
                               className={isCollected ? 'is-collected' : ''}
+                              aria-pressed={rule === 'released' ? isCollected : undefined}
                               disabled={rule !== 'released' || pending}
                               onClick={() => onCollectionChange(form, categoryId, !isCollected)}
-                              aria-label={`${form.formName ?? form.name} ${label}: ${rule === 'released' ? (isCollected ? 'collected' : 'missing') : rule}`}
                             >
                               <Icon
                                 name={
                                   rule === 'released' ? (isCollected ? 'check' : 'plus') : 'lock'
                                 }
                               />
-                              <span>
-                                <strong>{label}</strong>
-                                <small>
-                                  {pending
-                                    ? 'Saving…'
-                                    : rule === 'released'
-                                      ? isCollected
-                                        ? 'Collected'
-                                        : 'Missing'
-                                      : rule}
-                                </small>
-                              </span>
+                              <span>{categoryId === 'normal' ? 'Regular' : 'Shiny'}</span>
                             </button>
                           );
                         })}
-                      </div>
-                    </article>
-                  );
-                })}
-              </div>
-            </section>
-          )}
+                      </article>
+                    ))}
+                  </div>
+                </section>
+              )}
+            </>
+          }
         </div>
       </section>
     </dialog>

@@ -5,6 +5,82 @@
   line-height: 1.5;
 }
 
+.page--data {
+  max-width: 920px;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.page--data > .panel,
+.page--data > footer {
+  width: 100%;
+}
+.page--data .appearance-panel {
+  order: 1;
+}
+.page--data .collection-setup-panel {
+  order: 1;
+}
+.page--data .appearance-panel {
+  order: 2;
+}
+.page--data .import-panel {
+  order: 3;
+}
+.page--data .data-actions {
+  order: 4;
+}
+.page--data .security-panel {
+  order: 5;
+}
+.page--data .legal-footer {
+  order: 6;
+}
+.page--data .attribution {
+  order: 6;
+}
+.region-setup-grid {
+  display: grid;
+  gap: 0.7rem;
+}
+.region-setup-grid article {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: var(--brand-100);
+}
+.region-setup-grid article > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.region-setup-grid .button {
+  min-width: 0;
+}
+.region-setup-grid article > div:first-child {
+  display: grid;
+}
+.region-setup-grid small {
+  color: var(--ink);
+  font-weight: 600;
+  opacity: 0.8;
+}
+@media (max-width: 620px) {
+  .region-setup-grid article {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .region-setup-grid article > div:last-child {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 .appearance-mode {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

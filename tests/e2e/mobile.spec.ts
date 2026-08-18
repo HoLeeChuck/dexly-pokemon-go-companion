@@ -13,7 +13,7 @@ async function openDex(page: import('@playwright/test').Page) {
 
 async function openMobileRoute(
   page: import('@playwright/test').Page,
-  route: 'Home' | 'Dex' | 'Search Lab' | 'Profile',
+  route: 'Home' | 'Dex' | 'Progress' | 'Settings',
 ) {
   await page.getByRole('button', { name: 'Open navigation menu' }).click();
   const menu = page.locator('.mobile-nav-panel');
@@ -55,22 +55,22 @@ async function swipeHorizontally(target: Locator, direction: 'left' | 'right') {
 }
 
 test.describe('mobile collection experience', () => {
-  test('Home dashboard fits the viewport and stacks regional summaries', async ({ page }) => {
+  test('Home explains CatchGrid and fits the mobile viewport', async ({ page }) => {
     await installFakeApi(page);
     await page.goto('/#/home');
-    await expect(page.getByRole('heading', { name: 'Your Dex at a glance.' })).toBeVisible();
-    const overview = page.getByLabel('All Pokemon collection overview');
-    await expect(overview.locator('article')).toHaveCount(4);
-    await expect(overview).toContainText(/All Pok/);
-    await expect(page.getByRole('button', { name: 'Open Dex' })).toHaveCount(0);
+    await expect(
+      page.getByRole('heading', { name: 'Build the collection you care about.' }),
+    ).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Four simple steps' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Open Dex' })).toBeVisible();
 
     const layout = await page.locator('.page--dashboard').evaluate((dashboard) => {
-      const cards = [...dashboard.querySelectorAll('.region-progress-card')].slice(0, 2);
+      const cards = [...dashboard.querySelectorAll('.home-shortcut-grid > button')].slice(0, 2);
       const rectangles = cards.map((card) => card.getBoundingClientRect());
       return {
         pageOverflows: document.documentElement.scrollWidth > document.documentElement.clientWidth,
         cardsFit: rectangles.every((rect) => rect.left >= 0 && rect.right <= innerWidth),
-        cardsStack: rectangles.length === 2 && rectangles[1].top > rectangles[0].bottom,
+        cardsStack: rectangles.length === 2 && rectangles[1].top >= rectangles[0].bottom,
       };
     });
     expect(layout).toEqual({ pageOverflows: false, cardsFit: true, cardsStack: true });
@@ -154,7 +154,7 @@ test.describe('mobile collection experience', () => {
     await expect(page.getByLabel('Type')).toHaveCount(0);
     await expect(page.locator('.dex-controls').getByLabel('Generation')).toHaveCount(0);
     const mobileControlSizes = await page
-      .locator('.search-field input, .filter-row select')
+      .locator('.search-field input, .standard-filter-select select')
       .evaluateAll((elements) =>
         elements.map((element) => Number.parseFloat(getComputedStyle(element).fontSize)),
       );
@@ -213,47 +213,14 @@ test.describe('mobile collection experience', () => {
     await page.getByRole('button', { name: 'Close search' }).click();
     await expect(searchTrigger).toBeVisible();
 
-    const regionPicker = page.locator('.region-picker__toggle');
-    await regionPicker.click();
-    const regionOptions = page.getByRole('listbox', { name: 'Region' });
-    await expect(regionOptions).toBeVisible();
-    const kantoOption = regionOptions.getByRole('option', { name: /Kanto/ });
-    await expect(kantoOption).toContainText(/\d+\/151/);
-    await expect(kantoOption.locator('.region-medal')).toHaveCSS(
-      '--region-medal-icon',
-      /Badge_2\.png/,
-    );
-    await kantoOption.click();
-    await expect(regionPicker).toContainText('Kanto');
-    await expect(regionPicker).toContainText(/\d+\/151 Normal/);
-
-    const categoryPicker = page.locator('.category-picker__toggle');
-    await categoryPicker.click();
-    await expect(categoryPicker).toHaveAttribute('aria-expanded', 'true');
-    const categoryOptions = page.getByRole('toolbar', { name: 'Collection category' });
-    await expect(categoryOptions).toBeVisible();
-    await categoryOptions.getByRole('button', { name: 'Shiny' }).click();
-    await expect(categoryPicker).toContainText('Shiny');
-    await expect(categoryOptions).toBeHidden();
-
-    await categoryPicker.click();
-    await categoryOptions.getByRole('button', { name: 'XXS' }).click();
-    const pickerLayout = await categoryPicker.evaluate((button) => {
-      const badge = button.querySelector(':scope > span:first-child')!.getBoundingClientRect();
-      const copy = button.querySelector('.picker-copy')!.getBoundingClientRect();
-      const title = button.querySelector('.picker-copy strong')!.getBoundingClientRect();
-      const helper = button.querySelector('.picker-copy small')!.getBoundingClientRect();
-      return {
-        badgeBeforeCopy: badge.right < copy.left,
-        copyHasWidth: copy.width > 40,
-        linesDoNotOverlap: title.bottom <= helper.top,
-      };
-    });
-    expect(pickerLayout).toEqual({
-      badgeBeforeCopy: true,
-      copyHasWidth: true,
-      linesDoNotOverlap: true,
-    });
+    const regionPicker = page.locator('.region-standard-select select');
+    await regionPicker.selectOption('Kanto');
+    await expect(regionPicker).toHaveValue('Kanto');
+    const categoryPicker = page.locator('.collection-standard-select select');
+    await categoryPicker.selectOption('shiny');
+    await expect(categoryPicker).toHaveValue('shiny');
+    await categoryPicker.selectOption('xxs');
+    await expect(categoryPicker).toHaveValue('xxs');
   });
 
   test('uses the top hamburger menu instead of a persistent bottom bar', async ({ page }) => {
@@ -275,10 +242,10 @@ test.describe('mobile collection experience', () => {
       };
     });
     expect(menuLayout).toEqual({ fillsWidth: true, fillsBelowHeader: true });
-    for (const route of ['Home', 'Dex', 'Profile']) {
+    for (const route of ['Home', 'Dex', 'Progress', 'Settings']) {
       await expect(menu.getByRole('button', { name: route, exact: true })).toBeVisible();
     }
-    await expect(menu.getByRole('button', { name: 'Search Lab', exact: true })).toBeVisible();
+    await expect(menu.getByRole('button', { name: 'Search Lab', exact: true })).toHaveCount(0);
     await expect(menu.getByRole('button', { name: 'Trade', exact: true })).toHaveCount(0);
     await expect(menu.getByRole('button', { name: 'Dex', exact: true })).toHaveAttribute(
       'aria-current',
@@ -329,9 +296,7 @@ test.describe('mobile collection experience', () => {
     expect(api.unexpectedWriteCount).toBe(0);
   });
 
-  test('Quick Check toggles one entry and Undo restores its observed baseline', async ({
-    page,
-  }) => {
+  test('Quick Check toggles one entry without a confirmation toast', async ({ page }) => {
     const api = await installFakeApi(page);
     await openDex(page);
 
@@ -352,30 +317,16 @@ test.describe('mobile collection experience', () => {
     await expect(card).toHaveAttribute('aria-pressed', expectedPressedAfterToggle);
     await expect(card).toHaveAttribute('data-state', expectedStateAfterToggle);
 
-    const toast = page.locator('.toast');
-    await expect(toast).toContainText(/Bulbasaur marked (collected|missing) in normal\./);
-    const [headerBox, toastBox] = await Promise.all([
-      page.locator('.mobile-topbar').boundingBox(),
-      toast.boundingBox(),
-    ]);
-    expect(headerBox).not.toBeNull();
-    expect(toastBox).not.toBeNull();
-    expect(toastBox!.y).toBeGreaterThanOrEqual(headerBox!.y + headerBox!.height);
-    expect(toastBox!.y).toBeLessThan(160);
-    await toast.getByRole('button', { name: 'Undo' }).click();
-
-    await expect(card).toHaveAttribute('aria-pressed', baselinePressed ?? '');
-    await expect(card).toHaveAttribute('data-state', baselineState ?? '');
-    await expect(toast).toContainText('Last checklist change undone.');
-    const savedAfterUndo = await page.evaluate(() =>
+    await expect(page.locator('.toast').filter({ hasText: /Bulbasaur marked/ })).toHaveCount(0);
+    const savedAfterToggle = await page.evaluate(() =>
       JSON.parse(localStorage.getItem('catchgrid:local-profile:v2') ?? '{}'),
     );
     expect(
-      savedAfterUndo.collectionEntries.some(
+      savedAfterToggle.collectionEntries.some(
         (entry: { formId: string; categoryId: string; collected: boolean }) =>
           entry.formId === 'form-0001-standard' && entry.categoryId === 'normal' && entry.collected,
       ),
-    ).toBe(baselinePressed === 'true');
+    ).toBe(expectedPressedAfterToggle === 'true');
     expect(api.unexpectedWriteCount).toBe(0);
   });
 
@@ -408,17 +359,15 @@ test.describe('mobile collection experience', () => {
     expect(api.unexpectedWriteCount).toBe(0);
   });
 
-  test('Search Lab generates mobile-safe strings and a selectable Discord post', async ({
-    page,
-  }) => {
+  test('Progress generates mobile-safe strings and a selectable Discord post', async ({ page }) => {
     await page.setViewportSize({ width: 600, height: 900 });
     await installFakeApi(page);
     await openDex(page);
 
-    await openMobileRoute(page, 'Search Lab');
-    await expect(page).toHaveURL(/#\/search$/);
+    await openMobileRoute(page, 'Progress');
+    await expect(page).toHaveURL(/#\/progress$/);
     await expect(
-      page.getByRole('heading', { name: 'Turn gaps into useful searches.' }),
+      page.getByRole('heading', { name: 'See what you have. Act on what is missing.' }),
     ).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Visual search builder' })).toHaveCount(0);
 
@@ -488,7 +437,7 @@ test.describe('mobile collection experience', () => {
     const api = await installFakeApi(page);
     await openDex(page);
 
-    await openMobileRoute(page, 'Profile');
+    await openMobileRoute(page, 'Settings');
     await expect(page.getByRole('heading', { name: 'Import CSV' })).toBeVisible();
     await page
       .getByLabel('Choose a CSV file to preview')
@@ -514,7 +463,7 @@ test.describe('mobile collection experience', () => {
     const api = await installFakeApi(page);
     await openDex(page);
 
-    await openMobileRoute(page, 'Profile');
+    await openMobileRoute(page, 'Settings');
     await page
       .getByLabel('Choose a CSV file to preview')
       .setInputFiles(resolve(fixtureDirectory, 'collection-malformed.csv'));

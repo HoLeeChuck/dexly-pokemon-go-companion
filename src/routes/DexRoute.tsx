@@ -204,6 +204,41 @@ export default function DexRoute({
                 </button>
               </label>
             </div>
+            <label className="standard-filter-select region-standard-select">
+              <span className="sr-only">Region</span>
+              <select value={region} onChange={(event) => changeRegion(event.target.value)}>
+                <option value="all">All regions</option>
+                {index.regions.map((regionName) => (
+                  <option key={regionName} value={regionName}>
+                    {regionName}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="standard-filter-select collection-standard-select">
+              <span className="sr-only">Collection form</span>
+              <select
+                value={dexView === 'species' ? activeCategory : dexView}
+                onChange={(event) => {
+                  const value = event.target.value;
+                  if (value === 'mega' || value === 'gigantamax') {
+                    setDexView(value);
+                    onCategoryChange('normal');
+                  } else {
+                    setDexView('species');
+                    onCategoryChange(value as CategoryId);
+                  }
+                }}
+              >
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.label}
+                  </option>
+                ))}
+                <option value="mega">Mega &amp; Primal</option>
+                <option value="gigantamax">Gigantamax</option>
+              </select>
+            </label>
             <div className={`region-picker${regionPickerOpen ? ' is-open' : ''}`}>
               <button
                 type="button"
@@ -330,32 +365,6 @@ export default function DexRoute({
           </div>
         </section>
         <div className="dex-results">
-          <div className="dex-view-switcher" role="group" aria-label="Pokédex view">
-            {(
-              [
-                ['species', 'National Dex'],
-                ['mega', 'Mega & Primal'],
-                ['gigantamax', 'Gigantamax'],
-              ] as const
-            ).map(([value, label]) => (
-              <button
-                type="button"
-                key={value}
-                aria-pressed={dexView === value}
-                onClick={() => {
-                  setDexView(value);
-                  if (
-                    value !== 'species' &&
-                    activeCategory !== 'normal' &&
-                    activeCategory !== 'shiny'
-                  )
-                    onCategoryChange('normal');
-                }}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
           <div className="grid-heading">
             <div>
               <h2>

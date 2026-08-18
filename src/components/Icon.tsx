@@ -3,6 +3,7 @@ import type { ReactNode, SVGProps } from 'react';
 export type IconName =
   | 'arrow-left'
   | 'check'
+  | 'chart'
   | 'chevron-right'
   | 'clipboard'
   | 'close'
@@ -20,6 +21,7 @@ export type IconName =
   | 'refresh'
   | 'search'
   | 'shield'
+  | 'settings'
   | 'sparkles'
   | 'moon'
   | 'sun'
@@ -32,6 +34,7 @@ export type IconName =
 const paths: Record<IconName, ReactNode> = {
   'arrow-left': <path d="m15 18-6-6 6-6" />,
   check: <path d="m5 12 4 4L19 6" />,
+  chart: <path d="M4 20V10m6 10V4m6 16v-7m4 7H2" />,
   'chevron-right': <path d="m9 18 6-6-6-6" />,
   clipboard: (
     <>
@@ -79,6 +82,12 @@ const paths: Record<IconName, ReactNode> = {
   refresh: <path d="M20 7v5h-5M4 17v-5h5m9.5-4A8 8 0 0 0 6 5l-2 2m2 10a8 8 0 0 0 12.5 0L20 15" />,
   search: <path d="m21 21-4.3-4.3M19 11a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z" />,
   shield: <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Zm-3-10 2 2 4-5" />,
+  settings: (
+    <>
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3A1.7 1.7 0 0 0 10 3V2.8h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z" />
+    </>
+  ),
   sparkles: (
     <path d="m12 3 1.2 3.8L17 8l-3.8 1.2L12 13l-1.2-3.8L7 8l3.8-1.2L12 3ZM5 14l.8 2.2L8 17l-2.2.8L5 20l-.8-2.2L2 17l2.2-.8L5 14Zm14-1 .8 2.2L22 16l-2.2.8L19 19l-.8-2.2L16 16l2.2-.8L19 13Z" />
   ),

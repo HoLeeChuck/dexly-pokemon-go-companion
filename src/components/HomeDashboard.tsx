@@ -1,122 +1,165 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { progressForCategory } from '../../shared/domain';
 import type { CatalogItem, Category, CollectionEntry } from '../../shared/types';
-import { createCatalogIndex } from '../catalog/catalogIndex';
-import { defaultRegionCatalog, regionMedalProgress } from '../catalog/regionMedals';
+import type { RouteId } from '../app/routing';
+import { Icon } from './Icon';
+
+const GENERAL_SEARCHES = [
+  {
+    name: 'Recent Shinies',
+    value: '!traded&shiny&age0-7',
+    note: 'Review untraded Shiny Pokémon caught in the last seven days.',
+  },
+  {
+    name: 'Untagged review',
+    value: '!traded&!#',
+    note: 'Find untraded Pokémon that do not have a tag.',
+  },
+] as const;
 
 export function HomeDashboard({
   catalog,
   categories,
   entries,
+  onNavigate,
 }: {
   catalog: readonly CatalogItem[];
   categories: readonly Category[];
   entries: readonly CollectionEntry[];
+  onNavigate: (route: RouteId) => void;
 }) {
-  const catalogIndex = useMemo(() => createCatalogIndex(catalog), [catalog]);
-  const defaultCatalog = catalogIndex.defaultForms;
-  const regions = catalogIndex.regions;
-  const normalProgress = progressForCategory(defaultCatalog, entries, 'normal');
-  const unavailable =
-    normalProgress.unreleased + normalProgress.ineligible + normalProgress.unknown;
-  const completePercentage =
-    defaultCatalog.length === 0
-      ? 0
-      : Math.round((normalProgress.collected / defaultCatalog.length) * 100);
-  const overview = [
-    { label: 'All Pok\u00e9mon', value: defaultCatalog.length, detail: 'Complete Dex' },
-    {
-      label: 'Collected',
-      value: normalProgress.collected,
-      detail: `${completePercentage}% complete`,
-    },
-    { label: 'Missing', value: normalProgress.missing, detail: 'Available now' },
-    { label: 'Unavailable', value: unavailable, detail: 'Not currently obtainable' },
-  ];
-  const collectedKeys = new Set(
-    entries
-      .filter((entry) => entry.collected)
-      .map((entry) => `${entry.formId}:${entry.categoryId}`),
-  );
+  const [copied, setCopied] = useState<string | null>(null);
+  const defaults = useMemo(() => catalog.filter((item) => item.isDefault), [catalog]);
+  const normal = progressForCategory(defaults, entries, 'normal');
+  const percent = normal.total ? Math.round((normal.collected / normal.total) * 100) : 0;
+  const shortcuts = [
+    ['Browse the Dex', 'Mark Pokémon and collection states.', 'dex', 'grid'],
+    ['View Progress', 'Review completion by category and region.', 'progress', 'chart'],
+    ['Find missing Pokémon', 'Copy collection-aware storage searches.', 'progress', 'search'],
+    [
+      'Import a collection',
+      'Bring existing CSV or JSON data into CatchGrid.',
+      'settings',
+      'upload',
+    ],
+  ] as const;
+
+  async function copy(value: string, id: string) {
+    await navigator.clipboard.writeText(value);
+    setCopied(id);
+    window.setTimeout(() => setCopied((current) => (current === id ? null : current)), 1600);
+  }
 
   return (
-    <section className="page page--dashboard">
-      <header className="dashboard-hero">
+    <section className="page page--dashboard home-orientation">
+      <header className="dashboard-hero home-welcome">
         <div>
-          <span className="eyebrow eyebrow--light">Complete collection overview</span>
-          <h1>Your Dex at a glance.</h1>
-          <p>Review every regional collection, then turn the gaps into Pokémon GO searches.</p>
+          <span className="eyebrow eyebrow--light">Pokémon GO collection companion</span>
+          <h1>Build the collection you care about.</h1>
+          <p>
+            CatchGrid keeps your collection private in this browser while helping you track Pokémon,
+            spot gaps, and create useful Pokémon GO searches.
+          </p>
         </div>
-        <div className="dashboard-overview" aria-label="All Pokemon collection overview">
-          {overview.map((item) => (
-            <article key={item.label}>
-              <span>{item.label}</span>
-              <strong>{item.value}</strong>
-              <small>{item.detail}</small>
-            </article>
-          ))}
+        <div className="home-welcome__actions">
+          <button
+            className="button button--primary"
+            type="button"
+            onClick={() => onNavigate('dex')}
+          >
+            <Icon name="grid" /> Open Dex
+          </button>
+          <button
+            className="button button--secondary"
+            type="button"
+            onClick={() => onNavigate('progress')}
+          >
+            <Icon name="chart" /> View Progress
+          </button>
         </div>
       </header>
-
-      <section className="regional-progress" aria-labelledby="regional-progress-title">
+      <section className="home-section" aria-labelledby="how-title">
         <div className="section-heading">
           <div>
-            <span className="eyebrow">Regional collections</span>
-            <h2 id="regional-progress-title">Progress across every category</h2>
+            <span className="eyebrow">How CatchGrid works</span>
+            <h2 id="how-title">Four simple steps</h2>
           </div>
-          <p>Totals use each region's complete Dex, including Pokémon not released yet.</p>
         </div>
-        <div className="region-progress-grid">
-          {regions.map((region) => {
-            const regionCatalog = defaultRegionCatalog(catalogIndex, region);
-            return (
-              <article className="region-progress-card" key={region}>
-                <header>
-                  <div>
-                    <span className="eyebrow">Region</span>
-                    <h3>{region.charAt(0).toUpperCase() + region.slice(1).toLowerCase()}</h3>
-                  </div>
-                  <strong>
-                    {regionMedalProgress(catalogIndex, entries, region, 'normal').total}
-                  </strong>
-                </header>
-                <div className="region-category-grid">
-                  {categories.map((category) => {
-                    const progress = progressForCategory(regionCatalog, entries, category.id);
-                    const collected = regionCatalog.filter((item) =>
-                      collectedKeys.has(`${item.id}:${category.id}`),
-                    ).length;
-                    const medal = regionMedalProgress(catalogIndex, entries, region, category.id);
-                    const fullDexTotal = medal.total;
-                    const percentage =
-                      fullDexTotal === 0 ? 0 : Math.round((collected / fullDexTotal) * 100);
-                    const tier = medal.tier;
-                    return (
-                      <div className="region-category-progress" key={category.id}>
-                        <span>
-                          <strong>{category.shortLabel ?? category.label}</strong>
-                          <small>
-                            {tier.charAt(0).toUpperCase() + tier.slice(1)} · {percentage}%
-                          </small>
-                        </span>
-                        <progress
-                          aria-label={`${category.label} progress in ${region}`}
-                          value={collected}
-                          max={fullDexTotal || 1}
-                        />
-                        <p>
-                          {collected}/{fullDexTotal}
-                          {progress.total < fullDexTotal && ` · ${progress.total} available`}
-                        </p>
-                      </div>
-                    );
-                  })}
-                </div>
-              </article>
-            );
-          })}
+        <ol className="home-steps">
+          <li>
+            <strong>Browse</strong>
+            <span>Find Pokémon in the Dex.</span>
+          </li>
+          <li>
+            <strong>Mark</strong>
+            <span>Choose the collection states you have.</span>
+          </li>
+          <li>
+            <strong>Review</strong>
+            <span>See missing entries on Progress.</span>
+          </li>
+          <li>
+            <strong>Use</strong>
+            <span>Copy searches into Pokémon GO or Discord.</span>
+          </li>
+        </ol>
+      </section>
+      <section className="home-section" aria-labelledby="shortcut-title">
+        <div className="section-heading">
+          <div>
+            <span className="eyebrow">Shortcuts</span>
+            <h2 id="shortcut-title">What would you like to do?</h2>
+          </div>
+        </div>
+        <div className="home-shortcut-grid">
+          {shortcuts.map(([title, note, route, icon]) => (
+            <button type="button" key={title} onClick={() => onNavigate(route)}>
+              <Icon name={icon} />
+              <span>
+                <strong>{title}</strong>
+                <small>{note}</small>
+              </span>
+              <Icon name="chevron-right" />
+            </button>
+          ))}
         </div>
       </section>
+      <div className="home-lower-grid">
+        <section className="home-section collection-snapshot" aria-labelledby="snapshot-title">
+          <span className="eyebrow">Your collection</span>
+          <h2 id="snapshot-title">A quick snapshot</h2>
+          <strong>{percent}%</strong>
+          <p>
+            {normal.collected} collected · {normal.missing} obtainable entries missing
+          </p>
+          <button
+            type="button"
+            className="button button--secondary"
+            onClick={() => onNavigate('progress')}
+          >
+            Open full progress
+          </button>
+        </section>
+        <section className="home-section" aria-labelledby="search-title">
+          <span className="eyebrow">Useful searches</span>
+          <h2 id="search-title">Ready for Pokémon GO</h2>
+          <div className="home-search-list">
+            {GENERAL_SEARCHES.map((search) => (
+              <article key={search.name}>
+                <div>
+                  <strong>{search.name}</strong>
+                  <small>{search.note}</small>
+                  <code>{search.value}</code>
+                </div>
+                <button type="button" onClick={() => void copy(search.value, search.name)}>
+                  {copied === search.name ? 'Copied' : 'Copy'}
+                </button>
+              </article>
+            ))}
+          </div>
+        </section>
+      </div>
+      <p className="sr-only">CatchGrid supports {categories.length} collection categories.</p>
     </section>
   );
 }

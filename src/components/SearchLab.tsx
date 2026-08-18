@@ -6,6 +6,8 @@ import {
 } from '../../shared/domain';
 import type { CatalogItem, Category, CategoryId, CollectionEntry } from '../../shared/types';
 import { buildDiscordMessages } from '../lib/discordShare';
+import { createCatalogIndex } from '../catalog/catalogIndex';
+import { defaultRegionCatalog } from '../catalog/regionMedals';
 import { Icon } from './Icon';
 import '../routes/search.css';
 
@@ -31,14 +33,16 @@ async function copyText(value: string): Promise<boolean> {
   }
 }
 
-export function SearchLab({
+export function ProgressPage({
   catalog,
   entries,
   categories,
+  onOpen,
 }: {
   catalog: readonly CatalogItem[];
   entries: readonly CollectionEntry[];
   categories: readonly Category[];
+  onOpen?: (item: CatalogItem) => void;
 }) {
   const [copied, setCopied] = useState<string | null>(null);
   const [copyFailure, setCopyFailure] = useState(false);
@@ -51,6 +55,32 @@ export function SearchLab({
     [categories],
   );
   const nationalCatalog = useMemo(() => catalog.filter((item) => item.isDefault), [catalog]);
+  const catalogIndex = useMemo(() => createCatalogIndex(catalog), [catalog]);
+  const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
+  const [regionalCategory, setRegionalCategory] = useState<CategoryId>('normal');
+  const regionCatalog = useMemo(
+    () => (selectedRegion ? defaultRegionCatalog(catalogIndex, selectedRegion) : []),
+    [catalogIndex, selectedRegion],
+  );
+  const regionalMissing = useMemo(
+    () =>
+      regionCatalog.filter(
+        (item) =>
+          item.rules[regionalCategory] === 'released' &&
+          !entries.some(
+            (entry) =>
+              entry.formId === item.id && entry.categoryId === regionalCategory && entry.collected,
+          ),
+      ),
+    [entries, regionCatalog, regionalCategory],
+  );
+  const regionalSearch = useMemo(
+    () =>
+      generateMissingSearchStrings(regionCatalog, entries, regionalCategory, {
+        maxLength: 4_500,
+      }),
+    [entries, regionCatalog, regionalCategory],
+  );
   const results = useMemo(
     () =>
       SEARCH_CATEGORY_IDS.map((categoryId) => ({
@@ -146,20 +176,146 @@ export function SearchLab({
   }
 
   return (
-    <section className="page page--lab">
+    <section className="page page--lab page--progress">
       <header className="page-hero lab-hero">
         <div>
           <span className="eyebrow eyebrow--light">
-            <Icon name="flask" /> Search Lab
+            <Icon name="chart" /> Collection progress
           </span>
-          <h1>Turn gaps into useful searches.</h1>
-          <p>Build untraded Pokémon GO searches from your actual collection.</p>
+          <h1>See what you have. Act on what is missing.</h1>
+          <p>
+            Review completion, open regional gaps, and copy collection-aware Pokémon GO searches.
+          </p>
         </div>
         <div className="lab-hero__orb" aria-hidden="true">
           <Icon name="search" />
           <span />
         </div>
       </header>
+
+      <section className="progress-overview" aria-labelledby="progress-overview-title">
+        <div className="section-heading">
+          <div>
+            <span className="eyebrow">Overall collection</span>
+            <h2 id="progress-overview-title">Across every category</h2>
+          </div>
+        </div>
+        <div className="progress-summary-grid">
+          {categories.map((category) => {
+            const available = nationalCatalog.filter(
+              (item) => item.rules[category.id] === 'released',
+            );
+            const collected = available.filter((item) =>
+              entries.some(
+                (entry) =>
+                  entry.formId === item.id && entry.categoryId === category.id && entry.collected,
+              ),
+            ).length;
+            return (
+              <article key={category.id}>
+                <strong>{category.label}</strong>
+                <span>
+                  {collected}/{available.length}
+                </span>
+                <progress value={collected} max={available.length || 1} />
+              </article>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="regional-progress" aria-labelledby="regional-progress-title">
+        <div className="section-heading">
+          <div>
+            <span className="eyebrow">Regional progress</span>
+            <h2 id="regional-progress-title">Choose a region</h2>
+          </div>
+        </div>
+        <div className="region-shortcut-grid">
+          {catalogIndex.regions.map((region) => {
+            const scoped = defaultRegionCatalog(catalogIndex, region);
+            const available = scoped.filter((entry) => entry.rules.normal === 'released');
+            const collected = available.filter((entry) =>
+              entries.some(
+                (owned) =>
+                  owned.formId === entry.id && owned.categoryId === 'normal' && owned.collected,
+              ),
+            ).length;
+            const label = region.charAt(0).toUpperCase() + region.slice(1).toLowerCase();
+            return (
+              <button
+                type="button"
+                key={region}
+                className={selectedRegion === region ? 'is-active' : ''}
+                onClick={() => setSelectedRegion(region)}
+              >
+                <span>
+                  <strong>{label}</strong>
+                  <small>
+                    {collected}/{available.length} Normal
+                  </small>
+                </span>
+                <Icon name="chevron-right" />
+              </button>
+            );
+          })}
+        </div>
+        {selectedRegion && (
+          <div className="regional-detail">
+            <div className="section-heading">
+              <div>
+                <span className="eyebrow">Regional detail</span>
+                <h3>
+                  {selectedRegion.charAt(0).toUpperCase() + selectedRegion.slice(1).toLowerCase()}
+                </h3>
+              </div>
+              <select
+                aria-label="Regional collection category"
+                value={regionalCategory}
+                onChange={(event) => setRegionalCategory(event.target.value as CategoryId)}
+              >
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <p>{regionalMissing.length} obtainable Pokémon missing.</p>
+            <div className="regional-search-actions">
+              {regionalSearch.strings.map((value, index) => (
+                <article key={value}>
+                  <div>
+                    <strong>Search My Storage</strong>
+                    <small>Paste this into your Pokémon GO storage search.</small>
+                    <code>{value}</code>
+                  </div>
+                  <button
+                    type="button"
+                    className="button button--copy"
+                    onClick={() => void handleCopy(value, `regional-${index}`)}
+                  >
+                    {copied === `regional-${index}` ? 'Copied' : 'Copy'}
+                  </button>
+                </article>
+              ))}
+              {regionalSearch.strings.length > 0 && (
+                <p>
+                  <strong>Send to a Friend:</strong> share the same category and region string so
+                  another trainer can check what they have available.
+                </p>
+              )}
+            </div>
+            <div className="regional-missing-list">
+              {regionalMissing.map((pokemon) => (
+                <button type="button" key={pokemon.id} onClick={() => onOpen?.(pokemon)}>
+                  #{String(pokemon.dexNumber).padStart(4, '0')} {pokemon.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </section>
 
       <section className="panel generator-panel">
         <div className="panel-heading">

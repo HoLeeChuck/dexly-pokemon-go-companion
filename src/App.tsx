@@ -30,16 +30,17 @@ import { createPortableProfileBackupJson, restorePortableProfileBackup } from '.
 import { catalogDisplayName } from './lib/catalogDisplay';
 import type { AccentTheme } from './lib/theme';
 import { previewCanonicalWideCsv } from '../shared/csv';
-import { PUBLIC_ROUTES as routes, type RouteId } from './app/routing';
+import { PRIMARY_ROUTES, type RouteId } from './app/routing';
 import { useAppNavigation } from './app/useAppNavigation';
 import { usePwaUpdates } from './app/usePwaUpdates';
+import { APP_VERSION, PORTFOLIO_URL } from './config/app';
 
 type StorageMode = 'browser' | 'cloud';
 type Theme = 'light' | 'dark';
 
 const DexRoute = lazy(() => import('./routes/DexRoute'));
-const SearchLab = lazy(() =>
-  import('./components/SearchLab').then((module) => ({ default: module.SearchLab })),
+const ProgressPage = lazy(() =>
+  import('./components/SearchLab').then((module) => ({ default: module.ProgressPage })),
 );
 const DataPage = lazy(() =>
   import('./components/DataPage').then((module) => ({ default: module.DataPage })),
@@ -192,11 +193,7 @@ function MobileNavigationHeader({
               aria-label="Primary navigation"
               onClick={(event) => event.stopPropagation()}
             >
-              <div className="mobile-nav-panel__heading">
-                <span className="eyebrow">Pokémon GO collection companion</span>
-                <strong>Explore CatchGrid</strong>
-              </div>
-              {routes.map((item) => (
+              {PRIMARY_ROUTES.map((item) => (
                 <button
                   type="button"
                   key={item.id}
@@ -211,6 +208,24 @@ function MobileNavigationHeader({
                   <Icon name="chevron-right" />
                 </button>
               ))}
+              <footer className="mobile-nav-footer">
+                <button
+                  type="button"
+                  className={route === 'settings' || route === 'owner' ? 'is-active' : ''}
+                  aria-current={route === 'settings' || route === 'owner' ? 'page' : undefined}
+                  onClick={() => navigate('settings')}
+                >
+                  <span>
+                    <Icon name="settings" />
+                  </span>
+                  <strong>Settings</strong>
+                  <Icon name="chevron-right" />
+                </button>
+                <p>CatchGrid v{APP_VERSION}</p>
+                <a href={PORTFOLIO_URL} target="_blank" rel="noreferrer">
+                  Cody Johnson · Portfolio
+                </a>
+              </footer>
             </nav>
           </>
         )}
@@ -673,13 +688,6 @@ export default function App() {
           ];
           setCollectionEntries(collectionRef.current);
           revisionRef.current = saved.profile.revision;
-          const batchId = `local:${crypto.randomUUID()}`;
-          undoRef.current.set(batchId, { formId: item.id, categoryId, previous });
-          setToast({
-            tone: 'success',
-            message: `${displayName} marked ${desired ? 'collected' : 'missing'} in ${categoryId}.`,
-            batchId,
-          });
         }
         setPendingKeys((current) => {
           const remaining = new Set(current);
@@ -714,11 +722,6 @@ export default function App() {
           ) {
             updateLocalWanted(item.id, categoryId, false);
           }
-          setToast({
-            tone: 'success',
-            message: `${catalogDisplayName(item)} synced ${desired ? 'collected' : 'missing'} in ${categoryId}.`,
-            batchId: result.batchId ?? undefined,
-          });
           return;
         }
       } catch (error) {
@@ -740,6 +743,45 @@ export default function App() {
         });
       }
     });
+  }
+
+  async function setRegionNormal(region: string, collected: boolean): Promise<number> {
+    if (storageMode !== 'browser' || !bootstrap) return 0;
+    const targets = bootstrap.catalog.filter(
+      (item) => item.isDefault && item.region === region && item.rules.normal === 'released',
+    );
+    const targetIds = new Set(targets.map((item) => item.id));
+    let next = collectionRef.current.filter(
+      (entry) => !(entry.categoryId === 'normal' && targetIds.has(entry.formId)),
+    );
+    if (collected) {
+      next = [
+        ...next,
+        ...targets.map((item) => ({
+          formId: item.id,
+          categoryId: 'normal' as const,
+          collected: true as const,
+        })),
+      ];
+    }
+    const changed = targets.filter((item) =>
+      collected
+        ? !collectionRef.current.some(
+            (entry) => entry.formId === item.id && entry.categoryId === 'normal' && entry.collected,
+          )
+        : collectionRef.current.some(
+            (entry) => entry.formId === item.id && entry.categoryId === 'normal' && entry.collected,
+          ),
+    ).length;
+    const saved = persistLocalState(next, revisionRef.current + 1, `Before updating ${region}`);
+    if (!saved.ok) throw saved.error;
+    collectionRef.current = [
+      ...saved.profile.collectionEntries,
+      ...saved.profile.formCollectionEntries,
+    ];
+    revisionRef.current = saved.profile.revision;
+    setCollectionEntries(collectionRef.current);
+    return changed;
   }
 
   async function undoLatest(batchId: string) {
@@ -955,7 +997,7 @@ export default function App() {
       <aside className="desktop-sidebar">
         <AppBrand onHome={() => navigate('home')} />
         <nav aria-label="Primary navigation">
-          {routes.map((item) => (
+          {PRIMARY_ROUTES.map((item) => (
             <button
               type="button"
               key={item.id}
@@ -968,21 +1010,21 @@ export default function App() {
             </button>
           ))}
         </nav>
-        <button
-          type="button"
-          className="theme-toggle theme-toggle--desktop"
-          onClick={() => changeTheme(theme === 'dark' ? 'light' : 'dark')}
-          aria-label={`Use ${theme === 'dark' ? 'light' : 'dark'} mode`}
-          aria-pressed={theme === 'dark'}
-        >
-          <Icon name={theme === 'dark' ? 'sun' : 'moon'} />
-          <span>{theme === 'dark' ? 'Light mode' : 'Dark mode'}</span>
-        </button>
-        <p className="sidebar-foot">
-          Unofficial fan project
-          <br />
-          Catalog {bootstrap.catalogVersion}
-        </p>
+        <div className="sidebar-secondary">
+          <button
+            type="button"
+            className={route === 'settings' || route === 'owner' ? 'is-active' : ''}
+            onClick={() => navigate('settings')}
+          >
+            <Icon name="settings" />
+            <span>Settings</span>
+            {(route === 'settings' || route === 'owner') && <i />}
+          </button>
+          <p className="sidebar-foot">CatchGrid v{APP_VERSION}</p>
+          <a href={PORTFOLIO_URL} target="_blank" rel="noreferrer">
+            Cody Johnson · Portfolio
+          </a>
+        </div>
       </aside>
 
       <div className={`app-stage${route === 'dex' ? ' app-stage--dex' : ''}`}>
@@ -1012,13 +1054,15 @@ export default function App() {
                 catalog={bootstrap.catalog}
                 categories={bootstrap.categories}
                 entries={collectionEntries}
+                onNavigate={navigate}
               />
             )}
-            {route === 'search' && (
-              <SearchLab
+            {route === 'progress' && (
+              <ProgressPage
                 catalog={bootstrap.catalog}
                 entries={collectionEntries}
                 categories={bootstrap.categories}
+                onOpen={setSelected}
               />
             )}
             {route === 'dex' && (
@@ -1034,7 +1078,7 @@ export default function App() {
                 onCollectionChange={(item, value) => changeCollection(item, activeCategory, value)}
               />
             )}
-            {(route === 'profile' || route === 'owner') && (
+            {(route === 'settings' || route === 'owner') && (
               <DataPage
                 catalog={bootstrap.catalog}
                 collectionEntries={collectionEntries}
@@ -1052,6 +1096,7 @@ export default function App() {
                 onRestoreBackup={restorePortableBackup}
                 snapshots={recoverySnapshots}
                 onRestoreSnapshot={restoreSnapshot}
+                onSetRegionNormal={setRegionNormal}
               />
             )}
           </Suspense>
