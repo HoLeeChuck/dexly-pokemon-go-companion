@@ -5,7 +5,9 @@ import {
   type CsvImportPolicy,
 } from '../../shared/csv';
 import type { CatalogItem, CollectionEntry } from '../../shared/types';
+import { ACCENT_THEMES, type AccentTheme } from '../lib/theme';
 import { Icon } from './Icon';
+import '../routes/profile.css';
 
 export function DataPage({
   catalog,
@@ -30,10 +32,10 @@ export function DataPage({
   catalogVersion: string;
   storageMode: 'browser' | 'cloud';
   theme: 'light' | 'dark';
-  accentTheme: 'green' | 'blue' | 'purple' | 'red' | 'orange' | 'pink';
+  accentTheme: AccentTheme;
   showCloudAccess?: boolean;
   onThemeChange: (theme: 'light' | 'dark') => void;
-  onAccentThemeChange: (theme: 'green' | 'blue' | 'purple' | 'red' | 'orange' | 'pink') => void;
+  onAccentThemeChange: (theme: AccentTheme) => void;
   onUnlock: () => void;
   onLeaveCloud: () => void;
   onImport: (input: { csv: string; fileName: string; policy: CsvImportPolicy }) => Promise<void>;
@@ -160,7 +162,7 @@ export function DataPage({
           ))}
         </div>
         <div className="theme-choice-grid" role="radiogroup" aria-label="Color theme">
-          {(['green', 'blue', 'purple', 'red', 'orange', 'pink'] as const).map((color) => (
+          {ACCENT_THEMES.map((color) => (
             <button
               type="button"
               role="radio"

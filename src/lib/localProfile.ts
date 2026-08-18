@@ -10,6 +10,7 @@ import type {
 import type { CsvImportPreview } from '../../shared/csv';
 import { validateSavedSearch } from './savedSearches';
 import type { SavedSearch } from './savedSearches';
+import { ACCENT_THEMES, type AccentTheme } from './theme';
 
 export const LOCAL_PROFILE_SCHEMA_VERSION = 2 as const;
 export const LEGACY_LOCAL_PROFILE_STORAGE_KEY = 'dexly:local-profile:v1';
@@ -28,11 +29,8 @@ const CATEGORY_ID_SET = new Set<string>(CATEGORY_IDS);
 const TRADE_REQUEST_TRAIT_SET = new Set<string>(TRADE_REQUEST_TRAIT_IDS);
 const TRADE_OFFER_TRAIT_SET = new Set<string>(TRADE_OFFER_TRAIT_IDS);
 const FORM_COLLECTION_CATEGORY_SET = new Set<string>(['normal', 'shiny']);
-const ACCENT_THEMES = ['green', 'blue', 'purple', 'red', 'orange', 'pink'] as const;
-
 export type FormCollectionCategoryId = 'normal' | 'shiny';
 export type AppearanceTheme = 'light' | 'dark';
-export type AccentTheme = (typeof ACCENT_THEMES)[number];
 
 export interface FormCollectionEntry {
   formId: string;

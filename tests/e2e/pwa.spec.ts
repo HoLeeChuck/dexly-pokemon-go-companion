@@ -53,6 +53,9 @@ test('first install works offline and never caches private collection routes', a
     Boolean(navigator.serviceWorker.controller),
   );
   expect(controlledBeforeOffline).toBe(true);
+  // Visit the lazy Dex route once while controlled so its JS and CSS enter the runtime cache.
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Pokédex' })).toBeVisible();
   await page.unrouteAll({ behavior: 'wait' });
   await context.setOffline(true);
   const response = await page.reload({ waitUntil: 'domcontentloaded' });

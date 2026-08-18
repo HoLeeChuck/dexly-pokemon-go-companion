@@ -1,5 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState, type FormEvent } from 'react';
-import { deriveCollectionState } from '../shared/domain';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import type {
   CatalogItem,
   CategoryId,
@@ -9,19 +8,12 @@ import type {
   TradeSpecimen,
   WantedEntry,
 } from '../shared/types';
-import { DataPage } from './components/DataPage';
-import { DetailSheet } from './components/DetailSheet';
-import { Icon, type IconName } from './components/Icon';
-import { PokemonGrid } from './components/PokemonGrid';
+import { Icon } from './components/Icon';
 import { HomeDashboard } from './components/HomeDashboard';
-import { SearchLab } from './components/SearchLab';
-import {
-  ApiClientError,
-  api,
-  saveAccessToken,
-  storedAccessToken,
-  type BootstrapResponse,
-} from './lib/api';
+import { ApiClientError, saveAccessToken, storedAccessToken } from './lib/api/request';
+import { fetchPublicCatalog } from './lib/api/publicCatalogApi';
+import { setCloudCollection, undoCloudMutation } from './lib/api/collectionApi';
+import type { BootstrapResponse } from './lib/api/ownerApi';
 import {
   applyLocalCsvImport,
   emptyLocalProfile,
@@ -36,81 +28,31 @@ import {
 } from './lib/localProfile';
 import { createPortableProfileBackupJson, restorePortableProfileBackup } from './lib/profileBackup';
 import { catalogDisplayName } from './lib/catalogDisplay';
+import type { AccentTheme } from './lib/theme';
 import { previewCanonicalWideCsv } from '../shared/csv';
-import regionMedalPolicy from '../catalog/region-medals.v1.json';
+import { PUBLIC_ROUTES as routes, type RouteId } from './app/routing';
+import { useAppNavigation } from './app/useAppNavigation';
+import { usePwaUpdates } from './app/usePwaUpdates';
 
-type PublicRouteId = 'home' | 'dex' | 'search' | 'profile';
-type RouteId = PublicRouteId | 'owner';
-type CollectionFilter = 'all' | 'missing' | 'collected';
-type DexView = 'species' | 'mega' | 'gigantamax';
-type MedalTier = 'none' | 'bronze' | 'silver' | 'gold' | 'platinum';
 type StorageMode = 'browser' | 'cloud';
 type Theme = 'light' | 'dark';
-type AccentTheme = 'green' | 'blue' | 'purple' | 'red' | 'orange' | 'pink';
 
-const REGION_MEDAL_REQUIREMENTS = Object.fromEntries(
-  regionMedalPolicy.regions.map((region) => [
-    region.label,
-    { categoryThresholds: region.categoryThresholds, mark: region.mark },
-  ]),
-) as Record<
-  string,
-  {
-    categoryThresholds: Record<
-      CategoryId,
-      { bronze: number; silver: number; gold: number; platinum: number }
-    >;
-    mark: string;
-  }
->;
-
-const REGION_MEDAL_ASSET_IDS: Record<string, number> = {
-  Kanto: 2,
-  Johto: 39,
-  Hoenn: 45,
-  Sinnoh: 51,
-  Unova: 56,
-  Kalos: 61,
-  Alola: 62,
-  Galar: 63,
-  Hisui: 79,
-  Paldea: 82,
-};
-const routes: Array<{ id: PublicRouteId; label: string; icon: IconName }> = [
-  { id: 'home', label: 'Home', icon: 'home' },
-  { id: 'dex', label: 'Dex', icon: 'grid' },
-  { id: 'search', label: 'Search Lab', icon: 'flask' },
-  { id: 'profile', label: 'Profile', icon: 'user' },
-];
-
-const categoryGlyphs: Record<CategoryId, string> = {
-  normal: '◒',
-  shiny: '✦',
-  lucky: '♢',
-  hundo: '100',
-  xxl: 'XL',
-  xxs: 'XS',
-  shadow: '◐',
-  purified: '◇',
-};
-
-function routeFromLocation(): RouteId {
-  const path = window.location.pathname.replace(/\/+$/, '') || '/';
-  if (path === '/cody') return 'owner';
-  const value = window.location.hash.replace(/^#\/?/, '');
-  return routes.some((route) => route.id === value) ? (value as RouteId) : 'home';
-}
-
-function urlForRoute(route: RouteId): string {
-  return route === 'owner' ? '/cody' : `/#/${route}`;
-}
+const DexRoute = lazy(() => import('./routes/DexRoute'));
+const SearchLab = lazy(() =>
+  import('./components/SearchLab').then((module) => ({ default: module.SearchLab })),
+);
+const DataPage = lazy(() =>
+  import('./components/DataPage').then((module) => ({ default: module.DataPage })),
+);
+const DetailSheet = lazy(() =>
+  import('./components/DetailSheet').then((module) => ({ default: module.DetailSheet })),
+);
+const OwnerAccessDialog = lazy(() =>
+  import('./owner/OwnerAccessDialog').then((module) => ({ default: module.OwnerAccessDialog })),
+);
 
 function collectionKey(formId: string, categoryId: CategoryId): string {
   return `${formId}:${categoryId}`;
-}
-
-function titleCase(value: string): string {
-  return value.toLowerCase().replace(/(^|[\s-])\p{L}/gu, (letter) => letter.toUpperCase());
 }
 
 function readLocalSetting(key: string): string | null {
@@ -119,29 +61,6 @@ function readLocalSetting(key: string): string | null {
   } catch {
     return null;
   }
-}
-
-function medalTier(
-  count: number,
-  requirements: { bronze: number; silver: number; gold: number; platinum: number },
-): MedalTier {
-  if (count >= requirements.platinum) return 'platinum';
-  if (count >= requirements.gold) return 'gold';
-  if (count >= requirements.silver) return 'silver';
-  if (count >= requirements.bronze) return 'bronze';
-  return 'none';
-}
-
-function RegionMedal({ region, tier }: { region?: string; tier: MedalTier | 'all' }) {
-  const assetId = region ? REGION_MEDAL_ASSET_IDS[region] : undefined;
-  return (
-    <span
-      className={`region-medal region-medal--${tier}${assetId ? ` region-medal--asset-${assetId}` : ''}`}
-      aria-hidden="true"
-    >
-      {assetId ? <i /> : '◎'}
-    </span>
-  );
 }
 
 function setEntryLocally(
@@ -300,103 +219,6 @@ function MobileNavigationHeader({
   );
 }
 
-function AccessDialog({
-  open,
-  message,
-  onClose,
-  onSubmit,
-}: {
-  open: boolean;
-  message?: string;
-  onClose?: () => void;
-  onSubmit: (token: string) => Promise<void>;
-}) {
-  const ref = useRef<HTMLDialogElement>(null);
-  const [token, setToken] = useState(storedAccessToken());
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState('');
-
-  useEffect(() => {
-    const dialog = ref.current;
-    if (!dialog) return;
-    if (open && !dialog.open) dialog.showModal();
-    if (!open && dialog.open) dialog.close();
-  }, [open]);
-
-  async function submit(event: FormEvent) {
-    event.preventDefault();
-    setSubmitting(true);
-    setError('');
-    try {
-      await onSubmit(token.trim());
-    } catch (reason) {
-      setError(reason instanceof Error ? reason.message : 'That access key did not work.');
-    } finally {
-      setSubmitting(false);
-    }
-  }
-
-  return (
-    <dialog
-      ref={ref}
-      className="access-dialog"
-      onCancel={(event) => {
-        if (!onClose) event.preventDefault();
-      }}
-    >
-      <form onSubmit={submit}>
-        <span className="access-dialog__mark">
-          <Icon name="lock" />
-        </span>
-        <span className="eyebrow">Cody Cloud</span>
-        <h2>Sign in to Cody Cloud</h2>
-        <p>
-          {message ??
-            'Enter your private cloud access key. Public browser collections never require this key.'}
-        </p>
-        <label>
-          <span className="visually-hidden">Username</span>
-          <input
-            className="visually-hidden"
-            type="text"
-            name="username"
-            autoComplete="username"
-            value="cody-cloud-owner"
-            readOnly
-            tabIndex={-1}
-          />
-          Cloud access key
-          <input
-            type="password"
-            autoComplete="current-password"
-            value={token}
-            onChange={(event) => setToken(event.target.value)}
-            placeholder="Paste access key"
-            autoFocus
-          />
-        </label>
-        {error && (
-          <p className="form-error" role="alert">
-            {error}
-          </p>
-        )}
-        <button
-          className="button button--primary button--full"
-          disabled={!token.trim() || submitting}
-        >
-          <Icon name="lock" />
-          {submitting ? 'Checking…' : 'Connect Cody Cloud'}
-        </button>
-        {onClose && (
-          <button type="button" className="button button--ghost button--full" onClick={onClose}>
-            Cancel
-          </button>
-        )}
-      </form>
-    </dialog>
-  );
-}
-
 function LoadingScreen() {
   return (
     <div className="loading-screen">
@@ -547,7 +369,8 @@ function RecoveryScreen({
 }
 
 export default function App() {
-  const [route, setRoute] = useState<RouteId>(routeFromLocation);
+  const { route, navigate } = useAppNavigation();
+  const { updateReady, dismissUpdate, applyUpdate } = usePwaUpdates();
   const [bootstrap, setBootstrap] = useState<BootstrapResponse | null>(null);
   const [status, setStatus] = useState<'loading' | 'ready' | 'locked' | 'error' | 'recovery'>(
     'loading',
@@ -576,19 +399,9 @@ export default function App() {
       ? saved
       : 'normal';
   });
-  const [query, setQuery] = useState('');
-  const [region, setRegion] = useState('all');
-  const [collectionFilter, setCollectionFilter] = useState<CollectionFilter>('all');
-  const [dexView, setDexView] = useState<DexView>('species');
-  const [categoryPickerOpen, setCategoryPickerOpen] = useState(false);
-  const [regionPickerOpen, setRegionPickerOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [quickCheck, setQuickCheck] = useState(false);
   const [selected, setSelected] = useState<CatalogItem | null>(null);
   const [collectionEntries, setCollectionEntries] = useState<CollectionEntry[]>([]);
-  const [updateReady, setUpdateReady] = useState(false);
   const [wantedEntries, setWantedEntries] = useState<WantedEntry[]>([]);
-  const [, setTradeSpecimens] = useState<TradeSpecimen[]>([]);
   const [pendingKeys, setPendingKeys] = useState<Set<string>>(new Set());
   const [toast, setToast] = useState<ToastState | null>(null);
   const revisionRef = useRef(0);
@@ -600,14 +413,6 @@ export default function App() {
     new Map<string, { formId: string; categoryId: CategoryId; previous: boolean }>(),
   );
   const mutationQueue = useRef<Promise<void>>(Promise.resolve());
-  const searchInputRef = useRef<HTMLInputElement>(null);
-  const scrollPositions = useRef<Record<RouteId, number>>({
-    home: 0,
-    dex: 0,
-    search: 0,
-    profile: 0,
-    owner: 0,
-  });
 
   function adoptPayload(payload: PublicCatalogPayload, result = loadLocalProfileResult()) {
     setLocalLoadResult(result);
@@ -633,7 +438,6 @@ export default function App() {
     collectionRef.current = localEntries;
     setWantedEntries([...local.wantedEntries]);
     wantedRef.current = [...local.wantedEntries];
-    setTradeSpecimens([...local.tradeSpecimens]);
     tradeRef.current = [...local.tradeSpecimens];
     revisionRef.current = local.revision;
     if (local.settings.theme) setTheme(local.settings.theme);
@@ -656,7 +460,6 @@ export default function App() {
     collectionRef.current = [...payload.collectionEntries];
     setWantedEntries([...payload.wantedEntries]);
     wantedRef.current = [...payload.wantedEntries];
-    setTradeSpecimens([...payload.tradeSpecimens]);
     tradeRef.current = [...payload.tradeSpecimens];
     revisionRef.current = payload.revision;
     const local = loadLocalProfileResult();
@@ -705,10 +508,11 @@ export default function App() {
     setLoadMessage('');
     try {
       if (storageMode === 'cloud' && token) {
-        adoptCloudPayload(await api.bootstrap(token));
+        const { fetchOwnerBootstrap } = await import('./lib/api/ownerApi');
+        adoptCloudPayload(await fetchOwnerBootstrap(token));
         return;
       }
-      const catalogPayload = await api.catalog();
+      const catalogPayload = await fetchPublicCatalog();
       const localResult = loadLocalProfileResult();
       const local = localResult.profile;
       const hasLocalState =
@@ -720,7 +524,8 @@ export default function App() {
         local.tradeSpecimens.length > 0;
       if (!hasLocalState && token) {
         try {
-          const legacy = await api.bootstrap(token);
+          const { fetchOwnerBootstrap } = await import('./lib/api/ownerApi');
+          const legacy = await fetchOwnerBootstrap(token);
           const migrated = {
             ...local,
             revision: legacy.revision,
@@ -742,7 +547,7 @@ export default function App() {
         saveAccessToken('');
         setStorageMode('browser');
         try {
-          adoptPayload(await api.catalog());
+          adoptPayload(await fetchPublicCatalog());
           setToast({
             tone: 'info',
             message: "Your Cody Cloud session expired. This browser's collection is still here.",
@@ -792,39 +597,6 @@ export default function App() {
     }
   }, [accentTheme]);
 
-  useEffect(() => {
-    const onUpdateReady = () => setUpdateReady(true);
-    window.addEventListener('catchgrid:update-ready', onUpdateReady);
-    return () => window.removeEventListener('catchgrid:update-ready', onUpdateReady);
-  }, []);
-
-  useEffect(() => {
-    const onLocationChange = () => setRoute(routeFromLocation());
-    window.addEventListener('hashchange', onLocationChange);
-    window.addEventListener('popstate', onLocationChange);
-    return () => {
-      window.removeEventListener('hashchange', onLocationChange);
-      window.removeEventListener('popstate', onLocationChange);
-    };
-  }, []);
-
-  function navigate(next: RouteId) {
-    scrollPositions.current[route] = window.scrollY;
-    setRoute(next);
-    window.history.pushState(null, '', urlForRoute(next));
-  }
-
-  useLayoutEffect(() => {
-    const frame = window.requestAnimationFrame(() =>
-      window.scrollTo({ top: scrollPositions.current[route], behavior: 'auto' }),
-    );
-    return () => window.cancelAnimationFrame(frame);
-  }, [route]);
-
-  useEffect(() => {
-    if (searchOpen) searchInputRef.current?.focus();
-  }, [searchOpen]);
-
   function changeCategory(value: CategoryId) {
     if (storageMode === 'browser' && status === 'ready') {
       const saved = updateLocalProfileSettings(localProfileRef.current, {
@@ -837,12 +609,6 @@ export default function App() {
       localProfileRef.current = saved.profile;
     }
     setActiveCategory(value);
-    setCategoryPickerOpen(false);
-  }
-
-  function changeRegion(value: string) {
-    setRegion(value);
-    setRegionPickerOpen(false);
   }
 
   function changeTheme(value: Theme) {
@@ -930,7 +696,7 @@ export default function App() {
     mutationQueue.current = mutationQueue.current.then(async () => {
       try {
         if (storageMode === 'cloud') {
-          const result = await api.setCollection({
+          const result = await setCloudCollection({
             formId: item.id,
             categoryId,
             collected: desired,
@@ -980,7 +746,7 @@ export default function App() {
     await mutationQueue.current;
     if (storageMode === 'cloud') {
       try {
-        const result = await api.undo(batchId);
+        const result = await undoCloudMutation(batchId);
         revisionRef.current = result.revision;
         for (const change of result.changes)
           updateLocalCollection(change.formId, change.categoryId, change.collected);
@@ -1029,7 +795,9 @@ export default function App() {
   }) {
     if (!bootstrap) throw new Error('The catalog is not available.');
     if (storageMode === 'cloud') {
-      const authoritative = await api.previewImport({
+      const { applyCloudImport, fetchOwnerBootstrap, previewCloudImport } =
+        await import('./lib/api/ownerApi');
+      const authoritative = await previewCloudImport({
         csv: input.csv,
         sourceName: input.fileName,
         policy: input.policy,
@@ -1040,8 +808,8 @@ export default function App() {
             'The cloud import preview was rejected.',
         );
       }
-      const result = await api.applyImport(authoritative.jobId);
-      adoptCloudPayload(await api.bootstrap());
+      const result = await applyCloudImport(authoritative.jobId);
+      adoptCloudPayload(await fetchOwnerBootstrap());
       setToast({
         tone: 'success',
         message: `Cloud import applied: ${result.added} added, ${result.removed} removed.`,
@@ -1083,7 +851,8 @@ export default function App() {
 
   async function unlock(token: string) {
     saveAccessToken(token);
-    const payload = await api.bootstrap(token);
+    const { fetchOwnerBootstrap } = await import('./lib/api/ownerApi');
+    const payload = await fetchOwnerBootstrap(token);
     adoptCloudPayload(payload);
     setAccessDialogOpen(false);
   }
@@ -1091,7 +860,7 @@ export default function App() {
   async function leaveCloud() {
     saveAccessToken('');
     setStorageMode('browser');
-    adoptPayload(await api.catalog());
+    adoptPayload(await fetchPublicCatalog());
     setToast({ tone: 'info', message: "Using this browser's local collection." });
   }
 
@@ -1119,7 +888,6 @@ export default function App() {
     wantedRef.current = [...profile.wantedEntries];
     setWantedEntries(wantedRef.current);
     tradeRef.current = [...profile.tradeSpecimens];
-    setTradeSpecimens(tradeRef.current);
     revisionRef.current = profile.revision;
     if (profile.settings.theme) setTheme(profile.settings.theme);
     if (profile.settings.accentTheme) setAccentTheme(profile.settings.accentTheme);
@@ -1153,20 +921,6 @@ export default function App() {
     setToast({ tone: 'success', message: 'Recovery snapshot restored.' });
   }
 
-  const collectedKeys = useMemo(
-    () =>
-      new Set(
-        collectionEntries
-          .filter((entry) => entry.collected)
-          .map((entry) => collectionKey(entry.formId, entry.categoryId)),
-      ),
-    [collectionEntries],
-  );
-  const wantedFormIds = useMemo(
-    () => new Set(wantedEntries.filter((entry) => entry.wanted).map((entry) => entry.formId)),
-    [wantedEntries],
-  );
-
   if (status === 'loading') return <LoadingScreen />;
   if (status === 'locked')
     return (
@@ -1175,7 +929,9 @@ export default function App() {
           <AppBrand />
           <p>Private collection access is required.</p>
         </div>
-        <AccessDialog open message={loadMessage} onSubmit={unlock} />
+        <Suspense fallback={null}>
+          <OwnerAccessDialog open message={loadMessage} onSubmit={unlock} />
+        </Suspense>
       </>
     );
   if (status === 'recovery' && localLoadResult)
@@ -1191,61 +947,6 @@ export default function App() {
   if (status === 'error' || !bootstrap)
     return <ErrorScreen message={loadMessage} onRetry={() => void load()} />;
 
-  const defaultCatalog = bootstrap.catalog.filter((item) => item.isDefault);
-  const viewedCatalog =
-    dexView === 'species'
-      ? defaultCatalog
-      : bootstrap.catalog.filter((item) =>
-          dexView === 'mega'
-            ? item.variantKind === 'mega' || item.variantKind === 'primal'
-            : item.variantKind === 'gigantamax',
-        );
-  const regions = [...new Set(defaultCatalog.map((item) => titleCase(item.region)))];
-  const regionMedals = new Map(
-    regions.map((regionName) => {
-      const requirements = REGION_MEDAL_REQUIREMENTS[regionName];
-      const categoryRequirements = requirements?.categoryThresholds[activeCategory];
-      const regionItems = defaultCatalog.filter((item) => titleCase(item.region) === regionName);
-      const collected = new Set(
-        regionItems
-          .filter((item) => collectedKeys.has(collectionKey(item.id, activeCategory)))
-          .map((item) => item.dexNumber),
-      ).size;
-      return [
-        regionName,
-        {
-          collected,
-          total: categoryRequirements?.platinum ?? regionItems.length,
-          tier: categoryRequirements
-            ? medalTier(collected, categoryRequirements)
-            : ('none' as MedalTier),
-          mark: requirements?.mark ?? regionName.slice(0, 1),
-        },
-      ] as const;
-    }),
-  );
-  const filtered = viewedCatalog.filter((item) => {
-    const normalizedQuery = query.trim().toLowerCase();
-    if (
-      normalizedQuery &&
-      !item.name.toLowerCase().includes(normalizedQuery) &&
-      !catalogDisplayName(item).toLowerCase().includes(normalizedQuery) &&
-      !String(item.dexNumber).includes(normalizedQuery)
-    )
-      return false;
-    if (region !== 'all' && titleCase(item.region) !== region) return false;
-    const state = deriveCollectionState(
-      item.rules[activeCategory] ?? 'unknown',
-      collectedKeys.has(collectionKey(item.id, activeCategory)),
-    );
-    if (collectionFilter === 'missing' && state !== 'missing') return false;
-    if (collectionFilter === 'collected' && state !== 'collected') return false;
-    return true;
-  });
-  const activeCategoryLabel =
-    bootstrap.categories.find((category) => category.id === activeCategory)?.label ??
-    activeCategory;
-  const selectedRegionMedal = region === 'all' ? null : regionMedals.get(region);
   const legacyOrigin = window.location.hostname.endsWith('.workers.dev');
   const recoverySnapshots = storageMode === 'browser' ? listLocalProfileSnapshots() : [];
 
@@ -1305,303 +1006,71 @@ export default function App() {
           </aside>
         )}
         <main>
-          {route === 'home' && (
-            <HomeDashboard
-              catalog={bootstrap.catalog}
-              categories={bootstrap.categories}
-              entries={collectionEntries}
-            />
-          )}
-          {route === 'search' && (
-            <SearchLab
-              catalog={bootstrap.catalog}
-              entries={collectionEntries}
-              categories={bootstrap.categories}
-            />
-          )}
-          {route === 'dex' && (
-            <section className="page page--dex">
-              <header className="dex-header">
-                <div>
-                  <span className="eyebrow">Your collection</span>
-                  <h1>Pokédex</h1>
-                </div>
-                <button
-                  type="button"
-                  className={`quick-toggle${quickCheck ? ' is-active' : ''}`}
-                  aria-pressed={quickCheck}
-                  onClick={() => setQuickCheck((value) => !value)}
-                >
-                  <Icon name={quickCheck ? 'check' : 'grid'} />
-                  <span>
-                    <strong>Quick Check</strong>
-                    <small>{quickCheck ? 'Tap cards to mark' : 'Browse safely'}</small>
-                  </span>
-                </button>
-              </header>
-
-              <section className="dex-browser" aria-label="Collection browser">
-                <section className="dex-controls" aria-label="Pokédex filters">
-                  <div className={`dex-compact-bar${searchOpen || query ? ' is-searching' : ''}`}>
-                    <div className={`collapsible-search${searchOpen || query ? ' is-open' : ''}`}>
-                      <button
-                        type="button"
-                        className="collapsible-search__trigger"
-                        aria-label="Open Pokémon search"
-                        onClick={() => {
-                          setCategoryPickerOpen(false);
-                          setRegionPickerOpen(false);
-                          setSearchOpen(true);
-                        }}
-                      >
-                        <Icon name="search" />
-                      </button>
-                      <label className="search-field">
-                        <Icon name="search" />
-                        <input
-                          ref={searchInputRef}
-                          type="search"
-                          value={query}
-                          onChange={(event) => setQuery(event.target.value)}
-                          placeholder="Name or Pokédex number"
-                          aria-label="Search Pokémon"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setQuery('');
-                            setSearchOpen(false);
-                          }}
-                          aria-label="Close search"
-                        >
-                          <Icon name="close" />
-                        </button>
-                      </label>
-                    </div>
-
-                    <div className={`region-picker${regionPickerOpen ? ' is-open' : ''}`}>
-                      <button
-                        type="button"
-                        className="region-picker__toggle"
-                        aria-expanded={regionPickerOpen}
-                        aria-controls="region-options"
-                        onClick={() => {
-                          setCategoryPickerOpen(false);
-                          setRegionPickerOpen((value) => !value);
-                        }}
-                      >
-                        <RegionMedal
-                          region={region === 'all' ? undefined : region}
-                          tier={selectedRegionMedal?.tier ?? 'all'}
-                        />
-                        <span className="picker-copy">
-                          <strong>{region === 'all' ? 'All regions' : titleCase(region)}</strong>
-                          <small>
-                            {selectedRegionMedal
-                              ? `${selectedRegionMedal.collected}/${selectedRegionMedal.total} ${activeCategoryLabel}`
-                              : 'Regional medals'}
-                          </small>
-                        </span>
-                        <Icon name="chevron-right" />
-                      </button>
-                      <div
-                        id="region-options"
-                        className="region-options"
-                        role="listbox"
-                        aria-label="Region"
-                      >
-                        <button
-                          type="button"
-                          role="option"
-                          aria-selected={region === 'all'}
-                          onClick={() => changeRegion('all')}
-                        >
-                          <RegionMedal tier="all" />
-                          <span>
-                            <strong>All regions</strong>
-                            <small>Show the complete Pokédex</small>
-                          </span>
-                        </button>
-                        {regions.map((regionName) => {
-                          const medal = regionMedals.get(regionName)!;
-                          return (
-                            <button
-                              type="button"
-                              role="option"
-                              aria-selected={region === regionName}
-                              key={regionName}
-                              onClick={() => changeRegion(regionName)}
-                            >
-                              <RegionMedal region={regionName} tier={medal.tier} />
-                              <span>
-                                <strong>{titleCase(regionName)}</strong>
-                                <small>
-                                  {medal.collected}/{medal.total} · {titleCase(medal.tier)}
-                                </small>
-                              </span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    <div className={`category-picker${categoryPickerOpen ? ' is-open' : ''}`}>
-                      <button
-                        type="button"
-                        className="category-picker__toggle"
-                        aria-expanded={categoryPickerOpen}
-                        aria-controls="collection-category-options"
-                        onClick={() => {
-                          setRegionPickerOpen(false);
-                          setCategoryPickerOpen((value) => !value);
-                        }}
-                      >
-                        <span>{categoryGlyphs[activeCategory]}</span>
-                        <span className="picker-copy">
-                          <strong>{activeCategoryLabel}</strong>
-                          <small>Collection form</small>
-                        </span>
-                        <Icon name="chevron-right" />
-                      </button>
-                      <div
-                        id="collection-category-options"
-                        className="category-scroller"
-                        role="toolbar"
-                        aria-label="Collection category"
-                      >
-                        {bootstrap.categories
-                          .filter(
-                            (category) =>
-                              dexView === 'species' ||
-                              category.id === 'normal' ||
-                              category.id === 'shiny',
-                          )
-                          .map((category) => (
-                            <button
-                              type="button"
-                              key={category.id}
-                              className={activeCategory === category.id ? 'is-active' : ''}
-                              aria-pressed={activeCategory === category.id}
-                              onClick={() => changeCategory(category.id)}
-                            >
-                              <span>{categoryGlyphs[category.id]}</span>
-                              {category.shortLabel ?? category.label}
-                            </button>
-                          ))}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="state-filter" role="group" aria-label="Collection state">
-                    {(['all', 'missing', 'collected'] as const).map((value) => (
-                      <button
-                        type="button"
-                        key={value}
-                        aria-pressed={collectionFilter === value}
-                        onClick={() => setCollectionFilter(value)}
-                      >
-                        {value === 'all' ? 'All' : value[0]?.toUpperCase() + value.slice(1)}
-                      </button>
-                    ))}
-                  </div>
-                </section>
-
-                <div className="dex-results">
-                  <div className="dex-view-switcher" role="group" aria-label="Pokédex view">
-                    {(
-                      [
-                        ['species', 'National Dex'],
-                        ['mega', 'Mega & Primal'],
-                        ['gigantamax', 'Gigantamax'],
-                      ] as const
-                    ).map(([value, label]) => (
-                      <button
-                        type="button"
-                        key={value}
-                        aria-pressed={dexView === value}
-                        onClick={() => {
-                          setDexView(value);
-                          if (value !== 'species' && !['normal', 'shiny'].includes(activeCategory))
-                            changeCategory('normal');
-                        }}
-                      >
-                        {label}
-                      </button>
-                    ))}
-                  </div>
-                  <div className="grid-heading">
-                    <div>
-                      <h2>
-                        {dexView === 'species'
-                          ? `${activeCategoryLabel} collection`
-                          : dexView === 'mega'
-                            ? `Mega & Primal · ${activeCategoryLabel}`
-                            : `Gigantamax · ${activeCategoryLabel}`}
-                      </h2>
-                      <span>{filtered.length} shown</span>
-                    </div>
-                    <div className="state-legend">
-                      <span>
-                        <i className="is-collected" />
-                        Collected
-                      </span>
-                      <span>
-                        <i className="is-missing" />
-                        Missing
-                      </span>
-                      <span>
-                        <i className="is-unavailable" />
-                        Unavailable
-                      </span>
-                    </div>
-                  </div>
-                  <PokemonGrid
-                    items={filtered}
-                    categoryId={activeCategory}
-                    quickCheck={quickCheck}
-                    collectedKeys={collectedKeys}
-                    wantedFormIds={wantedFormIds}
-                    pendingKeys={pendingKeys}
-                    onOpen={setSelected}
-                    onToggle={(item, value) => changeCollection(item, activeCategory, value)}
-                  />
-                </div>
-              </section>
-            </section>
-          )}
-          {(route === 'profile' || route === 'owner') && (
-            <DataPage
-              catalog={bootstrap.catalog}
-              collectionEntries={collectionEntries}
-              catalogVersion={bootstrap.catalogVersion}
-              storageMode={storageMode}
-              theme={theme}
-              accentTheme={accentTheme}
-              showCloudAccess={route === 'owner'}
-              onThemeChange={changeTheme}
-              onAccentThemeChange={changeAccentTheme}
-              onUnlock={() => setAccessDialogOpen(true)}
-              onLeaveCloud={() => void leaveCloud()}
-              onImport={applyImport}
-              onExportBackup={exportPortableBackup}
-              onRestoreBackup={restorePortableBackup}
-              snapshots={recoverySnapshots}
-              onRestoreSnapshot={restoreSnapshot}
-            />
-          )}
+          <Suspense fallback={<LoadingScreen />}>
+            {route === 'home' && (
+              <HomeDashboard
+                catalog={bootstrap.catalog}
+                categories={bootstrap.categories}
+                entries={collectionEntries}
+              />
+            )}
+            {route === 'search' && (
+              <SearchLab
+                catalog={bootstrap.catalog}
+                entries={collectionEntries}
+                categories={bootstrap.categories}
+              />
+            )}
+            {route === 'dex' && (
+              <DexRoute
+                catalog={bootstrap.catalog}
+                categories={bootstrap.categories}
+                entries={collectionEntries}
+                wantedEntries={wantedEntries}
+                activeCategory={activeCategory}
+                pendingKeys={pendingKeys}
+                onCategoryChange={changeCategory}
+                onOpen={setSelected}
+                onCollectionChange={(item, value) => changeCollection(item, activeCategory, value)}
+              />
+            )}
+            {(route === 'profile' || route === 'owner') && (
+              <DataPage
+                catalog={bootstrap.catalog}
+                collectionEntries={collectionEntries}
+                catalogVersion={bootstrap.catalogVersion}
+                storageMode={storageMode}
+                theme={theme}
+                accentTheme={accentTheme}
+                showCloudAccess={route === 'owner'}
+                onThemeChange={changeTheme}
+                onAccentThemeChange={changeAccentTheme}
+                onUnlock={() => setAccessDialogOpen(true)}
+                onLeaveCloud={() => void leaveCloud()}
+                onImport={applyImport}
+                onExportBackup={exportPortableBackup}
+                onRestoreBackup={restorePortableBackup}
+                snapshots={recoverySnapshots}
+                onRestoreSnapshot={restoreSnapshot}
+              />
+            )}
+          </Suspense>
         </main>
       </div>
 
       {selected && (
-        <DetailSheet
-          item={selected}
-          catalog={bootstrap.catalog}
-          categories={bootstrap.categories}
-          collectionEntries={collectionEntries}
-          pendingKeys={pendingKeys}
-          onClose={() => setSelected(null)}
-          onNavigate={setSelected}
-          onCollectionChange={changeCollection}
-        />
+        <Suspense fallback={null}>
+          <DetailSheet
+            item={selected}
+            catalog={bootstrap.catalog}
+            categories={bootstrap.categories}
+            collectionEntries={collectionEntries}
+            pendingKeys={pendingKeys}
+            onClose={() => setSelected(null)}
+            onNavigate={setSelected}
+            onCollectionChange={changeCollection}
+          />
+        </Suspense>
       )}
       {toast && (
         <div
@@ -1631,11 +1100,11 @@ export default function App() {
           </button>
         </div>
       )}
-      <AccessDialog
-        open={accessDialogOpen}
-        onClose={() => setAccessDialogOpen(false)}
-        onSubmit={unlock}
-      />
+      {accessDialogOpen && (
+        <Suspense fallback={null}>
+          <OwnerAccessDialog open onClose={() => setAccessDialogOpen(false)} onSubmit={unlock} />
+        </Suspense>
+      )}
       {updateReady && (
         <aside className="update-prompt" role="status" aria-live="polite">
           <Icon name="refresh" />
@@ -1643,18 +1112,14 @@ export default function App() {
             <strong>A CatchGrid update is ready</strong>
             <p>Apply it now to use the newest catalog and app fixes.</p>
           </div>
-          <button
-            type="button"
-            className="button button--primary"
-            onClick={() => window.dispatchEvent(new Event('catchgrid:apply-update'))}
-          >
+          <button type="button" className="button button--primary" onClick={applyUpdate}>
             Update now
           </button>
           <button
             type="button"
             className="icon-button"
             aria-label="Dismiss update"
-            onClick={() => setUpdateReady(false)}
+            onClick={dismissUpdate}
           >
             <Icon name="close" />
           </button>

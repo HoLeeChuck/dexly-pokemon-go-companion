@@ -7,6 +7,7 @@ import {
 import type { CatalogItem, Category, CategoryId, CollectionEntry } from '../../shared/types';
 import { buildDiscordMessages } from '../lib/discordShare';
 import { Icon } from './Icon';
+import '../routes/search.css';
 
 const SEARCH_CATEGORY_IDS = [
   'normal',
