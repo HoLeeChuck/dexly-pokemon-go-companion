@@ -5,8 +5,8 @@ export function useAppNavigation() {
   const scrollPositions = useRef<Record<RouteId, number>>({
     home: 0,
     dex: 0,
-    search: 0,
-    profile: 0,
+    progress: 0,
+    settings: 0,
     owner: 0,
   });
   useEffect(() => {

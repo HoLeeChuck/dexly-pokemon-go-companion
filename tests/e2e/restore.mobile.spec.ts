@@ -32,7 +32,7 @@ test.describe('portable backup restore safety', () => {
     page,
   }) => {
     await installFakeApi(page);
-    await page.goto('/#/profile');
+    await page.goto('/#/settings');
 
     const backupJson = createPortableProfileBackupJson(
       backupProfile,
@@ -45,11 +45,12 @@ test.describe('portable backup restore safety', () => {
       buffer: Buffer.from(backupJson),
     });
     await expect(page.locator('.toast')).toContainText('Portable backup restored');
+    await page.locator('.toast__close').click();
 
     await page.goto('/#/dex');
     await page.getByRole('button', { name: /^Quick Check/ }).click();
     await page.getByTestId('pokemon-card-2').click();
-    await expect(page.locator('.toast')).toContainText(/Ivysaur marked (collected|missing)/);
+    await expect(page.locator('.toast').filter({ hasText: /Ivysaur marked/ })).toHaveCount(0);
 
     const persisted = await page.evaluate((storageKey) => {
       const value = localStorage.getItem(storageKey);

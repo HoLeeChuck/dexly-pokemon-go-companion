@@ -7,6 +7,7 @@ import {
 import type { CatalogItem, CollectionEntry } from '../../shared/types';
 import { ACCENT_THEMES, type AccentTheme } from '../lib/theme';
 import { Icon } from './Icon';
+import { APP_VERSION, PORTFOLIO_URL } from '../config/app';
 import '../routes/profile.css';
 
 export function DataPage({
@@ -26,6 +27,7 @@ export function DataPage({
   onRestoreBackup,
   snapshots,
   onRestoreSnapshot,
+  onSetRegionNormal,
 }: {
   catalog: readonly CatalogItem[];
   collectionEntries: readonly CollectionEntry[];
@@ -43,6 +45,7 @@ export function DataPage({
   onRestoreBackup: (json: string) => void;
   snapshots: readonly { id: string; createdAt: string; reason: string }[];
   onRestoreSnapshot: (id: string) => void;
+  onSetRegionNormal: (region: string, collected: boolean) => Promise<number>;
 }) {
   const fileRef = useRef<HTMLInputElement>(null);
   const backupRef = useRef<HTMLInputElement>(null);
@@ -116,12 +119,10 @@ export function DataPage({
       <header className="page-hero data-hero">
         <div>
           <span className="eyebrow eyebrow--light">
-            <Icon name="user" /> Profile & data
+            <Icon name="settings" /> Settings
           </span>
-          <h1>Your collection stays portable.</h1>
-          <p>
-            Import with a preview, export at any time, and keep this browser's collection portable.
-          </p>
+          <h1>Make CatchGrid work for you.</h1>
+          <p>Set up your collection, choose its appearance, and protect your browser data.</p>
         </div>
         <span className="data-hero__icon" aria-hidden="true">
           <Icon name="database" />
@@ -136,6 +137,83 @@ export function DataPage({
           </div>
         </div>
       )}
+
+      <section className="panel collection-setup-panel">
+        <div className="panel-heading">
+          <div>
+            <span className="eyebrow">Collection setup</span>
+            <h2>Start from a completed region</h2>
+          </div>
+          <Icon name="grid" />
+        </div>
+        <p>
+          Mark obtainable Normal entries together, then unmark the few you still need. Special
+          collection categories are never changed.
+        </p>
+        {storageMode === 'cloud' && (
+          <p className="notice notice--subtle">
+            Bulk region setup is available for browser collections. Switch back to this browser
+            before using it.
+          </p>
+        )}
+        <div className="region-setup-grid">
+          {[...new Set(catalog.filter((item) => item.isDefault).map((item) => item.region))].map(
+            (region) => {
+              const regionLabel = region.charAt(0).toUpperCase() + region.slice(1).toLowerCase();
+              const count = catalog.filter(
+                (item) =>
+                  item.isDefault && item.region === region && item.rules.normal === 'released',
+              ).length;
+              return (
+                <article key={region}>
+                  <div>
+                    <strong>{regionLabel}</strong>
+                    <small>{count} obtainable Normal entries</small>
+                  </div>
+                  <div>
+                    <button
+                      type="button"
+                      className="button button--primary"
+                      disabled={storageMode === 'cloud'}
+                      onClick={() => {
+                        if (
+                          window.confirm(
+                            `Mark ${count} obtainable Normal entries in ${regionLabel} as collected? Special categories will not change.`,
+                          )
+                        )
+                          void onSetRegionNormal(region, true).then((changed) =>
+                            setMessage(
+                              `${regionLabel}: ${changed} Normal entries marked collected.`,
+                            ),
+                          );
+                      }}
+                    >
+                      Mark complete
+                    </button>
+                    <button
+                      type="button"
+                      className="button button--secondary"
+                      disabled={storageMode === 'cloud'}
+                      onClick={() => {
+                        if (
+                          window.confirm(
+                            `Clear the Normal collection state for ${regionLabel}? Special categories will not change.`,
+                          )
+                        )
+                          void onSetRegionNormal(region, false).then((changed) =>
+                            setMessage(`${regionLabel}: ${changed} Normal entries cleared.`),
+                          );
+                      }}
+                    >
+                      Clear Normal
+                    </button>
+                  </div>
+                </article>
+              );
+            },
+          )}
+        </div>
+      </section>
 
       <section className="panel appearance-panel">
         <div className="panel-heading">
@@ -418,6 +496,7 @@ export function DataPage({
       )}
 
       <footer className="attribution">
+        <span className="eyebrow">About CatchGrid</span>
         <strong>CatchGrid is an unofficial fan project.</strong>
         <p>
           Pokémon and Pokémon GO are property of their respective owners. Sprite mappings reference
@@ -425,12 +504,16 @@ export function DataPage({
           endorsement is implied.
         </p>
         <span>
-          Catalog {catalogVersion} · {catalog.length} representative forms
+          CatchGrid v{APP_VERSION} · Catalog {catalogVersion} · {catalog.length} representative
+          forms
         </span>
         <nav aria-label="Legal and project policies">
           <a href="/privacy/">Privacy</a>
           <a href="/security/">Security</a>
           <a href="/notices/">Third-party notices</a>
+          <a href={PORTFOLIO_URL} target="_blank" rel="noreferrer">
+            Cody Johnson · Portfolio
+          </a>
         </nav>
       </footer>
     </section>

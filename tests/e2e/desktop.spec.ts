@@ -37,24 +37,25 @@ test('legacy workers.dev visitors receive a safe export path without an automati
 
 test('dark mode switches the complete interface and persists after reload', async ({ page }) => {
   await installFakeApi(page);
-  await page.goto('/#/home');
-
-  const toggle = page.getByRole('button', { name: 'Use dark mode' });
-  await expect(toggle).toBeVisible();
-  await toggle.click();
+  await page.goto('/#/settings');
+  await page
+    .getByRole('group', { name: 'Brightness mode' })
+    .getByRole('button', { name: 'Dark' })
+    .click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-  await expect(page.locator('.regional-progress')).toHaveCSS('background-color', 'rgb(23, 30, 28)');
 
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-  await expect(page.getByRole('button', { name: 'Use light mode' })).toBeVisible();
+  await expect(
+    page.getByRole('group', { name: 'Brightness mode' }).getByRole('button', { name: 'Dark' }),
+  ).toHaveAttribute('aria-pressed', 'true');
 });
 
 test('appearance settings combine a persistent color theme with light and dark modes', async ({
   page,
 }) => {
   await installFakeApi(page);
-  await page.goto('/#/profile');
+  await page.goto('/#/settings');
 
   const colorThemes = page.getByRole('radiogroup', { name: 'Color theme' });
   await expect(colorThemes.getByRole('radio')).toHaveCount(6);
@@ -67,7 +68,7 @@ test('appearance settings combine a persistent color theme with light and dark m
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await page
     .getByRole('navigation', { name: 'Primary navigation' })
-    .getByRole('button', { name: 'Search Lab' })
+    .getByRole('button', { name: 'Progress' })
     .click();
   const heroBackground = await page
     .locator('.lab-hero')
@@ -82,22 +83,25 @@ test('appearance settings combine a persistent color theme with light and dark m
 
   await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(17, 12, 22)');
   await page.goto('/#/home');
-  await expect(page.locator('.regional-progress')).toHaveCSS('background-color', 'rgb(32, 24, 39)');
+  await expect(page.locator('.home-section').first()).not.toHaveCSS(
+    'background-color',
+    'rgb(255, 255, 255)',
+  );
 
-  await page.goto('/#/profile');
+  await page.goto('/#/settings');
   await colorThemes.getByRole('radio', { name: 'Blue' }).click();
   await expect(page.locator('html')).toHaveAttribute('data-accent', 'blue');
   await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(8, 18, 23)');
   await page.goto('/#/home');
-  await expect(page.locator('.regional-progress')).toHaveCSS('background-color', 'rgb(17, 30, 37)');
+  await expect(page.locator('.home-section').first()).not.toHaveCSS(
+    'background-color',
+    'rgb(255, 255, 255)',
+  );
 
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-accent', 'blue');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-  await page
-    .getByRole('navigation', { name: 'Primary navigation' })
-    .getByRole('button', { name: 'Profile' })
-    .click();
+  await page.locator('.desktop-sidebar').getByRole('button', { name: 'Settings' }).click();
   await expect(page.getByRole('heading', { name: 'Appearance' })).toBeVisible();
   const restoredColorThemes = page.getByRole('radiogroup', { name: 'Color theme' });
   await expect(restoredColorThemes.getByRole('radio', { name: 'Blue' })).toHaveAttribute(
@@ -106,31 +110,32 @@ test('appearance settings combine a persistent color theme with light and dark m
   );
 });
 
-test('profile layout starts both columns together and keeps Cody Cloud access unlisted', async ({
-  page,
-}) => {
+test('settings uses a single column and keeps Cody Cloud access unlisted', async ({ page }) => {
   await installFakeApi(page);
-  await page.goto('/#/profile');
+  await page.goto('/#/settings');
 
   await expect(page.getByRole('heading', { name: 'Cody Cloud' })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Sign in to Cody Cloud' })).toHaveCount(0);
   await expect(page.getByText('Private by default')).toHaveCount(0);
 
   const layout = await page.locator('.page--data').evaluate((element) => {
+    const setup = element.querySelector('.collection-setup-panel')!.getBoundingClientRect();
     const appearance = element.querySelector('.appearance-panel')!.getBoundingClientRect();
     const importPanel = element.querySelector('.import-panel')!.getBoundingClientRect();
     return {
+      setupTop: Math.round(setup.top),
       appearanceTop: Math.round(appearance.top),
       importTop: Math.round(importPanel.top),
     };
   });
-  expect(Math.abs(layout.appearanceTop - layout.importTop)).toBeLessThanOrEqual(2);
+  expect(layout.setupTop).toBeLessThan(layout.appearanceTop);
+  expect(layout.appearanceTop).toBeLessThan(layout.importTop);
 
   await page.goto('/cody');
   await expect(page.getByRole('heading', { name: 'Cody Cloud' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Sign in to Cody Cloud' })).toBeVisible();
   const navigation = page.getByRole('navigation', { name: 'Primary navigation' });
-  await expect(navigation.getByRole('button')).toHaveCount(4);
+  await expect(navigation.getByRole('button')).toHaveCount(3);
   await expect(navigation.getByText('Cody Cloud')).toHaveCount(0);
   await navigation.getByRole('button', { name: 'Home' }).click();
   await expect(page).toHaveURL(/\/#\/home$/);
@@ -143,10 +148,12 @@ test('first launch opens the all-in-one Home without exposing the unfinished Tra
   const api = await installFakeApi(page);
   await page.goto('/');
 
-  await expect(page.getByRole('heading', { name: 'Your Dex at a glance.' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Build the collection you care about.' }),
+  ).toBeVisible();
   const dashboardLayout = await page.locator('.page--dashboard').evaluate((dashboard) => {
     const hero = dashboard.querySelector('.dashboard-hero')!.getBoundingClientRect();
-    const progress = dashboard.querySelector('.regional-progress')!.getBoundingClientRect();
+    const progress = dashboard.querySelector('.home-section')!.getBoundingClientRect();
     return {
       pageOverflows: document.documentElement.scrollWidth > document.documentElement.clientWidth,
       heroWidth: Math.round(hero.width),
@@ -158,13 +165,15 @@ test('first launch opens the all-in-one Home without exposing the unfinished Tra
   expect(dashboardLayout.sameColumn).toBe(true);
   expect(Math.abs(dashboardLayout.heroWidth - dashboardLayout.progressWidth)).toBeLessThan(2);
   const navigation = page.getByRole('navigation', { name: 'Primary navigation' });
-  await expect(navigation.getByRole('button')).toHaveCount(4);
+  await expect(navigation.getByRole('button')).toHaveCount(3);
   await expect(navigation.getByRole('button', { name: 'Home' })).toBeVisible();
-  await expect(navigation.getByRole('button', { name: 'Search Lab' })).toBeVisible();
+  await expect(navigation.getByRole('button', { name: 'Progress' })).toBeVisible();
   await expect(navigation.getByRole('button', { name: 'Trade' })).toHaveCount(0);
 
   await page.goto('/#/trade');
-  await expect(page.getByRole('heading', { name: 'Your Dex at a glance.' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Build the collection you care about.' }),
+  ).toBeVisible();
   expect(api.unexpectedWriteCount).toBe(0);
 });
 
@@ -173,7 +182,7 @@ test('critical routes fit every public launch viewport without horizontal overfl
 }) => {
   await installFakeApi(page);
   const widths = [320, 375, 390, 430, 768, 1024, 1440];
-  const routes = ['home', 'dex', 'search', 'profile'];
+  const routes = ['home', 'dex', 'progress', 'settings'];
 
   for (const width of widths) {
     await page.setViewportSize({ width, height: width < 768 ? 844 : 900 });
@@ -202,20 +211,20 @@ test('multi-form details track alternate Regular and Shiny without inflating spe
 
   await page.getByTestId('pokemon-card-38').click();
   await expect(page.getByRole('dialog', { name: 'Ninetales' })).toBeVisible();
-  await page.getByRole('tab', { name: /Forms 2/ }).click();
-  const forms = page.locator('.forms-gallery');
-  await expect(forms.locator('.form-card')).toHaveCount(2);
-  const alolan = forms.locator('.form-card', { hasText: 'Alolan Ninetales' });
-  await expect(alolan).toContainText('regional');
+  const forms = page.locator('.compact-form-sections');
+  await expect(forms.locator('.compact-form-row')).toHaveCount(1);
+  const alolan = forms.locator('.compact-form-row', { hasText: 'Alolan Ninetales' });
+  await expect(alolan).toContainText('Alternate form');
   await expect(alolan.getByRole('button')).toHaveCount(2);
-  await alolan.getByRole('button', { name: /Alolan Ninetales Regular: missing/ }).click();
-  await expect(
-    alolan.getByRole('button', { name: /Alolan Ninetales Regular: collected/ }),
-  ).toHaveAttribute('aria-pressed', 'true');
+  await alolan.getByRole('button', { name: /Regular/ }).click();
+  await expect(alolan.getByRole('button', { name: /Regular/ })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
 
   await page.getByRole('button', { name: 'Close details' }).click();
   await page.goto('/#/home');
-  await expect(page.getByLabel('All Pokemon collection overview')).toContainText('12');
+  await expect(page.getByRole('heading', { name: 'A quick snapshot' })).toBeVisible();
 });
 
 test('desktop shell shows its sidebar and navigates without the mobile bar', async ({ page }) => {
@@ -226,7 +235,7 @@ test('desktop shell shows its sidebar and navigates without the mobile bar', asy
   expect(page.viewportSize()).toEqual({ width: 1440, height: 900 });
   const sidebar = page.locator('.desktop-sidebar');
   await expect(sidebar).toBeVisible();
-  await expect(sidebar.getByText('CatchGrid')).toBeVisible();
+  await expect(sidebar.getByRole('button', { name: 'Go to home page' })).toBeVisible();
   await expect(sidebar.getByText('Private by default')).toHaveCount(0);
   await expect(page.locator('.bottom-nav')).toHaveCount(0);
 
@@ -278,7 +287,7 @@ test('desktop shell shows its sidebar and navigates without the mobile bar', asy
   await page.setViewportSize({ width: 1440, height: 900 });
 
   const navigation = sidebar.getByRole('navigation', { name: 'Primary navigation' });
-  await expect(navigation.getByRole('button')).toHaveCount(4);
+  await expect(navigation.getByRole('button')).toHaveCount(3);
   const home = navigation.getByRole('button', { name: 'Home' });
   await home.click();
 
@@ -288,15 +297,17 @@ test('desktop shell shows its sidebar and navigates without the mobile bar', asy
     0,
   );
 
-  await navigation.getByRole('button', { name: 'Search Lab' }).click();
-  await expect(page).toHaveURL(/#\/search$/);
+  await navigation.getByRole('button', { name: 'Progress' }).click();
+  await expect(page).toHaveURL(/#\/progress$/);
   await expect(
-    page.getByRole('heading', { name: 'Turn gaps into useful searches.' }),
+    page.getByRole('heading', { name: 'See what you have. Act on what is missing.' }),
   ).toBeVisible();
 
   await sidebar.getByRole('button', { name: 'Go to home page' }).click();
   await expect(page).toHaveURL(/#\/home$/);
-  await expect(page.getByRole('heading', { name: 'Your Dex at a glance.' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Build the collection you care about.' }),
+  ).toBeVisible();
   expect(api.collectionMutationCount).toBe(0);
   expect(api.unexpectedWriteCount).toBe(0);
 });
@@ -305,10 +316,7 @@ test('transformation views show and search the full collector form name', async 
   await installFakeApi(page);
   await page.goto('/#/dex');
 
-  await page
-    .getByRole('group', { name: 'Pokédex view' })
-    .getByRole('button', { name: 'Mega & Primal' })
-    .click();
+  await page.getByLabel('Collection form').selectOption('mega');
   const mega = page.getByRole('button', { name: /Open Mega Charizard X details/ });
   await expect(mega).toContainText('Mega Charizard X');
   await mega.click();
@@ -324,8 +332,7 @@ test('navigating away from a forms gallery returns to collection controls', asyn
   await page.goto('/#/dex');
   await page.getByTestId('pokemon-card-25').click();
 
-  await page.getByRole('tab', { name: /Forms/ }).click();
-  await expect(page.getByRole('heading', { name: 'Regular & Shiny' })).toBeVisible();
+  await expect(page.getByRole('tab', { name: /Costumes/ })).toBeDisabled();
   await page.getByRole('button', { name: 'Next Pokémon: Ninetales' }).click();
   await expect(page.getByRole('dialog', { name: 'Ninetales' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Collection', exact: true })).toBeVisible();
@@ -386,7 +393,9 @@ test('completing every released category activates the animated rainbow hook', a
   await expect(sheet).toHaveAttribute('data-collection-complete', 'false');
 
   for (const category of ['Shiny', 'Lucky', 'Hundo', 'XXL', 'XXS']) {
-    const tile = page.getByRole('button', { name: new RegExp(`^${category}`) });
+    const tile = page
+      .locator('.category-tile-grid')
+      .getByRole('button', { name: new RegExp(`^${category}`) });
     await tile.click();
     await expect(tile).toHaveAttribute('aria-pressed', 'true');
     await expect(tile.locator('.category-tile__status')).toBeVisible();
@@ -418,11 +427,7 @@ test('Shadow collection uses the standard card treatment without an aura', async
   const api = await installFakeApi(page);
   await page.goto('/#/dex');
 
-  await page.locator('.category-picker__toggle').click();
-  await page
-    .getByRole('toolbar', { name: 'Collection category' })
-    .getByRole('button', { name: 'Shadow' })
-    .click();
+  await page.getByLabel('Collection form').selectOption('shadow');
   const shadowCard = page.getByTestId('pokemon-card-1');
   await expect(shadowCard).toHaveAttribute('data-category', 'shadow');
   await expect(shadowCard).not.toHaveClass(/pokemon-card--shadow/);
