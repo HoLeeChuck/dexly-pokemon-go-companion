@@ -36,7 +36,7 @@ function item(overrides: Partial<CatalogItem>): CatalogItem {
 }
 
 describe('collectorFormsForSpecies', () => {
-  it('uses the default Unown as canonical A and omits a duplicate Unown A', () => {
+  it('keeps each explicitly collectible Unown letter exactly once', () => {
     const base = item({});
     const duplicateA = item({
       id: 'form-0201-a',
@@ -56,6 +56,6 @@ describe('collectorFormsForSpecies', () => {
     });
     expect(
       collectorFormsForSpecies([base, duplicateA, formB], base).map((form) => form.formName),
-    ).toEqual(['Unown B']);
+    ).toEqual(['Unown A', 'Unown B']);
   });
 });

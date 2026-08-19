@@ -224,7 +224,7 @@ describe('Worker bootstrap and authentication boundary', () => {
     expect(response.headers.get('cache-control')).toContain('no-store');
     expect(payload.authMode).toBe('local');
     expect(payload.profileId).toBe(PROFILE_ID);
-    expect(payload.catalogVersion).toBe('2026-08-13.1');
+    expect(payload.catalogVersion).toBe('2026-08-19.1');
     expect(payload.revision).toBe(0);
     expect(payload.categories.map((category) => category.id)).toEqual([
       'normal',

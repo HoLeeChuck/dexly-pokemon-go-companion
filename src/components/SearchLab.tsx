@@ -7,6 +7,7 @@ import {
 import type { CatalogItem, Category, CategoryId, CollectionEntry } from '../../shared/types';
 import { buildDiscordMessages } from '../lib/discordShare';
 import { createCatalogIndex } from '../catalog/catalogIndex';
+import { collectionCategoryLabel } from '../catalog/capabilities';
 import { defaultRegionCatalog } from '../catalog/regionMedals';
 import { Icon } from './Icon';
 import '../routes/search.css';
@@ -51,7 +52,7 @@ export function ProgressPage({
   );
 
   const labels = useMemo(
-    () => new Map(categories.map((category) => [category.id, category.label])),
+    () => new Map(categories.map((category) => [category.id, collectionCategoryLabel(category)])),
     [categories],
   );
   const nationalCatalog = useMemo(() => catalog.filter((item) => item.isDefault), [catalog]);
@@ -213,7 +214,7 @@ export function ProgressPage({
             ).length;
             return (
               <article key={category.id}>
-                <strong>{category.label}</strong>
+                <strong>{collectionCategoryLabel(category)}</strong>
                 <span>
                   {collected}/{available.length}
                 </span>
@@ -276,7 +277,7 @@ export function ProgressPage({
               >
                 {categories.map((category) => (
                   <option key={category.id} value={category.id}>
-                    {category.label}
+                    {collectionCategoryLabel(category)}
                   </option>
                 ))}
               </select>

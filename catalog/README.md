@@ -1,6 +1,6 @@
 # Versioned Pokémon catalog
 
-`catalog.v1.json` contains one stable representative for every National Pokédex species through #1025, including unreleased placeholders, plus 177 reviewed Pokémon GO collector forms as of 2026-08-13. All app-facing IDs are owned by this project; PokeMiners filenames are isolated inside each form's `assets` mapping.
+`catalog.v1.json` contains one stable representative for every National Pokédex species through #1025, including unreleased placeholders, plus 179 reviewed Pokémon GO collector forms as of 2026-08-19. All app-facing IDs are owned by this project; PokeMiners filenames are isolated inside each form's `assets` mapping.
 
 ## Data contract
 
@@ -14,11 +14,11 @@
 - `tradeable` describes the form itself. Shadow Pokémon remain non-tradeable through their category rules.
 - `assets.*.upstreamPath` is a relative PokeMiners path. The commit-pinned `source.rawBaseUrl` turns it into a deterministic URL.
 
-Normal releases, Shiny releases, Shadow eligibility, types, rarity, and names begin with a hash-pinned PoGoAPI snapshot. Reviewed, dated overrides preserve newer official decisions, including Shiny Solgaleo, without rewriting older migrations. Purified follows Shadow; Normal, Hundo, XXL, and XXS are enabled for every released representative. Lucky follows trade eligibility: Mythical Pokémon are ineligible except for Meltan and Melmetal. A mined sprite proves only that an asset exists, not that a Pokémon or Shiny was released.
+Normal releases, Shiny releases, types, rarity, and names begin with a hash-pinned PoGoAPI snapshot. Historical Shadow eligibility comes from a separately hash-pinned Pokémon Database table and is applied at the standard or explicitly named regional form level; Purified follows Shadow. Reviewed, dated overrides preserve newer official decisions, including Shiny Solgaleo, Nickit, Thievul, and Mega Raichu X/Y, without rewriting older migrations. Normal, Hundo, XXL, and XXS are enabled for every released representative. Lucky follows trade eligibility: Mythical Pokémon are ineligible except for Meltan and Melmetal. A mined sprite proves only that an asset exists, not that a Pokémon or Shiny was released.
 
-Collector forms expose Normal and Shiny tracking only. Lucky, Hundo, XXL, XXS, Shadow, and Purified are deliberately `ineligible` on those form rows, keeping species-category progress separate from form galleries. This reviewed snapshot includes all 28 Unown, released regional families, current Mega/Primal and Gigantamax families, selected gender/Rotom/fusion families, and a conservative initial costume set; it does not claim every historical costume is cataloged.
+Collector forms expose Normal and Shiny tracking, with Shadow/Purified additionally enabled only for historically verified regional forms. Lucky, Hundo, XXL, and XXS remain `ineligible` on collector rows, keeping species-category progress separate from form galleries. This reviewed snapshot includes all 28 Unown letters/symbols, released regional families, current Mega/Primal and Gigantamax families, selected gender/Rotom/fusion families, and a conservative initial costume set; it does not claim every historical costume is cataloged.
 
-`catalog-overrides.v1.json` is the reviewed input, `region-medals.v1.json` is the versioned regional and category-specific denominator policy, and `CHANGE_REPORT_2026-08-13.md` records sources, hashes, decisions, and the remaining asset-license blocker. Each region explicitly defines Normal, Shiny, Lucky, Hundo, XXL, XXS, Shadow, and Purified thresholds. Every category's platinum goal remains the complete regional species allocation, including unreleased or currently ineligible species; availability never shrinks the goal. `catalog.v1.json` and migration `0009` are generated outputs.
+`catalog-overrides.v1.json` is the reviewed input, `region-medals.v1.json` is the versioned regional and category-specific denominator policy, and `CHANGE_REPORT_2026-08-19.md` records sources, hashes, decisions, exact changed forms, and the remaining asset-license blocker. Each region explicitly defines Normal, Shiny, Lucky, Hundo, XXL, XXS, Shadow, and Purified thresholds. Every category's platinum goal remains the complete regional species allocation, including unreleased or currently ineligible species; availability never shrinks the goal. `catalog.v1.json` and migration `0010` are generated outputs.
 
 ## Sprite source and URL convention
 

@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "catalogVersion": "2026-08-13.1",
-  "releaseMetadataAsOf": "2026-08-13",
-  "nextMigration": "0009_phase_b_catalog_data.sql",
+  "catalogVersion": "2026-08-19.1",
+  "releaseMetadataAsOf": "2026-08-19",
+  "nextMigration": "0010_pokemon_data_detail_audit.sql",
   "assetCommit": "1a4ad1fc6c39f361ea85d53fc3040ce482ee9d90",
   "nationalDexMax": 1025,
   "expectedApiHashes": {
@@ -15,7 +15,29 @@
     "pokemon_evolutions.json": "2ae1757dd611ff7140fd62308cc3a8f0244004e6be68cc956e559c3250aab78d",
     "pokemon_names.json": "0db52f1125a7493ceb4a89d08cf049b98637939d7cf4ae25feb091fe57f5bd7b"
   },
+  "historicalShadowSource": {
+    "url": "https://pokemondb.net/go/shadow",
+    "sha256": "222b00af94b7f5c5e1de11603b79ac12a429510e74889f6bc98420bf58cc6bbb"
+  },
   "sources": {
+    "official-mega-raichu": {
+      "kind": "official",
+      "url": "https://pokemongo.com/news/raichu-super-mega-raid-day-2026",
+      "effectiveAt": "2026-07-18",
+      "note": "Confirms the Pokémon GO debuts of Mega Raichu X and Mega Raichu Y, including Shiny Raichu encounters."
+    },
+    "official-shadow-seel": {
+      "kind": "official",
+      "url": "https://pokemongo.com/news/flying-taxi-taken-over-2026",
+      "effectiveAt": "2026-06-25",
+      "note": "Confirms Shadow Seel as a Team GO Rocket encounter."
+    },
+    "historical-shadow-database": {
+      "kind": "secondary",
+      "url": "https://pokemondb.net/go/shadow",
+      "effectiveAt": "2026-08-19",
+      "note": "Complete historical Shadow table used to derive default and explicitly regional form eligibility."
+    },
     "official-medal-model": {
       "kind": "official",
       "url": "https://niantic.helpshift.com/hc/en/6-pokemon-go/faq/101-how-do-i-level-up-and-earn-medals/",
@@ -74,7 +96,7 @@
       "kind": "official",
       "url": "https://pokemongo.com/en/news/communityday-august-2026-nickit",
       "effectiveAt": "2026-08-16T14:00:00",
-      "note": "Nickit remains non-Shiny in this August 13 snapshot; its local-time debut requires a later reviewed update."
+      "note": "Confirms the August 16, 2026 Shiny debuts of Nickit and Thievul."
     },
     "reviewed-go-form-inventory": {
       "kind": "secondary",
@@ -115,6 +137,18 @@
       "shinyState": "released",
       "shinyAsset": "pm791.s.icon.png",
       "sourceIds": ["official-go-fest-2026"]
+    },
+    {
+      "dex": 827,
+      "shinyState": "released",
+      "shinyAsset": "pm827.s.icon.png",
+      "sourceIds": ["official-nickit-schedule"]
+    },
+    {
+      "dex": 828,
+      "shinyState": "released",
+      "shinyAsset": "pm828.s.icon.png",
+      "sourceIds": ["official-nickit-schedule"]
     }
   ],
   "regionOverrides": {
@@ -976,6 +1010,22 @@
           "displayName": "Mega Pidgeot",
           "normalAsset": "pm18.fMEGA.icon.png",
           "shinyAsset": "pm18.fMEGA.s.icon.png"
+        },
+        {
+          "dex": 26,
+          "formKey": "mega-x",
+          "displayName": "Mega Raichu X",
+          "normalAsset": "pm26.fMEGA_X.icon.png",
+          "shinyAsset": "pm26.fMEGA_X.s.icon.png",
+          "sourceIds": ["official-mega-raichu"]
+        },
+        {
+          "dex": 26,
+          "formKey": "mega-y",
+          "displayName": "Mega Raichu Y",
+          "normalAsset": "pm26.fMEGA_Y.icon.png",
+          "shinyAsset": "pm26.fMEGA_Y.s.icon.png",
+          "sourceIds": ["official-mega-raichu"]
         },
         {
           "dex": 65,

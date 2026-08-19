@@ -344,6 +344,10 @@
   background: var(--paper);
 }
 
+.detail-section-tabs:has(> button:only-child) {
+  grid-template-columns: 1fr;
+}
+
 .detail-section-tabs button {
   position: relative;
   min-height: 52px;
@@ -688,7 +692,36 @@
 /* Lazy route CSS loads after the global shell, so repeat the desktop visibility override here. */
 @media (min-width: 920px) {
   .detail-nav {
+    position: absolute;
+    z-index: 8;
+    top: 50%;
     display: grid;
+    width: 4rem;
+    height: 7rem;
+    padding: 0;
+    border: 0;
+    place-items: center;
+    color: rgb(255 255 255 / 74%);
+    background: transparent;
+    transform: translateY(-50%);
+    cursor: pointer;
+  }
+
+  .detail-nav svg {
+    width: 2rem;
+    height: 2rem;
+    filter: drop-shadow(0 2px 8px rgb(0 0 0 / 45%));
+  }
+
+  .detail-nav:hover:not(:disabled),
+  .detail-nav:focus-visible {
+    color: white;
+    background: transparent;
+  }
+
+  .detail-nav:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: -0.35rem;
   }
 
   .detail-nav:disabled {

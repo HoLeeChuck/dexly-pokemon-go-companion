@@ -64,7 +64,7 @@ Important invariants include:
   unreleased species;
 - forms do not add to National Dex or regional medal denominators;
 - Mythical Pokémon are nontradeable and Lucky-ineligible except reviewed exceptions;
-- Nickit remains non-Shiny before its scheduled August 16, 2026 local-time debut;
+- Nickit and Thievul are Shiny-eligible after their August 16, 2026 Community Day debut;
 - existing form IDs and retired collection history are preserved across updates.
 
 See [the catalog guide](../catalog/README.md) and the generated catalog change report

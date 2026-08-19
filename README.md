@@ -21,12 +21,12 @@ The Pokémon Company, or Nintendo, and it never asks for Pokémon GO credentials
 
 ## Catalog scope
 
-The reviewed `2026-08-13.1` snapshot contains:
+The reviewed `2026-08-19.1` snapshot contains:
 
 - one stable representative for every National Dex number from #1 through #1025, including
   unreleased placeholders used for complete-Dex denominators;
 - 949 released standard species as of August 13, 2026;
-- 177 reviewed collector forms, for 1,202 total form records;
+- 179 reviewed collector forms, for 1,204 total form records;
 - regional, gender, costume, alternate, Mega, Primal, Gigantamax, and fusion form groups;
 - all 28 Unown forms, tracked separately for Regular and Shiny only; and
 - release, tradeability, category-rule, sprite, and provenance metadata per form.

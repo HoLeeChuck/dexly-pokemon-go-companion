@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import manifestJson from '../../catalog/catalog.v1.json';
 import medalJson from '../../catalog/region-medals.v1.json';
-import changeReport from '../../catalog/CHANGE_REPORT_2026-08-13.md?raw';
-import catalogMigration from '../../migrations/0009_phase_b_catalog_data.sql?raw';
+import changeReport from '../../catalog/CHANGE_REPORT_2026-08-19.md?raw';
+import catalogMigration from '../../migrations/0010_pokemon_data_detail_audit.sql?raw';
 import type { CatalogVariantKind, CategoryId, RuleState } from '../../shared/types';
 
 interface ManifestForm {
@@ -50,7 +50,7 @@ describe('Phase B catalog snapshot', () => {
   it('has one stable representative for every National Dex species', () => {
     const defaults = manifest.forms.filter((form) => form.isDefault);
     expect(manifest.schemaVersion).toBe(2);
-    expect(manifest.catalogVersion).toBe('2026-08-13.1');
+    expect(manifest.catalogVersion).toBe('2026-08-19.1');
     expect(defaults).toHaveLength(1025);
     expect(defaults.map((form) => form.dex)).toEqual(
       Array.from({ length: 1025 }, (_, index) => index + 1),
@@ -65,10 +65,10 @@ describe('Phase B catalog snapshot', () => {
   it('binds the generated migration and report to this exact manifest snapshot', async () => {
     const manifestHash = await sha256(JSON.stringify(manifestJson));
     expect(catalogMigration).toContain(`'${manifestHash}'`);
-    expect(catalogMigration).toContain("'2026-08-13.1'");
-    expect(changeReport).toContain('# Catalog change report — 2026-08-13.1');
+    expect(catalogMigration).toContain("'2026-08-19.1'");
+    expect(changeReport).toContain('# Pokémon availability audit — 2026-08-19.1');
     expect(changeReport).toContain('- National Dex placeholders: 1025');
-    expect(changeReport).toContain('- Reviewed collector forms: 177');
+    expect(changeReport).toContain('- Reviewed collector forms: 179');
   });
 
   it('contains the reviewed regional, gender, Rotom, costume, and transformation families', () => {
@@ -79,6 +79,14 @@ describe('Phase B catalog snapshot', () => {
     expect(byId.get('form-0678-female')).toMatchObject({ variantKind: 'gender' });
     expect(byId.get('form-0479-heat')).toMatchObject({ collectorGroupId: 'rotom' });
     expect(byId.get('form-0006-mega-x')).toMatchObject({ variantKind: 'mega' });
+    expect(byId.get('form-0026-mega-x')).toMatchObject({
+      variantKind: 'mega',
+      formName: 'Mega Raichu X',
+    });
+    expect(byId.get('form-0026-mega-y')).toMatchObject({
+      variantKind: 'mega',
+      formName: 'Mega Raichu Y',
+    });
     expect(byId.get('form-0382-primal')).toMatchObject({ variantKind: 'primal' });
     expect(byId.get('form-0812-gigantamax')).toMatchObject({
       variantKind: 'gigantamax',
@@ -103,15 +111,32 @@ describe('Phase B catalog snapshot', () => {
     }
   });
 
-  it('preserves the reviewed Solgaleo and pre-Nickit release decisions', () => {
+  it('preserves Solgaleo and advances the completed Nickit release', () => {
     expect(byId.get('form-0791-standard')).toMatchObject({
       release: { shiny: true },
       rules: { shiny: 'released' },
       assets: { shiny: { upstreamPath: 'pm791.s.icon.png' } },
     });
     expect(byId.get('form-0827-standard')).toMatchObject({
-      release: { shiny: false },
-      rules: { shiny: 'unreleased' },
+      release: { shiny: true },
+      rules: { shiny: 'released' },
+    });
+    expect(byId.get('form-0828-standard')?.rules.shiny).toBe('released');
+  });
+
+  it('applies the historical Shadow audit and derives Purified eligibility', () => {
+    for (const dex of [
+      16, 17, 18, 56, 57, 979, 72, 73, 77, 78, 86, 87, 92, 93, 94, 95, 208, 98, 99,
+    ]) {
+      expect(byId.get(`form-${String(dex).padStart(4, '0')}-standard`)?.rules).toMatchObject({
+        shadow: 'released',
+        purified: 'released',
+      });
+    }
+    expect(byId.get('form-0084-standard')?.rules.shadow).toBe('ineligible');
+    expect(byId.get('form-0077-galar')?.rules).toMatchObject({
+      shadow: 'released',
+      purified: 'released',
     });
   });
 

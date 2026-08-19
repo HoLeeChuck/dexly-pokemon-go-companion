@@ -231,10 +231,22 @@ function validateManifest(manifest, medals) {
       if (defaultsByDex.has(form.dex)) add(`${at} is a second default for #${form.dex}.`);
       defaultsByDex.set(form.dex, form);
     } else {
-      for (const category of ['lucky', 'hundo', 'xxl', 'xxs', 'shadow', 'purified']) {
+      for (const category of ['lucky', 'hundo', 'xxl', 'xxs']) {
         if (form.rules?.[category] !== 'ineligible') {
           add(`${at} collector form ${category} must be ineligible.`);
         }
+      }
+      if (form.variantKind !== 'regional') {
+        for (const category of ['shadow', 'purified']) {
+          if (form.rules?.[category] !== 'ineligible') {
+            add(`${at} non-regional collector form ${category} must be ineligible.`);
+          }
+        }
+      } else if (
+        form.rules?.shadow === 'released' &&
+        !form.sourceIds?.includes('historical-shadow-database')
+      ) {
+        add(`${at} regional Shadow form lacks form-specific historical evidence.`);
       }
     }
   }
@@ -253,6 +265,8 @@ function validateManifest(manifest, medals) {
     'form-0678-female',
     'form-0479-heat',
     'form-0006-mega-x',
+    'form-0026-mega-x',
+    'form-0026-mega-y',
     'form-0382-primal',
     'form-0812-gigantamax',
     'form-0646-black',
@@ -261,8 +275,8 @@ function validateManifest(manifest, medals) {
   for (const id of requiredForms)
     if (!formById.has(id)) add(`Required reviewed form ${id} missing.`);
   const nickit = formById.get('form-0827-standard');
-  if (nickit?.release.shiny !== false || nickit?.rules.shiny !== 'unreleased') {
-    add('Nickit must remain non-Shiny before its August 16, 2026 scheduled release.');
+  if (nickit?.release.shiny !== true || nickit?.rules.shiny !== 'released') {
+    add('Nickit must be Shiny after its August 16, 2026 Community Day debut.');
   }
 
   if (medals?.schemaVersion !== 2) add('Region medals schemaVersion must equal 2.');
