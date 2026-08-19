@@ -69,7 +69,7 @@ supports one-way migration from `dexly:local-profile:v1` and legacy appearance k
 
 ## Catalog model
 
-Catalog version `2026-08-13.1` contains 1,025 stable National Dex representatives and 177
+Catalog version `2026-08-19.1` contains 1,025 stable National Dex representatives and 179
 reviewed collector forms, or 1,202 form records total. Of the standard representatives, 949
 are released in the dated snapshot; unreleased placeholders remain so completion and medal
 denominators never scale down to whatever happens to be available today.

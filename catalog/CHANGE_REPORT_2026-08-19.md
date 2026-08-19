@@ -1,0 +1,341 @@
+# Pokémon availability audit — 2026-08-19.1
+
+Generated from versioned CatchGrid overrides, hash-pinned PoGoAPI snapshots, the hash-pinned Pokémon Database historical Shadow table, and the exact commit-pinned PokeMiners filename tree. Sprite presence is asset evidence only; release states require metadata or reviewed release evidence.
+
+## Coverage
+
+- National Dex placeholders: 1025 (contiguous #0001–#1025)
+- Released representative species: 949
+- Reviewed collector forms: 179
+- All default IDs remain `form-NNNN-standard`; form IDs use `form-NNNN-kebab-key`.
+
+- alternate: 33
+- costume: 10
+- fusion: 4
+- gender: 2
+- gigantamax: 17
+- mega: 54
+- primal: 2
+- regional: 57
+
+## Change summary
+
+- Shadow flags added: 265
+- Purified flags added: 265
+- Shiny flags added: 4
+- Transformation records added: 2
+- Costume records added: 0
+- Stable-ID migration mappings required: 0
+
+## Reviewed decisions
+
+- Mega Raichu X and Mega Raichu Y are independent transformation records.
+- Nickit and Thievul Shiny tracking reflects the completed August 16, 2026 Community Day.
+- Historical Shadow eligibility is derived from the full audited table; Purified follows Shadow mechanically. Regional records only inherit eligibility when the source names that regional form.
+- Costumes remain separate collector records and never inflate National or regional species progress.
+
+## Changed Pokémon/forms
+
+- #0010 Caterpie (`form-0010-standard`)
+- #0011 Metapod (`form-0011-standard`)
+- #0012 Butterfree (`form-0012-standard`)
+- #0016 Pidgey (`form-0016-standard`)
+- #0017 Pidgeotto (`form-0017-standard`)
+- #0018 Pidgeot (`form-0018-standard`)
+- #0019 Alolan Rattata (`form-0019-alola`)
+- #0020 Alolan Raticate (`form-0020-alola`)
+- #0026 Mega Raichu X (`form-0026-mega-x`)
+- #0026 Mega Raichu Y (`form-0026-mega-y`)
+- #0027 Alolan Sandshrew (`form-0027-alola`)
+- #0028 Alolan Sandslash (`form-0028-alola`)
+- #0037 Alolan Vulpix (`form-0037-alola`)
+- #0038 Alolan Ninetales (`form-0038-alola`)
+- #0050 Alolan Diglett (`form-0050-alola`)
+- #0051 Alolan Dugtrio (`form-0051-alola`)
+- #0052 Alolan Meowth (`form-0052-alola`)
+- #0052 Galarian Meowth (`form-0052-galar`)
+- #0053 Alolan Persian (`form-0053-alola`)
+- #0056 Mankey (`form-0056-standard`)
+- #0057 Primeape (`form-0057-standard`)
+- #0058 Hisuian Growlithe (`form-0058-hisui`)
+- #0059 Hisuian Arcanine (`form-0059-hisui`)
+- #0072 Tentacool (`form-0072-standard`)
+- #0073 Tentacruel (`form-0073-standard`)
+- #0074 Alolan Geodude (`form-0074-alola`)
+- #0075 Alolan Graveler (`form-0075-alola`)
+- #0076 Alolan Golem (`form-0076-alola`)
+- #0077 Galarian Ponyta (`form-0077-galar`)
+- #0077 Ponyta (`form-0077-standard`)
+- #0078 Galarian Rapidash (`form-0078-galar`)
+- #0078 Rapidash (`form-0078-standard`)
+- #0079 Galarian Slowpoke (`form-0079-galar`)
+- #0080 Galarian Slowbro (`form-0080-galar`)
+- #0083 Galarian Farfetch’d (`form-0083-galar`)
+- #0083 Farfetch’d (`form-0083-standard`)
+- #0086 Seel (`form-0086-standard`)
+- #0087 Dewgong (`form-0087-standard`)
+- #0088 Alolan Grimer (`form-0088-alola`)
+- #0089 Alolan Muk (`form-0089-alola`)
+- #0092 Gastly (`form-0092-standard`)
+- #0093 Haunter (`form-0093-standard`)
+- #0094 Gengar (`form-0094-standard`)
+- #0095 Onix (`form-0095-standard`)
+- #0098 Krabby (`form-0098-standard`)
+- #0099 Kingler (`form-0099-standard`)
+- #0100 Hisuian Voltorb (`form-0100-hisui`)
+- #0103 Alolan Exeggutor (`form-0103-alola`)
+- #0105 Alolan Marowak (`form-0105-alola`)
+- #0110 Galarian Weezing (`form-0110-galar`)
+- #0111 Rhyhorn (`form-0111-standard`)
+- #0112 Rhydon (`form-0112-standard`)
+- #0115 Kangaskhan (`form-0115-standard`)
+- #0120 Staryu (`form-0120-standard`)
+- #0121 Starmie (`form-0121-standard`)
+- #0122 Galarian Mr. Mime (`form-0122-galar`)
+- #0122 Mr. Mime (`form-0122-standard`)
+- #0140 Kabuto (`form-0140-standard`)
+- #0141 Kabutops (`form-0141-standard`)
+- #0144 Galarian Articuno (`form-0144-galar`)
+- #0145 Galarian Zapdos (`form-0145-galar`)
+- #0146 Galarian Moltres (`form-0146-galar`)
+- #0157 Hisuian Typhlosion (`form-0157-hisui`)
+- #0163 Hoothoot (`form-0163-standard`)
+- #0164 Noctowl (`form-0164-standard`)
+- #0165 Ledyba (`form-0165-standard`)
+- #0166 Ledian (`form-0166-standard`)
+- #0177 Natu (`form-0177-standard`)
+- #0178 Xatu (`form-0178-standard`)
+- #0194 Paldean Wooper (`form-0194-paldea`)
+- #0199 Galarian Slowking (`form-0199-galar`)
+- #0208 Steelix (`form-0208-standard`)
+- #0211 Hisuian Qwilfish (`form-0211-hisui`)
+- #0211 Qwilfish (`form-0211-standard`)
+- #0215 Hisuian Sneasel (`form-0215-hisui`)
+- #0231 Phanpy (`form-0231-standard`)
+- #0232 Donphan (`form-0232-standard`)
+- #0237 Hitmontop (`form-0237-standard`)
+- #0252 Treecko (`form-0252-standard`)
+- #0253 Grovyle (`form-0253-standard`)
+- #0254 Sceptile (`form-0254-standard`)
+- #0255 Torchic (`form-0255-standard`)
+- #0256 Combusken (`form-0256-standard`)
+- #0257 Blaziken (`form-0257-standard`)
+- #0263 Galarian Zigzagoon (`form-0263-galar`)
+- #0263 Zigzagoon (`form-0263-standard`)
+- #0264 Galarian Linoone (`form-0264-galar`)
+- #0264 Linoone (`form-0264-standard`)
+- #0276 Taillow (`form-0276-standard`)
+- #0277 Swellow (`form-0277-standard`)
+- #0287 Slakoth (`form-0287-standard`)
+- #0288 Vigoroth (`form-0288-standard`)
+- #0289 Slaking (`form-0289-standard`)
+- #0320 Wailmer (`form-0320-standard`)
+- #0321 Wailord (`form-0321-standard`)
+- #0325 Spoink (`form-0325-standard`)
+- #0326 Grumpig (`form-0326-standard`)
+- #0333 Swablu (`form-0333-standard`)
+- #0334 Altaria (`form-0334-standard`)
+- #0339 Barboach (`form-0339-standard`)
+- #0340 Whiscash (`form-0340-standard`)
+- #0341 Corphish (`form-0341-standard`)
+- #0342 Crawdaunt (`form-0342-standard`)
+- #0343 Baltoy (`form-0343-standard`)
+- #0344 Claydol (`form-0344-standard`)
+- #0349 Feebas (`form-0349-standard`)
+- #0350 Milotic (`form-0350-standard`)
+- #0361 Snorunt (`form-0361-standard`)
+- #0362 Glalie (`form-0362-standard`)
+- #0377 Regirock (`form-0377-standard`)
+- #0378 Regice (`form-0378-standard`)
+- #0379 Registeel (`form-0379-standard`)
+- #0380 Latias (`form-0380-standard`)
+- #0382 Kyogre (`form-0382-standard`)
+- #0383 Groudon (`form-0383-standard`)
+- #0390 Chimchar (`form-0390-standard`)
+- #0391 Monferno (`form-0391-standard`)
+- #0392 Infernape (`form-0392-standard`)
+- #0393 Piplup (`form-0393-standard`)
+- #0394 Prinplup (`form-0394-standard`)
+- #0395 Empoleon (`form-0395-standard`)
+- #0408 Cranidos (`form-0408-standard`)
+- #0409 Rampardos (`form-0409-standard`)
+- #0410 Shieldon (`form-0410-standard`)
+- #0411 Bastiodon (`form-0411-standard`)
+- #0425 Drifloon (`form-0425-standard`)
+- #0426 Drifblim (`form-0426-standard`)
+- #0431 Glameow (`form-0431-standard`)
+- #0432 Purugly (`form-0432-standard`)
+- #0443 Gible (`form-0443-standard`)
+- #0444 Gabite (`form-0444-standard`)
+- #0445 Garchomp (`form-0445-standard`)
+- #0453 Croagunk (`form-0453-standard`)
+- #0454 Toxicroak (`form-0454-standard`)
+- #0464 Rhyperior (`form-0464-standard`)
+- #0478 Froslass (`form-0478-standard`)
+- #0483 Dialga (`form-0483-standard`)
+- #0484 Palkia (`form-0484-standard`)
+- #0485 Heatran (`form-0485-standard`)
+- #0486 Regigigas (`form-0486-standard`)
+- #0487 Giratina (`form-0487-standard`)
+- #0488 Cresselia (`form-0488-standard`)
+- #0491 Darkrai (`form-0491-standard`)
+- #0495 Snivy (`form-0495-standard`)
+- #0496 Servine (`form-0496-standard`)
+- #0497 Serperior (`form-0497-standard`)
+- #0498 Tepig (`form-0498-standard`)
+- #0499 Pignite (`form-0499-standard`)
+- #0500 Emboar (`form-0500-standard`)
+- #0501 Oshawott (`form-0501-standard`)
+- #0502 Dewott (`form-0502-standard`)
+- #0503 Hisuian Samurott (`form-0503-hisui`)
+- #0503 Samurott (`form-0503-standard`)
+- #0519 Pidove (`form-0519-standard`)
+- #0520 Tranquill (`form-0520-standard`)
+- #0521 Unfezant (`form-0521-standard`)
+- #0522 Blitzle (`form-0522-standard`)
+- #0523 Zebstrika (`form-0523-standard`)
+- #0524 Roggenrola (`form-0524-standard`)
+- #0525 Boldore (`form-0525-standard`)
+- #0526 Gigalith (`form-0526-standard`)
+- #0529 Drilbur (`form-0529-standard`)
+- #0530 Excadrill (`form-0530-standard`)
+- #0532 Timburr (`form-0532-standard`)
+- #0533 Gurdurr (`form-0533-standard`)
+- #0534 Conkeldurr (`form-0534-standard`)
+- #0538 Throh (`form-0538-standard`)
+- #0539 Sawk (`form-0539-standard`)
+- #0543 Venipede (`form-0543-standard`)
+- #0544 Whirlipede (`form-0544-standard`)
+- #0545 Scolipede (`form-0545-standard`)
+- #0554 Galarian Darumaka (`form-0554-galar`)
+- #0554 Darumaka (`form-0554-standard`)
+- #0555 Darmanitan (`form-0555-standard`)
+- #0557 Dwebble (`form-0557-standard`)
+- #0558 Crustle (`form-0558-standard`)
+- #0562 Galarian Yamask (`form-0562-galar`)
+- #0562 Yamask (`form-0562-standard`)
+- #0563 Cofagrigus (`form-0563-standard`)
+- #0564 Tirtouga (`form-0564-standard`)
+- #0565 Carracosta (`form-0565-standard`)
+- #0566 Archen (`form-0566-standard`)
+- #0567 Archeops (`form-0567-standard`)
+- #0568 Trubbish (`form-0568-standard`)
+- #0569 Garbodor (`form-0569-standard`)
+- #0574 Gothita (`form-0574-standard`)
+- #0575 Gothorita (`form-0575-standard`)
+- #0576 Gothitelle (`form-0576-standard`)
+- #0577 Solosis (`form-0577-standard`)
+- #0578 Duosion (`form-0578-standard`)
+- #0579 Reuniclus (`form-0579-standard`)
+- #0588 Karrablast (`form-0588-standard`)
+- #0589 Escavalier (`form-0589-standard`)
+- #0595 Joltik (`form-0595-standard`)
+- #0596 Galvantula (`form-0596-standard`)
+- #0597 Ferroseed (`form-0597-standard`)
+- #0598 Ferrothorn (`form-0598-standard`)
+- #0607 Litwick (`form-0607-standard`)
+- #0608 Lampent (`form-0608-standard`)
+- #0609 Chandelure (`form-0609-standard`)
+- #0610 Axew (`form-0610-standard`)
+- #0611 Fraxure (`form-0611-standard`)
+- #0612 Haxorus (`form-0612-standard`)
+- #0616 Shelmet (`form-0616-standard`)
+- #0617 Accelgor (`form-0617-standard`)
+- #0618 Galarian Stunfisk (`form-0618-galar`)
+- #0618 Stunfisk (`form-0618-standard`)
+- #0622 Golett (`form-0622-standard`)
+- #0623 Golurk (`form-0623-standard`)
+- #0633 Deino (`form-0633-standard`)
+- #0634 Zweilous (`form-0634-standard`)
+- #0635 Hydreigon (`form-0635-standard`)
+- #0641 Tornadus (`form-0641-standard`)
+- #0642 Thundurus (`form-0642-standard`)
+- #0643 Reshiram (`form-0643-standard`)
+- #0645 Landorus (`form-0645-standard`)
+- #0650 Chespin (`form-0650-standard`)
+- #0651 Quilladin (`form-0651-standard`)
+- #0652 Chesnaught (`form-0652-standard`)
+- #0653 Fennekin (`form-0653-standard`)
+- #0654 Braixen (`form-0654-standard`)
+- #0655 Delphox (`form-0655-standard`)
+- #0656 Froakie (`form-0656-standard`)
+- #0657 Frogadier (`form-0657-standard`)
+- #0658 Greninja (`form-0658-standard`)
+- #0659 Bunnelby (`form-0659-standard`)
+- #0660 Diggersby (`form-0660-standard`)
+- #0661 Fletchling (`form-0661-standard`)
+- #0662 Fletchinder (`form-0662-standard`)
+- #0663 Talonflame (`form-0663-standard`)
+- #0686 Inkay (`form-0686-standard`)
+- #0687 Malamar (`form-0687-standard`)
+- #0694 Helioptile (`form-0694-standard`)
+- #0695 Heliolisk (`form-0695-standard`)
+- #0696 Tyrunt (`form-0696-standard`)
+- #0697 Tyrantrum (`form-0697-standard`)
+- #0698 Amaura (`form-0698-standard`)
+- #0699 Aurorus (`form-0699-standard`)
+- #0708 Phantump (`form-0708-standard`)
+- #0709 Trevenant (`form-0709-standard`)
+- #0714 Noibat (`form-0714-standard`)
+- #0715 Noivern (`form-0715-standard`)
+- #0731 Pikipek (`form-0731-standard`)
+- #0732 Trumbeak (`form-0732-standard`)
+- #0733 Toucannon (`form-0733-standard`)
+- #0736 Grubbin (`form-0736-standard`)
+- #0737 Charjabug (`form-0737-standard`)
+- #0738 Vikavolt (`form-0738-standard`)
+- #0751 Dewpider (`form-0751-standard`)
+- #0752 Araquanid (`form-0752-standard`)
+- #0755 Morelull (`form-0755-standard`)
+- #0756 Shiinotic (`form-0756-standard`)
+- #0759 Stufful (`form-0759-standard`)
+- #0760 Bewear (`form-0760-standard`)
+- #0821 Rookidee (`form-0821-standard`)
+- #0822 Corvisquire (`form-0822-standard`)
+- #0823 Corviknight (`form-0823-standard`)
+- #0827 Nickit (`form-0827-standard`)
+- #0828 Thievul (`form-0828-standard`)
+- #0862 Obstagoon (`form-0862-standard`)
+- #0863 Perrserker (`form-0863-standard`)
+- #0865 Sirfetch’d (`form-0865-standard`)
+- #0866 Mr. Rime (`form-0866-standard`)
+- #0867 Runerigus (`form-0867-standard`)
+- #0901 Ursaluna (`form-0901-standard`)
+- #0903 Sneasler (`form-0903-standard`)
+- #0904 Overqwil (`form-0904-standard`)
+- #0979 Annihilape (`form-0979-standard`)
+- #0980 Clodsire (`form-0980-standard`)
+
+## Provenance
+
+- **pogoapi-released-pokemon** (secondary, 2026-08-19): https://pogoapi.net/api/v1/released_pokemon.json — SHA-256 `740d9a03ed6853023e89912cc31b2c3fa513582b091ee301cdf31a35794cc58d`
+- **pogoapi-shiny-pokemon** (secondary, 2026-08-19): https://pogoapi.net/api/v1/shiny_pokemon.json — SHA-256 `6697d100d4f941c1ddf542f2c3468d94a801ee93b2af621ca37a59a415fa62d4`
+- **pogoapi-shadow-pokemon** (secondary, 2026-08-19): https://pogoapi.net/api/v1/shadow_pokemon.json — SHA-256 `5e8f7aa3c731678fd03c20a2f08b60b77e592f19891c4dabe2e59446b1523b8d`
+- **pogoapi-pokemon-rarity** (secondary, 2026-08-19): https://pogoapi.net/api/v1/pokemon_rarity.json — SHA-256 `257f0f9e27b0d763bf85bf91c864df86fa37e1ebd3000e92713c7398bb99a874`
+- **pogoapi-pokemon-types** (secondary, 2026-08-19): https://pogoapi.net/api/v1/pokemon_types.json — SHA-256 `298d1f24fb162e496bfadad97e3cd0713bc1400f2606ce64e42a91ccb2ddc54a`
+- **pogoapi-pokemon-forms** (secondary, 2026-08-19): https://pogoapi.net/api/v1/pokemon_forms.json — SHA-256 `3813b468dc6e5122096911f577152824c8019e4d15864648fb1dfa3a726dea11`
+- **pogoapi-pokemon-evolutions** (secondary, 2026-08-19): https://pogoapi.net/api/v1/pokemon_evolutions.json — SHA-256 `2ae1757dd611ff7140fd62308cc3a8f0244004e6be68cc956e559c3250aab78d`
+- **pogoapi-pokemon-names** (secondary, 2026-08-19): https://pogoapi.net/api/v1/pokemon_names.json — SHA-256 `0db52f1125a7493ceb4a89d08cf049b98637939d7cf4ae25feb091fe57f5bd7b`
+- **historical-shadow-pokemon-db** (secondary, 2026-08-19): https://pokemondb.net/go/shadow — SHA-256 `222b00af94b7f5c5e1de11603b79ac12a429510e74889f6bc98420bf58cc6bbb`
+- **pokeminers-asset-tree** (asset, 2026-08-19): https://github.com/PokeMiners/pogo_assets/tree/1a4ad1fc6c39f361ea85d53fc3040ce482ee9d90/Images/Pokemon%20-%20256x256/Addressable%20Assets — SHA-256 `8c352abf85a1628f119a1cba4ed4656593a533e3add1c88b9d368ac5c477a533`
+- **catchgrid-reviewed-overrides** (manual, 2026-08-19): catalog/catalog-overrides.v1.json — SHA-256 `4892daddda4d5eebc61bcf1bbe49cbe2a0f21d770319ab53bc4a0013e8d3ee7d`
+- **review-record-official-mega-raichu** (official, 2026-07-18): https://pokemongo.com/news/raichu-super-mega-raid-day-2026 — SHA-256 `e4d9e1176ca1cf06eb8722f180e44b19092fa5d25cc2ee5cbc8b944680f592dd`
+- **review-record-official-shadow-seel** (official, 2026-06-25): https://pokemongo.com/news/flying-taxi-taken-over-2026 — SHA-256 `a0b324b1cb0e46e078a2d8f3087817679b348fb56ed70732b52ef7c79c684ed0`
+- **review-record-historical-shadow-database** (secondary, 2026-08-19): https://pokemondb.net/go/shadow — SHA-256 `d79513575204310c8bb9f46737dcbff8fb7659e78507fb3262a7a83806457de1`
+- **review-record-official-medal-model** (official, 2026-08-13): https://niantic.helpshift.com/hc/en/6-pokemon-go/faq/101-how-do-i-level-up-and-earn-medals/ — SHA-256 `2513d9b7f7d4d461194d6a01d7a986e67dad842ffd48857c90edbbbe19c88d6c`
+- **review-record-official-shiny-forms** (official, 2026-08-13): https://niantic.helpshift.com/hc/en/6-pokemon-go/faq/2678-what-are-shiny-pokemon/ — SHA-256 `d63e3e52cbc02ef2e21dc23a40841ce6aa62cba748742b1e06fa1ebe390962a7`
+- **review-record-official-mega-2026** (official, 2026-03-01): https://pokemongo.com/en/news/mega-evolution-2026-update?game_client=android — SHA-256 `5a8ec5a35e821d72250468ef5eaa0b9257fc51c5391f9a8baf063cd6a240ff4c`
+- **review-record-official-mega-kalos** (official, 2026-03-01): https://pokemongo.com/gotour/global — SHA-256 `b53ed576b152d9ec85b6d9c15e64edd8f674790110d0de4ee39bc3e7fa796ffc`
+- **review-record-official-mega-mewtwo** (official, 2026-07-12): https://pokemongo.com/news/mega-mewtwo-gofest-2026?hl=en_us — SHA-256 `7d19d00c36a2c47614ab9151db2e36b0ad0b69df019a091ffd0f53e0e4aeccbd`
+- **review-record-official-mega-falinks** (official, 2026-05-23): https://pokemongo.com/news/falinks-super-mega-raid-day-2026?hl=en — SHA-256 `87054b8dcf74fd993f21e4b18f9bce195325dcfb01a713d44911da1bd18815cd`
+- **review-record-official-gmax-rillaboom** (official, 2026-08-01): https://pokemongo.com/en/news/gigantamax-rillaboom-max-battle-day-2026 — SHA-256 `8a3a25290a5c202b920763e1b01e5b110b3ac94b191b930f554ca7d1cad651ef`
+- **review-record-official-max-mechanics** (official, 2026-08-13): https://niantic.helpshift.com/hc/en/6-pokemon-go/faq/4792-collecting-max-particles-and-dynamaxing-or-gigantamaxing-pokemon/ — SHA-256 `f0b7a0129c5ef7623cebfc1881ae1ee8b919898480a74a8f2bb8084f1a6ae48b`
+- **review-record-official-go-fest-2026** (official, 2026-07-12): https://pokemongo.com/en/news/go-fest-2026-global-final-details — SHA-256 `03bbade063a6667a725223286cdd1ce532198ac5a5dd49e9ce99269c01361077`
+- **review-record-official-nickit-schedule** (official, 2026-08-16T14:00:00): https://pokemongo.com/en/news/communityday-august-2026-nickit — SHA-256 `2d5218acbadca6f25072f70d2ed3c5648e2a396de8e754d709aea7aabfb9174a`
+- **review-record-reviewed-go-form-inventory** (secondary, 2026-08-13): https://pogoapi.net/api/v1/pokemon_types.json — SHA-256 `327efe8a6e8550fed186a092c86c810895e6bcb549db5a1e697ea9158817247e`
+- **review-record-reviewed-unown-history** (secondary, 2026-07-25): https://raids.fyi/unown.html — SHA-256 `8117348ce3fe47f7d35d4813a530659b0330f9ed769cf4d25252372fbb1388c5`
+- **review-record-official-news-index** (official, 2026-08-13): https://pokemongo.com/news — SHA-256 `2ed1abfee323771b508c2686a50086dc210e7f24d6a8c66725c33fb6a7b57f32`
+
+## Known launch blocker
+
+The PokeMiners sprite repository remains an asset mapping source, not proof of Pokémon GO release status. Its repository does not provide a clear redistribution license for a public production bundle; legal/provenance approval remains an external launch blocker.

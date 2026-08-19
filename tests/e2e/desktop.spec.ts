@@ -214,7 +214,7 @@ test('multi-form details track alternate Regular and Shiny without inflating spe
   const forms = page.locator('.compact-form-sections');
   await expect(forms.locator('.compact-form-row')).toHaveCount(1);
   const alolan = forms.locator('.compact-form-row', { hasText: 'Alolan Ninetales' });
-  await expect(alolan).toContainText('Alternate form');
+  await expect(alolan).toContainText('Regional form');
   await expect(alolan.getByRole('button')).toHaveCount(2);
   await alolan.getByRole('button', { name: /Regular/ }).click();
   await expect(alolan.getByRole('button', { name: /Regular/ })).toHaveAttribute(
@@ -327,12 +327,17 @@ test('transformation views show and search the full collector form name', async 
   await expect(page.getByRole('button', { name: /Open Mega Charizard X details/ })).toBeVisible();
 });
 
-test('navigating away from a forms gallery returns to collection controls', async ({ page }) => {
+test('costumes are separate from transformations and navigation resets to collection', async ({
+  page,
+}) => {
   await installFakeApi(page);
   await page.goto('/#/dex');
   await page.getByTestId('pokemon-card-25').click();
 
-  await expect(page.getByRole('tab', { name: /Costumes/ })).toBeDisabled();
+  await expect(page.getByText('Gigantamax Pikachu', { exact: true })).toBeVisible();
+  await page.getByRole('tab', { name: /Costumes/ }).click();
+  await expect(page.getByText('Pikachu with Party Hat (2017)', { exact: true })).toBeVisible();
+  await expect(page.getByText('Gigantamax Pikachu', { exact: true })).toBeHidden();
   await page.getByRole('button', { name: 'Next Pokémon: Ninetales' }).click();
   await expect(page.getByRole('dialog', { name: 'Ninetales' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Collection', exact: true })).toBeVisible();
@@ -351,6 +356,9 @@ test('detail arrows follow catalog order and type themes update with the Pokémo
   await expect(sheet).toHaveAttribute('data-secondary-type', 'poison');
   await expect(page.getByRole('button', { name: 'No previous Pokémon' })).toBeHidden();
   await expect(page.getByRole('button', { name: 'Next Pokémon: Ivysaur' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Next Pokémon: Ivysaur' })).not.toHaveClass(
+    /icon-button/,
+  );
 
   const grassTheme = await sheet.evaluate((element) => ({
     primary: getComputedStyle(element).getPropertyValue('--type-primary').trim(),
@@ -392,7 +400,7 @@ test('completing every released category activates the animated rainbow hook', a
   const sheet = page.locator('.detail-sheet');
   await expect(sheet).toHaveAttribute('data-collection-complete', 'false');
 
-  for (const category of ['Shiny', 'Lucky', 'Hundo', 'XXL', 'XXS']) {
+  for (const category of ['Shiny', '★ 100%', 'Lucky', 'XXL', 'XXS']) {
     const tile = page
       .locator('.category-tile-grid')
       .getByRole('button', { name: new RegExp(`^${category}`) });

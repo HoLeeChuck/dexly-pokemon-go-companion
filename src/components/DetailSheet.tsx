@@ -1,8 +1,15 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { deriveCollectionState } from '../../shared/domain';
 import type { CatalogItem, Category, CategoryId, CollectionEntry } from '../../shared/types';
 import { catalogDisplayName } from '../lib/catalogDisplay';
 import { collectorFormsForSpecies } from '../catalog/collectorForms';
+import {
+  BASE_COLLECTION_ORDER,
+  collectionCategoryLabel,
+  getCostumes,
+  getTransformations,
+  ROCKET_COLLECTION_ORDER,
+} from '../catalog/capabilities';
 import { Icon } from './Icon';
 import { PokemonSprite } from './PokemonSprite';
 import './detail.css';
@@ -31,6 +38,15 @@ function categoryKey(formId: string, categoryId: CategoryId): string {
   return `${formId}:${categoryId}`;
 }
 
+function formKindLabel(form: CatalogItem): string {
+  if (form.variantKind === 'regional') return 'Regional form';
+  if (form.variantKind === 'gigantamax') return 'G-Max';
+  if (form.variantKind === 'mega') return 'Mega';
+  if (form.variantKind === 'primal') return 'Primal';
+  if (form.variantKind === 'costume') return 'Costume';
+  return 'Alternate form';
+}
+
 export function DetailSheet({
   item,
   categories,
@@ -53,6 +69,7 @@ export function DetailSheet({
   const dialogRef = useRef<HTMLDialogElement>(null);
   const swipeOriginRef = useRef<SwipeOrigin | null>(null);
   const suppressClickUntilRef = useRef(0);
+  const [section, setSection] = useState<'collection' | 'costumes'>('collection');
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -84,6 +101,11 @@ export function DetailSheet({
   const previousItem = speciesIndex > 0 ? speciesCatalog[speciesIndex - 1] : undefined;
   const nextItem = speciesIndex >= 0 ? speciesCatalog[speciesIndex + 1] : undefined;
   const collectorForms = collectorFormsForSpecies(catalog ?? [], item);
+  const transformations = getTransformations(catalog ?? [], item);
+  const costumes = getCostumes(catalog ?? [], item);
+  const orderedCategories = [...BASE_COLLECTION_ORDER, ...ROCKET_COLLECTION_ORDER]
+    .map((categoryId) => categories.find((category) => category.id === categoryId))
+    .filter((category): category is Category => Boolean(category));
   const releasedCategories = categories.filter(
     (category) => item.rules[category.id] === 'released',
   );
@@ -95,6 +117,7 @@ export function DetailSheet({
 
   function navigateTo(destination: CatalogItem | undefined) {
     if (destination && onNavigate) {
+      setSection('collection');
       onNavigate(destination);
     }
   }
@@ -139,6 +162,59 @@ export function DetailSheet({
     navigateTo(deltaX < 0 ? nextItem : previousItem);
   }
 
+  function renderFormRows(forms: readonly CatalogItem[], heading: string, eyebrow: string) {
+    if (forms.length === 0) return null;
+    return (
+      <section className="compact-form-sections" aria-label={heading}>
+        <div className="section-heading">
+          <div>
+            <span className="eyebrow">{eyebrow}</span>
+            <h3>{heading}</h3>
+          </div>
+          <span>{forms.length} forms</span>
+        </div>
+        <div className="compact-form-list">
+          {forms.map((form) => (
+            <article
+              key={form.id}
+              className="compact-form-row"
+              data-variant-kind={form.variantKind}
+            >
+              <PokemonSprite item={form} />
+              <div>
+                <strong>{form.formName ?? form.name}</strong>
+                <small>
+                  {formKindLabel(form)} · {form.isReleased ? 'Released' : 'Unreleased'}
+                </small>
+              </div>
+              {(['normal', 'shiny'] as const).map((categoryId) => {
+                const rule = form.rules[categoryId] ?? 'unknown';
+                const isCollected = collectionEntries.some(
+                  (entry) =>
+                    entry.formId === form.id && entry.categoryId === categoryId && entry.collected,
+                );
+                const pending = pendingKeys.has(categoryKey(form.id, categoryId));
+                return (
+                  <button
+                    type="button"
+                    key={categoryId}
+                    className={isCollected ? 'is-collected' : ''}
+                    aria-pressed={rule === 'released' ? isCollected : undefined}
+                    disabled={rule !== 'released' || pending}
+                    onClick={() => onCollectionChange(form, categoryId, !isCollected)}
+                  >
+                    <Icon name={rule === 'released' ? (isCollected ? 'check' : 'plus') : 'lock'} />
+                    <span>{categoryId === 'normal' ? 'Regular' : 'Shiny'}</span>
+                  </button>
+                );
+              })}
+            </article>
+          ))}
+        </div>
+      </section>
+    );
+  }
+
   return (
     <dialog
       ref={dialogRef}
@@ -177,7 +253,7 @@ export function DetailSheet({
           <>
             <button
               type="button"
-              className="icon-button detail-nav detail-nav--previous"
+              className="detail-nav detail-nav--previous"
               disabled={!previousItem}
               onClick={() => navigateTo(previousItem)}
               aria-label={
@@ -191,7 +267,7 @@ export function DetailSheet({
             </button>
             <button
               type="button"
-              className="icon-button detail-nav detail-nav--next"
+              className="detail-nav detail-nav--next"
               disabled={!nextItem}
               onClick={() => navigateTo(nextItem)}
               aria-label={
@@ -237,16 +313,28 @@ export function DetailSheet({
         </header>
 
         <div className="detail-section-tabs" role="tablist" aria-label="Pokémon detail sections">
-          <button type="button" role="tab" aria-selected="true">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={section === 'collection'}
+            onClick={() => setSection('collection')}
+          >
             Collection
           </button>
-          <button type="button" role="tab" aria-selected="false" disabled>
-            Costumes <span>Coming soon</span>
-          </button>
+          {costumes.length > 0 && (
+            <button
+              type="button"
+              role="tab"
+              aria-selected={section === 'costumes'}
+              onClick={() => setSection('costumes')}
+            >
+              Costumes <span>{costumes.length}</span>
+            </button>
+          )}
         </div>
 
         <div className="detail-sheet__body">
-          {
+          {section === 'collection' ? (
             <>
               <div className="section-heading">
                 <div>
@@ -256,7 +344,7 @@ export function DetailSheet({
                 <span>{collected.size} marked</span>
               </div>
               <div className="category-tile-grid">
-                {categories.map((category) => {
+                {orderedCategories.slice(0, BASE_COLLECTION_ORDER.length).map((category) => {
                   const rule = item.rules[category.id] ?? 'unknown';
                   const isCollected = collected.has(category.id);
                   const state = deriveCollectionState(rule, isCollected);
@@ -276,7 +364,7 @@ export function DetailSheet({
                         />
                       </span>
                       <span className="category-tile__copy">
-                        <strong>{category.label}</strong>
+                        <strong>{collectionCategoryLabel(category)}</strong>
                         <small>
                           {pending
                             ? 'Saving…'
@@ -293,70 +381,67 @@ export function DetailSheet({
                   );
                 })}
               </div>
-              {collectorForms.length > 0 && (
-                <section className="compact-form-sections" aria-labelledby="alternate-forms-title">
-                  <div className="section-heading">
-                    <div>
-                      <span className="eyebrow">Collector forms</span>
-                      <h3 id="alternate-forms-title">Alternate forms & transformations</h3>
-                    </div>
-                    <span>{collectorForms.length} forms</span>
-                  </div>
-                  <p className="section-intro">
-                    Track Regular and Shiny versions without leaving this Collection view.
-                  </p>
-                  <div className="compact-form-list">
-                    {collectorForms.map((form) => (
-                      <article
-                        key={form.id}
-                        className="compact-form-row"
-                        data-variant-kind={form.variantKind}
-                      >
-                        <PokemonSprite item={form} />
-                        <div>
-                          <strong>{form.formName ?? form.name}</strong>
-                          <small>
-                            {form.variantKind === 'gigantamax'
-                              ? 'Gigantamax'
-                              : form.variantKind === 'mega' || form.variantKind === 'primal'
-                                ? 'Mega / Primal'
-                                : 'Alternate form'}
-                          </small>
-                        </div>
-                        {(['normal', 'shiny'] as const).map((categoryId) => {
-                          const rule = form.rules[categoryId] ?? 'unknown';
-                          const isCollected = collectionEntries.some(
-                            (entry) =>
-                              entry.formId === form.id &&
-                              entry.categoryId === categoryId &&
-                              entry.collected,
-                          );
-                          const pending = pendingKeys.has(categoryKey(form.id, categoryId));
-                          return (
-                            <button
-                              type="button"
-                              key={categoryId}
-                              className={isCollected ? 'is-collected' : ''}
-                              aria-pressed={rule === 'released' ? isCollected : undefined}
-                              disabled={rule !== 'released' || pending}
-                              onClick={() => onCollectionChange(form, categoryId, !isCollected)}
-                            >
-                              <Icon
-                                name={
-                                  rule === 'released' ? (isCollected ? 'check' : 'plus') : 'lock'
-                                }
-                              />
-                              <span>{categoryId === 'normal' ? 'Regular' : 'Shiny'}</span>
-                            </button>
-                          );
-                        })}
-                      </article>
-                    ))}
-                  </div>
-                </section>
+              {renderFormRows(collectorForms, 'Alternate forms', 'Collector forms')}
+              {renderFormRows(
+                transformations.filter((form) => form.variantKind !== 'gigantamax'),
+                'Mega & Primal',
+                'Transformations',
               )}
+              {renderFormRows(
+                transformations.filter((form) => form.variantKind === 'gigantamax'),
+                'G-Max',
+                'Transformations',
+              )}
+              <div className="category-tile-grid category-tile-grid--rocket">
+                {orderedCategories.slice(BASE_COLLECTION_ORDER.length).map((category) => {
+                  const rule = item.rules[category.id] ?? 'unknown';
+                  const isCollected = collected.has(category.id);
+                  const state = deriveCollectionState(rule, isCollected);
+                  const pending = pendingKeys.has(categoryKey(item.id, category.id));
+                  return (
+                    <button
+                      type="button"
+                      key={category.id}
+                      className={`category-tile category-tile--collection category-tile--${state}`}
+                      aria-pressed={rule === 'released' ? isCollected : undefined}
+                      disabled={rule !== 'released' || pending}
+                      onClick={() => onCollectionChange(item, category.id, !isCollected)}
+                    >
+                      <span className="category-tile__status" aria-hidden="true">
+                        <Icon
+                          name={rule === 'released' ? (isCollected ? 'check' : 'plus') : 'lock'}
+                        />
+                      </span>
+                      <span className="category-tile__copy">
+                        <strong>{collectionCategoryLabel(category)}</strong>
+                        <small>
+                          {state === 'collected'
+                            ? 'Collected'
+                            : state === 'missing'
+                              ? 'Not yet'
+                              : state}
+                        </small>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
             </>
-          }
+          ) : (
+            <>
+              <div className="section-heading">
+                <div>
+                  <span className="eyebrow">Event collection</span>
+                  <h3>Costumes</h3>
+                </div>
+                <span>{costumes.length} costumes</span>
+              </div>
+              <p className="section-intro">
+                Costume ownership is tracked separately from the base and transformation collection.
+              </p>
+              {renderFormRows(costumes, 'Costume collection', 'Costumes')}
+            </>
+          )}
         </div>
       </section>
     </dialog>

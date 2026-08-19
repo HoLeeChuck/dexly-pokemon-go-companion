@@ -8,6 +8,7 @@ import type {
   WantedEntry,
 } from '../../shared/types';
 import { createCatalogIndex, titleCase } from '../catalog/catalogIndex';
+import { collectionCategoryLabel } from '../catalog/capabilities';
 import { regionMedalProgresses, type MedalTier } from '../catalog/regionMedals';
 import { catalogDisplayName } from '../lib/catalogDisplay';
 import { Icon } from '../components/Icon';
@@ -133,8 +134,9 @@ export default function DexRoute({
       return true;
     });
   }, [activeCategory, collectedKeys, collectionFilter, query, region, viewedCatalog]);
-  const activeCategoryLabel =
-    categories.find((category) => category.id === activeCategory)?.label ?? activeCategory;
+  const activeCategoryLabel = categories.find((category) => category.id === activeCategory)
+    ? collectionCategoryLabel(categories.find((category) => category.id === activeCategory)!)
+    : activeCategory;
   const selectedRegionMedal = region === 'all' ? null : regionMedals.get(region);
 
   useEffect(() => {
@@ -232,7 +234,7 @@ export default function DexRoute({
               >
                 {categories.map((category) => (
                   <option key={category.id} value={category.id}>
-                    {category.label}
+                    {collectionCategoryLabel(category)}
                   </option>
                 ))}
                 <option value="mega">Mega &amp; Primal</option>
@@ -345,7 +347,7 @@ export default function DexRoute({
                       }}
                     >
                       <span>{categoryGlyphs[category.id]}</span>
-                      {category.shortLabel ?? category.label}
+                      {collectionCategoryLabel(category)}
                     </button>
                   ))}
               </div>
