@@ -975,6 +975,49 @@ describe('authoritative CSV import', () => {
     expect((await bootstrap()).collectionEntries).toHaveLength(importSlice.length * 6);
   });
 
+  it('applies a complete collection export containing thousands of changed cells', async () => {
+    const state = await bootstrap();
+    const categoryIds = state.categories.map((category) => category.id);
+    const csv = [
+      ['form_id', ...categoryIds].join(','),
+      ...state.catalog.map((item) =>
+        [
+          item.id,
+          ...categoryIds.map((categoryId) => (item.rules[categoryId] === 'released' ? 'true' : '')),
+        ].join(','),
+      ),
+    ].join('\n');
+
+    const expectedChanges = state.catalog.reduce(
+      (total, item) =>
+        total + categoryIds.filter((categoryId) => item.rules[categoryId] === 'released').length,
+      0,
+    );
+    expect(expectedChanges).toBeGreaterThan(2_000);
+
+    const previewResponse = await localApi('/api/v1/imports/preview', {
+      method: 'POST',
+      body: JSON.stringify({ csv, sourceName: 'complete-export.csv', policy: 'merge' }),
+    });
+    const preview = await responseJson<ImportPreviewResponse>(previewResponse);
+    expect(previewResponse.status).toBe(200);
+    expect(preview.preview.summary).toMatchObject({
+      added: expectedChanges,
+      removed: 0,
+      rejected: 0,
+    });
+    if (!preview.jobId) throw new Error('Expected a complete collection import job');
+
+    const applyResponse = await localApi(`/api/v1/imports/${preview.jobId}/apply`, {
+      method: 'POST',
+      body: JSON.stringify({}),
+    });
+    const applied = await responseJson<ImportApplyResponse>(applyResponse);
+    expect(applyResponse.status).toBe(200);
+    expect(applied.added).toBe(expectedChanges);
+    expect((await bootstrap()).collectionEntries).toHaveLength(expectedChanges);
+  }, 60_000);
+
   it('claims a no-change import exactly once under concurrent apply requests', async () => {
     const csv = ['form_id,normal', 'form-0001-standard,false'].join('\n');
     const previewResponse = await localApi('/api/v1/imports/preview', {

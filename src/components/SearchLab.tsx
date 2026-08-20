@@ -18,6 +18,17 @@ const SEARCH_CATEGORY_IDS = [
   'xxl',
   'xxs',
 ] as const satisfies readonly CategoryId[];
+
+type MissingSearchMode = 'personal' | 'tradeable';
+
+function formatMissingSearch(value: string, mode: MissingSearchMode): string {
+  return mode === 'personal' ? value.replace(/^!traded&/, '!#&') : value;
+}
+
+function formatPersonalHelper(value: string): string {
+  return value.replace(/^!traded&/, '');
+}
+
 async function copyText(value: string): Promise<boolean> {
   try {
     await navigator.clipboard.writeText(value);
@@ -45,16 +56,6 @@ export function ProgressPage({
   categories: readonly Category[];
   onOpen?: (item: CatalogItem) => void;
 }) {
-  const [copied, setCopied] = useState<string | null>(null);
-  const [copyFailure, setCopyFailure] = useState(false);
-  const [sharedCategories, setSharedCategories] = useState<Set<CategoryId>>(
-    () => new Set(SEARCH_CATEGORY_IDS),
-  );
-
-  const labels = useMemo(
-    () => new Map(categories.map((category) => [category.id, collectionCategoryLabel(category)])),
-    [categories],
-  );
   const nationalCatalog = useMemo(() => catalog.filter((item) => item.isDefault), [catalog]);
   const catalogIndex = useMemo(() => createCatalogIndex(catalog), [catalog]);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
@@ -75,13 +76,151 @@ export function ProgressPage({
       ),
     [entries, regionCatalog, regionalCategory],
   );
-  const regionalSearch = useMemo(
-    () =>
-      generateMissingSearchStrings(regionCatalog, entries, regionalCategory, {
-        maxLength: 4_500,
-      }),
-    [entries, regionCatalog, regionalCategory],
+
+  return (
+    <section className="page page--progress">
+      <header className="tool-page-header progress-page-header">
+        <span className="eyebrow">
+          <Icon name="chart" /> Collection progress
+        </span>
+        <h1>Your collection, clearly.</h1>
+        <p>See completion across every category, then focus on the region that needs attention.</p>
+      </header>
+
+      <section className="progress-overview" aria-labelledby="progress-overview-title">
+        <div className="section-heading">
+          <div>
+            <span className="eyebrow">Overall collection</span>
+            <h2 id="progress-overview-title">At a glance</h2>
+          </div>
+        </div>
+        <div className="progress-summary-grid">
+          {categories.map((category) => {
+            const available = nationalCatalog.filter(
+              (item) => item.rules[category.id] === 'released',
+            );
+            const collected = available.filter((item) =>
+              entries.some(
+                (entry) =>
+                  entry.formId === item.id && entry.categoryId === category.id && entry.collected,
+              ),
+            ).length;
+            const percentage = available.length
+              ? Math.round((collected / available.length) * 100)
+              : 0;
+            return (
+              <article key={category.id}>
+                <span>
+                  <strong>{collectionCategoryLabel(category)}</strong>
+                  <small>{percentage}%</small>
+                </span>
+                <b>
+                  {collected}
+                  <small> / {available.length}</small>
+                </b>
+                <progress value={collected} max={available.length || 1} />
+              </article>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="regional-progress" aria-labelledby="regional-progress-title">
+        <div className="section-heading regional-progress__heading">
+          <div>
+            <span className="eyebrow">Regional explorer</span>
+            <h2 id="regional-progress-title">Where are your gaps?</h2>
+          </div>
+          {selectedRegion && (
+            <label>
+              <span className="sr-only">Regional collection category</span>
+              <select
+                aria-label="Regional collection category"
+                value={regionalCategory}
+                onChange={(event) => setRegionalCategory(event.target.value as CategoryId)}
+              >
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {collectionCategoryLabel(category)}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
+        </div>
+        <div className="region-shortcut-grid">
+          {catalogIndex.regions.map((region) => {
+            const scoped = defaultRegionCatalog(catalogIndex, region);
+            const available = scoped.filter((entry) => entry.rules.normal === 'released');
+            const collected = available.filter((entry) =>
+              entries.some(
+                (owned) =>
+                  owned.formId === entry.id && owned.categoryId === 'normal' && owned.collected,
+              ),
+            ).length;
+            const label = region.charAt(0).toUpperCase() + region.slice(1).toLowerCase();
+            return (
+              <button
+                type="button"
+                key={region}
+                className={selectedRegion === region ? 'is-active' : ''}
+                aria-pressed={selectedRegion === region}
+                onClick={() => setSelectedRegion(region)}
+              >
+                <strong>{label}</strong>
+                <span>
+                  {collected}/{available.length}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+        {selectedRegion ? (
+          <div className="regional-detail">
+            <div>
+              <strong>
+                {selectedRegion.charAt(0).toUpperCase() + selectedRegion.slice(1).toLowerCase()} ·{' '}
+                {collectionCategoryLabel(categories.find((item) => item.id === regionalCategory)!)}
+              </strong>
+              <span>{regionalMissing.length} obtainable Pokémon missing</span>
+            </div>
+            <div className="regional-missing-list">
+              {regionalMissing.map((pokemon) => (
+                <button type="button" key={pokemon.id} onClick={() => onOpen?.(pokemon)}>
+                  <span>#{String(pokemon.dexNumber).padStart(4, '0')}</span> {pokemon.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <p className="regional-progress__empty">Choose a region to see its missing Pokémon.</p>
+        )}
+      </section>
+    </section>
   );
+}
+
+export function SearchLabPage({
+  catalog,
+  entries,
+  categories,
+}: {
+  catalog: readonly CatalogItem[];
+  entries: readonly CollectionEntry[];
+  categories: readonly Category[];
+}) {
+  const [copied, setCopied] = useState<string | null>(null);
+  const [copyFailure, setCopyFailure] = useState(false);
+  const [missingSearchMode, setMissingSearchMode] = useState<MissingSearchMode>('personal');
+  const [sharedCategories, setSharedCategories] = useState<Set<CategoryId>>(
+    () => new Set(SEARCH_CATEGORY_IDS),
+  );
+
+  const labels = useMemo(
+    () => new Map(categories.map((category) => [category.id, collectionCategoryLabel(category)])),
+    [categories],
+  );
+  const nationalCatalog = useMemo(() => catalog.filter((item) => item.isDefault), [catalog]);
   const results = useMemo(
     () =>
       SEARCH_CATEGORY_IDS.map((categoryId) => ({
@@ -128,14 +267,14 @@ export function ProgressPage({
       note: 'Untraded Shiny Pokémon caught in the last seven days.',
     },
     ...personalXXL.strings.map((value, index) => ({
-      name: `My missing XXL families${personalXXL.strings.length > 1 ? ` ${index + 1}/${personalXXL.strings.length}` : ''}`,
-      value,
-      note: `${personalXXL.missingDexNumbers.length} XXL gaps; includes catchable family stages you can evolve.`,
+      name: `XXL evolution helper${personalXXL.strings.length > 1 ? ` ${index + 1}/${personalXXL.strings.length}` : ''}`,
+      value: formatPersonalHelper(value),
+      note: `${personalXXL.missingDexNumbers.length} missing XXL entries. Also finds earlier stages that can evolve into them.`,
     })),
     ...personalXXS.strings.map((value, index) => ({
-      name: `My missing XXS families${personalXXS.strings.length > 1 ? ` ${index + 1}/${personalXXS.strings.length}` : ''}`,
-      value,
-      note: `${personalXXS.missingDexNumbers.length} XXS gaps; includes catchable family stages you can evolve.`,
+      name: `XXS evolution helper${personalXXS.strings.length > 1 ? ` ${index + 1}/${personalXXS.strings.length}` : ''}`,
+      value: formatPersonalHelper(value),
+      note: `${personalXXS.missingDexNumbers.length} missing XXS entries. Also finds earlier stages that can evolve into them.`,
     })),
     {
       name: 'Untagged review',
@@ -177,154 +316,49 @@ export function ProgressPage({
   }
 
   return (
-    <section className="page page--lab page--progress">
-      <header className="page-hero lab-hero">
-        <div>
-          <span className="eyebrow eyebrow--light">
-            <Icon name="chart" /> Collection progress
-          </span>
-          <h1>See what you have. Act on what is missing.</h1>
-          <p>
-            Review completion, open regional gaps, and copy collection-aware Pokémon GO searches.
-          </p>
-        </div>
-        <div className="lab-hero__orb" aria-hidden="true">
-          <Icon name="search" />
-          <span />
-        </div>
+    <section className="page page--lab page--search-lab">
+      <header className="tool-page-header search-page-header">
+        <span className="eyebrow">
+          <Icon name="flask" /> Search Lab
+        </span>
+        <h1>Useful searches, ready to paste.</h1>
+        <p>Build collection-aware Pokémon GO searches and package missing lists for friends.</p>
       </header>
-
-      <section className="progress-overview" aria-labelledby="progress-overview-title">
-        <div className="section-heading">
-          <div>
-            <span className="eyebrow">Overall collection</span>
-            <h2 id="progress-overview-title">Across every category</h2>
-          </div>
-        </div>
-        <div className="progress-summary-grid">
-          {categories.map((category) => {
-            const available = nationalCatalog.filter(
-              (item) => item.rules[category.id] === 'released',
-            );
-            const collected = available.filter((item) =>
-              entries.some(
-                (entry) =>
-                  entry.formId === item.id && entry.categoryId === category.id && entry.collected,
-              ),
-            ).length;
-            return (
-              <article key={category.id}>
-                <strong>{collectionCategoryLabel(category)}</strong>
-                <span>
-                  {collected}/{available.length}
-                </span>
-                <progress value={collected} max={available.length || 1} />
-              </article>
-            );
-          })}
-        </div>
-      </section>
-
-      <section className="regional-progress" aria-labelledby="regional-progress-title">
-        <div className="section-heading">
-          <div>
-            <span className="eyebrow">Regional progress</span>
-            <h2 id="regional-progress-title">Choose a region</h2>
-          </div>
-        </div>
-        <div className="region-shortcut-grid">
-          {catalogIndex.regions.map((region) => {
-            const scoped = defaultRegionCatalog(catalogIndex, region);
-            const available = scoped.filter((entry) => entry.rules.normal === 'released');
-            const collected = available.filter((entry) =>
-              entries.some(
-                (owned) =>
-                  owned.formId === entry.id && owned.categoryId === 'normal' && owned.collected,
-              ),
-            ).length;
-            const label = region.charAt(0).toUpperCase() + region.slice(1).toLowerCase();
-            return (
-              <button
-                type="button"
-                key={region}
-                className={selectedRegion === region ? 'is-active' : ''}
-                onClick={() => setSelectedRegion(region)}
-              >
-                <span>
-                  <strong>{label}</strong>
-                  <small>
-                    {collected}/{available.length} Normal
-                  </small>
-                </span>
-                <Icon name="chevron-right" />
-              </button>
-            );
-          })}
-        </div>
-        {selectedRegion && (
-          <div className="regional-detail">
-            <div className="section-heading">
-              <div>
-                <span className="eyebrow">Regional detail</span>
-                <h3>
-                  {selectedRegion.charAt(0).toUpperCase() + selectedRegion.slice(1).toLowerCase()}
-                </h3>
-              </div>
-              <select
-                aria-label="Regional collection category"
-                value={regionalCategory}
-                onChange={(event) => setRegionalCategory(event.target.value as CategoryId)}
-              >
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {collectionCategoryLabel(category)}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <p>{regionalMissing.length} obtainable Pokémon missing.</p>
-            <div className="regional-search-actions">
-              {regionalSearch.strings.map((value, index) => (
-                <article key={value}>
-                  <div>
-                    <strong>Search My Storage</strong>
-                    <small>Paste this into your Pokémon GO storage search.</small>
-                    <code>{value}</code>
-                  </div>
-                  <button
-                    type="button"
-                    className="button button--copy"
-                    onClick={() => void handleCopy(value, `regional-${index}`)}
-                  >
-                    {copied === `regional-${index}` ? 'Copied' : 'Copy'}
-                  </button>
-                </article>
-              ))}
-              {regionalSearch.strings.length > 0 && (
-                <p>
-                  <strong>Send to a Friend:</strong> share the same category and region string so
-                  another trainer can check what they have available.
-                </p>
-              )}
-            </div>
-            <div className="regional-missing-list">
-              {regionalMissing.map((pokemon) => (
-                <button type="button" key={pokemon.id} onClick={() => onOpen?.(pokemon)}>
-                  #{String(pokemon.dexNumber).padStart(4, '0')} {pokemon.name}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-      </section>
 
       <section className="panel generator-panel">
         <div className="panel-heading">
           <div>
             <span className="eyebrow">My missing</span>
-            <h2>Missing-Dex generator</h2>
+            <h2>My missing searches</h2>
+          </div>
+          <div className="missing-search-mode" role="group" aria-label="Missing search format">
+            <button
+              type="button"
+              aria-pressed={missingSearchMode === 'personal'}
+              onClick={() => {
+                setCopied(null);
+                setMissingSearchMode('personal');
+              }}
+            >
+              Personal
+            </button>
+            <button
+              type="button"
+              aria-pressed={missingSearchMode === 'tradeable'}
+              onClick={() => {
+                setCopied(null);
+                setMissingSearchMode('tradeable');
+              }}
+            >
+              Tradeable
+            </button>
           </div>
         </div>
+        <p className="missing-search-mode__help">
+          {missingSearchMode === 'personal'
+            ? 'Excludes tagged Pokémon with !# so this can become your own saved search.'
+            : 'Excludes previously traded Pokémon for lists you share with friends.'}
+        </p>
         <div className="all-category-searches">
           {results.map((result) => (
             <section className="search-output" key={result.categoryId}>
@@ -335,11 +369,16 @@ export function ProgressPage({
               {result.generated.strings.length ? (
                 result.generated.strings.map((value, index) => (
                   <div className="search-string" key={value}>
-                    <code tabIndex={0}>{value}</code>
+                    <code tabIndex={0}>{formatMissingSearch(value, missingSearchMode)}</code>
                     <button
                       type="button"
                       className="button button--copy"
-                      onClick={() => void handleCopy(value, `${result.categoryId}-${index}`)}
+                      onClick={() =>
+                        void handleCopy(
+                          formatMissingSearch(value, missingSearchMode),
+                          `${result.categoryId}-${index}`,
+                        )
+                      }
                     >
                       <Icon
                         name={copied === `${result.categoryId}-${index}` ? 'check' : 'clipboard'}
@@ -447,8 +486,8 @@ export function ProgressPage({
       <section className="panel recommended-panel">
         <div className="panel-heading">
           <div>
-            <span className="eyebrow">Personal catch helpers</span>
-            <h2>Recommended strings</h2>
+            <span className="eyebrow">Smarter Pokémon searches</span>
+            <h2>Catch helpers</h2>
           </div>
           <Icon name="sparkles" />
         </div>
@@ -458,15 +497,18 @@ export function ProgressPage({
               <div>
                 <strong>{item.name}</strong>
                 <p>{item.note}</p>
-                <code>{item.value}</code>
+                <span className="recommended-query" tabIndex={0}>
+                  {item.value}
+                </span>
               </div>
               <button
                 type="button"
-                className="icon-button"
+                className="button button--secondary recommended-copy"
                 aria-label={`Copy ${item.name}`}
                 onClick={() => void handleCopy(item.value, item.name)}
               >
                 <Icon name={copied === item.name ? 'check' : 'clipboard'} />
+                {copied === item.name ? 'Copied' : 'Copy'}
               </button>
             </article>
           ))}

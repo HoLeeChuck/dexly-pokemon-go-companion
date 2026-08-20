@@ -42,6 +42,9 @@ const DexRoute = lazy(() => import('./routes/DexRoute'));
 const ProgressPage = lazy(() =>
   import('./components/SearchLab').then((module) => ({ default: module.ProgressPage })),
 );
+const SearchLabPage = lazy(() =>
+  import('./components/SearchLab').then((module) => ({ default: module.SearchLabPage })),
+);
 const DataPage = lazy(() =>
   import('./components/DataPage').then((module) => ({ default: module.DataPage })),
 );
@@ -130,16 +133,16 @@ function MobileNavigationHeader({
     if (!dialog.open) dialog.showModal();
     document.body.classList.add('scroll-locked');
     window.requestAnimationFrame(() =>
-      dialog.querySelector<HTMLButtonElement>('nav button')?.focus(),
+      dialog.querySelector<HTMLElement>('.mobile-nav-panel')?.focus({ preventScroll: true }),
     );
     return () => {
       document.body.classList.remove('scroll-locked');
     };
   }, [open]);
 
-  function closeMenu() {
+  function closeMenu(restoreTriggerFocus = false) {
     setOpen(false);
-    window.requestAnimationFrame(() => triggerRef.current?.focus());
+    if (restoreTriggerFocus) window.requestAnimationFrame(() => triggerRef.current?.focus());
   }
 
   function navigate(nextRoute: RouteId) {
@@ -171,7 +174,7 @@ function MobileNavigationHeader({
         aria-label="CatchGrid navigation"
         onCancel={(event) => {
           event.preventDefault();
-          closeMenu();
+          closeMenu(true);
         }}
         onClick={(event) => {
           if (event.target === dialogRef.current) closeMenu();
@@ -183,7 +186,7 @@ function MobileNavigationHeader({
               type="button"
               className="mobile-menu-button mobile-nav-close"
               aria-label="Close navigation menu"
-              onClick={closeMenu}
+              onClick={(event) => closeMenu(event.detail === 0)}
             >
               <Icon name="close" />
             </button>
@@ -191,8 +194,13 @@ function MobileNavigationHeader({
               id="mobile-primary-menu"
               className="mobile-nav-panel"
               aria-label="Primary navigation"
+              tabIndex={-1}
               onClick={(event) => event.stopPropagation()}
             >
+              <div className="mobile-nav-panel__heading">
+                <span className="eyebrow">Navigation</span>
+                <strong>Where would you like to go?</strong>
+              </div>
               {PRIMARY_ROUTES.map((item) => (
                 <button
                   type="button"
@@ -1063,6 +1071,13 @@ export default function App() {
                 entries={collectionEntries}
                 categories={bootstrap.categories}
                 onOpen={setSelected}
+              />
+            )}
+            {route === 'search' && (
+              <SearchLabPage
+                catalog={bootstrap.catalog}
+                entries={collectionEntries}
+                categories={bootstrap.categories}
               />
             )}
             {route === 'dex' && (

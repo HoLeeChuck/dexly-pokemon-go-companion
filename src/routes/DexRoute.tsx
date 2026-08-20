@@ -82,8 +82,6 @@ export default function DexRoute({
   const [region, setRegion] = useState('all');
   const [collectionFilter, setCollectionFilter] = useState<CollectionFilter>('all');
   const [dexView, setDexView] = useState<DexView>('species');
-  const [categoryPickerOpen, setCategoryPickerOpen] = useState(false);
-  const [regionPickerOpen, setRegionPickerOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [quickCheck, setQuickCheck] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -134,9 +132,6 @@ export default function DexRoute({
       return true;
     });
   }, [activeCategory, collectedKeys, collectionFilter, query, region, viewedCatalog]);
-  const activeCategoryLabel = categories.find((category) => category.id === activeCategory)
-    ? collectionCategoryLabel(categories.find((category) => category.id === activeCategory)!)
-    : activeCategory;
   const selectedRegionMedal = region === 'all' ? null : regionMedals.get(region);
 
   useEffect(() => {
@@ -145,16 +140,12 @@ export default function DexRoute({
 
   function changeRegion(value: string) {
     setRegion(value);
-    setRegionPickerOpen(false);
   }
 
   return (
     <section className="page page--dex">
       <header className="dex-header">
-        <div>
-          <span className="eyebrow">Your collection</span>
-          <h1>Pokédex</h1>
-        </div>
+        <h1>Pokédex</h1>
         <button
           type="button"
           className={`quick-toggle${quickCheck ? ' is-active' : ''}`}
@@ -171,14 +162,60 @@ export default function DexRoute({
       <section className="dex-browser" aria-label="Collection browser">
         <section className="dex-controls" aria-label="Pokédex filters">
           <div className={`dex-compact-bar${searchOpen || query ? ' is-searching' : ''}`}>
+            <label className="standard-filter-select region-standard-select">
+              <span className="sr-only">Region</span>
+              <RegionMedal
+                region={region === 'all' ? undefined : region}
+                tier={selectedRegionMedal?.tier ?? 'all'}
+              />
+              <select value={region} onChange={(event) => changeRegion(event.target.value)}>
+                <option value="all">All</option>
+                {index.regions.map((regionName) => (
+                  <option key={regionName} value={regionName}>
+                    {regionName}
+                  </option>
+                ))}
+              </select>
+              <Icon name="chevron-right" />
+            </label>
+            <label className="standard-filter-select collection-standard-select">
+              <span className="sr-only">Collection form</span>
+              <span className="collection-filter-glyph" aria-hidden="true">
+                {dexView === 'species'
+                  ? categoryGlyphs[activeCategory]
+                  : dexView === 'mega'
+                    ? 'M'
+                    : 'G'}
+              </span>
+              <select
+                value={dexView === 'species' ? activeCategory : dexView}
+                onChange={(event) => {
+                  const value = event.target.value;
+                  if (value === 'mega' || value === 'gigantamax') {
+                    setDexView(value);
+                    onCategoryChange('normal');
+                  } else {
+                    setDexView('species');
+                    onCategoryChange(value as CategoryId);
+                  }
+                }}
+              >
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {collectionCategoryLabel(category)}
+                  </option>
+                ))}
+                <option value="mega">Mega &amp; Primal</option>
+                <option value="gigantamax">Gigantamax</option>
+              </select>
+              <Icon name="chevron-right" />
+            </label>
             <div className={`collapsible-search${searchOpen || query ? ' is-open' : ''}`}>
               <button
                 type="button"
                 className="collapsible-search__trigger"
                 aria-label="Open Pokémon search"
                 onClick={() => {
-                  setCategoryPickerOpen(false);
-                  setRegionPickerOpen(false);
                   setSearchOpen(true);
                 }}
               >
@@ -206,152 +243,6 @@ export default function DexRoute({
                 </button>
               </label>
             </div>
-            <label className="standard-filter-select region-standard-select">
-              <span className="sr-only">Region</span>
-              <select value={region} onChange={(event) => changeRegion(event.target.value)}>
-                <option value="all">All regions</option>
-                {index.regions.map((regionName) => (
-                  <option key={regionName} value={regionName}>
-                    {regionName}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="standard-filter-select collection-standard-select">
-              <span className="sr-only">Collection form</span>
-              <select
-                value={dexView === 'species' ? activeCategory : dexView}
-                onChange={(event) => {
-                  const value = event.target.value;
-                  if (value === 'mega' || value === 'gigantamax') {
-                    setDexView(value);
-                    onCategoryChange('normal');
-                  } else {
-                    setDexView('species');
-                    onCategoryChange(value as CategoryId);
-                  }
-                }}
-              >
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {collectionCategoryLabel(category)}
-                  </option>
-                ))}
-                <option value="mega">Mega &amp; Primal</option>
-                <option value="gigantamax">Gigantamax</option>
-              </select>
-            </label>
-            <div className={`region-picker${regionPickerOpen ? ' is-open' : ''}`}>
-              <button
-                type="button"
-                className="region-picker__toggle"
-                aria-expanded={regionPickerOpen}
-                aria-controls="region-options"
-                onClick={() => {
-                  setCategoryPickerOpen(false);
-                  setRegionPickerOpen((value) => !value);
-                }}
-              >
-                <RegionMedal
-                  region={region === 'all' ? undefined : region}
-                  tier={selectedRegionMedal?.tier ?? 'all'}
-                />
-                <span className="picker-copy">
-                  <strong>{region === 'all' ? 'All regions' : region}</strong>
-                  <small>
-                    {selectedRegionMedal
-                      ? `${selectedRegionMedal.collected}/${selectedRegionMedal.total} ${activeCategoryLabel}`
-                      : 'Regional medals'}
-                  </small>
-                </span>
-                <Icon name="chevron-right" />
-              </button>
-              <div
-                id="region-options"
-                className="region-options"
-                role="listbox"
-                aria-label="Region"
-              >
-                <button
-                  type="button"
-                  role="option"
-                  aria-selected={region === 'all'}
-                  onClick={() => changeRegion('all')}
-                >
-                  <RegionMedal tier="all" />
-                  <span>
-                    <strong>All regions</strong>
-                    <small>Show the complete Pokédex</small>
-                  </span>
-                </button>
-                {index.regions.map((regionName) => {
-                  const medal = regionMedals.get(regionName)!;
-                  return (
-                    <button
-                      type="button"
-                      role="option"
-                      aria-selected={region === regionName}
-                      key={regionName}
-                      onClick={() => changeRegion(regionName)}
-                    >
-                      <RegionMedal region={regionName} tier={medal.tier} />
-                      <span>
-                        <strong>{regionName}</strong>
-                        <small>
-                          {medal.collected}/{medal.total} · {titleCase(medal.tier)}
-                        </small>
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-            <div className={`category-picker${categoryPickerOpen ? ' is-open' : ''}`}>
-              <button
-                type="button"
-                className="category-picker__toggle"
-                aria-expanded={categoryPickerOpen}
-                aria-controls="collection-category-options"
-                onClick={() => {
-                  setRegionPickerOpen(false);
-                  setCategoryPickerOpen((value) => !value);
-                }}
-              >
-                <span>{categoryGlyphs[activeCategory]}</span>
-                <span className="picker-copy">
-                  <strong>{activeCategoryLabel}</strong>
-                  <small>Collection form</small>
-                </span>
-                <Icon name="chevron-right" />
-              </button>
-              <div
-                id="collection-category-options"
-                className="category-scroller"
-                role="toolbar"
-                aria-label="Collection category"
-              >
-                {categories
-                  .filter(
-                    (category) =>
-                      dexView === 'species' || category.id === 'normal' || category.id === 'shiny',
-                  )
-                  .map((category) => (
-                    <button
-                      type="button"
-                      key={category.id}
-                      className={activeCategory === category.id ? 'is-active' : ''}
-                      aria-pressed={activeCategory === category.id}
-                      onClick={() => {
-                        onCategoryChange(category.id);
-                        setCategoryPickerOpen(false);
-                      }}
-                    >
-                      <span>{categoryGlyphs[category.id]}</span>
-                      {collectionCategoryLabel(category)}
-                    </button>
-                  ))}
-              </div>
-            </div>
           </div>
           <div className="state-filter" role="group" aria-label="Collection state">
             {(['all', 'missing', 'collected'] as const).map((value) => (
@@ -367,32 +258,6 @@ export default function DexRoute({
           </div>
         </section>
         <div className="dex-results">
-          <div className="grid-heading">
-            <div>
-              <h2>
-                {dexView === 'species'
-                  ? `${activeCategoryLabel} collection`
-                  : dexView === 'mega'
-                    ? `Mega & Primal · ${activeCategoryLabel}`
-                    : `Gigantamax · ${activeCategoryLabel}`}
-              </h2>
-              <span>{filtered.length} shown</span>
-            </div>
-            <div className="state-legend">
-              <span>
-                <i className="is-collected" />
-                Collected
-              </span>
-              <span>
-                <i className="is-missing" />
-                Missing
-              </span>
-              <span>
-                <i className="is-unavailable" />
-                Unavailable
-              </span>
-            </div>
-          </div>
           <PokemonGrid
             items={filtered}
             categoryId={activeCategory}
