@@ -19,9 +19,11 @@ interface SwipeOrigin {
   startY: number;
   lastX: number;
   lastY: number;
+  canDismiss: boolean;
 }
 
 const SWIPE_DISTANCE_PX = 52;
+const DISMISS_SWIPE_DISTANCE_PX = 84;
 const SWIPE_AXIS_RATIO = 1.25;
 
 function typeHook(type: string | undefined): string | undefined {
@@ -36,15 +38,6 @@ function typeHook(type: string | undefined): string | undefined {
 
 function categoryKey(formId: string, categoryId: CategoryId): string {
   return `${formId}:${categoryId}`;
-}
-
-function formKindLabel(form: CatalogItem): string {
-  if (form.variantKind === 'regional') return 'Regional form';
-  if (form.variantKind === 'gigantamax') return 'G-Max';
-  if (form.variantKind === 'mega') return 'Mega';
-  if (form.variantKind === 'primal') return 'Primal';
-  if (form.variantKind === 'costume') return 'Costume';
-  return 'Alternate form';
 }
 
 export function DetailSheet({
@@ -67,6 +60,7 @@ export function DetailSheet({
   onCollectionChange: (item: CatalogItem, categoryId: CategoryId, collected: boolean) => void;
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const sheetRef = useRef<HTMLElement>(null);
   const swipeOriginRef = useRef<SwipeOrigin | null>(null);
   const suppressClickUntilRef = useRef(0);
   const [section, setSection] = useState<'collection' | 'costumes'>('collection');
@@ -75,7 +69,9 @@ export function DetailSheet({
     const dialog = dialogRef.current;
     if (!dialog) return;
     dialog.showModal();
+    dialog.focus({ preventScroll: true });
     document.body.classList.add('scroll-locked');
+
     return () => {
       document.body.classList.remove('scroll-locked');
       if (dialog.open) dialog.close();
@@ -115,15 +111,86 @@ export function DetailSheet({
   const primaryType = typeHook(item.types[0]);
   const secondaryType = typeHook(item.types[1]);
 
-  function navigateTo(destination: CatalogItem | undefined) {
-    if (destination && onNavigate) {
+  useEffect(() => {
+    function handleKeydown(event: KeyboardEvent) {
+      if (
+        event.altKey ||
+        event.ctrlKey ||
+        event.metaKey ||
+        event.shiftKey ||
+        (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight')
+      ) {
+        return;
+      }
+
+      const target = event.target;
+      const targetIsTextEntry =
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLSelectElement ||
+        target instanceof HTMLTextAreaElement ||
+        (target instanceof HTMLElement && target.isContentEditable);
+      if (targetIsTextEntry && target instanceof Node && dialogRef.current?.contains(target)) {
+        return;
+      }
+
+      const destination = event.key === 'ArrowLeft' ? previousItem : nextItem;
+      if (!destination || !onNavigate) return;
+      event.preventDefault();
       setSection('collection');
       onNavigate(destination);
     }
+
+    document.addEventListener('keydown', handleKeydown, true);
+    return () => document.removeEventListener('keydown', handleKeydown, true);
+  }, [nextItem, onNavigate, previousItem]);
+
+  function navigateTo(destination: CatalogItem | undefined) {
+    if (!destination || !onNavigate) return;
+    setSection('collection');
+    onNavigate(destination);
+  }
+
+  function updateDismissDrag(distance: number) {
+    const sheet = sheetRef.current;
+    if (!sheet) return;
+    const step = Math.min(50, Math.max(1, Math.round(distance / 10)));
+    const progress = Math.min(4, Math.max(1, Math.ceil((distance / window.innerHeight) * 4)));
+    sheet.dataset.dismissDragging = 'true';
+    sheet.dataset.dismissDrag = String(step);
+    sheet.dataset.dismissProgress = String(progress);
+  }
+
+  function releaseDismissDrag(close: boolean) {
+    const sheet = sheetRef.current;
+    if (!sheet) {
+      if (close) onClose();
+      return;
+    }
+    delete sheet.dataset.dismissDragging;
+    if (!close) {
+      delete sheet.dataset.dismissDrag;
+      delete sheet.dataset.dismissProgress;
+      return;
+    }
+
+    sheet.dataset.dismissState = 'closing';
+    let completed = false;
+    const finish = () => {
+      if (completed) return;
+      completed = true;
+      onClose();
+    };
+    sheet.addEventListener('transitionend', finish, { once: true });
+    window.setTimeout(finish, 360);
   }
 
   function startSwipe(event: React.TouchEvent<HTMLElement>) {
     const touch = event.touches[0];
+    const target = event.target;
+    const canDismiss =
+      window.matchMedia('(max-width: 899px)').matches &&
+      target instanceof Element &&
+      Boolean(target.closest('.detail-hero'));
     suppressClickUntilRef.current = 0;
     swipeOriginRef.current =
       event.touches.length === 1 && touch
@@ -132,6 +199,7 @@ export function DetailSheet({
             startY: touch.clientY,
             lastX: touch.clientX,
             lastY: touch.clientY,
+            canDismiss,
           }
         : null;
   }
@@ -143,7 +211,17 @@ export function DetailSheet({
     origin.lastX = touch.clientX;
     origin.lastY = touch.clientY;
     const horizontalDistance = Math.abs(origin.lastX - origin.startX);
-    const verticalDistance = Math.abs(origin.lastY - origin.startY);
+    const verticalDelta = origin.lastY - origin.startY;
+    const verticalDistance = Math.abs(verticalDelta);
+    if (
+      origin.canDismiss &&
+      verticalDelta > 0 &&
+      verticalDistance > horizontalDistance * SWIPE_AXIS_RATIO
+    ) {
+      event.preventDefault();
+      updateDismissDrag(verticalDelta);
+      return;
+    }
     if (horizontalDistance > 12 && horizontalDistance > verticalDistance) event.preventDefault();
   }
 
@@ -154,6 +232,16 @@ export function DetailSheet({
     if (!origin) return;
     const deltaX = (touch?.clientX ?? origin.lastX) - origin.startX;
     const deltaY = (touch?.clientY ?? origin.lastY) - origin.startY;
+    const isDismissSwipe =
+      origin.canDismiss &&
+      deltaY >= DISMISS_SWIPE_DISTANCE_PX &&
+      deltaY > Math.abs(deltaX) * SWIPE_AXIS_RATIO;
+    if (isDismissSwipe) {
+      suppressClickUntilRef.current = Date.now() + 450;
+      releaseDismissDrag(true);
+      return;
+    }
+    releaseDismissDrag(false);
     const isHorizontalSwipe =
       Math.abs(deltaX) >= SWIPE_DISTANCE_PX &&
       Math.abs(deltaX) > Math.abs(deltaY) * SWIPE_AXIS_RATIO;
@@ -162,13 +250,12 @@ export function DetailSheet({
     navigateTo(deltaX < 0 ? nextItem : previousItem);
   }
 
-  function renderFormRows(forms: readonly CatalogItem[], heading: string, eyebrow: string) {
+  function renderFormRows(forms: readonly CatalogItem[], heading: string) {
     if (forms.length === 0) return null;
     return (
       <section className="compact-form-sections" aria-label={heading}>
         <div className="section-heading">
           <div>
-            <span className="eyebrow">{eyebrow}</span>
             <h3>{heading}</h3>
           </div>
           <span>{forms.length} forms</span>
@@ -183,9 +270,6 @@ export function DetailSheet({
               <PokemonSprite item={form} />
               <div>
                 <strong>{form.formName ?? form.name}</strong>
-                <small>
-                  {formKindLabel(form)} · {form.isReleased ? 'Released' : 'Unreleased'}
-                </small>
               </div>
               {(['normal', 'shiny'] as const).map((categoryId) => {
                 const rule = form.rules[categoryId] ?? 'unknown';
@@ -219,6 +303,7 @@ export function DetailSheet({
     <dialog
       ref={dialogRef}
       className="detail-dialog"
+      tabIndex={-1}
       aria-labelledby="detail-title"
       onCancel={(event) => {
         event.preventDefault();
@@ -229,6 +314,7 @@ export function DetailSheet({
       }}
     >
       <section
+        ref={sheetRef}
         className={`detail-sheet${isCollectionComplete ? ' detail-sheet--complete is-collection-complete' : ''}`}
         data-form-id={item.id}
         data-dex-number={item.dexNumber}
@@ -240,6 +326,7 @@ export function DetailSheet({
         onTouchEnd={finishSwipe}
         onTouchCancel={() => {
           swipeOriginRef.current = null;
+          releaseDismissDrag(false);
         }}
         onClickCapture={(event) => {
           if (Date.now() <= suppressClickUntilRef.current) {
@@ -312,16 +399,16 @@ export function DetailSheet({
           </div>
         </header>
 
-        <div className="detail-section-tabs" role="tablist" aria-label="Pokémon detail sections">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={section === 'collection'}
-            onClick={() => setSection('collection')}
-          >
-            Collection
-          </button>
-          {costumes.length > 0 && (
+        {costumes.length > 0 && (
+          <div className="detail-section-tabs" role="tablist" aria-label="Pokémon detail sections">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={section === 'collection'}
+              onClick={() => setSection('collection')}
+            >
+              Collection
+            </button>
             <button
               type="button"
               role="tab"
@@ -330,21 +417,14 @@ export function DetailSheet({
             >
               Costumes <span>{costumes.length}</span>
             </button>
-          )}
-        </div>
+          </div>
+        )}
 
         <div className="detail-sheet__body">
           {section === 'collection' ? (
             <>
-              <div className="section-heading">
-                <div>
-                  <span className="eyebrow">Your history</span>
-                  <h3>Collection</h3>
-                </div>
-                <span>{collected.size} marked</span>
-              </div>
               <div className="category-tile-grid">
-                {orderedCategories.slice(0, BASE_COLLECTION_ORDER.length).map((category) => {
+                {orderedCategories.map((category) => {
                   const rule = item.rules[category.id] ?? 'unknown';
                   const isCollected = collected.has(category.id);
                   const state = deriveCollectionState(rule, isCollected);
@@ -355,6 +435,7 @@ export function DetailSheet({
                       key={category.id}
                       className={`category-tile category-tile--collection category-tile--${state}`}
                       aria-pressed={rule === 'released' ? isCollected : undefined}
+                      aria-busy={pending || undefined}
                       disabled={rule !== 'released' || pending}
                       onClick={() => onCollectionChange(item, category.id, !isCollected)}
                     >
@@ -365,73 +446,17 @@ export function DetailSheet({
                       </span>
                       <span className="category-tile__copy">
                         <strong>{collectionCategoryLabel(category)}</strong>
-                        <small>
-                          {pending
-                            ? 'Saving…'
-                            : state === 'collected'
-                              ? 'Collected'
-                              : state === 'missing'
-                                ? 'Not yet'
-                                : state === 'unknown'
-                                  ? 'Not cataloged'
-                                  : state}
-                        </small>
                       </span>
                     </button>
                   );
                 })}
               </div>
-              {renderFormRows(collectorForms, 'Alternate forms', 'Collector forms')}
-              {renderFormRows(
-                transformations.filter((form) => form.variantKind !== 'gigantamax'),
-                'Mega & Primal',
-                'Transformations',
-              )}
-              {renderFormRows(
-                transformations.filter((form) => form.variantKind === 'gigantamax'),
-                'G-Max',
-                'Transformations',
-              )}
-              <div className="category-tile-grid category-tile-grid--rocket">
-                {orderedCategories.slice(BASE_COLLECTION_ORDER.length).map((category) => {
-                  const rule = item.rules[category.id] ?? 'unknown';
-                  const isCollected = collected.has(category.id);
-                  const state = deriveCollectionState(rule, isCollected);
-                  const pending = pendingKeys.has(categoryKey(item.id, category.id));
-                  return (
-                    <button
-                      type="button"
-                      key={category.id}
-                      className={`category-tile category-tile--collection category-tile--${state}`}
-                      aria-pressed={rule === 'released' ? isCollected : undefined}
-                      disabled={rule !== 'released' || pending}
-                      onClick={() => onCollectionChange(item, category.id, !isCollected)}
-                    >
-                      <span className="category-tile__status" aria-hidden="true">
-                        <Icon
-                          name={rule === 'released' ? (isCollected ? 'check' : 'plus') : 'lock'}
-                        />
-                      </span>
-                      <span className="category-tile__copy">
-                        <strong>{collectionCategoryLabel(category)}</strong>
-                        <small>
-                          {state === 'collected'
-                            ? 'Collected'
-                            : state === 'missing'
-                              ? 'Not yet'
-                              : state}
-                        </small>
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
+              {renderFormRows([...collectorForms, ...transformations], 'Alternative Forms')}
             </>
           ) : (
             <>
               <div className="section-heading">
                 <div>
-                  <span className="eyebrow">Event collection</span>
                   <h3>Costumes</h3>
                 </div>
                 <span>{costumes.length} costumes</span>
@@ -439,7 +464,7 @@ export function DetailSheet({
               <p className="section-intro">
                 Costume ownership is tracked separately from the base and transformation collection.
               </p>
-              {renderFormRows(costumes, 'Costume collection', 'Costumes')}
+              {renderFormRows(costumes, 'Costume collection')}
             </>
           )}
         </div>

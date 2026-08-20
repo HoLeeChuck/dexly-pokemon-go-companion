@@ -39,9 +39,9 @@ export interface ImportApplyResponse {
 
 const MAX_IMPORT_BYTES = 512_000;
 const MAX_IMPORT_ROWS = 2_500;
-const MAX_IMPORT_CHANGES = 200;
-const MAX_STORED_PREVIEW_BYTES = 256_000;
-const MAX_BACKUP_BYTES = 1_000_000;
+const MAX_IMPORT_CHANGES = 10_000;
+const MAX_STORED_PREVIEW_BYTES = 1_750_000;
+const MAX_BACKUP_BYTES = 1_750_000;
 
 function toHex(buffer: ArrayBuffer): string {
   return [...new Uint8Array(buffer)].map((value) => value.toString(16).padStart(2, '0')).join('');
@@ -109,11 +109,7 @@ export async function previewImport(
   input: { csv: string; sourceName: string; policy: CsvImportPolicy },
 ): Promise<ImportPreviewResponse> {
   if (new TextEncoder().encode(input.csv).byteLength > MAX_IMPORT_BYTES) {
-    throw new ApiError(
-      413,
-      'CSV_TOO_LARGE',
-      'CSV imports are limited to 512 KB in this vertical slice.',
-    );
+    throw new ApiError(413, 'CSV_TOO_LARGE', 'CSV imports are limited to 512 KB.');
   }
   if (input.csv.includes('\0'))
     throw new ApiError(400, 'INVALID_CSV', 'CSV files cannot contain NUL bytes.');
@@ -153,7 +149,7 @@ export async function previewImport(
     throw new ApiError(
       413,
       'IMPORT_CHANGE_LIMIT',
-      `This vertical slice applies at most ${MAX_IMPORT_CHANGES} changed cells per import.`,
+      `A single import can apply at most ${MAX_IMPORT_CHANGES.toLocaleString('en-US')} changed cells.`,
     );
   }
 

@@ -29,7 +29,7 @@ test('mobile menu traps focus, closes with Escape, and restores its trigger', as
   await trigger.click();
   const dialog = page.getByRole('dialog', { name: 'CatchGrid navigation' });
   await expect(dialog).toBeVisible();
-  await expect(dialog.getByRole('button', { name: 'Home', exact: true })).toBeFocused();
+  await expect(dialog.locator('.mobile-nav-panel')).toBeFocused();
 
   await page.keyboard.press('Escape');
   await expect(dialog).toBeHidden();

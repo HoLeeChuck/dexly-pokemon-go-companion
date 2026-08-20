@@ -6,42 +6,142 @@
 }
 
 .page--data {
-  max-width: 920px;
+  max-width: 1080px;
   margin-inline: auto;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 1rem;
 }
 .page--data > .panel,
 .page--data > footer {
   width: 100%;
 }
-.page--data .appearance-panel {
+
+.page--data > .settings-header {
+  order: 0;
+}
+
+.page--data > .notice {
   order: 1;
 }
-.page--data .collection-setup-panel {
-  order: 1;
-}
-.page--data .appearance-panel {
+
+.page--data > .appearance-panel,
+.page--data > .data-actions {
   order: 2;
 }
-.page--data .import-panel {
+
+.page--data > .import-panel {
   order: 3;
 }
-.page--data .data-actions {
+
+.page--data > .collection-setup-panel {
   order: 4;
 }
-.page--data .security-panel {
+
+.page--data > .security-panel {
   order: 5;
 }
-.page--data .legal-footer {
+
+.page--data > .attribution {
   order: 6;
 }
-.page--data .attribution {
-  order: 6;
+
+.settings-header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.35rem 0 0.15rem;
+}
+
+.settings-header h1 {
+  margin: 0.15rem 0 0;
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 1;
+}
+
+.settings-header p {
+  margin: 0.45rem 0 0;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.settings-disclosure {
+  padding: 0;
+  overflow: clip;
+}
+
+.settings-disclosure > summary {
+  min-height: 76px;
+  padding: 1rem 1.1rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.settings-disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+
+.settings-disclosure > summary p {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+  font-size: 0.65rem;
+  font-weight: 500;
+}
+
+.settings-disclosure__icon {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--brand-700);
+}
+
+.settings-disclosure__icon svg:last-child {
+  transition: transform 180ms ease;
+}
+
+.settings-disclosure[open] .settings-disclosure__icon svg:last-child {
+  transform: rotate(90deg);
+}
+
+.settings-disclosure__body {
+  padding: 0 1.1rem 1.1rem;
+  border-top: 1px solid var(--line);
+}
+
+.settings-disclosure__body > p:first-child {
+  margin: 0.85rem 0;
+  color: var(--muted);
+  font-size: 0.68rem;
+  line-height: 1.5;
+}
+
+@media (min-width: 800px) {
+  .page--data {
+    grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+    align-items: start;
+  }
+
+  .page--data > .settings-header,
+  .page--data > .notice,
+  .page--data > .import-panel,
+  .page--data > .collection-setup-panel,
+  .page--data > .security-panel,
+  .page--data > .attribution {
+    grid-column: 1 / -1;
+  }
+
+  .page--data > .appearance-panel {
+    grid-column: 1;
+  }
+
+  .page--data > .data-actions {
+    grid-column: 2;
+  }
 }
 .region-setup-grid {
   display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.7rem;
 }
 .region-setup-grid article {
@@ -71,6 +171,18 @@
   opacity: 0.8;
 }
 @media (max-width: 620px) {
+  .settings-header {
+    padding-inline: 0.15rem;
+  }
+
+  .settings-header p {
+    max-width: 26rem;
+  }
+
+  .region-setup-grid {
+    grid-template-columns: 1fr;
+  }
+
   .region-setup-grid article {
     align-items: stretch;
     flex-direction: column;
@@ -133,7 +245,7 @@
   position: relative;
   display: flex;
   min-width: 0;
-  min-height: 70px;
+  min-height: 58px;
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
@@ -257,36 +369,6 @@
   white-space: nowrap;
 }
 
-.data-hero {
-  background:
-    radial-gradient(
-      circle at 88% 15%,
-      color-mix(in srgb, var(--lime) 22%, transparent),
-      transparent 11rem
-    ),
-    linear-gradient(140deg, var(--brand-800), var(--brand-950));
-}
-
-.data-hero__icon {
-  position: absolute;
-  right: 25px;
-  bottom: 25px;
-  display: grid;
-  width: 82px;
-  height: 82px;
-  place-items: center;
-  border: 1px solid rgb(255 255 255 / 12%);
-  border-radius: 24px;
-  color: var(--lime);
-  background: rgb(255 255 255 / 5%);
-  transform: rotate(6deg);
-}
-
-.data-hero__icon svg {
-  width: 2.7rem;
-  height: 2.7rem;
-}
-
 .data-actions > p,
 .import-panel > p,
 .security-panel > p {
@@ -307,7 +389,7 @@
 .file-picker {
   position: relative;
   display: flex;
-  min-height: 138px;
+  min-height: 96px;
   align-items: center;
   justify-content: center;
   padding: 1rem;

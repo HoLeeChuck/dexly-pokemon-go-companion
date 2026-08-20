@@ -54,6 +54,10 @@ export function DataPage({
   const [policy, setPolicy] = useState<CsvImportPolicy>('merge');
   const [applying, setApplying] = useState(false);
   const [message, setMessage] = useState('');
+  const [importMessage, setImportMessage] = useState<{
+    tone: 'success' | 'error';
+    text: string;
+  } | null>(null);
 
   const previewResult = useMemo(() => {
     if (!csv) return { preview: null, error: '' };
@@ -91,24 +95,30 @@ export function DataPage({
     setFileName(file.name);
     setCsv(await file.text());
     setMessage('');
+    setImportMessage(null);
   }
 
   async function applyImport() {
     if (!preview || preview.summary.rejected > 0) return;
     setApplying(true);
-    setMessage('');
+    setImportMessage(null);
     try {
       await onImport({ csv, fileName, policy });
-      setMessage(
-        `Import applied: ${preview.summary.added} added and ${preview.summary.removed} removed.`,
-      );
+      setImportMessage({
+        tone: 'success',
+        text: `Import applied: ${preview.summary.added} added and ${preview.summary.removed} removed.`,
+      });
       setCsv('');
       setFileName('');
       if (fileRef.current) fileRef.current.value = '';
     } catch (error) {
-      setMessage(
-        error instanceof Error ? error.message : 'Import failed without changing your collection.',
-      );
+      setImportMessage({
+        tone: 'error',
+        text:
+          error instanceof Error
+            ? error.message
+            : 'Import failed without changing your collection.',
+      });
     } finally {
       setApplying(false);
     }
@@ -116,17 +126,14 @@ export function DataPage({
 
   return (
     <section className="page page--data">
-      <header className="page-hero data-hero">
+      <header className="settings-header">
         <div>
-          <span className="eyebrow eyebrow--light">
+          <span className="eyebrow">
             <Icon name="settings" /> Settings
           </span>
-          <h1>Make CatchGrid work for you.</h1>
-          <p>Set up your collection, choose its appearance, and protect your browser data.</p>
+          <h1>Settings</h1>
+          <p>Personalize CatchGrid and manage your collection data.</p>
         </div>
-        <span className="data-hero__icon" aria-hidden="true">
-          <Icon name="database" />
-        </span>
       </header>
 
       {message && (
@@ -138,82 +145,88 @@ export function DataPage({
         </div>
       )}
 
-      <section className="panel collection-setup-panel">
-        <div className="panel-heading">
+      <details className="panel collection-setup-panel settings-disclosure">
+        <summary className="panel-heading">
           <div>
-            <span className="eyebrow">Collection setup</span>
-            <h2>Start from a completed region</h2>
+            <span className="eyebrow">Advanced setup</span>
+            <h2>Bulk collection setup</h2>
+            <p>Mark or clear an entire region’s obtainable Normal entries.</p>
           </div>
-          <Icon name="grid" />
-        </div>
-        <p>
-          Mark obtainable Normal entries together, then unmark the few you still need. Special
-          collection categories are never changed.
-        </p>
-        {storageMode === 'cloud' && (
-          <p className="notice notice--subtle">
-            Bulk region setup is available for browser collections. Switch back to this browser
-            before using it.
+          <span className="settings-disclosure__icon" aria-hidden="true">
+            <Icon name="grid" />
+            <Icon name="chevron-right" />
+          </span>
+        </summary>
+        <div className="settings-disclosure__body">
+          <p>
+            This only changes Normal collection entries. Shiny, Lucky, sizes, Shadow, and Purified
+            are never changed.
           </p>
-        )}
-        <div className="region-setup-grid">
-          {[...new Set(catalog.filter((item) => item.isDefault).map((item) => item.region))].map(
-            (region) => {
-              const regionLabel = region.charAt(0).toUpperCase() + region.slice(1).toLowerCase();
-              const count = catalog.filter(
-                (item) =>
-                  item.isDefault && item.region === region && item.rules.normal === 'released',
-              ).length;
-              return (
-                <article key={region}>
-                  <div>
-                    <strong>{regionLabel}</strong>
-                    <small>{count} obtainable Normal entries</small>
-                  </div>
-                  <div>
-                    <button
-                      type="button"
-                      className="button button--primary"
-                      disabled={storageMode === 'cloud'}
-                      onClick={() => {
-                        if (
-                          window.confirm(
-                            `Mark ${count} obtainable Normal entries in ${regionLabel} as collected? Special categories will not change.`,
-                          )
-                        )
-                          void onSetRegionNormal(region, true).then((changed) =>
-                            setMessage(
-                              `${regionLabel}: ${changed} Normal entries marked collected.`,
-                            ),
-                          );
-                      }}
-                    >
-                      Mark complete
-                    </button>
-                    <button
-                      type="button"
-                      className="button button--secondary"
-                      disabled={storageMode === 'cloud'}
-                      onClick={() => {
-                        if (
-                          window.confirm(
-                            `Clear the Normal collection state for ${regionLabel}? Special categories will not change.`,
-                          )
-                        )
-                          void onSetRegionNormal(region, false).then((changed) =>
-                            setMessage(`${regionLabel}: ${changed} Normal entries cleared.`),
-                          );
-                      }}
-                    >
-                      Clear Normal
-                    </button>
-                  </div>
-                </article>
-              );
-            },
+          {storageMode === 'cloud' && (
+            <p className="notice notice--subtle">
+              Bulk region setup is available for browser collections. Switch back to this browser
+              before using it.
+            </p>
           )}
+          <div className="region-setup-grid">
+            {[...new Set(catalog.filter((item) => item.isDefault).map((item) => item.region))].map(
+              (region) => {
+                const regionLabel = region.charAt(0).toUpperCase() + region.slice(1).toLowerCase();
+                const count = catalog.filter(
+                  (item) =>
+                    item.isDefault && item.region === region && item.rules.normal === 'released',
+                ).length;
+                return (
+                  <article key={region}>
+                    <div>
+                      <strong>{regionLabel}</strong>
+                      <small>{count} obtainable Normal entries</small>
+                    </div>
+                    <div>
+                      <button
+                        type="button"
+                        className="button button--primary"
+                        disabled={storageMode === 'cloud'}
+                        onClick={() => {
+                          if (
+                            window.confirm(
+                              `Mark ${count} obtainable Normal entries in ${regionLabel} as collected? Special categories will not change.`,
+                            )
+                          )
+                            void onSetRegionNormal(region, true).then((changed) =>
+                              setMessage(
+                                `${regionLabel}: ${changed} Normal entries marked collected.`,
+                              ),
+                            );
+                        }}
+                      >
+                        Mark complete
+                      </button>
+                      <button
+                        type="button"
+                        className="button button--secondary"
+                        disabled={storageMode === 'cloud'}
+                        onClick={() => {
+                          if (
+                            window.confirm(
+                              `Clear the Normal collection state for ${regionLabel}? Special categories will not change.`,
+                            )
+                          )
+                            void onSetRegionNormal(region, false).then((changed) =>
+                              setMessage(`${regionLabel}: ${changed} Normal entries cleared.`),
+                            );
+                        }}
+                      >
+                        Clear Normal
+                      </button>
+                    </div>
+                  </article>
+                );
+              },
+            )}
+          </div>
         </div>
-      </section>
+      </details>
 
       <section className="panel appearance-panel">
         <div className="panel-heading">
@@ -362,6 +375,21 @@ export function DataPage({
             {fileName ? 'Select a different file' : 'Up to 512 KB · nothing applies without review'}
           </span>
         </div>
+
+        {importMessage && (
+          <div
+            className={`notice ${importMessage.tone === 'error' ? 'notice--warning' : 'notice--info'}`}
+            role={importMessage.tone === 'error' ? 'alert' : 'status'}
+          >
+            <Icon name={importMessage.tone === 'error' ? 'shield' : 'check'} />
+            <div>
+              <strong>
+                {importMessage.tone === 'error' ? 'Import not applied' : 'Import complete'}
+              </strong>
+              <p>{importMessage.text}</p>
+            </div>
+          </div>
+        )}
 
         {previewResult.error && (
           <div className="notice notice--warning" role="alert">

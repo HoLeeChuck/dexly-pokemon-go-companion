@@ -6,6 +6,7 @@ export function useAppNavigation() {
     home: 0,
     dex: 0,
     progress: 0,
+    search: 0,
     settings: 0,
     owner: 0,
   });

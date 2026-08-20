@@ -7,7 +7,7 @@ describe('application routing', () => {
     expect(routeFromLocation({ pathname: '/', hash: '#/dex' })).toBe('dex');
     expect(routeFromLocation({ pathname: '/', hash: '#/progress' })).toBe('progress');
     expect(routeFromLocation({ pathname: '/', hash: '#/settings' })).toBe('settings');
-    expect(routeFromLocation({ pathname: '/', hash: '#/search' })).toBe('progress');
+    expect(routeFromLocation({ pathname: '/', hash: '#/search' })).toBe('search');
     expect(routeFromLocation({ pathname: '/', hash: '#/profile' })).toBe('settings');
     expect(routeFromLocation({ pathname: '/', hash: '#/unknown' })).toBe('home');
     expect(urlForRoute('owner')).toBe('/cody');

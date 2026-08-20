@@ -13,7 +13,7 @@ async function openDex(page: import('@playwright/test').Page) {
 
 async function openMobileRoute(
   page: import('@playwright/test').Page,
-  route: 'Home' | 'Dex' | 'Progress' | 'Settings',
+  route: 'Home' | 'Dex' | 'Progress' | 'Search Lab' | 'Settings',
 ) {
   await page.getByRole('button', { name: 'Open navigation menu' }).click();
   const menu = page.locator('.mobile-nav-panel');
@@ -52,6 +52,40 @@ async function swipeHorizontally(target: Locator, direction: 'left' | 'right') {
     dispatchTouch('touchmove', endX);
     dispatchTouch('touchend', endX, true);
   }, direction);
+}
+
+async function swipeDown(target: Locator): Promise<string> {
+  return target.evaluate((element) => {
+    const rect = element.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const startY = rect.top + 28;
+    const endY = Math.min(rect.bottom - 12, startY + 110);
+    const dispatchTouch = (type: string, clientY: number, ended = false) => {
+      const touch = {
+        identifier: 1,
+        target: element,
+        clientX: x,
+        clientY,
+        pageX: x,
+        pageY: clientY,
+        screenX: x,
+        screenY: clientY,
+      };
+      const event = new Event(type, { bubbles: true, cancelable: true });
+      Object.defineProperties(event, {
+        touches: { value: ended ? [] : [touch] },
+        targetTouches: { value: ended ? [] : [touch] },
+        changedTouches: { value: [touch] },
+      });
+      element.dispatchEvent(event);
+    };
+
+    dispatchTouch('touchstart', startY);
+    dispatchTouch('touchmove', endY);
+    const dragTransform = getComputedStyle(element.closest('.detail-sheet')!).transform;
+    dispatchTouch('touchend', endY, true);
+    return dragTransform;
+  });
 }
 
 test.describe('mobile collection experience', () => {
@@ -95,14 +129,7 @@ test.describe('mobile collection experience', () => {
       'rgb(255, 255, 255)',
     );
     await expect(page.locator('.quick-toggle')).toHaveCSS('color', 'rgb(231, 243, 238)');
-    await expect(page.locator('.dex-results .grid-heading')).toHaveCSS(
-      'background-color',
-      'rgb(23, 30, 28)',
-    );
-    await expect(page.locator('.dex-results .grid-heading')).toHaveCSS(
-      'color',
-      'rgb(231, 243, 238)',
-    );
+    await expect(page.locator('.dex-results')).toHaveCSS('color', 'rgb(231, 243, 238)');
     await expect(
       page.getByRole('group', { name: 'Collection state' }).getByRole('button', { name: 'All' }),
     ).toHaveCSS('background-color', 'rgb(24, 61, 53)');
@@ -180,19 +207,11 @@ test.describe('mobile collection experience', () => {
     expect(controls.bottom).toBeLessThan(controls.viewportHeight);
     expect(await page.evaluate(() => window.scrollY)).toBe(0);
 
-    const stacking = await page.evaluate(() => {
-      const heading = document.querySelector<HTMLElement>('.dex-results .grid-heading')!;
-      const card = document.querySelector<HTMLElement>('.pokemon-card')!;
-      return {
-        headingZIndex: Number(getComputedStyle(heading).zIndex),
-        headingBackground: getComputedStyle(heading).backgroundColor,
-        cardIsolation: getComputedStyle(card).isolation,
-      };
-    });
-    expect(stacking.headingZIndex).toBeGreaterThanOrEqual(20);
-    expect(stacking.headingBackground).not.toBe('rgba(0, 0, 0, 0)');
-    expect(stacking.headingBackground).not.toBe('transparent');
-    expect(stacking.cardIsolation).toBe('isolate');
+    await expect(page.locator('.dex-results .grid-heading')).toHaveCount(0);
+    await expect(page.getByText('Your collection', { exact: true })).toHaveCount(0);
+    await expect(page.getByText(/collection$/i, { exact: true })).toHaveCount(0);
+    await expect(page.getByText(/shown$/i, { exact: true })).toHaveCount(0);
+    await expect(page.locator('.pokemon-card').first()).toHaveCSS('isolation', 'isolate');
 
     const brandTarget = await page
       .getByRole('button', { name: 'Go to home page' })
@@ -214,6 +233,7 @@ test.describe('mobile collection experience', () => {
     await expect(searchTrigger).toBeVisible();
 
     const regionPicker = page.locator('.region-standard-select select');
+    await expect(regionPicker.locator('option[value="all"]')).toHaveText('All');
     await regionPicker.selectOption('Kanto');
     await expect(regionPicker).toHaveValue('Kanto');
     const categoryPicker = page.locator('.collection-standard-select select');
@@ -242,10 +262,9 @@ test.describe('mobile collection experience', () => {
       };
     });
     expect(menuLayout).toEqual({ fillsWidth: true, fillsBelowHeader: true });
-    for (const route of ['Home', 'Dex', 'Progress', 'Settings']) {
+    for (const route of ['Home', 'Dex', 'Progress', 'Search Lab', 'Settings']) {
       await expect(menu.getByRole('button', { name: route, exact: true })).toBeVisible();
     }
-    await expect(menu.getByRole('button', { name: 'Search Lab', exact: true })).toHaveCount(0);
     await expect(menu.getByRole('button', { name: 'Trade', exact: true })).toHaveCount(0);
     await expect(menu.getByRole('button', { name: 'Dex', exact: true })).toHaveAttribute(
       'aria-current',
@@ -268,6 +287,7 @@ test.describe('mobile collection experience', () => {
 
     await card.click();
     await expect(page.getByRole('dialog', { name: 'Bulbasaur' })).toBeVisible();
+    await expect(page.locator('.detail-dialog')).toHaveCSS('outline-style', 'none');
     expect(api.collectionMutationCount).toBe(0);
     expect(api.unexpectedWriteCount).toBe(0);
 
@@ -294,6 +314,24 @@ test.describe('mobile collection experience', () => {
     await expect(page.getByRole('dialog', { name: 'Bulbasaur' })).toBeVisible();
     expect(api.collectionMutationCount).toBe(0);
     expect(api.unexpectedWriteCount).toBe(0);
+  });
+
+  test('swiping down on the Pokémon header closes it while the collection body remains scrollable', async ({
+    page,
+  }) => {
+    const api = await installFakeApi(page);
+    await openDex(page);
+    await page.getByTestId('pokemon-card-1').click();
+
+    await expect(page.getByRole('button', { name: 'Close details' })).toBeVisible();
+    await swipeDown(page.locator('.detail-sheet__body'));
+    await expect(page.getByRole('dialog', { name: 'Bulbasaur' })).toBeVisible();
+
+    const dragTransform = await swipeDown(page.locator('.detail-hero'));
+    expect(dragTransform).not.toBe('none');
+    expect(dragTransform).not.toBe('matrix(1, 0, 0, 1, 0, 0)');
+    await expect(page.getByRole('dialog', { name: 'Bulbasaur' })).toBeHidden();
+    expect(api.collectionMutationCount).toBe(0);
   });
 
   test('Quick Check toggles one entry without a confirmation toast', async ({ page }) => {
@@ -359,15 +397,22 @@ test.describe('mobile collection experience', () => {
     expect(api.unexpectedWriteCount).toBe(0);
   });
 
-  test('Progress generates mobile-safe strings and a selectable Discord post', async ({ page }) => {
+  test('Progress stays focused while Search Lab provides strings and Discord sharing', async ({
+    page,
+  }) => {
     await page.setViewportSize({ width: 600, height: 900 });
     await installFakeApi(page);
     await openDex(page);
 
     await openMobileRoute(page, 'Progress');
     await expect(page).toHaveURL(/#\/progress$/);
+    await expect(page.getByRole('heading', { name: 'Your collection, clearly.' })).toBeVisible();
+    await expect(page.locator('.generator-panel')).toHaveCount(0);
+
+    await openMobileRoute(page, 'Search Lab');
+    await expect(page).toHaveURL(/#\/search$/);
     await expect(
-      page.getByRole('heading', { name: 'See what you have. Act on what is missing.' }),
+      page.getByRole('heading', { name: 'Useful searches, ready to paste.' }),
     ).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Visual search builder' })).toHaveCount(0);
 
@@ -375,9 +420,7 @@ test.describe('mobile collection experience', () => {
       .locator('.all-category-searches .search-output')
       .filter({ hasText: 'Normal' });
     await expect(output).toContainText('8 missing');
-    await expect(output.locator('.search-string code')).toHaveText(
-      '!traded&4,7,38,133,152,155,158,252',
-    );
+    await expect(output.locator('.search-string code')).toHaveText('!#&4,7,38,133,152,155,158,252');
     await expect(page.locator('.generator-panel').getByLabel('Generation')).toHaveCount(0);
     await expect(page.locator('.generator-panel').getByLabel('Region')).toHaveCount(0);
     await expect(page.locator('.generator-panel').getByLabel('Category')).toHaveCount(0);
@@ -386,21 +429,24 @@ test.describe('mobile collection experience', () => {
       .locator('.all-category-searches .search-output')
       .filter({ hasText: 'Shiny' });
     await expect(shinyOutput.locator('.search-string code')).toHaveText(
-      '!traded&shiny&1,7,25,38,133,152,155,158,252',
+      '!#&shiny&1,7,25,38,133,152,155,158,252',
     );
+
+    await page.getByRole('button', { name: 'Tradeable', exact: true }).click();
+    await expect(output.locator('.search-string code')).toHaveText(
+      '!traded&4,7,38,133,152,155,158,252',
+    );
+    await page.getByRole('button', { name: 'Personal', exact: true }).click();
 
     const xxlRecommendation = page
       .locator('.recommended-list article')
-      .filter({ hasText: 'My missing XXL families' });
-    await expect(xxlRecommendation.locator('code')).toHaveText(
-      '!traded&xxl&1-4,7,25,38,133,152,155,158,252',
+      .filter({ hasText: 'XXL evolution helper' });
+    await expect(xxlRecommendation.locator('.recommended-query')).toHaveText(
+      'xxl&1-4,7,25,38,133,152,155,158,252',
     );
-    await expect(xxlRecommendation).toContainText(
-      'includes catchable family stages you can evolve',
-    );
+    await expect(xxlRecommendation).toContainText('earlier stages that can evolve into them');
 
     const layout = await page.locator('.generator-panel').evaluate((panel) => {
-      const hero = document.querySelector('.page--lab .page-hero')!.getBoundingClientRect();
       const cards = [...panel.querySelectorAll('.search-output')].slice(0, 2);
       const cardRects = cards.map((card) => card.getBoundingClientRect());
       return {
@@ -410,7 +456,6 @@ test.describe('mobile collection experience', () => {
           (entry) => entry.getBoundingClientRect().right <= panel.getBoundingClientRect().right,
         ),
         searchCardsStack: cardRects.length === 2 && cardRects[1].top >= cardRects[0].bottom,
-        heroAligned: Math.abs(hero.left) <= 1 && Math.abs(hero.right - innerWidth) <= 1,
       };
     });
     expect(layout).toEqual({
@@ -418,10 +463,26 @@ test.describe('mobile collection experience', () => {
       panelFits: true,
       stringsFit: true,
       searchCardsStack: true,
-      heroAligned: true,
     });
 
     const sharePicker = page.getByRole('group', { name: 'Lists to share' });
+    const shareToggleLayout = await sharePicker.evaluate((element) => {
+      const buttons = [...element.querySelectorAll('button')].map((button) =>
+        button.getBoundingClientRect(),
+      );
+      return {
+        firstRowAligned: Math.abs(buttons[0].top - buttons[1].top) <= 1,
+        secondRowAligned: Math.abs(buttons[2].top - buttons[3].top) <= 1,
+        twoRows: buttons[2].top > buttons[0].bottom,
+        fits: buttons.every((button) => button.right <= innerWidth),
+      };
+    });
+    expect(shareToggleLayout).toEqual({
+      firstRowAligned: true,
+      secondRowAligned: true,
+      twoRows: true,
+      fits: true,
+    });
     await sharePicker.getByRole('button', { name: /^Normal/ }).click();
     await sharePicker.getByRole('button', { name: /^Shiny/ }).click();
     const preview = page.locator('.discord-message-list pre');
@@ -455,6 +516,51 @@ test.describe('mobile collection experience', () => {
     await expect(table).toContainText('Squirtle');
     await expect(table.locator('tbody tr')).toHaveCount(2);
     await expect(page.getByRole('button', { name: 'Apply reviewed import' })).toBeEnabled();
+    expect(api.collectionMutationCount).toBe(0);
+    expect(api.unexpectedWriteCount).toBe(0);
+  });
+
+  test('reviewed CSV import applies locally and survives a reload', async ({ page }) => {
+    const api = await installFakeApi(page);
+    await openDex(page);
+    await openMobileRoute(page, 'Settings');
+    await page
+      .getByLabel('Choose a CSV file to preview')
+      .setInputFiles(resolve(fixtureDirectory, 'collection-preview.csv'));
+
+    await page.getByRole('button', { name: 'Apply reviewed import' }).click();
+    await expect(page.locator('.toast')).toContainText('Import applied: 2 added, 0 removed.');
+    await expect(page.locator('.import-panel')).toContainText('Import complete');
+    await expect(page.locator('.import-panel')).toContainText(
+      'Import applied: 2 added and 0 removed.',
+    );
+
+    const importedEntries = await page.evaluate(() => {
+      const saved = JSON.parse(localStorage.getItem('catchgrid:local-profile:v2') ?? '{}');
+      return saved.collectionEntries;
+    });
+    expect(importedEntries).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          formId: 'form-0004-standard',
+          categoryId: 'normal',
+          collected: true,
+        }),
+        expect.objectContaining({
+          formId: 'form-0007-standard',
+          categoryId: 'shiny',
+          collected: true,
+        }),
+      ]),
+    );
+
+    await page.reload();
+    await expect(page.getByRole('heading', { name: 'Import CSV' })).toBeVisible();
+    const persistedEntries = await page.evaluate(() => {
+      const saved = JSON.parse(localStorage.getItem('catchgrid:local-profile:v2') ?? '{}');
+      return saved.collectionEntries;
+    });
+    expect(persistedEntries).toEqual(expect.arrayContaining(importedEntries));
     expect(api.collectionMutationCount).toBe(0);
     expect(api.unexpectedWriteCount).toBe(0);
   });
