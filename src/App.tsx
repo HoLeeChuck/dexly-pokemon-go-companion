@@ -29,6 +29,7 @@ import {
 import { createPortableProfileBackupJson, restorePortableProfileBackup } from './lib/profileBackup';
 import { catalogDisplayName } from './lib/catalogDisplay';
 import type { AccentTheme } from './lib/theme';
+import type { RegionPreference } from './catalog/regionalAvailability';
 import { previewCanonicalWideCsv } from '../shared/csv';
 import { PRIMARY_ROUTES, type RouteId } from './app/routing';
 import { useAppNavigation } from './app/useAppNavigation';
@@ -422,6 +423,7 @@ export default function App() {
       ? saved
       : 'normal';
   });
+  const [regionPreference, setRegionPreference] = useState('no-preference');
   const [selected, setSelected] = useState<CatalogItem | null>(null);
   const [collectionEntries, setCollectionEntries] = useState<CollectionEntry[]>([]);
   const [wantedEntries, setWantedEntries] = useState<WantedEntry[]>([]);
@@ -466,6 +468,7 @@ export default function App() {
     if (local.settings.theme) setTheme(local.settings.theme);
     if (local.settings.accentTheme) setAccentTheme(local.settings.accentTheme);
     if (local.settings.activeCategory) setActiveCategory(local.settings.activeCategory);
+    setRegionPreference(local.settings.regionPreference ?? 'no-preference');
     if (result.status === 'migrated') {
       setToast({ tone: 'info', message: 'Your browser collection was upgraded safely.' });
     } else if (result.status === 'unavailable') {
@@ -655,6 +658,15 @@ export default function App() {
     if (saved.ok) {
       localProfileRef.current = saved.profile;
       setAccentTheme(value);
+    } else setToast({ tone: 'error', message: saved.error.message });
+  }
+
+  function changeRegionPreference(value: RegionPreference) {
+    const saved = updateLocalProfileSettings(localProfileRef.current, { regionPreference: value });
+    if (saved.ok) {
+      localProfileRef.current = saved.profile;
+      setRegionPreference(value);
+      setToast({ tone: 'success', message: 'Regional preference saved in this browser.' });
     } else setToast({ tone: 'error', message: saved.error.message });
   }
 
@@ -1112,6 +1124,8 @@ export default function App() {
                 snapshots={recoverySnapshots}
                 onRestoreSnapshot={restoreSnapshot}
                 onSetRegionNormal={setRegionNormal}
+                regionPreference={regionPreference}
+                onRegionPreferenceChange={changeRegionPreference}
               />
             )}
           </Suspense>

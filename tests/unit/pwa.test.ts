@@ -22,6 +22,12 @@ describe('offline and update safety', () => {
     expect(serviceWorker).toContain("cache.put('/api/v1/catalog'");
   });
 
+  it('purges and bypasses PWA caches in local Vite development', () => {
+    expect(serviceWorker).toContain('const IS_DEVELOPMENT = GENERATED_ASSETS.length === 0');
+    expect(serviceWorker).toContain("key.startsWith('catchgrid-')");
+    expect(serviceWorker).toContain('if (IS_DEVELOPMENT) return;');
+  });
+
   it('never intercepts or shares private API responses', () => {
     expect(serviceWorker).toContain("if (url.pathname.startsWith('/api/')) return;");
     expect(serviceWorker).not.toMatch(/cache\.put\([^\n]*api\/v1\/bootstrap/);

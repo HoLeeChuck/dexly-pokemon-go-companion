@@ -224,7 +224,7 @@ describe('Worker bootstrap and authentication boundary', () => {
     expect(response.headers.get('cache-control')).toContain('no-store');
     expect(payload.authMode).toBe('local');
     expect(payload.profileId).toBe(PROFILE_ID);
-    expect(payload.catalogVersion).toBe('2026-08-19.1');
+    expect(payload.catalogVersion).toBe('2026-08-24.1');
     expect(payload.revision).toBe(0);
     expect(payload.categories.map((category) => category.id)).toEqual([
       'normal',
@@ -257,9 +257,15 @@ describe('Worker bootstrap and authentication boundary', () => {
     expect(solgaleo).toMatchObject({
       dexNumber: 791,
       name: 'Solgaleo',
-      shinySpriteUrl: expect.stringContaining('pm791.s.icon.png'),
+      shinySpriteUrl: '/artwork/pokemon-home/HOME0791 s.png',
     });
     expect(solgaleo?.rules.shiny).toBe('released');
+
+    const pomPom = payload.catalog.find((item) => item.id === 'form-0741-pom-pom');
+    expect(pomPom).toMatchObject({
+      artworkIsFallback: true,
+      availability: { mode: 'regional', zones: ['united-states', 'americas'] },
+    });
 
     const mew = payload.catalog.find((item) => item.id === 'form-0151-standard');
     const cosmog = payload.catalog.find((item) => item.id === 'form-0789-standard');

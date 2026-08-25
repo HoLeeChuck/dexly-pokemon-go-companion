@@ -270,6 +270,7 @@ export function DetailSheet({
               <PokemonSprite item={form} />
               <div>
                 <strong>{form.formName ?? form.name}</strong>
+                {form.artworkIsFallback && <small>Representative art</small>}
               </div>
               {(['normal', 'shiny'] as const).map((categoryId) => {
                 const rule = form.rules[categoryId] ?? 'unknown';
@@ -396,6 +397,9 @@ export function DetailSheet({
                 </span>
               ))}
             </div>
+            {item.artworkIsFallback && (
+              <p className="detail-artwork-note">Representative Pokémon HOME artwork</p>
+            )}
           </div>
         </header>
 

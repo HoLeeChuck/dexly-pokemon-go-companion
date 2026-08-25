@@ -6,6 +6,7 @@ const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 const CATALOG_CACHE = `${CACHE_VERSION}-catalog`;
 const ACTIVE_CACHES = new Set([SHELL_CACHE, RUNTIME_CACHE, CATALOG_CACHE]);
 const GENERATED_ASSETS = /* __CATCHGRID_GENERATED_ASSETS__ */ [];
+const IS_DEVELOPMENT = GENERATED_ASSETS.length === 0;
 const PRECACHE_URLS = [
   '/',
   '/offline.html',
@@ -19,6 +20,13 @@ const PRECACHE_URLS = [
 ];
 
 self.addEventListener('install', (event) => {
+  if (IS_DEVELOPMENT) {
+    // Vite serves the unexpanded build token. Never let a development worker
+    // retain cache-first modules or catalog responses between local revisions.
+    event.waitUntil(self.skipWaiting());
+    return;
+  }
+
   event.waitUntil(
     Promise.all([
       caches.open(SHELL_CACHE).then((cache) => cache.addAll(PRECACHE_URLS)),
@@ -37,6 +45,20 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
+  if (IS_DEVELOPMENT) {
+    event.waitUntil(
+      caches
+        .keys()
+        .then((keys) =>
+          Promise.all(
+            keys.filter((key) => key.startsWith('catchgrid-')).map((key) => caches.delete(key)),
+          ),
+        )
+        .then(() => self.clients.claim()),
+    );
+    return;
+  }
+
   event.waitUntil(
     caches
       .keys()
@@ -94,6 +116,10 @@ async function staticResponse(request) {
 }
 
 self.addEventListener('fetch', (event) => {
+  // Development requests must always reach Vite/Miniflare so hard refreshes
+  // cannot resurrect an old catalog or remote artwork URL.
+  if (IS_DEVELOPMENT) return;
+
   const { request } = event;
   if (request.method !== 'GET') return;
 

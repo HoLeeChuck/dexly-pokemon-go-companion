@@ -587,3 +587,107 @@
   color: var(--ink);
   font-weight: 760;
 }
+.regional-availability-panel {
+  display: grid;
+  gap: 1rem;
+}
+
+.regional-preference-controls {
+  display: grid;
+  grid-template-columns: minmax(13rem, 1fr) auto;
+  gap: 0.75rem;
+  align-items: end;
+}
+
+.regional-preference-controls label {
+  display: grid;
+  gap: 0.4rem;
+  font-weight: 700;
+}
+
+.regional-preference-controls select {
+  min-height: 2.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.7rem;
+  padding: 0 0.75rem;
+  color: var(--text);
+  background: var(--surface);
+}
+
+.regional-recommendations,
+.regional-form-browser,
+.vivillon-browser {
+  border: 1px solid var(--border);
+  border-radius: 0.85rem;
+  padding: 0.9rem;
+}
+
+.regional-form-browser > summary,
+.vivillon-browser > summary {
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.regional-recommendations ul,
+.regional-form-browser ul,
+.vivillon-browser ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 0.55rem;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.regional-recommendations li,
+.regional-form-browser li,
+.vivillon-browser li {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.65rem;
+  border-radius: 0.65rem;
+  background: var(--surface-subtle, color-mix(in srgb, var(--surface) 88%, var(--accent)));
+}
+
+.regional-recommendations li span,
+.regional-form-browser li span,
+.vivillon-browser li span {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.vivillon-zone-map {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  overflow: hidden;
+  margin-top: 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+.vivillon-zone-map span {
+  padding: 0.55rem;
+  color: var(--text-muted);
+  text-align: center;
+  font-size: 0.76rem;
+  font-weight: 800;
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+}
+
+.vivillon-zone-map span + span {
+  border-left: 1px solid var(--border);
+}
+
+@media (max-width: 640px) {
+  .regional-preference-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .regional-preference-controls .button {
+    width: 100%;
+  }
+
+  .vivillon-zone-map {
+    border-radius: 0.75rem;
+  }
+}

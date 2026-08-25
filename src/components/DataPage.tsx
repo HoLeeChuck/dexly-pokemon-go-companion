@@ -9,6 +9,8 @@ import { ACCENT_THEMES, type AccentTheme } from '../lib/theme';
 import { Icon } from './Icon';
 import { APP_VERSION, PORTFOLIO_URL } from '../config/app';
 import '../routes/profile.css';
+import { RegionalAvailabilityPanel } from './RegionalAvailabilityPanel';
+import type { RegionPreference } from '../catalog/regionalAvailability';
 
 export function DataPage({
   catalog,
@@ -28,6 +30,8 @@ export function DataPage({
   snapshots,
   onRestoreSnapshot,
   onSetRegionNormal,
+  regionPreference,
+  onRegionPreferenceChange,
 }: {
   catalog: readonly CatalogItem[];
   collectionEntries: readonly CollectionEntry[];
@@ -46,6 +50,8 @@ export function DataPage({
   snapshots: readonly { id: string; createdAt: string; reason: string }[];
   onRestoreSnapshot: (id: string) => void;
   onSetRegionNormal: (region: string, collected: boolean) => Promise<number>;
+  regionPreference: string;
+  onRegionPreferenceChange: (preference: RegionPreference) => void;
 }) {
   const fileRef = useRef<HTMLInputElement>(null);
   const backupRef = useRef<HTMLInputElement>(null);
@@ -144,6 +150,12 @@ export function DataPage({
           </div>
         </div>
       )}
+
+      <RegionalAvailabilityPanel
+        catalog={catalog}
+        preference={regionPreference}
+        onPreferenceChange={onRegionPreferenceChange}
+      />
 
       <details className="panel collection-setup-panel settings-disclosure">
         <summary className="panel-heading">
@@ -527,9 +539,9 @@ export function DataPage({
         <span className="eyebrow">About CatchGrid</span>
         <strong>CatchGrid is an unofficial fan project.</strong>
         <p>
-          Pokémon and Pokémon GO are property of their respective owners. Sprite mappings reference
-          PokeMiners’ educational-use repository at pinned commit metadata; no affiliation or
-          endorsement is implied.
+          Pokémon and Pokémon GO are property of their respective owners. Catalog artwork uses
+          repository-local Pokémon HOME thumbnails traced to Bulbagarden Archives file pages; no
+          affiliation, endorsement, or ownership is implied.
         </p>
         <span>
           CatchGrid v{APP_VERSION} · Catalog {catalogVersion} · {catalog.length} representative

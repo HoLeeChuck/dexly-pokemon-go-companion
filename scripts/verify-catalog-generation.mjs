@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const overrides = JSON.parse(
-  await readFile(resolve(root, 'catalog/catalog-overrides.v1.json'), 'utf8'),
+  await readFile(resolve(root, 'catalog/catchgrid-update.v1.json'), 'utf8'),
 );
 const reportFilename = `CHANGE_REPORT_${overrides.catalogVersion.slice(0, 10)}.md`;
 const generatedArtifacts = [
@@ -18,12 +18,16 @@ const generatedArtifacts = [
 ];
 
 function runGenerator(arguments_, timeout = 180_000) {
-  const result = spawnSync(process.execPath, ['scripts/sync-catalog.mjs', ...arguments_], {
-    cwd: root,
-    encoding: 'utf8',
-    timeout,
-    maxBuffer: 16 * 1024 * 1024,
-  });
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/generate-catchgrid-update.mjs', ...arguments_],
+    {
+      cwd: root,
+      encoding: 'utf8',
+      timeout,
+      maxBuffer: 16 * 1024 * 1024,
+    },
+  );
   return { ...result, output: `${result.stdout ?? ''}\n${result.stderr ?? ''}` };
 }
 
@@ -45,7 +49,7 @@ if (
 ) {
   throw new Error(`Catalog sync failed for an unexpected reason:\n${refusal.output.trim()}`);
 }
-if (/PokeMiners tree|HTTP \d{3}|fetch failed/i.test(refusal.output)) {
+if (/HTTP \d{3}|fetch failed/i.test(refusal.output)) {
   throw new Error('Catalog sync reached the network before refusing the existing migration.');
 }
 

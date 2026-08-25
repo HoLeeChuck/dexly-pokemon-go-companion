@@ -178,6 +178,22 @@ describe('versioned local profiles', () => {
     expect(storage.getItem(LOCAL_PROFILE_STORAGE_KEY)).not.toBeNull();
   });
 
+  it('persists only a coarse regional preference in portable settings', () => {
+    const storage = new MemoryStorage();
+    const saved = updateLocalProfileSettings(
+      profile(),
+      { regionPreference: 'united-states' },
+      { storage, now: at() },
+    );
+
+    expect(saved).toMatchObject({
+      ok: true,
+      profile: { settings: { regionPreference: 'united-states' } },
+    });
+    expect(storage.getItem(LOCAL_PROFILE_STORAGE_KEY)).not.toContain('latitude');
+    expect(storage.getItem(LOCAL_PROFILE_STORAGE_KEY)).not.toContain('longitude');
+  });
+
   it('preserves corrupt raw data instead of silently overwriting it', () => {
     const storage = new MemoryStorage();
     storage.setItem(LOCAL_PROFILE_STORAGE_KEY, '{not-json');

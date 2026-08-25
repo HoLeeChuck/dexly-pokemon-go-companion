@@ -34,9 +34,13 @@ interface CatalogRow {
   transformation_group: string | null;
   form_sort_order: number;
   search_exact: number;
+  availability_mode: 'global' | 'regional' | 'event' | 'unknown';
+  availability_zones_json: string;
+  availability_note: string | null;
   retired_at: string | null;
   normal_path: string;
   shiny_path: string | null;
+  artwork_is_fallback: number;
   types: string | null;
 }
 
@@ -136,9 +140,13 @@ const CATALOG_QUERY = `SELECT
     f.transformation_group,
     f.form_sort_order,
     f.search_exact,
+    f.availability_mode,
+    f.availability_zones_json,
+    f.availability_note,
     f.retired_at,
     a.normal_path,
     a.shiny_path,
+    a.artwork_is_fallback,
     COALESCE(
       (SELECT group_concat(ft.type, '|') FROM pokemon_form_types ft WHERE ft.form_id = f.id),
       (SELECT group_concat(pt.type, '|') FROM pokemon_types pt WHERE pt.species_id = s.id)
@@ -199,6 +207,21 @@ function mapCoreCatalog(
     searchExact: row.search_exact === 1,
     spriteUrl: row.normal_path || undefined,
     shinySpriteUrl: row.shiny_path ?? undefined,
+    availability: {
+      mode: row.availability_mode,
+      zones: (() => {
+        try {
+          const parsed: unknown = JSON.parse(row.availability_zones_json);
+          return Array.isArray(parsed) && parsed.every((zone) => typeof zone === 'string')
+            ? parsed
+            : ['global'];
+        } catch {
+          return ['global'];
+        }
+      })(),
+      note: row.availability_note ?? undefined,
+    },
+    artworkIsFallback: row.artwork_is_fallback === 1,
     rules: rulesByForm.get(row.id) ?? {},
   }));
 

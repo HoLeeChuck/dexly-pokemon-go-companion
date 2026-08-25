@@ -67,6 +67,14 @@ export interface CatalogItem {
   searchExact: boolean;
   spriteUrl?: string;
   shinySpriteUrl?: string;
+  /** Geographic availability is advisory and never removes a form from collection views. */
+  availability?: {
+    mode: 'global' | 'regional' | 'event' | 'unknown';
+    zones: readonly string[];
+    note?: string;
+  };
+  /** True when a form intentionally uses its species representative HOME artwork. */
+  artworkIsFallback?: boolean;
   rules: Readonly<Partial<Record<CategoryId, RuleState>>>;
 }
 

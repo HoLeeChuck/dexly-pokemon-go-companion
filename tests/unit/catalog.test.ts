@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import manifestJson from '../../catalog/catalog.v1.json';
 import medalJson from '../../catalog/region-medals.v1.json';
-import changeReport from '../../catalog/CHANGE_REPORT_2026-08-19.md?raw';
-import catalogMigration from '../../migrations/0010_pokemon_data_detail_audit.sql?raw';
+import changeReport from '../../catalog/CHANGE_REPORT_2026-08-24.md?raw';
+import catalogMigration from '../../migrations/0011_catalog_forms_regions_home_artwork.sql?raw';
 import type { CatalogVariantKind, CategoryId, RuleState } from '../../shared/types';
 
 interface ManifestForm {
@@ -50,7 +50,7 @@ describe('Phase B catalog snapshot', () => {
   it('has one stable representative for every National Dex species', () => {
     const defaults = manifest.forms.filter((form) => form.isDefault);
     expect(manifest.schemaVersion).toBe(2);
-    expect(manifest.catalogVersion).toBe('2026-08-19.1');
+    expect(manifest.catalogVersion).toBe('2026-08-24.1');
     expect(defaults).toHaveLength(1025);
     expect(defaults.map((form) => form.dex)).toEqual(
       Array.from({ length: 1025 }, (_, index) => index + 1),
@@ -65,10 +65,10 @@ describe('Phase B catalog snapshot', () => {
   it('binds the generated migration and report to this exact manifest snapshot', async () => {
     const manifestHash = await sha256(JSON.stringify(manifestJson));
     expect(catalogMigration).toContain(`'${manifestHash}'`);
-    expect(catalogMigration).toContain("'2026-08-19.1'");
-    expect(changeReport).toContain('# Pokémon availability audit — 2026-08-19.1');
-    expect(changeReport).toContain('- National Dex placeholders: 1025');
-    expect(changeReport).toContain('- Reviewed collector forms: 179');
+    expect(catalogMigration).toContain("'2026-08-24.1'");
+    expect(changeReport).toContain('# CatchGrid catalog, forms, regions, and artwork update');
+    expect(changeReport).toContain('- Stable default IDs retained: 1025');
+    expect(changeReport).toContain('- Collector forms: 244');
   });
 
   it('contains the reviewed regional, gender, Rotom, costume, and transformation families', () => {
@@ -115,7 +115,7 @@ describe('Phase B catalog snapshot', () => {
     expect(byId.get('form-0791-standard')).toMatchObject({
       release: { shiny: true },
       rules: { shiny: 'released' },
-      assets: { shiny: { upstreamPath: 'pm791.s.icon.png' } },
+      assets: { shiny: { upstreamPath: 'artwork/pokemon-home/HOME0791 s.png' } },
     });
     expect(byId.get('form-0827-standard')).toMatchObject({
       release: { shiny: true },

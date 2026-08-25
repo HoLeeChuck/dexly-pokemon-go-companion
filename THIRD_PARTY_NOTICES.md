@@ -9,12 +9,15 @@ Pokémon and Pokémon character names and imagery are trademarks and/or copyrigh
 materials of their respective owners. Pokémon GO is property of Niantic and The Pokémon
 Company. CatchGrid does not claim ownership of those materials.
 
-The current catalog references commit-pinned sprite files from the
-[PokeMiners `pogo_assets` repository](https://github.com/PokeMiners/pogo_assets). PokeMiners
-states that its repository is for educational use and that the assets belong to The
-Pokémon Company and Niantic. Its disclaimer is attribution and does **not** provide an
-open redistribution license. CatchGrid therefore treats broad public sprite usage as an
-unresolved permission/legal-review item; attribution is not represented as permission.
+The current catalog uses repository-local 256px thumbnails traced to the
+[Bulbagarden Archives Pokémon HOME artwork category](https://archives.bulbagarden.net/wiki/Category:HOME_artwork).
+`catalog/home-artwork-manifest.v1.json` records every source file page, source timestamp,
+Archives SHA-1, local SHA-256, and byte size. CatchGrid does not hotlink Archives at runtime.
+
+The [Bulbagarden Archives copyright notice](https://archives.bulbagarden.net/wiki/Archives:Copyrights)
+does **not** grant blanket unrestricted rights to Pokémon imagery. This attribution is not
+represented as permission or an open redistribution license. Bulbapedia's Event Pokémon (GO)
+page is used as a secondary costume inventory only; it is not official release evidence.
 
 ## Software dependencies
 

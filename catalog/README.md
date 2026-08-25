@@ -1,66 +1,41 @@
 # Versioned Pokémon catalog
 
-`catalog.v1.json` contains one stable representative for every National Pokédex species through #1025, including unreleased placeholders, plus 179 reviewed Pokémon GO collector forms as of 2026-08-19. All app-facing IDs are owned by this project; PokeMiners filenames are isolated inside each form's `assets` mapping.
+`catalog.v1.json` contains one stable representative for every National Pokédex species through #1025, including unreleased placeholders, plus 244 reviewed Pokémon GO collector forms as of 2026-08-24. Application-owned IDs never depend on artwork filenames.
 
 ## Data contract
 
 - `speciesId` identifies a National Pokédex species and is shared by its collector forms.
-- `formId` is the stable collection-record key. Never derive or rename it from an upstream filename.
-- `formKey` is a stable, human-readable key within a species, such as `standard`, `alola`, or `female`.
-- `isDefault` identifies the one representative that contributes to National Dex and regional medal progress. Collector forms never inflate those denominators.
-- `variantKind` and `collectorGroupId` organize regional, Unown, Mega/Primal, Gigantamax, Rotom, fusion, gender, and costume families without changing record IDs.
-- `release` records reviewed Pokémon GO release facts. `null` means “not asserted by this snapshot,” not `false`.
-- `rules` is the database-ready category state (`released`, `unreleased`, `ineligible`, or `unknown`).
-- `tradeable` describes the form itself. Shadow Pokémon remain non-tradeable through their category rules.
-- `assets.*.upstreamPath` is a relative PokeMiners path. The commit-pinned `source.rawBaseUrl` turns it into a deterministic URL.
+- `formId` is the stable collection-record key. Existing `form-NNNN-standard` IDs remain unchanged when a representative gains a specific form label.
+- `isDefault` identifies the one representative that contributes to National Dex and regional medal progress. Alternate forms never inflate species totals.
+- `release` and `rules` separate reviewed availability from collection eligibility. Asset presence is never release proof.
+- `availability` is advisory geography. It powers recommendations and the accessible regional browser but never hides forms or changes saved collection state.
+- `assets.*.upstreamPath` points to a repository-local file under `public/artwork/pokemon-home`.
+- `artworkIsFallback` is true when a named form intentionally uses representative species art. The UI exposes that state rather than silently showing a possibly wrong form.
 
-Normal releases, Shiny releases, types, rarity, and names begin with a hash-pinned PoGoAPI snapshot. Historical Shadow eligibility comes from a separately hash-pinned Pokémon Database table and is applied at the standard or explicitly named regional form level; Purified follows Shadow. Reviewed, dated overrides preserve newer official decisions, including Shiny Solgaleo, Nickit, Thievul, and Mega Raichu X/Y, without rewriting older migrations. Normal, Hundo, XXL, and XXS are enabled for every released representative. Lucky follows trade eligibility: Mythical Pokémon are ineligible except for Meltan and Melmetal. A mined sprite proves only that an asset exists, not that a Pokémon or Shiny was released.
+`catalog/catchgrid-update.v1.json` is the reviewed availability/form source, `catalog/catalog-base-2026-08-19.v1.json` is the immutable stable-ID baseline, and `catalog/home-artwork-manifest.v1.json` pins the artwork inventory. Migration `0011` contains additive schema changes and upserts; it never deletes form or collection rows.
 
-Collector forms expose Normal and Shiny tracking, with Shadow/Purified additionally enabled only for historically verified regional forms. Lucky, Hundo, XXL, and XXS remain `ineligible` on collector rows, keeping species-category progress separate from form galleries. This reviewed snapshot includes all 28 Unown letters/symbols, released regional families, current Mega/Primal and Gigantamax families, selected gender/Rotom/fusion families, and a conservative initial costume set; it does not claim every historical costume is cataloged.
+## Artwork synchronization
 
-`catalog-overrides.v1.json` is the reviewed input, `region-medals.v1.json` is the versioned regional and category-specific denominator policy, and `CHANGE_REPORT_2026-08-19.md` records sources, hashes, decisions, exact changed forms, and the remaining asset-license blocker. Each region explicitly defines Normal, Shiny, Lucky, Hundo, XXL, XXS, Shadow, and Purified thresholds. Every category's platinum goal remains the complete regional species allocation, including unreleased or currently ineligible species; availability never shrinks the goal. `catalog.v1.json` and migration `0010` are generated outputs.
+Pokémon HOME art comes from the [Bulbagarden Archives HOME artwork category](https://archives.bulbagarden.net/wiki/Category:HOME_artwork). Run:
 
-## Sprite source and URL convention
-
-Sprites come from the semantic addressable-assets directory in [PokeMiners/pogo_assets](https://github.com/PokeMiners/pogo_assets/tree/master/Images/Pokemon%20-%20256x256/Addressable%20Assets):
-
-```text
-https://raw.githubusercontent.com/PokeMiners/pogo_assets/{commit}/Images/Pokemon%20-%20256x256/Addressable%20Assets/{upstreamPath}
+```powershell
+pnpm catalog:sync:artwork
+pnpm catalog:sync
 ```
 
-The manifest pins commit `1a4ad1fc6c39f361ea85d53fc3040ce482ee9d90`. Do not use `master` in runtime URLs. Some upstream forms use `.fFORM`, `.cCOSTUME`, or `.g2`, while `.s` denotes a Shiny asset. The generator consumes exact mappings; it never picks an arbitrary matching filename.
+The artwork sync uses the MediaWiki `imageinfo` API at build time, downloads 256px files locally, and records each Archives file page, source timestamp, Archives SHA-1, local SHA-256, and byte size. The app never scrapes or hotlinks Bulbagarden at runtime. A missing required normal or released-Shiny file fails the sync.
+
+Named forms use exact HOME files when a reviewed mapping exists. Otherwise they use the species representative with `artworkIsFallback: true`. Pokémon GO event costumes cannot transfer to HOME, so existing costume IDs use explicit representative-art fallbacks. The [Bulbapedia Event Pokémon (GO) page](<https://bulbapedia.bulbagarden.net/wiki/Event_Pok%C3%A9mon_(GO)>) is treated as a secondary inventory and chronology; it is not official release evidence, and future-dated entries beyond the catalog cutoff are excluded.
 
 ## Verification
 
-Offline validation needs only Node:
-
 ```powershell
-node scripts/verify-sprites.mjs
+pnpm validate:pokemon-data
+pnpm catalog:verify
 ```
 
-Opt into HTTP `HEAD` requests for each unique referenced sprite:
-
-```powershell
-node scripts/verify-sprites.mjs --network
-```
-
-The verifier checks the complete #1–#1025 representative range, stable IDs, source hashes, form semantics, all 28 Unown, required families, current release regressions, regional medal denominators, and exact sprite mappings.
-
-## Catalog synchronization
-
-Catalog migrations are immutable. To create a new snapshot, increment `catalogVersion` and `nextMigration` in `catalog-overrides.v1.json`, then run `pnpm catalog:sync`. The generator refuses to overwrite an existing migration before making any network request. `pnpm catalog:verify` also regenerates the manifest, change report, and migration into a temporary directory and byte-compares all three with the checked-in artifacts, so hand edits and stale generated output fail the release gate.
-
-The sync process:
-
-1. Resolves a specific PokeMiners commit and enumerates its exact addressable-asset filename tree.
-2. Verifies each PoGoAPI input against its expected published SHA-256, then records each raw response hash.
-3. Hashes the sorted asset tree and complete reviewed override file for reproducibility.
-4. Preserves stable IDs and existing migrations; retired mappings remain available for history.
-5. Writes one new additive migration, the manifest, and a human-readable change report.
-6. Requires review of release/eligibility evidence independently from asset presence.
+The verifier checks the complete #1–#1025 range, stable IDs, source hashes, category rules, alternate-form invariants, regional metadata, local artwork paths, and byte-for-byte reproducibility of the catalog, migration, and report.
 
 ## Copyright and project notice
 
-The PokeMiners repository does **not** contain an open-source license. Its README describes the repository as educational-use-only and says the assets belong to The Pokémon Company and Niantic. That disclaimer does not grant redistribution rights.
-
-This catalog records source attribution and paths but does not claim ownership or a license to the artwork. Public deployment should display an unofficial/no-affiliation notice, retain applicable ownership notices, and obtain legal review if its asset distribution model changes. Attribution alone is not permission.
+Pokémon names and imagery remain property of their respective owners. The [Bulbagarden Archives copyright notice](https://archives.bulbagarden.net/wiki/Archives:Copyrights) does not grant blanket unrestricted redistribution rights. CatchGrid retains attribution, provenance, and its unofficial/no-affiliation notice; attribution is not represented as permission or an open license.

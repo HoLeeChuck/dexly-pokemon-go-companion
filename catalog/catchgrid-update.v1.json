@@ -1,0 +1,1054 @@
+{
+  "schemaVersion": 1,
+  "catalogVersion": "2026-08-24.1",
+  "releaseMetadataAsOf": "2026-08-24",
+  "nextMigration": "0011_catalog_forms_regions_home_artwork.sql",
+  "baseCatalog": "catalog/catalog-base-2026-08-19.v1.json",
+  "sources": {
+    "official-water-festival-2026": {
+      "kind": "official",
+      "url": "https://pokemongo.com/en/news/water-festival-2026",
+      "effectiveAt": "2026-08-18",
+      "note": "Arrokuda and Barraskewda debut; neither is marked as Shiny."
+    },
+    "official-spring-2025": {
+      "kind": "official",
+      "url": "https://pokemongo.com/en/post/spring-into-spring-2025",
+      "effectiveAt": "2025-04-09",
+      "note": "Gossifleur debut announcement does not mark it as Shiny; no later official Shiny debut was found by the catalog cutoff."
+    },
+    "official-teddiursa-community-day": {
+      "kind": "official",
+      "url": "https://pokemongo.com/post/community-day-november-2022-teddiursa",
+      "effectiveAt": "2022-11-12",
+      "note": "Shiny Teddiursa and evolution to Ursaluna establish standard Ursaluna Shiny availability."
+    },
+    "secondary-current-shadow-feed": {
+      "kind": "secondary",
+      "url": "https://pogoapi.net/api/v1/shadow_pokemon.json",
+      "effectiveAt": "2026-08-24",
+      "note": "Current Shadow inventory cross-check; Clodsire is absent and historical species inheritance is not treated as form proof."
+    },
+    "official-news-cutoff-review": {
+      "kind": "official",
+      "url": "https://pokemongo.com/news",
+      "effectiveAt": "2026-08-24",
+      "note": "Current official-news review point for negative availability decisions, including unreleased Hisuian Sliggoo and Hisuian Goodra."
+    },
+    "official-sustainability-2026": {
+      "kind": "official",
+      "url": "https://pokemongo.com/pl/news/sustainability-week-2026",
+      "effectiveAt": "2026-04-14",
+      "note": "Shiny Toedscool debut; Toedscruel inherits Shiny availability by evolution."
+    },
+    "official-steeled-resolve-2026": {
+      "kind": "official",
+      "url": "https://pokemongo.com/news/steeled-resolve-taken-over-2026",
+      "effectiveAt": "2026-04-30",
+      "note": "Shiny Varoom and Shiny Honedge debut evidence."
+    },
+    "official-scorbunny-community-day": {
+      "kind": "official",
+      "url": "https://pokemongo.com/news/communityday-march-2026-scorbunny",
+      "effectiveAt": "2026-03-14",
+      "note": "Shiny Scorbunny debut; Raboot and Cinderace inherit by evolution."
+    },
+    "official-sobble-community-day": {
+      "kind": "official",
+      "url": "https://pokemongo.com/en/news/communityday-july-2026-sobble",
+      "effectiveAt": "2026-07-18",
+      "note": "Shiny Sobble debut; Drizzile and Inteleon inherit by evolution."
+    },
+    "official-bug-out-2026": {
+      "kind": "official",
+      "url": "https://pokemongo.com/news/bug-out-2026",
+      "effectiveAt": "2026-03-17",
+      "note": "Shiny Sizzlipede debut; Centiskorch inherits by evolution."
+    },
+    "official-halloween-2025": {
+      "kind": "official",
+      "url": "https://pokemongo.com/en/news/halloween-part-1-2025",
+      "effectiveAt": "2025-10-21",
+      "note": "Shiny Sinistea debut; Polteageist inherits by evolution."
+    },
+    "official-summer-marathon-2026": {
+      "kind": "official",
+      "url": "https://pokemongo.com/news/summer-marathon-2026",
+      "effectiveAt": "2026-08-04",
+      "note": "Shiny Snom debut; Frosmoth inherits by evolution."
+    },
+    "secondary-lunala-raids-2026": {
+      "kind": "secondary",
+      "url": "https://leekduck.com/events/lunala-in-5-star-raid-battles-august-2026/",
+      "effectiveAt": "2026-08-19",
+      "note": "Current raid listing marks Lunala as Shiny-eligible."
+    },
+    "official-go-tour-kalos": {
+      "kind": "official",
+      "url": "https://pokemongo.com/gotour/global",
+      "effectiveAt": "2026-03-01",
+      "note": "Shiny Hawlucha, Klefki, Diancie, and Kalos event form evidence."
+    },
+    "official-oricorio-2026": {
+      "kind": "official",
+      "url": "https://pokemongo.com/news/catch-mastery-oricorio-2026",
+      "effectiveAt": "2026-05-09",
+      "note": "Four Oricorio styles, their normal regions, and Shiny availability."
+    },
+    "official-vivillon": {
+      "kind": "official",
+      "url": "https://pokemongo.com/en/post/vivillon-launch-postcard-feature",
+      "effectiveAt": "2022-12-15",
+      "note": "Vivillon Collector, postcard flow, and 18 habitat patterns."
+    },
+    "official-flabebe-community-day": {
+      "kind": "official",
+      "url": "https://pokemongo.com/en/post/communityday-september-2025-flabebe",
+      "effectiveAt": "2025-09-14",
+      "note": "Five flower colors, regional distribution, and Shiny availability."
+    },
+    "official-furfrou": {
+      "kind": "official",
+      "url": "https://pokemongo.com/post/fashion-week-2021",
+      "effectiveAt": "2021-09-21",
+      "note": "Furfrou trim-change mechanic and normal geographic availability."
+    },
+    "official-tatsugiri": {
+      "kind": "official",
+      "url": "https://pokemongo.com/post/water-festival-2025",
+      "effectiveAt": "2025-07-15",
+      "note": "Curly, Droopy, and Stretchy Tatsugiri regional distribution."
+    },
+    "official-crowned-heroes": {
+      "kind": "official",
+      "url": "https://pokemongo.com/post/crowned-energy-resource-zacian-zamazenta",
+      "effectiveAt": "2025-06-29",
+      "note": "Crowned Sword Zacian and Crowned Shield Zamazenta, including Shinies."
+    },
+    "official-urshifu": {
+      "kind": "official",
+      "url": "https://pokemongo.com/post/final-strike-2025",
+      "effectiveAt": "2025-05-21",
+      "note": "Single Strike and Rapid Strike Urshifu releases."
+    },
+    "official-enamorus-therian": {
+      "kind": "official",
+      "url": "https://pokemongo.com/en/news/enamorus-therian-raid-day-2026",
+      "effectiveAt": "2026-02-14",
+      "note": "Therian Forme Enamorus debut; no Shiny marker."
+    },
+    "official-hoopa": {
+      "kind": "official",
+      "url": "https://pokemongo.com/post/mischief-unbound-2021",
+      "effectiveAt": "2021-11-26",
+      "note": "Hoopa Confined and Hoopa Unbound form-change release."
+    },
+    "official-pumpkaboo": {
+      "kind": "official",
+      "url": "https://pokemongo.com/en/post/halloween-2021",
+      "effectiveAt": "2021-10-15",
+      "note": "Four Pumpkaboo and Gourgeist sizes."
+    },
+    "official-lycanroc-dusk": {
+      "kind": "official",
+      "url": "https://pokemongo.com/es_mx/post/lustrous-odyssey-2024",
+      "effectiveAt": "2024-01-06",
+      "note": "Dusk Form Lycanroc and Shiny availability."
+    },
+    "official-toxtricity": {
+      "kind": "official",
+      "url": "https://pokemongo.com/news/into-the-wild-2025",
+      "effectiveAt": "2025-11-15",
+      "note": "Amped and Low Key Toxtricity availability."
+    },
+    "official-polteageist-forms": {
+      "kind": "official",
+      "url": "https://niantic.helpshift.com/hc/en/6-pokemon-go/faq/4847-appraising-your-pokemon/",
+      "effectiveAt": "2026-08-24",
+      "note": "Pokémon GO appraisal distinguishes authentic form variants; paired with official release news."
+    },
+    "secondary-form-reference": {
+      "kind": "secondary",
+      "url": "https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_with_form_differences",
+      "effectiveAt": "2026-08-24",
+      "note": "Cross-check for official form names and evolution pairings, not release evidence."
+    },
+    "archives-home-artwork": {
+      "kind": "asset",
+      "url": "https://archives.bulbagarden.net/wiki/Category:HOME_artwork",
+      "effectiveAt": "2026-08-24",
+      "note": "Pokémon HOME artwork inventory. Runtime uses checked-in local thumbnails, never hotlinks Archives."
+    },
+    "archives-copyrights": {
+      "kind": "asset",
+      "url": "https://archives.bulbagarden.net/wiki/Archives:Copyrights",
+      "effectiveAt": "2026-08-24",
+      "note": "Rights and fair-use notice retained because the category does not grant unrestricted redistribution rights."
+    },
+    "secondary-event-pokemon-inventory": {
+      "kind": "secondary",
+      "url": "https://bulbapedia.bulbagarden.net/wiki/Event_Pok%C3%A9mon_(GO)",
+      "effectiveAt": "2026-08-24",
+      "note": "Secondary costume name and availability chronology; future-dated entries and inventory presence are not treated as release proof."
+    }
+  },
+  "defaultPatches": [
+    { "dex": 668, "formName": "Male Pyroar", "sourceIds": ["secondary-form-reference"] },
+    {
+      "dex": 669,
+      "formName": "Red Flower Flabébé",
+      "availability": {
+        "mode": "regional",
+        "zones": ["emea"],
+        "note": "Usually Europe, the Middle East, and Africa."
+      },
+      "sourceIds": ["official-flabebe-community-day"]
+    },
+    {
+      "dex": 670,
+      "formName": "Red Flower Floette",
+      "availability": {
+        "mode": "regional",
+        "zones": ["emea"],
+        "note": "Usually Europe, the Middle East, and Africa."
+      },
+      "sourceIds": ["official-flabebe-community-day"]
+    },
+    {
+      "dex": 671,
+      "formName": "Red Flower Florges",
+      "availability": {
+        "mode": "regional",
+        "zones": ["emea"],
+        "note": "Usually Europe, the Middle East, and Africa."
+      },
+      "sourceIds": ["official-flabebe-community-day"]
+    },
+    {
+      "dex": 666,
+      "formName": "Meadow Pattern Vivillon",
+      "availability": {
+        "mode": "regional",
+        "zones": ["europe"],
+        "note": "Central European postcard habitats; confirm with the in-game map."
+      },
+      "sourceIds": ["official-vivillon"]
+    },
+    { "dex": 676, "formName": "Natural Form Furfrou", "sourceIds": ["official-furfrou"] },
+    { "dex": 710, "formName": "Average Size Pumpkaboo", "sourceIds": ["official-pumpkaboo"] },
+    { "dex": 711, "formName": "Average Size Gourgeist", "sourceIds": ["official-pumpkaboo"] },
+    { "dex": 718, "formName": "50% Forme Zygarde", "sourceIds": ["secondary-form-reference"] },
+    { "dex": 720, "formName": "Hoopa Confined", "sourceIds": ["official-hoopa"] },
+    {
+      "dex": 741,
+      "formName": "Baile Style Oricorio",
+      "availability": {
+        "mode": "regional",
+        "zones": ["emea"],
+        "note": "Usually Europe, the Middle East, and Africa."
+      },
+      "sourceIds": ["official-oricorio-2026"]
+    },
+    { "dex": 745, "formName": "Midday Form Lycanroc", "sourceIds": ["official-lycanroc-dusk"] },
+    {
+      "dex": 846,
+      "normalState": "released",
+      "shinyState": "unreleased",
+      "sourceIds": ["official-water-festival-2026"]
+    },
+    {
+      "dex": 847,
+      "normalState": "released",
+      "shinyState": "unreleased",
+      "sourceIds": ["official-water-festival-2026"]
+    },
+    { "dex": 829, "shinyState": "unreleased", "sourceIds": ["official-spring-2025"] },
+    { "dex": 830, "shinyState": "unreleased", "sourceIds": ["official-spring-2025"] },
+    { "dex": 876, "formName": "Male Indeedee", "sourceIds": ["secondary-form-reference"] },
+    {
+      "dex": 849,
+      "formName": "Amped Form Toxtricity",
+      "normalState": "released",
+      "shinyState": "released",
+      "normalArtworkFile": "HOME0849.png",
+      "shinyArtworkFile": "HOME0849 s.png",
+      "sourceIds": ["official-toxtricity"]
+    },
+    {
+      "dex": 888,
+      "formName": "Hero of Many Battles Zacian",
+      "sourceIds": ["official-crowned-heroes"]
+    },
+    {
+      "dex": 889,
+      "formName": "Hero of Many Battles Zamazenta",
+      "sourceIds": ["official-crowned-heroes"]
+    },
+    { "dex": 892, "formName": "Single Strike Style Urshifu", "sourceIds": ["official-urshifu"] },
+    {
+      "dex": 901,
+      "formName": "Ursaluna",
+      "shinyState": "released",
+      "sourceIds": ["official-teddiursa-community-day"]
+    },
+    {
+      "dex": 905,
+      "formName": "Incarnate Forme Enamorus",
+      "sourceIds": ["official-enamorus-therian"]
+    },
+    {
+      "dex": 978,
+      "formName": "Curly Form Tatsugiri",
+      "shinyState": "released",
+      "availability": {
+        "mode": "regional",
+        "zones": ["emea"],
+        "note": "Usually Europe, the Middle East, and Africa."
+      },
+      "sourceIds": ["official-tatsugiri", "official-water-festival-2026"]
+    },
+    {
+      "dex": 854,
+      "formName": "Phony Form Sinistea",
+      "shinyState": "released",
+      "sourceIds": ["official-halloween-2025"]
+    },
+    {
+      "dex": 855,
+      "formName": "Phony Form Polteageist",
+      "shinyState": "released",
+      "sourceIds": ["official-halloween-2025"]
+    },
+    {
+      "dex": 1012,
+      "formName": "Counterfeit Form Poltchageist",
+      "sourceIds": ["official-polteageist-forms"]
+    },
+    {
+      "dex": 1013,
+      "formName": "Unremarkable Form Sinistcha",
+      "sourceIds": ["official-polteageist-forms"]
+    }
+  ],
+  "shinyReleasePatches": [
+    { "dexes": [948, 949], "sourceIds": ["official-sustainability-2026"] },
+    { "dexes": [965, 966], "sourceIds": ["official-steeled-resolve-2026"] },
+    { "dexes": [813, 814, 815], "sourceIds": ["official-scorbunny-community-day"] },
+    { "dexes": [816, 817, 818], "sourceIds": ["official-sobble-community-day"] },
+    { "dexes": [850, 851], "sourceIds": ["official-bug-out-2026"] },
+    { "dexes": [872, 873], "sourceIds": ["official-summer-marathon-2026"] },
+    { "dexes": [792], "sourceIds": ["secondary-lunala-raids-2026"] },
+    { "dexes": [679, 680, 681, 701, 707, 719], "sourceIds": ["official-go-tour-kalos"] }
+  ],
+  "formPatches": [
+    {
+      "formId": "form-0705-hisui",
+      "normalState": "unreleased",
+      "shinyState": "unreleased",
+      "sourceIds": ["official-news-cutoff-review"]
+    },
+    {
+      "formId": "form-0706-hisui",
+      "normalState": "unreleased",
+      "shinyState": "unreleased",
+      "sourceIds": ["official-news-cutoff-review"]
+    },
+    {
+      "formId": "form-0980-standard",
+      "ruleOverrides": { "shadow": "ineligible", "purified": "ineligible" },
+      "sourceIds": ["secondary-current-shadow-feed"]
+    }
+  ],
+  "groups": [
+    {
+      "id": "forms-pyroar",
+      "variantKind": "gender",
+      "sourceIds": ["secondary-form-reference"],
+      "members": [
+        {
+          "dex": 668,
+          "formKey": "female",
+          "displayName": "Female Pyroar",
+          "genderCode": "female",
+          "normalState": "released",
+          "shinyState": "released"
+        }
+      ]
+    },
+    {
+      "id": "forms-flabebe",
+      "variantKind": "alternate",
+      "sourceIds": ["official-flabebe-community-day"],
+      "members": [
+        {
+          "dex": 669,
+          "formKey": "blue-flower",
+          "displayName": "Blue Flower Flabébé",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": {
+            "mode": "regional",
+            "zones": ["asia-pacific"],
+            "note": "Usually Asia-Pacific."
+          }
+        },
+        {
+          "dex": 669,
+          "formKey": "yellow-flower",
+          "displayName": "Yellow Flower Flabébé",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": {
+            "mode": "regional",
+            "zones": ["americas"],
+            "note": "Usually the Americas."
+          }
+        },
+        {
+          "dex": 669,
+          "formKey": "white-flower",
+          "displayName": "White Flower Flabébé",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": { "mode": "global", "zones": ["global"], "note": "Uncommon worldwide." }
+        },
+        {
+          "dex": 669,
+          "formKey": "orange-flower",
+          "displayName": "Orange Flower Flabébé",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": { "mode": "global", "zones": ["global"], "note": "Uncommon worldwide." }
+        },
+        {
+          "dex": 670,
+          "formKey": "blue-flower",
+          "displayName": "Blue Flower Floette",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": {
+            "mode": "regional",
+            "zones": ["asia-pacific"],
+            "note": "Evolves from regional Blue Flower Flabébé."
+          }
+        },
+        {
+          "dex": 670,
+          "formKey": "yellow-flower",
+          "displayName": "Yellow Flower Floette",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": {
+            "mode": "regional",
+            "zones": ["americas"],
+            "note": "Evolves from regional Yellow Flower Flabébé."
+          }
+        },
+        {
+          "dex": 670,
+          "formKey": "white-flower",
+          "displayName": "White Flower Floette",
+          "normalState": "released",
+          "shinyState": "released"
+        },
+        {
+          "dex": 670,
+          "formKey": "orange-flower",
+          "displayName": "Orange Flower Floette",
+          "normalState": "released",
+          "shinyState": "released"
+        },
+        {
+          "dex": 671,
+          "formKey": "blue-flower",
+          "displayName": "Blue Flower Florges",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": {
+            "mode": "regional",
+            "zones": ["asia-pacific"],
+            "note": "Evolves from regional Blue Flower Flabébé."
+          }
+        },
+        {
+          "dex": 671,
+          "formKey": "yellow-flower",
+          "displayName": "Yellow Flower Florges",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": {
+            "mode": "regional",
+            "zones": ["americas"],
+            "note": "Evolves from regional Yellow Flower Flabébé."
+          }
+        },
+        {
+          "dex": 671,
+          "formKey": "white-flower",
+          "displayName": "White Flower Florges",
+          "normalState": "released",
+          "shinyState": "released"
+        },
+        {
+          "dex": 671,
+          "formKey": "orange-flower",
+          "displayName": "Orange Flower Florges",
+          "normalState": "released",
+          "shinyState": "released"
+        }
+      ]
+    },
+    {
+      "id": "forms-furfrou",
+      "variantKind": "alternate",
+      "sourceIds": ["official-furfrou"],
+      "members": [
+        {
+          "dex": 676,
+          "formKey": "matron-trim",
+          "displayName": "Matron Trim Furfrou",
+          "normalState": "released",
+          "shinyState": "released"
+        },
+        {
+          "dex": 676,
+          "formKey": "dandy-trim",
+          "displayName": "Dandy Trim Furfrou",
+          "normalState": "released",
+          "shinyState": "released"
+        },
+        {
+          "dex": 676,
+          "formKey": "debutante-trim",
+          "displayName": "Debutante Trim Furfrou",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": {
+            "mode": "regional",
+            "zones": ["americas"],
+            "note": "Usually the Americas."
+          }
+        },
+        {
+          "dex": 676,
+          "formKey": "diamond-trim",
+          "displayName": "Diamond Trim Furfrou",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": {
+            "mode": "regional",
+            "zones": ["emea"],
+            "note": "Usually Europe, the Middle East, and Africa."
+          }
+        },
+        {
+          "dex": 676,
+          "formKey": "star-trim",
+          "displayName": "Star Trim Furfrou",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": {
+            "mode": "regional",
+            "zones": ["asia-pacific"],
+            "note": "Usually Asia-Pacific."
+          }
+        },
+        {
+          "dex": 676,
+          "formKey": "la-reine-trim",
+          "displayName": "La Reine Trim Furfrou",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": { "mode": "regional", "zones": ["europe"], "note": "Usually France." }
+        },
+        {
+          "dex": 676,
+          "formKey": "kabuki-trim",
+          "displayName": "Kabuki Trim Furfrou",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": { "mode": "regional", "zones": ["japan"], "note": "Usually Japan." }
+        },
+        {
+          "dex": 676,
+          "formKey": "pharaoh-trim",
+          "displayName": "Pharaoh Trim Furfrou",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": {
+            "mode": "regional",
+            "zones": ["africa-middle-east"],
+            "note": "Usually Egypt."
+          }
+        },
+        {
+          "dex": 676,
+          "formKey": "heart-trim",
+          "displayName": "Heart Trim Furfrou",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": {
+            "mode": "event",
+            "zones": ["global"],
+            "note": "Usually limited to Valentine-themed events."
+          }
+        }
+      ]
+    },
+    {
+      "id": "forms-pumpkaboo",
+      "variantKind": "alternate",
+      "sourceIds": ["official-pumpkaboo"],
+      "members": [
+        {
+          "dex": 710,
+          "formKey": "small",
+          "displayName": "Small Size Pumpkaboo",
+          "normalState": "released",
+          "shinyState": "released"
+        },
+        {
+          "dex": 710,
+          "formKey": "large",
+          "displayName": "Large Size Pumpkaboo",
+          "normalState": "released",
+          "shinyState": "released"
+        },
+        {
+          "dex": 710,
+          "formKey": "super",
+          "displayName": "Super Size Pumpkaboo",
+          "normalState": "released",
+          "shinyState": "released"
+        },
+        {
+          "dex": 711,
+          "formKey": "small",
+          "displayName": "Small Size Gourgeist",
+          "normalState": "released",
+          "shinyState": "released"
+        },
+        {
+          "dex": 711,
+          "formKey": "large",
+          "displayName": "Large Size Gourgeist",
+          "normalState": "released",
+          "shinyState": "released"
+        },
+        {
+          "dex": 711,
+          "formKey": "super",
+          "displayName": "Super Size Gourgeist",
+          "normalState": "released",
+          "shinyState": "released"
+        }
+      ]
+    },
+    {
+      "id": "forms-vivillon",
+      "variantKind": "alternate",
+      "sourceIds": ["official-vivillon"],
+      "members": [
+        {
+          "dex": 666,
+          "formKey": "archipelago",
+          "displayName": "Archipelago Pattern Vivillon",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": {
+            "mode": "regional",
+            "zones": ["americas"],
+            "note": "Caribbean and nearby postcard habitats; confirm in game."
+          }
+        },
+        {
+          "dex": 666,
+          "formKey": "continental",
+          "displayName": "Continental Pattern Vivillon",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": {
+            "mode": "regional",
+            "zones": ["europe", "asia-pacific"],
+            "note": "Parts of Europe and Asia; confirm in game."
+          }
+        },
+        {
+          "dex": 666,
+          "formKey": "elegant",
+          "displayName": "Elegant Pattern Vivillon",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": {
+            "mode": "regional",
+            "zones": ["japan"],
+            "note": "Primarily Japan; confirm in game."
+          }
+        },
+        {
+          "dex": 666,
+          "formKey": "garden",
+          "displayName": "Garden Pattern Vivillon",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": {
+            "mode": "regional",
+            "zones": ["europe"],
+            "note": "British Isles and nearby habitats; confirm in game."
+          }
+        },
+        {
+          "dex": 666,
+          "formKey": "high-plains",
+          "displayName": "High Plains Pattern Vivillon",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": {
+            "mode": "regional",
+            "zones": ["united-states", "americas"],
+            "note": "Western North America and nearby habitats; confirm in game."
+          }
+        },
+        {
+          "dex": 666,
+          "formKey": "icy-snow",
+          "displayName": "Icy Snow Pattern Vivillon",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": {
+            "mode": "regional",
+            "zones": ["europe"],
+            "note": "Far-northern habitats; confirm in game."
+          }
+        },
+        {
+          "dex": 666,
+          "formKey": "jungle",
+          "displayName": "Jungle Pattern Vivillon",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": {
+            "mode": "regional",
+            "zones": ["americas", "asia-pacific"],
+            "note": "Equatorial habitats; confirm in game."
+          }
+        },
+        {
+          "dex": 666,
+          "formKey": "marine",
+          "displayName": "Marine Pattern Vivillon",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": {
+            "mode": "regional",
+            "zones": ["europe"],
+            "note": "Mediterranean habitats; confirm in game."
+          }
+        },
+        {
+          "dex": 666,
+          "formKey": "modern",
+          "displayName": "Modern Pattern Vivillon",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": {
+            "mode": "regional",
+            "zones": ["united-states"],
+            "note": "Eastern United States habitats; confirm in game."
+          }
+        },
+        {
+          "dex": 666,
+          "formKey": "monsoon",
+          "displayName": "Monsoon Pattern Vivillon",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": {
+            "mode": "regional",
+            "zones": ["asia-pacific"],
+            "note": "South and Southeast Asian habitats; confirm in game."
+          }
+        },
+        {
+          "dex": 666,
+          "formKey": "ocean",
+          "displayName": "Ocean Pattern Vivillon",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": {
+            "mode": "regional",
+            "zones": ["asia-pacific"],
+            "note": "Pacific island habitats; confirm in game."
+          }
+        },
+        {
+          "dex": 666,
+          "formKey": "polar",
+          "displayName": "Polar Pattern Vivillon",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": {
+            "mode": "regional",
+            "zones": ["united-states", "americas"],
+            "note": "Northern North American habitats; confirm in game."
+          }
+        },
+        {
+          "dex": 666,
+          "formKey": "river",
+          "displayName": "River Pattern Vivillon",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": {
+            "mode": "regional",
+            "zones": ["asia-pacific"],
+            "note": "Australian and nearby habitats; confirm in game."
+          }
+        },
+        {
+          "dex": 666,
+          "formKey": "sandstorm",
+          "displayName": "Sandstorm Pattern Vivillon",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": {
+            "mode": "regional",
+            "zones": ["africa-middle-east"],
+            "note": "Middle Eastern habitats; confirm in game."
+          }
+        },
+        {
+          "dex": 666,
+          "formKey": "savanna",
+          "displayName": "Savanna Pattern Vivillon",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": {
+            "mode": "regional",
+            "zones": ["americas"],
+            "note": "Brazilian and nearby habitats; confirm in game."
+          }
+        },
+        {
+          "dex": 666,
+          "formKey": "sun",
+          "displayName": "Sun Pattern Vivillon",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": {
+            "mode": "regional",
+            "zones": ["americas"],
+            "note": "Mexico and nearby habitats; confirm in game."
+          }
+        },
+        {
+          "dex": 666,
+          "formKey": "tundra",
+          "displayName": "Tundra Pattern Vivillon",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": {
+            "mode": "regional",
+            "zones": ["europe", "japan"],
+            "note": "Northern coastal habitats; confirm in game."
+          }
+        }
+      ]
+    },
+    {
+      "id": "forms-other",
+      "variantKind": "alternate",
+      "sourceIds": ["secondary-form-reference"],
+      "members": [
+        {
+          "dex": 718,
+          "formKey": "ten-percent",
+          "displayName": "10% Forme Zygarde",
+          "normalState": "released",
+          "shinyState": "unreleased",
+          "tradeable": false
+        },
+        {
+          "dex": 718,
+          "formKey": "complete",
+          "displayName": "Complete Forme Zygarde",
+          "normalState": "released",
+          "shinyState": "unreleased",
+          "tradeable": false
+        },
+        {
+          "dex": 720,
+          "formKey": "unbound",
+          "displayName": "Hoopa Unbound",
+          "normalState": "released",
+          "shinyState": "unreleased",
+          "tradeable": false,
+          "sourceIds": ["official-hoopa"]
+        },
+        {
+          "dex": 741,
+          "formKey": "pom-pom",
+          "displayName": "Pom-Pom Style Oricorio",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": {
+            "mode": "regional",
+            "zones": ["united-states", "americas"],
+            "note": "Usually the Americas, including the United States."
+          },
+          "sourceIds": ["official-oricorio-2026"]
+        },
+        {
+          "dex": 741,
+          "formKey": "pau",
+          "displayName": "Pa’u Style Oricorio",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": {
+            "mode": "regional",
+            "zones": ["africa-middle-east", "asia-pacific", "americas"],
+            "note": "Usually African, Asian, Pacific, and Caribbean islands."
+          },
+          "sourceIds": ["official-oricorio-2026"]
+        },
+        {
+          "dex": 741,
+          "formKey": "sensu",
+          "displayName": "Sensu Style Oricorio",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": {
+            "mode": "regional",
+            "zones": ["asia-pacific"],
+            "note": "Usually Asia-Pacific."
+          },
+          "sourceIds": ["official-oricorio-2026"]
+        },
+        {
+          "dex": 745,
+          "formKey": "midnight",
+          "displayName": "Midnight Form Lycanroc",
+          "normalState": "released",
+          "shinyState": "released",
+          "sourceIds": ["official-lycanroc-dusk"]
+        },
+        {
+          "dex": 745,
+          "formKey": "dusk",
+          "displayName": "Dusk Form Lycanroc",
+          "normalState": "released",
+          "shinyState": "released",
+          "sourceIds": ["official-lycanroc-dusk"]
+        },
+        {
+          "dex": 849,
+          "formKey": "low-key",
+          "displayName": "Low Key Form Toxtricity",
+          "normalState": "released",
+          "shinyState": "released",
+          "normalArtworkFile": "HOME0849L.png",
+          "shinyArtworkFile": "HOME0849L s.png",
+          "sourceIds": ["official-toxtricity"]
+        },
+        {
+          "dex": 978,
+          "formKey": "droopy",
+          "displayName": "Droopy Form Tatsugiri",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": {
+            "mode": "regional",
+            "zones": ["americas"],
+            "note": "Usually the Americas."
+          },
+          "sourceIds": ["official-tatsugiri"]
+        },
+        {
+          "dex": 978,
+          "formKey": "stretchy",
+          "displayName": "Stretchy Form Tatsugiri",
+          "normalState": "released",
+          "shinyState": "released",
+          "availability": {
+            "mode": "regional",
+            "zones": ["asia-pacific"],
+            "note": "Usually Asia-Pacific."
+          },
+          "sourceIds": ["official-tatsugiri"]
+        },
+        {
+          "dex": 901,
+          "formKey": "bloodmoon",
+          "displayName": "Bloodmoon Ursaluna",
+          "normalState": "unreleased",
+          "shinyState": "unreleased"
+        },
+        {
+          "dex": 888,
+          "formKey": "crowned-sword",
+          "displayName": "Crowned Sword Zacian",
+          "normalState": "released",
+          "shinyState": "released",
+          "sourceIds": ["official-crowned-heroes"]
+        },
+        {
+          "dex": 889,
+          "formKey": "crowned-shield",
+          "displayName": "Crowned Shield Zamazenta",
+          "normalState": "released",
+          "shinyState": "released",
+          "sourceIds": ["official-crowned-heroes"]
+        },
+        {
+          "dex": 892,
+          "formKey": "rapid-strike",
+          "displayName": "Rapid Strike Style Urshifu",
+          "normalState": "released",
+          "shinyState": "unreleased",
+          "sourceIds": ["official-urshifu"]
+        },
+        {
+          "dex": 854,
+          "formKey": "antique",
+          "displayName": "Antique Form Sinistea",
+          "normalState": "released",
+          "shinyState": "released",
+          "sourceIds": ["official-halloween-2025", "official-polteageist-forms"]
+        },
+        {
+          "dex": 855,
+          "formKey": "antique",
+          "displayName": "Antique Form Polteageist",
+          "normalState": "released",
+          "shinyState": "released",
+          "sourceIds": ["official-halloween-2025", "official-polteageist-forms"]
+        },
+        {
+          "dex": 1012,
+          "formKey": "artisan",
+          "displayName": "Artisan Form Poltchageist",
+          "normalState": "released",
+          "shinyState": "unreleased",
+          "sourceIds": ["official-polteageist-forms"]
+        },
+        {
+          "dex": 1013,
+          "formKey": "masterpiece",
+          "displayName": "Masterpiece Form Sinistcha",
+          "normalState": "released",
+          "shinyState": "unreleased",
+          "sourceIds": ["official-polteageist-forms"]
+        },
+        {
+          "dex": 905,
+          "formKey": "therian",
+          "displayName": "Therian Forme Enamorus",
+          "normalState": "released",
+          "shinyState": "unreleased",
+          "tradeable": false,
+          "sourceIds": ["official-enamorus-therian"]
+        }
+      ]
+    }
+  ]
+}

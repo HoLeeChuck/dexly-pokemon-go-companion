@@ -109,7 +109,8 @@ and rate limiting.
 
 The PWA caches the shell and public catalog for recovery, but never caches private API
 responses. A waiting service worker is applied only after an accessible user prompt.
-Missing remote sprites receive a local neutral fallback.
+Missing local artwork receives a neutral fallback. Named forms that intentionally use a species
+representative are marked as such in catalog metadata and the UI.
 
 See [Architecture](ARCHITECTURE.md) and [Deployment](DEPLOYMENT.md) for detailed runtime
 and release boundaries.
@@ -117,11 +118,12 @@ and release boundaries.
 ## Launch gates and future work
 
 The public-launch closure matrix is the source of truth for completed, open, deferred,
-and externally blocked findings. In particular, PokeMiners does not provide CatchGrid an
-open redistribution license for Pokémon artwork; attribution does not resolve that
-rights question.
+and externally blocked findings. Pokémon HOME artwork is now synchronized locally from
+Bulbagarden Archives with per-file provenance and no runtime hotlinking. Archives' copyright
+notice does not provide a blanket open redistribution license, so attribution and legal review
+remain applicable.
 
 Potential later work includes a richer CSV column-mapping wizard, an approved local
-sprite pack, event-aware catalog review, optional QR/share images, and separately
+event-costume artwork with reviewed reuse terms, optional QR/share images, and separately
 approved community features. None should weaken the local-first privacy boundary or
 silently reinterpret existing collection records.

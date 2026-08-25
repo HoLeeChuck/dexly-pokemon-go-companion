@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { readFile } from 'node:fs/promises';
+import { access, readFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -121,18 +121,14 @@ function validateManifest(manifest, medals) {
   if (manifest.nationalDex?.includesUnreleased !== true) {
     add('nationalDex.includesUnreleased must be true.');
   }
-  if (!/^[a-f\d]{40}$/.test(manifest.source?.commit ?? '')) {
-    add('source.commit must be a pinned 40-character lowercase SHA.');
+  if (!/^[a-f\d]{64}$/.test(manifest.source?.assetManifestSha256 ?? '')) {
+    add('source.assetManifestSha256 must be SHA-256.');
   }
-  if (!/^[a-f\d]{64}$/.test(manifest.source?.assetTreeSha256 ?? '')) {
-    add('source.assetTreeSha256 must be SHA-256.');
+  if (!/^[a-f\d]{64}$/.test(manifest.source?.updateSha256 ?? '')) {
+    add('source.updateSha256 must be SHA-256.');
   }
-  if (!/^[a-f\d]{64}$/.test(manifest.source?.overridesSha256 ?? '')) {
-    add('source.overridesSha256 must be SHA-256.');
-  }
-  if (!validUrl(manifest.source?.rawBaseUrl)) add('source.rawBaseUrl must use HTTPS.');
-  if (!manifest.source?.rawBaseUrl?.includes(`/${manifest.source?.commit}/`)) {
-    add('source.rawBaseUrl must contain the pinned asset commit.');
+  if (manifest.source?.runtimeBaseUrl !== '/' || manifest.source?.hotlinking !== false) {
+    add('source must use repository-local runtime assets with hotlinking disabled.');
   }
   if (!Array.isArray(manifest.sourceInputs) || manifest.sourceInputs.length < 10) {
     add('sourceInputs must include hash-addressed API, asset, and manual inputs.');
@@ -149,8 +145,8 @@ function validateManifest(manifest, medals) {
       if (!/^[a-f\d]{64}$/.test(source.sha256 ?? '')) {
         add(`sourceInputs[${index}].sha256 must be SHA-256.`);
       }
-      if (source.url !== 'catalog/catalog-overrides.v1.json' && !validUrl(source.url)) {
-        add(`sourceInputs[${index}].url must be HTTPS or the versioned local overrides path.`);
+      if (!validUrl(source.url) && !/^catalog\/[a-z0-9._/-]+$/i.test(source.url ?? '')) {
+        add(`sourceInputs[${index}].url must be HTTPS or a versioned catalog path.`);
       }
     }
     for (const kind of ['official', 'secondary', 'asset', 'manual']) {
@@ -221,6 +217,17 @@ function validateManifest(manifest, medals) {
       add(`${at} released form needs a sprite.`);
     if (form.release?.shiny === true && !form.assets?.shiny)
       add(`${at} released Shiny needs a sprite.`);
+    if (form.assets?.normal?.upstreamPath?.includes('PokeMiners')) {
+      add(`${at} still depends on PokeMiners artwork.`);
+    }
+    if (
+      !form.availability ||
+      !['global', 'regional', 'event', 'unknown'].includes(form.availability.mode)
+    ) {
+      add(`${at}.availability is missing or invalid.`);
+    } else if (!Array.isArray(form.availability.zones)) {
+      add(`${at}.availability.zones must be an array.`);
+    }
 
     if (form.isDefault) {
       if (form.formKey !== 'standard' || form.variantKind !== 'standard') {
@@ -336,7 +343,7 @@ function collectAssetChecks(manifest) {
         formId: form.formId,
         kind,
         path: asset.upstreamPath,
-        url: new URL(asset.upstreamPath, manifest.source.rawBaseUrl).href,
+        localPath: resolve(rootDirectory, 'public', asset.upstreamPath),
       });
     }
   }
@@ -400,15 +407,40 @@ async function main() {
     return;
   }
   const checks = collectAssetChecks(manifest);
+  const missingLocal = [];
+  await Promise.all(
+    checks.map(async (check) => {
+      try {
+        await access(check.localPath);
+      } catch {
+        missingLocal.push(check.path);
+      }
+    }),
+  );
+  if (missingLocal.length) {
+    throw new Error(`Missing ${missingLocal.length} repository-local artwork file(s).`);
+  }
   console.log(
     `Manifest valid: schema v${manifest.schemaVersion}, catalog ${manifest.catalogVersion}, ` +
       `1025 National Dex representatives, ${manifest.forms.length} total forms, ${checks.length} unique sprite references.`,
   );
   if (!options.network) {
-    console.log('Network checks skipped. Run with --network to verify commit-pinned sprite URLs.');
+    console.log(
+      'Local artwork checks passed. Run with --network to verify pinned Archives thumbnails.',
+    );
     return;
   }
-  const results = await mapWithConcurrency(checks, 16, checkUrl);
+  const artworkManifest = JSON.parse(
+    await readFile(resolve(rootDirectory, 'catalog/home-artwork-manifest.v1.json'), 'utf8'),
+  );
+  const sourceByPath = new Map(
+    artworkManifest.assets.map((asset) => [asset.localPath, asset.thumbnailUrl]),
+  );
+  const networkChecks = checks.map((check) => ({
+    ...check,
+    url: sourceByPath.get(check.path),
+  }));
+  const results = await mapWithConcurrency(networkChecks, 16, checkUrl);
   const failures = results.filter((result) => result.error);
   if (failures.length) {
     for (const failure of failures)

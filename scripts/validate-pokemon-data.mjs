@@ -28,6 +28,9 @@ for (const form of manifest.forms) {
   if (form.rules.shiny === 'released' && !form.assets.shiny?.upstreamPath) {
     errors.push(`${form.formId}: released Shiny is missing an exact asset.`);
   }
+  if (form.assets.normal?.upstreamPath?.includes('PokeMiners')) {
+    errors.push(`${form.formId}: still uses PokeMiners artwork.`);
+  }
 }
 
 for (const [speciesId, forms] of bySpecies) {

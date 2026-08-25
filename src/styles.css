@@ -1821,35 +1821,23 @@ p {
   mask-size: contain;
 }
 
-.region-medal--asset-2 {
-  --region-medal-icon: url('https://raw.githubusercontent.com/PokeMiners/pogo_assets/1a4ad1fc6c39f361ea85d53fc3040ce482ee9d90/Images/Badges/Achievements/Badge_2.png');
-}
-.region-medal--asset-39 {
-  --region-medal-icon: url('https://raw.githubusercontent.com/PokeMiners/pogo_assets/1a4ad1fc6c39f361ea85d53fc3040ce482ee9d90/Images/Badges/Achievements/Badge_39.png');
-}
-.region-medal--asset-45 {
-  --region-medal-icon: url('https://raw.githubusercontent.com/PokeMiners/pogo_assets/1a4ad1fc6c39f361ea85d53fc3040ce482ee9d90/Images/Badges/Achievements/Badge_45.png');
-}
-.region-medal--asset-51 {
-  --region-medal-icon: url('https://raw.githubusercontent.com/PokeMiners/pogo_assets/1a4ad1fc6c39f361ea85d53fc3040ce482ee9d90/Images/Badges/Achievements/Badge_51.png');
-}
-.region-medal--asset-56 {
-  --region-medal-icon: url('https://raw.githubusercontent.com/PokeMiners/pogo_assets/1a4ad1fc6c39f361ea85d53fc3040ce482ee9d90/Images/Badges/Achievements/Badge_56.png');
-}
-.region-medal--asset-61 {
-  --region-medal-icon: url('https://raw.githubusercontent.com/PokeMiners/pogo_assets/1a4ad1fc6c39f361ea85d53fc3040ce482ee9d90/Images/Badges/Achievements/Badge_61.png');
-}
-.region-medal--asset-62 {
-  --region-medal-icon: url('https://raw.githubusercontent.com/PokeMiners/pogo_assets/1a4ad1fc6c39f361ea85d53fc3040ce482ee9d90/Images/Badges/Achievements/Badge_62.png');
-}
-.region-medal--asset-63 {
-  --region-medal-icon: url('https://raw.githubusercontent.com/PokeMiners/pogo_assets/1a4ad1fc6c39f361ea85d53fc3040ce482ee9d90/Images/Badges/Achievements/Badge_63.png');
-}
-.region-medal--asset-79 {
-  --region-medal-icon: url('https://raw.githubusercontent.com/PokeMiners/pogo_assets/1a4ad1fc6c39f361ea85d53fc3040ce482ee9d90/Images/Badges/Achievements/Badge_79.png');
-}
+.region-medal--asset-2,
+.region-medal--asset-39,
+.region-medal--asset-45,
+.region-medal--asset-51,
+.region-medal--asset-56,
+.region-medal--asset-61,
+.region-medal--asset-62,
+.region-medal--asset-63,
+.region-medal--asset-79,
 .region-medal--asset-82 {
-  --region-medal-icon: url('https://raw.githubusercontent.com/PokeMiners/pogo_assets/1a4ad1fc6c39f361ea85d53fc3040ce482ee9d90/Images/Badges/Achievements/Badge_82.png');
+  --region-medal-icon: radial-gradient(
+    circle,
+    #000 0 28%,
+    transparent 30% 40%,
+    #000 42% 52%,
+    transparent 54%
+  );
 }
 
 .region-medal--bronze {

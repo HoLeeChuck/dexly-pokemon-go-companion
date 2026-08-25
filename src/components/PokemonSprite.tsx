@@ -12,7 +12,7 @@ export function PokemonSprite({
   className?: string;
 }) {
   const [failedSource, setFailedSource] = useState<string | null>(null);
-  const source = shiny ? item.shinySpriteUrl || item.spriteUrl : item.spriteUrl;
+  const source = shiny ? item.shinySpriteUrl : item.spriteUrl;
   const displayName = catalogDisplayName(item);
 
   if (!source || failedSource === source) {
@@ -34,6 +34,7 @@ export function PokemonSprite({
       alt={`${shiny ? 'Shiny ' : ''}${displayName}`}
       loading="lazy"
       decoding="async"
+      title={item.artworkIsFallback ? 'Representative Pokémon HOME artwork' : undefined}
       onError={() => setFailedSource(source)}
     />
   );

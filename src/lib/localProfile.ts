@@ -43,6 +43,8 @@ export interface LocalProfileSettings {
   theme?: AppearanceTheme;
   accentTheme?: AccentTheme;
   activeCategory?: CategoryId;
+  /** A deliberately coarse value; precise coordinates are never persisted. */
+  regionPreference?: string;
 }
 
 export interface LocalProfileMigrationEvent {
@@ -367,7 +369,11 @@ function validateTradeSpecimens(value: unknown, path: string): string[] {
 
 function validateSettings(value: unknown, path: string): string[] {
   if (!isRecord(value)) return [`${path} must be an object.`];
-  const errors = unknownKeyErrors(value, ['theme', 'accentTheme', 'activeCategory'], path);
+  const errors = unknownKeyErrors(
+    value,
+    ['theme', 'accentTheme', 'activeCategory', 'regionPreference'],
+    path,
+  );
   if (value.theme !== undefined && !['light', 'dark'].includes(String(value.theme))) {
     errors.push(`${path}.theme is not supported.`);
   }
@@ -379,6 +385,9 @@ function validateSettings(value: unknown, path: string): string[] {
   }
   if (value.activeCategory !== undefined && !CATEGORY_ID_SET.has(String(value.activeCategory))) {
     errors.push(`${path}.activeCategory is not supported.`);
+  }
+  if (!isOptionalString(value.regionPreference, 64)) {
+    errors.push(`${path}.regionPreference is invalid.`);
   }
   return errors;
 }
