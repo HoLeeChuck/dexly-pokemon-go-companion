@@ -1,8 +1,8 @@
 import { cloudflare } from '@cloudflare/vite-plugin';
 import react from '@vitejs/plugin-react';
 import { execFileSync } from 'node:child_process';
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { relative, resolve } from 'node:path';
 import { defineConfig } from 'vite';
 
 function gitSha(): string {
@@ -14,11 +14,25 @@ function gitSha(): string {
   }
 }
 
-function initialClientAssets(directory: string): string[] {
+function publicClientAssets(directory: string): string[] {
   const html = readFileSync(resolve(directory, 'index.html'), 'utf8');
-  return [...html.matchAll(/(?:src|href)="(\/assets\/[^"]+\.(?:css|js))"/g)]
+  const initial = [...html.matchAll(/(?:src|href)="(\/assets\/[^"]+\.(?:css|js))"/g)]
     .map((match) => match[1])
     .filter((value): value is string => Boolean(value));
+  const assetsDirectory = resolve(directory, 'assets');
+  if (!existsSync(assetsDirectory)) return initial;
+  const modules: string[] = [];
+  const visit = (current: string) => {
+    for (const entry of readdirSync(current, { withFileTypes: true })) {
+      const path = resolve(current, entry.name);
+      if (entry.isDirectory()) visit(path);
+      else if (/\.(?:css|js)$/.test(entry.name)) {
+        modules.push(`/${relative(directory, path).replaceAll('\\', '/')}`);
+      }
+    }
+  };
+  visit(assetsDirectory);
+  return [...new Set([...initial, ...modules])];
 }
 
 export default defineConfig({
@@ -37,7 +51,7 @@ export default defineConfig({
             .replace('__CATCHGRID_BUILD_VERSION__', gitSha().slice(0, 12))
             .replace(
               '/* __CATCHGRID_GENERATED_ASSETS__ */ []',
-              JSON.stringify(initialClientAssets(resolve('dist/client')).sort()),
+              JSON.stringify(publicClientAssets(resolve('dist/client')).sort()),
             ),
         );
       },

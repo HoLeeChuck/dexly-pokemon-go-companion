@@ -32,6 +32,8 @@ export interface MissingSearchOptions {
   maxLength?: number;
 }
 
+export type MissingSearchMode = 'none' | 'personal' | 'tradeable';
+
 const TRADE_REQUEST_SEARCH_KEYWORDS: Readonly<Record<TradeRequestTrait, string | null>> = {
   normal: null,
   shiny: 'shiny',
@@ -46,6 +48,18 @@ export const MISSING_SEARCH_CATEGORY_IDS = ['normal', 'shiny', 'xxl', 'xxs'] as 
 
 export type MissingSearchCategoryId = (typeof MISSING_SEARCH_CATEGORY_IDS)[number];
 export type SizeCategoryId = Extract<MissingSearchCategoryId, 'xxl' | 'xxs'>;
+
+export function formatMissingSearchString(value: string, mode: MissingSearchMode): string {
+  if (mode === 'personal') {
+    return value.replace(/^!traded&/, '!#&');
+  }
+
+  if (mode === 'none') {
+    return value.replace(/^!traded&/, '');
+  }
+
+  return value;
+}
 
 /**
  * Maps a Pokedex number to catch candidates that can satisfy that size goal after evolution.

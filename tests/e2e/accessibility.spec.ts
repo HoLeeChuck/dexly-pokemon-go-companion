@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import { installFakeApi } from './support/fake-api';
 
-for (const route of ['home', 'dex', 'search', 'profile'] as const) {
+for (const route of ['home', 'dex', 'progress', 'search', 'settings'] as const) {
   test(`${route} has no automatically detectable serious accessibility violations`, async ({
     page,
   }) => {

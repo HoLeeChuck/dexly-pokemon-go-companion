@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import bootstrap from '../../public/app-bootstrap.js?raw';
 import serviceWorker from '../../public/sw.js?raw';
+import viteConfig from '../../vite.config.ts?raw';
 import { ACCENT_THEMES } from '../../src/lib/theme';
 
 describe('offline and update safety', () => {
@@ -20,6 +21,13 @@ describe('offline and update safety', () => {
     expect(serviceWorker).toContain("url.pathname === '/api/v1/catalog'");
     expect(serviceWorker).toContain('...GENERATED_ASSETS');
     expect(serviceWorker).toContain("cache.put('/api/v1/catalog'");
+  });
+
+  it('includes every built JavaScript and CSS route chunk without precaching artwork', () => {
+    expect(viteConfig).toContain('readdirSync(current, { withFileTypes: true })');
+    expect(viteConfig).toContain('/\\.(?:css|js)$/.test(entry.name)');
+    expect(viteConfig).toContain('publicClientAssets');
+    expect(viteConfig).not.toContain("resolve(directory, 'artwork')");
   });
 
   it('purges and bypasses PWA caches in local Vite development', () => {

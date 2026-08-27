@@ -25,10 +25,10 @@ export function useAppNavigation() {
     );
     return () => window.cancelAnimationFrame(frame);
   }, [route]);
-  function navigate(next: RouteId) {
+  function navigate(next: RouteId, section?: string) {
     scrollPositions.current[route] = window.scrollY;
     setRoute(next);
-    window.history.pushState(null, '', urlForRoute(next));
+    window.history.pushState(null, '', urlForRoute(next, section));
   }
   return { route, navigate } as const;
 }

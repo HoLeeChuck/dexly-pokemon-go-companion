@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 import { deriveCollectionState } from '../../shared/domain';
 import type { CatalogItem, CategoryId, CollectionState } from '../../shared/types';
 import { catalogDisplayName } from '../lib/catalogDisplay';
@@ -29,6 +30,8 @@ export function PokemonGrid({
   collectedKeys,
   wantedFormIds,
   pendingKeys,
+  renderCount,
+  onRenderCountChange,
   onOpen,
   onToggle,
 }: {
@@ -38,10 +41,11 @@ export function PokemonGrid({
   collectedKeys: ReadonlySet<string>;
   wantedFormIds: ReadonlySet<string>;
   pendingKeys: ReadonlySet<string>;
+  renderCount: number;
+  onRenderCountChange: Dispatch<SetStateAction<number>>;
   onOpen: (item: CatalogItem) => void;
   onToggle: (item: CatalogItem, collected: boolean) => void;
 }) {
-  const [renderCount, setRenderCount] = useState(BATCH_SIZE);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const visibleCount = Math.min(renderCount, items.length);
 
@@ -51,14 +55,14 @@ export function PokemonGrid({
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry?.isIntersecting) {
-          setRenderCount((current) => Math.min(items.length, current + BATCH_SIZE));
+          onRenderCountChange((current) => Math.min(items.length, current + BATCH_SIZE));
         }
       },
       { rootMargin: '500px 0px' },
     );
     observer.observe(sentinel);
     return () => observer.disconnect();
-  }, [items.length, visibleCount]);
+  }, [items.length, onRenderCountChange, visibleCount]);
 
   if (items.length === 0) {
     return (
@@ -112,7 +116,6 @@ export function PokemonGrid({
                   ? `Mark ${displayName} as ${collected ? 'missing' : 'collected'} in ${categoryId}`
                   : `Open ${displayName} details. ${stateLabel(state)} in ${categoryId}.`
               }
-              disabled={quickCheck && !canToggle}
               onClick={() => {
                 if (quickCheck && canToggle) onToggle(item, !collected);
                 else onOpen(item);
@@ -126,6 +129,9 @@ export function PokemonGrid({
                 <PokemonSprite item={item} shiny={shiny} className="pokemon-card__sprite" />
               </span>
               <span className="pokemon-card__name">{displayName}</span>
+              {item.artworkIsFallback && (
+                <span className="pokemon-card__representative">Representative art</span>
+              )}
               <span className={`state-pill state-pill--${state}`}>
                 {state === 'collected' && <Icon name="check" />}
                 {state === 'unreleased' && <Icon name="lock" />}

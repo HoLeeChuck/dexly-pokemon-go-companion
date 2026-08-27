@@ -2,7 +2,7 @@
   "id": "/",
   "name": "CatchGrid · Pokémon GO Collection Companion",
   "short_name": "CatchGrid",
-  "description": "A private-by-default visual Pokémon GO collection tracker and Search Lab.",
+  "description": "A private-by-default visual Pokémon GO collection and progress companion.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -26,6 +26,10 @@
   ],
   "shortcuts": [
     { "name": "Open Pokédex", "short_name": "Dex", "url": "/#/dex" },
-    { "name": "Open Search Lab", "short_name": "Search Lab", "url": "/#/search" }
+    {
+      "name": "Open Search Lab",
+      "short_name": "Search Lab",
+      "url": "/#/search?section=missing-searches"
+    }
   ]
 }

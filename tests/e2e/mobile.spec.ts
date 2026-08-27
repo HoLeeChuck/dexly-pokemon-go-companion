@@ -92,9 +92,7 @@ test.describe('mobile collection experience', () => {
   test('Home explains CatchGrid and fits the mobile viewport', async ({ page }) => {
     await installFakeApi(page);
     await page.goto('/#/home');
-    await expect(
-      page.getByRole('heading', { name: 'Build the collection you care about.' }),
-    ).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Home', exact: true })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Four simple steps' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Open Dex' })).toBeVisible();
 
@@ -262,7 +260,7 @@ test.describe('mobile collection experience', () => {
       };
     });
     expect(menuLayout).toEqual({ fillsWidth: true, fillsBelowHeader: true });
-    for (const route of ['Home', 'Dex', 'Progress', 'Search Lab', 'Settings']) {
+    for (const route of ['Home', 'Dex', 'Progress', 'Settings']) {
       await expect(menu.getByRole('button', { name: route, exact: true })).toBeVisible();
     }
     await expect(menu.getByRole('button', { name: 'Trade', exact: true })).toHaveCount(0);
@@ -368,6 +366,25 @@ test.describe('mobile collection experience', () => {
     expect(api.unexpectedWriteCount).toBe(0);
   });
 
+  test('Quick Check opens ineligible cards without mutating unavailable state', async ({
+    page,
+  }) => {
+    const api = await installFakeApi(page);
+    await openDex(page);
+
+    await page.getByLabel('Collection category').selectOption('shadow');
+    await page.getByRole('button', { name: /^Quick Check/ }).click();
+    const ineligible = page.getByTestId('pokemon-card-2');
+    await expect(ineligible).toHaveAttribute('data-state', 'unknown');
+    await expect(ineligible).toBeEnabled();
+    await ineligible.click();
+
+    await expect(page.getByRole('dialog', { name: 'Ivysaur' })).toBeVisible();
+    await expect(page.getByText('Data unavailable · needs review').first()).toBeVisible();
+    expect(api.collectionMutationCount).toBe(0);
+    expect(api.unexpectedWriteCount).toBe(0);
+  });
+
   test('Quick Check preserves the collection scroll position when a filtered card leaves the grid', async ({
     page,
   }) => {
@@ -397,30 +414,66 @@ test.describe('mobile collection experience', () => {
     expect(api.unexpectedWriteCount).toBe(0);
   });
 
-  test('Progress stays focused while Search Lab provides strings and Discord sharing', async ({
+  test('Dex filters, Quick Check, render depth, and internal scroll survive route navigation', async ({
     page,
   }) => {
+    await page.setViewportSize({ width: 600, height: 900 });
+    await installFakeApi(page, { catalogCopies: 10 });
+    await openDex(page);
+
+    await page.getByLabel('Region').selectOption('Kanto');
+    await page.getByLabel('Collection category').selectOption('shiny');
+    await page.getByRole('button', { name: /^Quick Check/ }).click();
+    await page.getByRole('button', { name: 'Open Pokémon search' }).click();
+    await page.getByRole('searchbox', { name: 'Search Pokémon' }).fill('a');
+    const results = page.locator('.dex-results');
+    await results.evaluate((element) => element.scrollTo(0, 520));
+    await expect.poll(() => results.evaluate((element) => element.scrollTop)).toBeGreaterThan(200);
+
+    await openMobileRoute(page, 'Progress');
+    await openMobileRoute(page, 'Dex');
+
+    await expect(page.getByRole('searchbox', { name: 'Search Pokémon' })).toHaveValue('a');
+    await expect(page.getByLabel('Region')).toHaveValue('Kanto');
+    await expect(page.getByLabel('Collection category')).toHaveValue('shiny');
+    await expect(page.getByRole('button', { name: /^Quick Check/ })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    await expect.poll(() => results.evaluate((element) => element.scrollTop)).toBeGreaterThan(200);
+  });
+
+  test('Progress accuracy and Search Lab tools stay separate', async ({ page }) => {
     await page.setViewportSize({ width: 600, height: 900 });
     await installFakeApi(page);
     await openDex(page);
 
     await openMobileRoute(page, 'Progress');
     await expect(page).toHaveURL(/#\/progress$/);
-    await expect(page.getByRole('heading', { name: 'Your collection, clearly.' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Progress', exact: true })).toBeVisible();
     await expect(page.locator('.generator-panel')).toHaveCount(0);
+
+    const kanto = page.locator('.region-shortcut-grid button').filter({ hasText: 'Kanto' });
+    await expect(kanto).toContainText('4/8');
+    await kanto.click();
+    await page.getByLabel('Regional collection category').selectOption('shiny');
+    await expect(kanto).toContainText('3/8');
 
     await openMobileRoute(page, 'Search Lab');
     await expect(page).toHaveURL(/#\/search$/);
-    await expect(
-      page.getByRole('heading', { name: 'Useful searches, ready to paste.' }),
-    ).toBeVisible();
+    await expect(page.locator('.generator-panel')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Search Lab', exact: true })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Visual search builder' })).toHaveCount(0);
 
     const output = page
       .locator('.all-category-searches .search-output')
       .filter({ hasText: 'Normal' });
     await expect(output).toContainText('8 missing');
-    await expect(output.locator('.search-string code')).toHaveText('!#&4,7,38,133,152,155,158,252');
+    await expect(output.locator('.search-string code')).toHaveText('4,7,38,133,152,155,158,252');
+    await expect(page.getByRole('button', { name: 'None', exact: true })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
     await expect(page.locator('.generator-panel').getByLabel('Generation')).toHaveCount(0);
     await expect(page.locator('.generator-panel').getByLabel('Region')).toHaveCount(0);
     await expect(page.locator('.generator-panel').getByLabel('Category')).toHaveCount(0);
@@ -429,22 +482,55 @@ test.describe('mobile collection experience', () => {
       .locator('.all-category-searches .search-output')
       .filter({ hasText: 'Shiny' });
     await expect(shinyOutput.locator('.search-string code')).toHaveText(
-      '!#&shiny&1,7,25,38,133,152,155,158,252',
+      'shiny&1,7,25,38,133,152,155,158,252',
     );
 
+    await page.getByRole('button', { name: 'Personal', exact: true }).click();
+    await expect(output.locator('.search-string code')).toHaveText('!#&4,7,38,133,152,155,158,252');
     await page.getByRole('button', { name: 'Tradeable', exact: true }).click();
     await expect(output.locator('.search-string code')).toHaveText(
       '!traded&4,7,38,133,152,155,158,252',
     );
-    await page.getByRole('button', { name: 'Personal', exact: true }).click();
+    await page.getByRole('button', { name: 'None', exact: true }).click();
+    await expect(output.locator('.search-string code')).toHaveText('4,7,38,133,152,155,158,252');
 
-    const xxlRecommendation = page
-      .locator('.recommended-list article')
-      .filter({ hasText: 'XXL evolution helper' });
-    await expect(xxlRecommendation.locator('.recommended-query')).toHaveText(
+    const xxlOutput = page
+      .locator('.all-category-searches .search-output')
+      .filter({ hasText: 'XXL' });
+    await expect(xxlOutput.locator('.search-string code')).not.toContainText('1-4');
+    await page.getByRole('checkbox', { name: /Evolution-aware XXL/ }).check();
+    await expect(xxlOutput.locator('.search-string code')).toHaveText(
       'xxl&1-4,7,25,38,133,152,155,158,252',
     );
-    await expect(xxlRecommendation).toContainText('earlier stages that can evolve into them');
+    await expect(page.getByRole('heading', { name: 'My Missing', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Cody’s Recommended' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Share With Friends' })).toBeVisible();
+    const recommendations = page.locator('.recommended-list article');
+    await expect(recommendations).toHaveCount(8);
+    expect(await recommendations.locator('h3').allTextContents()).toEqual([
+      'Trade',
+      'Megas',
+      'Tag',
+      'Evolve',
+      'Special Moves',
+      'Untagged',
+      'XXL',
+      'XXS',
+    ]);
+    await expect(recommendations.nth(0).locator('code')).toHaveText('#trade&');
+    await expect(recommendations.nth(0)).toContainText('adoption');
+    await expect(recommendations.nth(1).locator('code')).toHaveText('#max&mega2-3&');
+    await expect(recommendations.nth(1)).toContainText('Avoid naming the custom tag “mega”');
+    await expect(recommendations.nth(2).locator('code')).toHaveText(
+      '!#&4*,shiny,costume,background,candykm20,dynamax,gigantamax,lucky&',
+    );
+    await expect(recommendations.nth(3).locator('code')).toHaveText('!#&evolvenew&');
+    await expect(recommendations.nth(4).locator('code')).toHaveText(
+      '!#&@frustration,@return,@special&',
+    );
+    await expect(recommendations.nth(5).locator('code')).toHaveText('!#&');
+    await expect(recommendations.nth(6).locator('code')).toHaveText(/^!#&xxl&/);
+    await expect(recommendations.nth(7).locator('code')).toHaveText(/^!#&xxs&/);
 
     const layout = await page.locator('.generator-panel').evaluate((panel) => {
       const cards = [...panel.querySelectorAll('.search-output')].slice(0, 2);
@@ -492,6 +578,17 @@ test.describe('mobile collection experience', () => {
     await expect(preview).toContainText('**XXS**');
     await expect(preview).toContainText('[Generated by CatchGrid](https://dex.cjdev.app/)');
     await expect(page.getByRole('button', { name: 'Copy Discord message' })).toBeVisible();
+    await page.getByRole('checkbox', { name: /Discord Nitro/ }).check();
+    await expect(page.locator('.discord-message-list article').first()).toContainText(
+      '/4,000 characters',
+    );
+    const nitroCheckboxSize = await page
+      .getByRole('checkbox', { name: /Discord Nitro/ })
+      .evaluate((checkbox) => {
+        const box = checkbox.getBoundingClientRect();
+        return { width: Math.round(box.width), height: Math.round(box.height) };
+      });
+    expect(nitroCheckboxSize).toEqual({ width: 17, height: 17 });
   });
 
   test('CSV fixture produces a client-side preview without applying changes', async ({ page }) => {
@@ -515,9 +612,29 @@ test.describe('mobile collection experience', () => {
     await expect(table).toContainText('Charmander');
     await expect(table).toContainText('Squirtle');
     await expect(table.locator('tbody tr')).toHaveCount(2);
+    await expect(page.getByText('Showing 1–2 of 2 proposed changes')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Apply reviewed import' })).toBeEnabled();
     expect(api.collectionMutationCount).toBe(0);
     expect(api.unexpectedWriteCount).toBe(0);
+  });
+
+  test('CSV review paginates every blocking issue and keeps Apply disabled', async ({ page }) => {
+    await installFakeApi(page);
+    await page.goto('/#/settings');
+    const csv = `name,normal\n${Array.from(
+      { length: 20 },
+      (_, index) => `Unknown form ${index + 1},true`,
+    ).join('\n')}`;
+    await page.getByLabel('Choose a CSV file to preview').setInputFiles({
+      name: 'many-issues.csv',
+      mimeType: 'text/csv',
+      buffer: Buffer.from(csv),
+    });
+
+    await expect(page.getByText('Showing 1–12 of 20 issues')).toBeVisible();
+    await page.getByRole('button', { name: 'Next' }).click();
+    await expect(page.getByText('Showing 13–20 of 20 issues')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Apply reviewed import' })).toBeDisabled();
   });
 
   test('reviewed CSV import applies locally and survives a reload', async ({ page }) => {

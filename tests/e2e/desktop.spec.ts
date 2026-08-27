@@ -70,9 +70,7 @@ test('appearance settings combine a persistent color theme with light and dark m
     .getByRole('navigation', { name: 'Primary navigation' })
     .getByRole('button', { name: 'Search Lab' })
     .click();
-  await expect(
-    page.getByRole('heading', { name: 'Useful searches, ready to paste.' }),
-  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Search Lab', exact: true })).toBeVisible();
 
   const purpleAccent = await page
     .locator('html')
@@ -120,13 +118,21 @@ test('settings uses a compact dashboard and keeps Cody Cloud access unlisted', a
     const setup = element.querySelector('.collection-setup-panel')!.getBoundingClientRect();
     const appearance = element.querySelector('.appearance-panel')!.getBoundingClientRect();
     const importPanel = element.querySelector('.import-panel')!.getBoundingClientRect();
+    const exportPanel = element.querySelector('.data-actions')!.getBoundingClientRect();
     return {
       setupTop: Math.round(setup.top),
       appearanceTop: Math.round(appearance.top),
       importTop: Math.round(importPanel.top),
+      exportTop: Math.round(exportPanel.top),
+      appearanceLeft: Math.round(appearance.left),
+      importLeft: Math.round(importPanel.left),
+      exportLeft: Math.round(exportPanel.left),
     };
   });
-  expect(layout.appearanceTop).toBeLessThan(layout.importTop);
+  expect(Math.abs(layout.appearanceTop - layout.exportTop)).toBeLessThan(2);
+  expect(Math.abs(layout.appearanceTop - layout.importTop)).toBeLessThan(2);
+  expect(layout.appearanceLeft).toBeLessThan(layout.exportLeft);
+  expect(layout.exportLeft).toBeLessThan(layout.importLeft);
   expect(layout.importTop).toBeLessThan(layout.setupTop);
   await expect(page.locator('.collection-setup-panel')).not.toHaveAttribute('open', '');
 
@@ -147,22 +153,26 @@ test('first launch opens the all-in-one Home without exposing the unfinished Tra
   const api = await installFakeApi(page);
   await page.goto('/');
 
-  await expect(
-    page.getByRole('heading', { name: 'Build the collection you care about.' }),
-  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Home', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Recommended Search Strings' })).toBeVisible();
+  await expect(page.getByText('Recent Shinies')).toHaveCount(0);
   const dashboardLayout = await page.locator('.page--dashboard').evaluate((dashboard) => {
-    const hero = dashboard.querySelector('.dashboard-hero')!.getBoundingClientRect();
-    const progress = dashboard.querySelector('.home-section')!.getBoundingClientRect();
+    const header = dashboard.querySelector('.home-header')!.getBoundingClientRect();
+    const shortcuts = dashboard.querySelector('.home-shortcuts')!.getBoundingClientRect();
+    const guide = dashboard.querySelector('.home-guide')!.getBoundingClientRect();
+    const lower = dashboard.querySelector('.home-lower-grid')!.getBoundingClientRect();
     return {
       pageOverflows: document.documentElement.scrollWidth > document.documentElement.clientWidth,
-      heroWidth: Math.round(hero.width),
-      progressWidth: Math.round(progress.width),
-      sameColumn: Math.abs(hero.left - progress.left) < 2,
+      headerWidth: Math.round(header.width),
+      headerHeight: Math.round(header.height),
+      lowerWidth: Math.round(lower.width),
+      panelsShareRow: Math.abs(shortcuts.top - guide.top) < 2 && shortcuts.right < guide.left,
     };
   });
   expect(dashboardLayout.pageOverflows).toBe(false);
-  expect(dashboardLayout.sameColumn).toBe(true);
-  expect(Math.abs(dashboardLayout.heroWidth - dashboardLayout.progressWidth)).toBeLessThan(2);
+  expect(dashboardLayout.headerHeight).toBeLessThan(100);
+  expect(dashboardLayout.panelsShareRow).toBe(true);
+  expect(Math.abs(dashboardLayout.headerWidth - dashboardLayout.lowerWidth)).toBeLessThan(2);
   const navigation = page.getByRole('navigation', { name: 'Primary navigation' });
   await expect(navigation.getByRole('button')).toHaveCount(4);
   await expect(navigation.getByRole('button', { name: 'Home' })).toBeVisible();
@@ -171,21 +181,86 @@ test('first launch opens the all-in-one Home without exposing the unfinished Tra
   await expect(navigation.getByRole('button', { name: 'Trade' })).toHaveCount(0);
 
   await page.goto('/#/trade');
-  await expect(
-    page.getByRole('heading', { name: 'Build the collection you care about.' }),
-  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Home', exact: true })).toBeVisible();
   expect(api.unexpectedWriteCount).toBe(0);
+});
+
+test('primary pages fill the viewport stage and use responsive wide-screen workspaces', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1920, height: 1000 });
+  await installFakeApi(page);
+
+  for (const route of ['home', 'progress', 'search', 'settings']) {
+    await page.goto(`/#/${route}`);
+    await expect(page.locator('.page')).toBeVisible();
+    const shell = await page.evaluate(() => {
+      const main = document.querySelector<HTMLElement>('main')!;
+      const stage = document.querySelector<HTMLElement>('.app-stage')!;
+      const activePage = document.querySelector<HTMLElement>('.page')!;
+      return {
+        documentClientHeight: document.documentElement.clientHeight,
+        documentScrollHeight: document.documentElement.scrollHeight,
+        mainOverflowY: getComputedStyle(main).overflowY,
+        pageWidth: activePage.getBoundingClientRect().width,
+        stageWidth: stage.getBoundingClientRect().width,
+      };
+    });
+    expect(shell.documentScrollHeight).toBeLessThanOrEqual(shell.documentClientHeight + 1);
+    expect(shell.mainOverflowY).toBe('auto');
+    expect(Math.abs(shell.stageWidth - shell.pageWidth)).toBeLessThanOrEqual(18);
+  }
+
+  await page.goto('/#/progress');
+  const progressLayout = await page.locator('.page--progress').evaluate((element) => {
+    const overview = element.querySelector('.progress-overview')!.getBoundingClientRect();
+    const regional = element.querySelector('.regional-progress')!.getBoundingClientRect();
+    return {
+      sharesRow: Math.abs(overview.top - regional.top) < 2,
+      separated: overview.right < regional.left,
+    };
+  });
+  expect(progressLayout).toEqual({ sharesRow: true, separated: true });
+
+  await page.goto('/#/search');
+  const searchLayout = await page.locator('.page--search-lab').evaluate((element) => {
+    const generator = element.querySelector('.generator-panel')!.getBoundingClientRect();
+    const recommended = element.querySelector('.recommended-panel')!.getBoundingClientRect();
+    const share = element.querySelector('.discord-share-panel')!.getBoundingClientRect();
+    return {
+      topPanelsShareRow: Math.abs(generator.top - recommended.top) < 2,
+      topPanelsSeparated: generator.right < recommended.left,
+      shareSpansTopPanels:
+        share.left === generator.left && Math.abs(share.right - recommended.right) < 2,
+    };
+  });
+  expect(searchLayout).toEqual({
+    topPanelsShareRow: true,
+    topPanelsSeparated: true,
+    shareSpansTopPanels: true,
+  });
 });
 
 test('critical routes fit every public launch viewport without horizontal overflow', async ({
   page,
 }) => {
   await installFakeApi(page);
-  const widths = [320, 375, 390, 430, 768, 1024, 1440];
-  const routes = ['home', 'dex', 'progress', 'settings'];
+  const viewports = [
+    { width: 320, height: 844 },
+    { width: 360, height: 800 },
+    { width: 375, height: 844 },
+    { width: 390, height: 844 },
+    { width: 430, height: 844 },
+    { width: 768, height: 1024 },
+    { width: 1024, height: 900 },
+    { width: 1280, height: 800 },
+    { width: 1440, height: 900 },
+    { width: 1920, height: 1080 },
+  ];
+  const routes = ['home', 'dex', 'progress', 'search', 'settings'];
 
-  for (const width of widths) {
-    await page.setViewportSize({ width, height: width < 768 ? 844 : 900 });
+  for (const viewport of viewports) {
+    await page.setViewportSize(viewport);
     for (const route of routes) {
       await page.goto(`/#/${route}`);
       await expect(page.locator('main')).toBeVisible();
@@ -193,11 +268,11 @@ test('critical routes fit every public launch viewport without horizontal overfl
         clientWidth: document.documentElement.clientWidth,
         scrollWidth: document.documentElement.scrollWidth,
       }));
-      expect.soft({ width, route, ...layout }).toMatchObject({
-        width,
+      expect.soft({ ...viewport, route, ...layout }).toMatchObject({
+        width: viewport.width,
         route,
-        clientWidth: width,
-        scrollWidth: width,
+        clientWidth: viewport.width,
+        scrollWidth: viewport.width,
       });
     }
   }
@@ -293,19 +368,20 @@ test('desktop shell shows its sidebar and navigates without the mobile bar', asy
 
   await expect(page).toHaveURL(/#\/home$/);
   await expect(home).toHaveClass(/is-active/);
-  await expect(page.getByRole('heading', { name: 'Turn gaps into useful searches.' })).toHaveCount(
-    0,
-  );
+  await expect(page.getByRole('heading', { name: 'Search Lab', exact: true })).toHaveCount(0);
 
   await navigation.getByRole('button', { name: 'Progress' }).click();
   await expect(page).toHaveURL(/#\/progress$/);
-  await expect(page.getByRole('heading', { name: 'Your collection, clearly.' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Progress', exact: true })).toBeVisible();
+  await expect(page.locator('.generator-panel')).toHaveCount(0);
+
+  await navigation.getByRole('button', { name: 'Search Lab' }).click();
+  await expect(page).toHaveURL(/#\/search$/);
+  await expect(page.getByRole('heading', { name: 'Search Lab', exact: true })).toBeVisible();
 
   await sidebar.getByRole('button', { name: 'Go to home page' }).click();
   await expect(page).toHaveURL(/#\/home$/);
-  await expect(
-    page.getByRole('heading', { name: 'Build the collection you care about.' }),
-  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Home', exact: true })).toBeVisible();
   expect(api.collectionMutationCount).toBe(0);
   expect(api.unexpectedWriteCount).toBe(0);
 });
@@ -314,7 +390,7 @@ test('transformation views show and search the full collector form name', async 
   await installFakeApi(page);
   await page.goto('/#/dex');
 
-  await page.getByLabel('Collection form').selectOption('mega');
+  await page.getByLabel('Form view').selectOption('mega');
   const mega = page.getByRole('button', { name: /Open Mega Charizard X details/ });
   await expect(mega).toContainText('Mega Charizard X');
   await mega.click();
@@ -325,6 +401,60 @@ test('transformation views show and search the full collector form name', async 
   await expect(page.getByRole('button', { name: /Open Mega Charizard X details/ })).toBeVisible();
 });
 
+test('Progress and Search Lab remain distinct public destinations', async ({ page }) => {
+  await installFakeApi(page);
+  await page.goto('/#/progress');
+
+  await expect(page.getByRole('heading', { name: 'Progress', exact: true })).toBeVisible();
+  await expect(page.locator('.generator-panel')).toHaveCount(0);
+
+  await page.goto('/#/search?section=missing-searches');
+  await expect(page).toHaveURL(/#\/search\?section=missing-searches$/);
+  await expect(page.getByRole('heading', { name: 'Search Lab', exact: true })).toBeVisible();
+  await expect(page.locator('.generator-panel')).toBeVisible();
+});
+
+test('Search Lab keeps its desktop sections stacked without overlap', async ({ page }) => {
+  await installFakeApi(page);
+  await page.goto('/#/search');
+
+  const searchLab = page.locator('.page--search-lab');
+  const [labBox, generatorBox, recommendedBox, discordBox] = await Promise.all([
+    searchLab.boundingBox(),
+    page.locator('#missing-searches').boundingBox(),
+    page.locator('#recommended-searches').boundingBox(),
+    page.locator('#share-tools').boundingBox(),
+  ]);
+
+  expect([labBox, generatorBox, recommendedBox, discordBox].every(Boolean)).toBe(true);
+  expect(generatorBox!.y + generatorBox!.height).toBeLessThanOrEqual(recommendedBox!.y + 1);
+  expect(recommendedBox!.y + recommendedBox!.height).toBeLessThanOrEqual(discordBox!.y + 1);
+  expect(Math.abs(recommendedBox!.x - generatorBox!.x)).toBeLessThan(2);
+  expect(Math.abs(discordBox!.x - generatorBox!.x)).toBeLessThan(2);
+  expect(Math.abs(recommendedBox!.width - generatorBox!.width)).toBeLessThan(2);
+  expect(Math.abs(discordBox!.width - generatorBox!.width)).toBeLessThan(2);
+});
+
+test('species-first search discovers named alternate forms directly', async ({ page }) => {
+  await installFakeApi(page);
+  await page.goto('/#/dex');
+
+  await expect(page.getByLabel('Form view')).toHaveValue('species');
+  await page.getByRole('searchbox', { name: 'Search Pokémon' }).fill('Alolan Ninetales');
+  await expect(page.getByRole('button', { name: /Open Alolan Ninetales details/ })).toBeVisible();
+});
+
+test('detail navigation follows the filtered result context', async ({ page }) => {
+  await installFakeApi(page);
+  await page.goto('/#/dex');
+
+  await page.getByRole('searchbox', { name: 'Search Pokémon' }).fill('Pikachu');
+  await page.getByTestId('pokemon-card-25').click();
+  await expect(page.getByRole('dialog', { name: 'Pikachu' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'No previous Pokémon' })).toBeHidden();
+  await expect(page.getByRole('button', { name: 'No next Pokémon' })).toBeHidden();
+});
+
 test('desktop search, region, and collection controls share one aligned row', async ({ page }) => {
   await installFakeApi(page);
   await page.goto('/#/dex');
@@ -333,6 +463,7 @@ test('desktop search, region, and collection controls share one aligned row', as
     page.getByRole('searchbox', { name: 'Search Pokémon' }),
     page.locator('.region-standard-select select'),
     page.locator('.collection-standard-select select'),
+    page.locator('.view-standard-select select'),
   ];
   const boxes = await Promise.all(controls.map((control) => control.boundingBox()));
   expect(boxes.every(Boolean)).toBe(true);
@@ -469,7 +600,7 @@ test('Shadow collection uses the standard card treatment without an aura', async
   const api = await installFakeApi(page);
   await page.goto('/#/dex');
 
-  await page.getByLabel('Collection form').selectOption('shadow');
+  await page.getByLabel('Collection category').selectOption('shadow');
   const shadowCard = page.getByTestId('pokemon-card-1');
   await expect(shadowCard).toHaveAttribute('data-category', 'shadow');
   await expect(shadowCard).not.toHaveClass(/pokemon-card--shadow/);

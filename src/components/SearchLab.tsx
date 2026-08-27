@@ -1,11 +1,17 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import evolutionFamilyData from '../../catalog/evolution-families.v1.json';
 import {
+  formatMissingSearchString,
   generateMissingSearchStrings,
   generatePersonalSizeCatchSearchStrings,
 } from '../../shared/domain';
+import type { MissingSearchMode } from '../../shared/domain';
 import type { CatalogItem, Category, CategoryId, CollectionEntry } from '../../shared/types';
-import { buildDiscordMessages } from '../lib/discordShare';
+import {
+  buildDiscordMessages,
+  NITRO_DISCORD_MESSAGE_LIMIT,
+  STANDARD_DISCORD_MESSAGE_LIMIT,
+} from '../lib/discordShare';
 import { createCatalogIndex } from '../catalog/catalogIndex';
 import { collectionCategoryLabel } from '../catalog/capabilities';
 import { defaultRegionCatalog } from '../catalog/regionMedals';
@@ -19,14 +25,13 @@ const SEARCH_CATEGORY_IDS = [
   'xxs',
 ] as const satisfies readonly CategoryId[];
 
-type MissingSearchMode = 'personal' | 'tradeable';
-
-function formatMissingSearch(value: string, mode: MissingSearchMode): string {
-  return mode === 'personal' ? value.replace(/^!traded&/, '!#&') : value;
-}
-
-function formatPersonalHelper(value: string): string {
-  return value.replace(/^!traded&/, '');
+interface SearchRecommendation {
+  id: string;
+  name: string;
+  description: string;
+  help?: string;
+  values: readonly string[];
+  emptyMessage?: string;
 }
 
 async function copyText(value: string): Promise<boolean> {
@@ -54,7 +59,7 @@ export function ProgressPage({
   catalog: readonly CatalogItem[];
   entries: readonly CollectionEntry[];
   categories: readonly Category[];
-  onOpen?: (item: CatalogItem) => void;
+  onOpen?: (item: CatalogItem, context: readonly CatalogItem[]) => void;
 }) {
   const nationalCatalog = useMemo(() => catalog.filter((item) => item.isDefault), [catalog]);
   const catalogIndex = useMemo(() => createCatalogIndex(catalog), [catalog]);
@@ -76,49 +81,59 @@ export function ProgressPage({
       ),
     [entries, regionCatalog, regionalCategory],
   );
-
+  const categoryProgress = useMemo(
+    () =>
+      categories.map((category) => {
+        const available = nationalCatalog.filter((item) => item.rules[category.id] === 'released');
+        const collected = available.filter((item) =>
+          entries.some(
+            (entry) =>
+              entry.formId === item.id && entry.categoryId === category.id && entry.collected,
+          ),
+        ).length;
+        return {
+          category,
+          available: available.length,
+          collected,
+          percentage: available.length ? Math.round((collected / available.length) * 100) : 0,
+        };
+      }),
+    [categories, entries, nationalCatalog],
+  );
   return (
     <section className="page page--progress">
-      <header className="tool-page-header progress-page-header">
-        <span className="eyebrow">
-          <Icon name="chart" /> Collection progress
-        </span>
-        <h1>Your collection, clearly.</h1>
-        <p>See completion across every category, then focus on the region that needs attention.</p>
+      <header className="tool-page-header progress-page-header simple-page-header">
+        <h1>Progress</h1>
       </header>
 
       <section className="progress-overview" aria-labelledby="progress-overview-title">
         <div className="section-heading">
           <div>
             <span className="eyebrow">Overall collection</span>
-            <h2 id="progress-overview-title">At a glance</h2>
+            <h2 id="progress-overview-title">National Dex species progress</h2>
+            <p className="section-scope-note">
+              Counts default National Dex species only; collector forms and transformations are
+              tracked separately in the Dex.
+            </p>
           </div>
         </div>
         <div className="progress-summary-grid">
-          {categories.map((category) => {
-            const available = nationalCatalog.filter(
-              (item) => item.rules[category.id] === 'released',
-            );
-            const collected = available.filter((item) =>
-              entries.some(
-                (entry) =>
-                  entry.formId === item.id && entry.categoryId === category.id && entry.collected,
-              ),
-            ).length;
-            const percentage = available.length
-              ? Math.round((collected / available.length) * 100)
-              : 0;
+          {categoryProgress.map(({ category, available, collected, percentage }) => {
             return (
               <article key={category.id}>
-                <span>
+                <div className="progress-card__top">
                   <strong>{collectionCategoryLabel(category)}</strong>
-                  <small>{percentage}%</small>
-                </span>
-                <b>
-                  {collected}
-                  <small> / {available.length}</small>
-                </b>
-                <progress value={collected} max={available.length || 1} />
+                  <span>{percentage}%</span>
+                </div>
+                <div className="progress-card__count">
+                  <strong>{collected}</strong>
+                  <span>of {available}</span>
+                </div>
+                <progress
+                  value={collected}
+                  max={available || 1}
+                  aria-label={`${collectionCategoryLabel(category)} ${percentage}% complete`}
+                />
               </article>
             );
           })}
@@ -151,13 +166,20 @@ export function ProgressPage({
         <div className="region-shortcut-grid">
           {catalogIndex.regions.map((region) => {
             const scoped = defaultRegionCatalog(catalogIndex, region);
-            const available = scoped.filter((entry) => entry.rules.normal === 'released');
+            const available = scoped.filter(
+              (entry) => entry.rules[regionalCategory] === 'released',
+            );
             const collected = available.filter((entry) =>
               entries.some(
                 (owned) =>
-                  owned.formId === entry.id && owned.categoryId === 'normal' && owned.collected,
+                  owned.formId === entry.id &&
+                  owned.categoryId === regionalCategory &&
+                  owned.collected,
               ),
             ).length;
+            const percentage = available.length
+              ? Math.round((collected / available.length) * 100)
+              : 0;
             const label = region.charAt(0).toUpperCase() + region.slice(1).toLowerCase();
             return (
               <button
@@ -167,10 +189,18 @@ export function ProgressPage({
                 aria-pressed={selectedRegion === region}
                 onClick={() => setSelectedRegion(region)}
               >
-                <strong>{label}</strong>
-                <span>
-                  {collected}/{available.length}
+                <span className="region-shortcut__top">
+                  <strong>{label}</strong>
+                  <span>{percentage}%</span>
                 </span>
+                <progress
+                  value={collected}
+                  max={available.length || 1}
+                  aria-label={`${label} ${percentage}% complete`}
+                />
+                <small>
+                  {collected}/{available.length} caught
+                </small>
               </button>
             );
           })}
@@ -186,14 +216,24 @@ export function ProgressPage({
             </div>
             <div className="regional-missing-list">
               {regionalMissing.map((pokemon) => (
-                <button type="button" key={pokemon.id} onClick={() => onOpen?.(pokemon)}>
+                <button
+                  type="button"
+                  key={pokemon.id}
+                  onClick={() => onOpen?.(pokemon, regionalMissing)}
+                >
                   <span>#{String(pokemon.dexNumber).padStart(4, '0')}</span> {pokemon.name}
                 </button>
               ))}
             </div>
           </div>
         ) : (
-          <p className="regional-progress__empty">Choose a region to see its missing Pokémon.</p>
+          <div className="regional-progress__empty">
+            <Icon name="search" />
+            <span>
+              <strong>Choose a region</strong>
+              <small>Its missing obtainable Pokémon will appear here.</small>
+            </span>
+          </div>
         )}
       </section>
     </section>
@@ -211,7 +251,9 @@ export function SearchLabPage({
 }) {
   const [copied, setCopied] = useState<string | null>(null);
   const [copyFailure, setCopyFailure] = useState(false);
-  const [missingSearchMode, setMissingSearchMode] = useState<MissingSearchMode>('personal');
+  const [missingSearchMode, setMissingSearchMode] = useState<MissingSearchMode>('none');
+  const [evolutionAwareSizes, setEvolutionAwareSizes] = useState(false);
+  const [discordNitro, setDiscordNitro] = useState(false);
   const [sharedCategories, setSharedCategories] = useState<Set<CategoryId>>(
     () => new Set(SEARCH_CATEGORY_IDS),
   );
@@ -221,19 +263,35 @@ export function SearchLabPage({
     [categories],
   );
   const nationalCatalog = useMemo(() => catalog.filter((item) => item.isDefault), [catalog]);
+  const discordMessageLimit = discordNitro
+    ? NITRO_DISCORD_MESSAGE_LIMIT
+    : STANDARD_DISCORD_MESSAGE_LIMIT;
+  const discordSearchLimit = discordMessageLimit - 500;
   const results = useMemo(
     () =>
-      SEARCH_CATEGORY_IDS.map((categoryId) => ({
-        categoryId,
-        label: labels.get(categoryId) ?? categoryId.toUpperCase(),
-        generated: generateMissingSearchStrings(nationalCatalog, entries, categoryId, {
+      SEARCH_CATEGORY_IDS.map((categoryId) => {
+        const isSizeCategory = categoryId === 'xxl' || categoryId === 'xxs';
+        const generate = (maxLength: number) =>
+          evolutionAwareSizes && isSizeCategory
+            ? generatePersonalSizeCatchSearchStrings(nationalCatalog, entries, categoryId, {
+                maxLength,
+                evolutionFamilies: evolutionFamilyData.families,
+              })
+            : generateMissingSearchStrings(nationalCatalog, entries, categoryId, { maxLength });
+        const missing = generateMissingSearchStrings(nationalCatalog, entries, categoryId, {
           maxLength: 4_500,
-        }),
-        discord: generateMissingSearchStrings(nationalCatalog, entries, categoryId, {
-          maxLength: 1_500,
-        }),
-      })),
-    [entries, labels, nationalCatalog],
+        });
+        const generated = generate(4_500);
+        const discord = generate(discordSearchLimit);
+        return {
+          categoryId,
+          label: labels.get(categoryId) ?? categoryId.toUpperCase(),
+          generated,
+          discord,
+          missingCount: missing.dexNumbers.length,
+        };
+      }),
+    [discordSearchLimit, entries, evolutionAwareSizes, labels, nationalCatalog],
   );
   const discordMessages = useMemo(
     () =>
@@ -241,10 +299,11 @@ export function SearchLabPage({
         results
           .filter((result) => sharedCategories.has(result.categoryId))
           .map((result) => ({ label: result.label, strings: result.discord.strings })),
+        { maxLength: discordMessageLimit },
       ),
-    [results, sharedCategories],
+    [discordMessageLimit, results, sharedCategories],
   );
-  const personalXXL = useMemo(
+  const recommendedXXL = useMemo(
     () =>
       generatePersonalSizeCatchSearchStrings(nationalCatalog, entries, 'xxl', {
         maxLength: 4_500,
@@ -252,7 +311,7 @@ export function SearchLabPage({
       }),
     [entries, nationalCatalog],
   );
-  const personalXXS = useMemo(
+  const recommendedXXS = useMemo(
     () =>
       generatePersonalSizeCatchSearchStrings(nationalCatalog, entries, 'xxs', {
         maxLength: 4_500,
@@ -260,29 +319,71 @@ export function SearchLabPage({
       }),
     [entries, nationalCatalog],
   );
-  const recommendations = [
+  const recommendations: readonly SearchRecommendation[] = [
     {
-      name: 'Recent shinies',
-      value: '!traded&shiny&age0-7',
-      note: 'Untraded Shiny Pokémon caught in the last seven days.',
+      id: 'trade',
+      name: 'Trade',
+      description:
+        'Quickly open Pokémon you have tagged for trading. The trailing & lets you immediately append another Pokémon GO search term, for example #trade&pikachu.',
+      help: '“trade” is Cody’s tag name, not a requirement. Replace it with any trade-storage tag you use, such as “adoption”.',
+      values: ['#trade&'],
     },
-    ...personalXXL.strings.map((value, index) => ({
-      name: `XXL evolution helper${personalXXL.strings.length > 1 ? ` ${index + 1}/${personalXXL.strings.length}` : ''}`,
-      value: formatPersonalHelper(value),
-      note: `${personalXXL.missingDexNumbers.length} missing XXL entries. Also finds earlier stages that can evolve into them.`,
-    })),
-    ...personalXXS.strings.map((value, index) => ({
-      name: `XXS evolution helper${personalXXS.strings.length > 1 ? ` ${index + 1}/${personalXXS.strings.length}` : ''}`,
-      value: formatPersonalHelper(value),
-      note: `${personalXXS.missingDexNumbers.length} missing XXS entries. Also finds earlier stages that can evolve into them.`,
-    })),
     {
-      name: 'Untagged review',
-      value: '!traded&!#',
-      note: 'Untraded Pokémon without any tags. Review before acting.',
+      id: 'megas',
+      name: 'Megas',
+      description:
+        'Show Mega Level 2–3 Pokémon you deliberately keep in your active Mega rotation. Newer Super Mega Raid catches may already have Mega Level 1 unlocked, so the #max tag keeps those extra results from cluttering the rotation.',
+      help: '“max” is Cody’s tag name and can be replaced. Avoid naming the custom tag “mega” because Pokémon GO already uses mega in its built-in search syntax.',
+      values: ['#max&mega2-3&'],
+    },
+    {
+      id: 'tag',
+      name: 'Tag',
+      description:
+        'Review untagged Pokémon that may be valuable or unusual: 4-star, shiny, costume, background, 20 km buddy-distance, Dynamax, Gigantamax, or lucky.',
+      help: 'Use this as an organization pass; the trailing & leaves room for another condition.',
+      values: ['!#&4*,shiny,costume,background,candykm20,dynamax,gigantamax,lucky&'],
+    },
+    {
+      id: 'evolve',
+      name: 'Evolve',
+      description:
+        'Find untagged Pokémon that can evolve into a Pokédex entry you have not registered yet.',
+      values: ['!#&evolvenew&'],
+    },
+    {
+      id: 'special-moves',
+      name: 'Special Moves',
+      description:
+        'Find untagged Pokémon with Frustration, Return, or special/legacy move results worth reviewing before transferring or organizing.',
+      values: ['!#&@frustration,@return,@special&'],
+    },
+    {
+      id: 'untagged',
+      name: 'Untagged',
+      description:
+        'Find Pokémon with no tag assigned. The trailing & lets you add another filter, for example !#&kanto.',
+      values: ['!#&'],
+    },
+    {
+      id: 'xxl',
+      name: 'XXL',
+      description:
+        'Find untagged XXL Pokémon that could fill missing XXL collection entries, including useful earlier stages that can evolve into a missing entry.',
+      help: `${recommendedXXL.missingDexNumbers.length} released XXL collection entries are currently missing. This search updates with your CatchGrid collection.`,
+      values: recommendedXXL.strings.map((value) => formatMissingSearchString(value, 'personal')),
+      emptyMessage: 'No released XXL collection entries are currently missing.',
+    },
+    {
+      id: 'xxs',
+      name: 'XXS',
+      description:
+        'Find untagged XXS Pokémon that could fill missing XXS collection entries, including useful earlier stages that can evolve into a missing entry.',
+      help: `${recommendedXXS.missingDexNumbers.length} released XXS collection entries are currently missing. This search updates with your CatchGrid collection.`,
+      values: recommendedXXS.strings.map((value) => formatMissingSearchString(value, 'personal')),
+      emptyMessage: 'No released XXS collection entries are currently missing.',
     },
   ];
-
   async function handleCopy(value: string, id: string) {
     if (await copyText(value)) {
       setCopyFailure(false);
@@ -315,23 +416,44 @@ export function SearchLabPage({
     });
   }
 
+  useEffect(() => {
+    const query = window.location.hash.split('?')[1];
+    const section = query ? new URLSearchParams(query).get('section') : null;
+    if (!section) return;
+    const frame = window.requestAnimationFrame(() =>
+      document.getElementById(section)?.scrollIntoView({ block: 'start', behavior: 'auto' }),
+    );
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
+
   return (
-    <section className="page page--lab page--search-lab">
-      <header className="tool-page-header search-page-header">
-        <span className="eyebrow">
-          <Icon name="flask" /> Search Lab
-        </span>
-        <h1>Useful searches, ready to paste.</h1>
-        <p>Build collection-aware Pokémon GO searches and package missing lists for friends.</p>
+    <section className="page page--lab page--search-lab" aria-labelledby="search-lab-title">
+      <header className="tool-page-header search-page-header simple-page-header">
+        <h1 id="search-lab-title">Search Lab</h1>
       </header>
 
-      <section className="panel generator-panel">
+      <section
+        className="panel generator-panel tool-panel tool-panel--missing"
+        id="missing-searches"
+      >
         <div className="panel-heading">
-          <div>
-            <span className="eyebrow">My missing</span>
-            <h2>My missing searches</h2>
+          <div className="tool-panel__title">
+            <span className="tool-panel__icon" aria-hidden="true">
+              <Icon name="search" />
+            </span>
+            <h2>My Missing</h2>
           </div>
           <div className="missing-search-mode" role="group" aria-label="Missing search format">
+            <button
+              type="button"
+              aria-pressed={missingSearchMode === 'none'}
+              onClick={() => {
+                setCopied(null);
+                setMissingSearchMode('none');
+              }}
+            >
+              None
+            </button>
             <button
               type="button"
               aria-pressed={missingSearchMode === 'personal'}
@@ -355,27 +477,43 @@ export function SearchLabPage({
           </div>
         </div>
         <p className="missing-search-mode__help">
-          {missingSearchMode === 'personal'
-            ? 'Excludes tagged Pokémon with !# so this can become your own saved search.'
-            : 'Excludes previously traded Pokémon for lists you share with friends.'}
+          {missingSearchMode === 'none'
+            ? 'Uses only the missing Pokémon and category terms, with no storage modifier.'
+            : missingSearchMode === 'personal'
+              ? 'Adds !# to find missing candidates in your untagged personal storage.'
+              : 'Adds !traded to find missing candidates that can still be traded.'}
         </p>
+        <label className="search-option-toggle evolution-aware-toggle">
+          <input
+            type="checkbox"
+            checked={evolutionAwareSizes}
+            onChange={(event) => {
+              setCopied(null);
+              setEvolutionAwareSizes(event.target.checked);
+            }}
+          />
+          <span>
+            <strong>Evolution-aware XXL &amp; XXS</strong>
+            <small>Include earlier family stages that can evolve into a size entry you need.</small>
+          </span>
+        </label>
         <div className="all-category-searches">
           {results.map((result) => (
             <section className="search-output" key={result.categoryId}>
               <div className="search-output__meta">
                 <strong>{result.label}</strong>
-                <span>{result.generated.dexNumbers.length} missing</span>
+                <span>{result.missingCount} missing</span>
               </div>
               {result.generated.strings.length ? (
                 result.generated.strings.map((value, index) => (
                   <div className="search-string" key={value}>
-                    <code tabIndex={0}>{formatMissingSearch(value, missingSearchMode)}</code>
+                    <code tabIndex={0}>{formatMissingSearchString(value, missingSearchMode)}</code>
                     <button
                       type="button"
                       className="button button--copy"
                       onClick={() =>
                         void handleCopy(
-                          formatMissingSearch(value, missingSearchMode),
+                          formatMissingSearchString(value, missingSearchMode),
                           `${result.categoryId}-${index}`,
                         )
                       }
@@ -403,13 +541,75 @@ export function SearchLabPage({
         )}
       </section>
 
-      <section className="panel discord-share-panel">
+      <section
+        className="panel recommended-panel tool-panel tool-panel--recommended"
+        id="recommended-searches"
+      >
         <div className="panel-heading">
-          <div>
-            <span className="eyebrow">Share with friends</span>
-            <h2>Discord-ready message</h2>
+          <div className="tool-panel__title">
+            <span className="tool-panel__icon" aria-hidden="true">
+              <Icon name="sparkles" />
+            </span>
+            <h2>Cody’s Recommended</h2>
           </div>
-          <Icon name="clipboard" />
+        </div>
+        <div className="recommended-list">
+          {recommendations.map((item) => (
+            <article key={item.id}>
+              <div className="recommended-content">
+                <h3>{item.name}</h3>
+                <p className="recommended-description">{item.description}</p>
+                {item.values.length > 0 ? (
+                  <div className="recommended-queries">
+                    {item.values.map((value, index) => {
+                      const copyId = `recommended-${item.id}-${index}`;
+                      return (
+                        <div className="recommended-query-row" key={value}>
+                          <code className="recommended-query" tabIndex={0}>
+                            {value}
+                          </code>
+                          <button
+                            type="button"
+                            className="button button--secondary recommended-copy"
+                            aria-label={`Copy ${item.name}${item.values.length > 1 ? ` ${index + 1}` : ''}`}
+                            onClick={() => void handleCopy(value, copyId)}
+                          >
+                            <Icon name={copied === copyId ? 'check' : 'clipboard'} />
+                            {copied === copyId ? 'Copied' : 'Copy'}
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p className="recommended-empty">{item.emptyMessage}</p>
+                )}
+                {item.help && <p className="recommended-note">{item.help}</p>}
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="panel discord-share-panel tool-panel tool-panel--share" id="share-tools">
+        <div className="panel-heading">
+          <div className="tool-panel__title">
+            <span className="tool-panel__icon" aria-hidden="true">
+              <Icon name="clipboard" />
+            </span>
+            <h2>Share With Friends</h2>
+          </div>
+          <label className="search-option-toggle discord-nitro-toggle">
+            <input
+              type="checkbox"
+              checked={discordNitro}
+              onChange={(event) => setDiscordNitro(event.target.checked)}
+            />
+            <span>
+              <strong>I use Discord Nitro</strong>
+              <small>Use the 4,000-character message limit.</small>
+            </span>
+          </label>
         </div>
         <p className="discord-share-panel__intro">
           Choose the lists to share. CatchGrid formats copyable code blocks and splits long posts
@@ -430,9 +630,7 @@ export function SearchLabPage({
                 <Icon name={selected ? 'check' : 'plus'} />
                 <span>
                   <strong>{result.label}</strong>
-                  <small>
-                    {available ? `${result.discord.dexNumbers.length} missing` : 'Complete'}
-                  </small>
+                  <small>{available ? `${result.missingCount} missing` : 'Complete'}</small>
                 </span>
               </button>
             );
@@ -446,7 +644,9 @@ export function SearchLabPage({
                   <strong>
                     Discord message {index + 1} of {discordMessages.length}
                   </strong>
-                  <small>{message.length}/2,000 characters</small>
+                  <small>
+                    {message.length}/{discordMessageLimit.toLocaleString()} characters
+                  </small>
                 </div>
                 <pre tabIndex={0} aria-label={`Discord message ${index + 1} preview`}>
                   {message}
@@ -481,45 +681,6 @@ export function SearchLabPage({
             </div>
           </div>
         )}
-      </section>
-
-      <section className="panel recommended-panel">
-        <div className="panel-heading">
-          <div>
-            <span className="eyebrow">Smarter Pokémon searches</span>
-            <h2>Catch helpers</h2>
-          </div>
-          <Icon name="sparkles" />
-        </div>
-        <div className="recommended-list">
-          {recommendations.map((item) => (
-            <article key={item.name}>
-              <div>
-                <strong>{item.name}</strong>
-                <p>{item.note}</p>
-                <span className="recommended-query" tabIndex={0}>
-                  {item.value}
-                </span>
-              </div>
-              <button
-                type="button"
-                className="button button--secondary recommended-copy"
-                aria-label={`Copy ${item.name}`}
-                onClick={() => void handleCopy(item.value, item.name)}
-              >
-                <Icon name={copied === item.name ? 'check' : 'clipboard'} />
-                {copied === item.name ? 'Copied' : 'Copy'}
-              </button>
-            </article>
-          ))}
-        </div>
-        <p className="safety-note">
-          <Icon name="shield" />
-          <span>
-            <strong>Evolution-aware size hunting.</strong> If an evolved family member is still
-            missing, its earlier stages remain in your XXL or XXS catch string.
-          </span>
-        </p>
       </section>
     </section>
   );

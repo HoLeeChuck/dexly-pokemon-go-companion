@@ -6,7 +6,8 @@
 }
 
 .page--data {
-  max-width: 1080px;
+  width: 100%;
+  max-width: none;
   margin-inline: auto;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -25,25 +26,32 @@
   order: 1;
 }
 
-.page--data > .appearance-panel,
-.page--data > .data-actions {
+.page--data > .collection-setup-panel {
   order: 2;
 }
 
-.page--data > .import-panel {
+.page--data > .appearance-panel {
   order: 3;
 }
 
-.page--data > .collection-setup-panel {
+.page--data > .import-panel {
   order: 4;
 }
 
-.page--data > .security-panel {
+.page--data > .data-actions {
   order: 5;
 }
 
-.page--data > .attribution {
+.page--data > .security-panel {
   order: 6;
+}
+
+.page--data > .advanced-regional-settings {
+  order: 7;
+}
+
+.page--data > .attribution {
+  order: 8;
 }
 
 .settings-header {
@@ -118,7 +126,7 @@
 
 @media (min-width: 800px) {
   .page--data {
-    grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+    grid-template-columns: minmax(0, 1fr);
     align-items: start;
   }
 
@@ -127,16 +135,9 @@
   .page--data > .import-panel,
   .page--data > .collection-setup-panel,
   .page--data > .security-panel,
+  .page--data > .advanced-regional-settings,
   .page--data > .attribution {
     grid-column: 1 / -1;
-  }
-
-  .page--data > .appearance-panel {
-    grid-column: 1;
-  }
-
-  .page--data > .data-actions {
-    grid-column: 2;
   }
 }
 .region-setup-grid {
@@ -362,6 +363,62 @@
   font-size: 0.58rem;
 }
 
+.restore-review {
+  display: grid;
+  gap: 0.8rem;
+  margin-top: 0.85rem;
+  padding: 0.9rem;
+  border: 1px solid color-mix(in srgb, var(--brand-500) 38%, var(--line));
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--paper) 82%, var(--brand-100));
+}
+
+.restore-review h3 {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.restore-review__details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.restore-review__details div {
+  min-width: 0;
+  padding: 0.55rem;
+  border-radius: 0.7rem;
+  background: var(--paper);
+}
+
+.restore-review__details dt {
+  color: var(--muted);
+  font-size: 0.55rem;
+  font-weight: 750;
+  text-transform: uppercase;
+}
+
+.restore-review__details dd {
+  margin: 0.16rem 0 0;
+  overflow-wrap: anywhere;
+  font-size: 0.66rem;
+  font-weight: 750;
+}
+
+.restore-review__settings {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.62rem;
+  line-height: 1.45;
+}
+
+.restore-review__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
 .snapshot-list small {
   overflow: hidden;
   color: var(--muted);
@@ -486,6 +543,101 @@
 .issue--error {
   color: #893a35;
   background: #ffe8e4;
+}
+
+.review-page__heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin: 0.75rem 0 0.45rem;
+  color: var(--muted);
+  font-size: 0.61rem;
+}
+
+.review-page__heading > div {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.review-page__heading button {
+  min-height: 32px;
+  padding: 0.25rem 0.55rem;
+  border: 1px solid var(--line);
+  border-radius: 0.55rem;
+  color: var(--ink);
+  background: var(--paper);
+  font: inherit;
+  font-weight: 750;
+}
+
+.review-page__heading button:disabled {
+  opacity: 0.45;
+}
+
+.advanced-regional-settings {
+  overflow: clip;
+  border: 1px solid var(--line);
+  border-radius: 1.1rem;
+  background: var(--paper);
+  box-shadow: var(--shadow-sm);
+}
+
+.advanced-regional-settings > summary {
+  display: flex;
+  min-height: 72px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.1rem;
+  color: var(--ink);
+  cursor: pointer;
+  list-style: none;
+}
+
+.advanced-regional-settings > summary::-webkit-details-marker {
+  display: none;
+}
+
+.advanced-regional-settings > summary span {
+  display: grid;
+  gap: 0.22rem;
+}
+
+.advanced-regional-settings > summary small {
+  color: var(--muted);
+  font-size: 0.62rem;
+  font-weight: 550;
+}
+
+.advanced-regional-settings > summary > svg {
+  width: 1rem;
+  transition: transform 180ms ease;
+}
+
+.advanced-regional-settings[open] > summary > svg {
+  transform: rotate(90deg);
+}
+
+.advanced-regional-settings > .regional-availability-panel {
+  margin: 0 0.75rem 0.75rem;
+  box-shadow: none;
+}
+
+@media (max-width: 540px) {
+  .restore-review__details {
+    grid-template-columns: 1fr;
+  }
+
+  .restore-review__actions,
+  .review-page__heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .restore-review__actions .button {
+    width: 100%;
+  }
 }
 
 .preview-table-wrap {
@@ -689,5 +841,220 @@
 
   .vivillon-zone-map {
     border-radius: 0.75rem;
+  }
+}
+
+/* Dashboard design pass: Settings. */
+.page--data {
+  width: 100%;
+  max-width: none;
+  gap: 1rem;
+}
+
+.settings-header.simple-page-header {
+  margin-bottom: 0;
+  padding: 0;
+}
+
+.settings-header.simple-page-header h1 {
+  margin: 0;
+  font-size: clamp(1.65rem, 7vw, 2.4rem);
+  letter-spacing: -0.055em;
+  line-height: normal;
+}
+
+.page--data > .panel,
+.page--data > .advanced-regional-settings,
+.page--data > .attribution {
+  margin-top: 0;
+}
+
+.page--data > .appearance-panel {
+  order: 2;
+}
+
+.page--data > .data-actions {
+  order: 3;
+}
+
+.page--data > .import-panel {
+  order: 4;
+}
+
+.page--data > .collection-setup-panel {
+  order: 5;
+}
+
+.page--data > .security-panel {
+  order: 6;
+}
+
+.page--data > .advanced-regional-settings {
+  order: 7;
+}
+
+.page--data > .attribution {
+  order: 8;
+}
+
+.page--data > .panel,
+.page--data > .advanced-regional-settings {
+  border-radius: 1.3rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.page--data > .appearance-panel,
+.page--data > .data-actions {
+  position: relative;
+  overflow: hidden;
+  border-top: 4px solid var(--brand-700);
+  background:
+    radial-gradient(
+      circle at 100% 0,
+      color-mix(in srgb, var(--lime) 14%, transparent),
+      transparent 10rem
+    ),
+    var(--paper);
+}
+
+.page--data > .data-actions {
+  border-top-color: var(--lime);
+}
+
+.page--data .panel-heading > svg {
+  box-sizing: content-box;
+  width: 1.05rem;
+  height: 1.05rem;
+  padding: 0.65rem;
+  border-radius: 0.85rem;
+  color: var(--brand-700);
+  background: var(--brand-100);
+}
+
+.page--data .panel-heading h2 {
+  font-size: 1.28rem;
+}
+
+.page--data .panel-heading .eyebrow {
+  margin-bottom: 0.16rem;
+  font-size: 0.58rem;
+}
+
+.page--data > .import-panel {
+  padding: clamp(1rem, 2.5vw, 1.5rem);
+  background:
+    linear-gradient(120deg, color-mix(in srgb, var(--brand-100) 30%, transparent), transparent 36%),
+    var(--paper);
+}
+
+.page--data .file-picker {
+  min-height: 132px;
+  border-color: color-mix(in srgb, var(--brand-500) 52%, var(--line));
+  background:
+    radial-gradient(
+      circle at 50% 120%,
+      color-mix(in srgb, var(--lime) 20%, transparent),
+      transparent 9rem
+    ),
+    color-mix(in srgb, var(--paper) 72%, var(--brand-100));
+}
+
+.page--data .file-picker svg {
+  box-sizing: content-box;
+  padding: 0.55rem;
+  border-radius: 50%;
+  color: var(--brand-700);
+  background: var(--paper);
+  box-shadow: var(--shadow-sm);
+}
+
+.page--data > .collection-setup-panel > summary,
+.page--data > .advanced-regional-settings > summary {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--brand-100) 38%, transparent),
+    transparent 45%
+  );
+}
+
+.page--data > .collection-setup-panel[open] > summary,
+.page--data > .advanced-regional-settings[open] > summary {
+  border-bottom: 1px solid var(--line);
+}
+
+.page--data .appearance-mode {
+  padding: 0.35rem;
+  border: 1px solid color-mix(in srgb, var(--brand-500) 24%, var(--line));
+}
+
+.page--data .theme-choice {
+  min-height: 66px;
+  border-radius: 0.9rem;
+}
+
+.page--data .portable-backup-actions {
+  gap: 0.6rem;
+}
+
+@media (min-width: 900px) {
+  .page--data {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    align-items: start;
+    gap: 1.1rem;
+  }
+
+  .page--data > .settings-header,
+  .page--data > .notice,
+  .page--data > .import-panel,
+  .page--data > .collection-setup-panel,
+  .page--data > .security-panel,
+  .page--data > .advanced-regional-settings,
+  .page--data > .attribution {
+    grid-column: 1 / -1;
+  }
+
+  .page--data > .appearance-panel {
+    grid-column: 1 / span 5;
+    order: 2;
+  }
+
+  .page--data > .data-actions {
+    grid-column: 6 / -1;
+    order: 2;
+  }
+
+  .page--data > .import-panel {
+    order: 3;
+  }
+
+  .page--data > .collection-setup-panel {
+    order: 4;
+  }
+}
+
+@media (max-width: 600px) {
+  .page--data .theme-choice-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1320px) {
+  .page--data > .appearance-panel {
+    grid-column: 1 / span 4;
+    order: 2;
+  }
+
+  .page--data > .data-actions {
+    grid-column: 5 / span 4;
+    order: 2;
+  }
+
+  .page--data > .import-panel {
+    grid-column: 9 / -1;
+    order: 2;
+  }
+
+  .page--data > .collection-setup-panel {
+    order: 3;
   }
 }

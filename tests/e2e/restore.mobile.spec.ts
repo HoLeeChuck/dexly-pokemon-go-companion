@@ -44,6 +44,11 @@ test.describe('portable backup restore safety', () => {
       mimeType: 'application/json',
       buffer: Buffer.from(backupJson),
     });
+    await expect(page.getByRole('region', { name: 'Restore review' })).toContainText('1 / 1');
+    await expect(
+      page.locator('.toast').filter({ hasText: 'Portable backup restored' }),
+    ).toHaveCount(0);
+    await page.getByRole('button', { name: 'Confirm JSON restore' }).click();
     await expect(page.locator('.toast')).toContainText('Portable backup restored');
     await page.locator('.toast__close').click();
 

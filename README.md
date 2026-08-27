@@ -21,12 +21,12 @@ The Pokémon Company, or Nintendo, and it never asks for Pokémon GO credentials
 
 ## Catalog scope
 
-The reviewed `2026-08-19.1` snapshot contains:
+The reviewed `2026-08-24.1` snapshot contains:
 
 - one stable representative for every National Dex number from #1 through #1025, including
   unreleased placeholders used for complete-Dex denominators;
 - 949 released standard species as of August 13, 2026;
-- 179 reviewed collector forms, for 1,204 total form records;
+- 244 reviewed collector forms, for 1,269 total form records;
 - regional, gender, costume, alternate, Mega, Primal, Gigantamax, and fusion form groups;
 - all 28 Unown forms, tracked separately for Regular and Shiny only; and
 - release, tradeability, category-rule, sprite, and provenance metadata per form.
@@ -100,14 +100,14 @@ not public multi-user authentication and is separate from normal browser-local p
 
 ## Search and PWA behavior
 
-The Search Lab provides copy/share actions and generated collection-gap strings.
+Search Lab includes copy/share actions, storage helpers, and generated collection-gap strings.
 Generated inventory queries preserve the `!traded&` guard. Exact and candidate output are
 labeled rather than presented as equivalent.
 
-The installable PWA precaches only the initial application shell and safe public catalog
-response. Lazy route chunks are runtime-cached after a visit; private API responses and
-`/cody` navigation are never cached. Updates require an explicit refresh action. Catalog downtime is
-shown as a recoverable error and is never rendered as an empty collection.
+The installable PWA precaches the public application shell, all public JavaScript/CSS route chunks,
+and the safe public catalog response. Artwork remains on-demand; private API responses and `/cody`
+navigation are never cached. Updates require an explicit refresh action. Catalog downtime is shown
+as a recoverable error and is never rendered as an empty collection.
 
 ## Legacy infrastructure names
 

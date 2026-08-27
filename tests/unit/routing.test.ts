@@ -12,5 +12,6 @@ describe('application routing', () => {
     expect(routeFromLocation({ pathname: '/', hash: '#/unknown' })).toBe('home');
     expect(urlForRoute('owner')).toBe('/cody');
     expect(urlForRoute('settings')).toBe('/#/settings');
+    expect(urlForRoute('search', 'missing-searches')).toBe('/#/search?section=missing-searches');
   });
 });

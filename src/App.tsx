@@ -25,6 +25,7 @@ import {
   updateLocalProfileSettings,
   type LocalProfile,
   type LocalProfileLoadResult,
+  type LocalProfileSnapshot,
 } from './lib/localProfile';
 import { createPortableProfileBackupJson, restorePortableProfileBackup } from './lib/profileBackup';
 import { catalogDisplayName } from './lib/catalogDisplay';
@@ -35,6 +36,12 @@ import { PRIMARY_ROUTES, type RouteId } from './app/routing';
 import { useAppNavigation } from './app/useAppNavigation';
 import { usePwaUpdates } from './app/usePwaUpdates';
 import { APP_VERSION, PORTFOLIO_URL } from './config/app';
+import {
+  RestoreReviewPanel,
+  reviewPortableBackup,
+  reviewSnapshot,
+  type PortableBackupReview,
+} from './components/RestoreReview';
 
 type StorageMode = 'browser' | 'cloud';
 type Theme = 'light' | 'dark';
@@ -286,17 +293,42 @@ function downloadText(name: string, value: string, type = 'application/json') {
 
 function RecoveryScreen({
   result,
+  catalogVersion,
   onRestored,
 }: {
   result: LocalProfileLoadResult;
+  catalogVersion: string;
   onRestored: () => void;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState('');
+  const [backupReview, setBackupReview] = useState<PortableBackupReview | null>(null);
+  const [snapshotReview, setSnapshotReview] = useState<LocalProfileSnapshot | null>(null);
   const snapshots = listLocalProfileSnapshots();
 
-  async function restore(file: File) {
-    const restored = restorePortableProfileBackup(await file.text());
+  async function reviewBackup(file: File) {
+    try {
+      setBackupReview(reviewPortableBackup(await file.text(), file.name, catalogVersion));
+      setMessage('');
+    } catch (error) {
+      setBackupReview(null);
+      setMessage(error instanceof Error ? error.message : 'The backup could not be reviewed.');
+    }
+  }
+
+  function confirmBackupRestore() {
+    if (!backupReview) return;
+    const restored = restorePortableProfileBackup(backupReview.raw);
+    if (!restored.ok) {
+      setMessage(restored.error.message);
+      return;
+    }
+    onRestored();
+  }
+
+  function confirmSnapshotRestore() {
+    if (!snapshotReview) return;
+    const restored = restoreLocalProfileSnapshot(snapshotReview.id);
     if (!restored.ok) {
       setMessage(restored.error.message);
       return;
@@ -337,7 +369,8 @@ function RecoveryScreen({
         hidden
         onChange={(event) => {
           const file = event.target.files?.[0];
-          if (file) void restore(file);
+          if (file) void reviewBackup(file);
+          event.currentTarget.value = '';
         }}
       />
       <button
@@ -345,8 +378,16 @@ function RecoveryScreen({
         className="button button--primary"
         onClick={() => inputRef.current?.click()}
       >
-        <Icon name="upload" /> Restore portable backup
+        <Icon name="upload" /> Review portable backup
       </button>
+      {backupReview && (
+        <RestoreReviewPanel
+          summary={backupReview.summary}
+          confirmLabel="Confirm backup restore"
+          onCancel={() => setBackupReview(null)}
+          onConfirm={confirmBackupRestore}
+        />
+      )}
       {snapshots.length > 0 && (
         <section className="recovery-screen__snapshots" aria-labelledby="recovery-snapshots-title">
           <h2 id="recovery-snapshots-title">Browser recovery snapshots</h2>
@@ -359,17 +400,21 @@ function RecoveryScreen({
               <button
                 type="button"
                 className="button button--secondary"
-                onClick={() => {
-                  const restored = restoreLocalProfileSnapshot(snapshot.id);
-                  if (!restored.ok) setMessage(restored.error.message);
-                  else onRestored();
-                }}
+                onClick={() => setSnapshotReview(snapshot)}
               >
-                Restore
+                Review
               </button>
             </article>
           ))}
         </section>
+      )}
+      {snapshotReview && (
+        <RestoreReviewPanel
+          summary={reviewSnapshot(snapshotReview, catalogVersion)}
+          confirmLabel="Confirm snapshot restore"
+          onCancel={() => setSnapshotReview(null)}
+          onConfirm={confirmSnapshotRestore}
+        />
       )}
       <details className="recovery-reset">
         <summary>Start over only if recovery is impossible</summary>
@@ -425,6 +470,7 @@ export default function App() {
   });
   const [regionPreference, setRegionPreference] = useState('no-preference');
   const [selected, setSelected] = useState<CatalogItem | null>(null);
+  const [detailContext, setDetailContext] = useState<readonly CatalogItem[]>([]);
   const [collectionEntries, setCollectionEntries] = useState<CollectionEntry[]>([]);
   const [wantedEntries, setWantedEntries] = useState<WantedEntry[]>([]);
   const [pendingKeys, setPendingKeys] = useState<Set<string>>(new Set());
@@ -983,6 +1029,11 @@ export default function App() {
     setToast({ tone: 'success', message: 'Recovery snapshot restored.' });
   }
 
+  function openDetail(item: CatalogItem, context: readonly CatalogItem[] = []) {
+    setDetailContext(context);
+    setSelected(item);
+  }
+
   if (status === 'loading') return <LoadingScreen />;
   if (status === 'locked')
     return (
@@ -1000,6 +1051,9 @@ export default function App() {
     return (
       <RecoveryScreen
         result={localLoadResult}
+        catalogVersion={
+          bootstrap?.catalogVersion ?? localLoadResult.profile.catalogVersion ?? 'Unknown'
+        }
         onRestored={() => {
           setStatus('loading');
           void load('');
@@ -1047,7 +1101,7 @@ export default function App() {
         </div>
       </aside>
 
-      <div className={`app-stage${route === 'dex' ? ' app-stage--dex' : ''}`}>
+      <div className="app-stage">
         <MobileNavigationHeader route={route} onNavigate={navigate} />
         {legacyOrigin && (
           <aside className="origin-migration-banner" role="status">
@@ -1082,7 +1136,7 @@ export default function App() {
                 catalog={bootstrap.catalog}
                 entries={collectionEntries}
                 categories={bootstrap.categories}
-                onOpen={setSelected}
+                onOpen={openDetail}
               />
             )}
             {route === 'search' && (
@@ -1101,7 +1155,7 @@ export default function App() {
                 activeCategory={activeCategory}
                 pendingKeys={pendingKeys}
                 onCategoryChange={changeCategory}
-                onOpen={setSelected}
+                onOpen={openDetail}
                 onCollectionChange={(item, value) => changeCollection(item, activeCategory, value)}
               />
             )}
@@ -1137,67 +1191,83 @@ export default function App() {
           <DetailSheet
             item={selected}
             catalog={bootstrap.catalog}
+            navigationContext={detailContext}
             categories={bootstrap.categories}
             collectionEntries={collectionEntries}
             pendingKeys={pendingKeys}
-            onClose={() => setSelected(null)}
+            onClose={() => {
+              setSelected(null);
+              setDetailContext([]);
+            }}
             onNavigate={setSelected}
             onCollectionChange={changeCollection}
           />
         </Suspense>
       )}
-      {toast && (
-        <div
-          className={`toast toast--${toast.tone}${toast.batchId ? ' toast--undo' : ''}`}
-          role="status"
-        >
-          <span>
-            <Icon
-              name={
-                toast.tone === 'error' ? 'wifi-off' : toast.tone === 'success' ? 'check' : 'undo'
-              }
-            />
-          </span>
-          <p>{toast.message}</p>
-          {toast.batchId && (
-            <button type="button" onClick={() => void undoLatest(toast.batchId!)}>
-              <Icon name="undo" /> Undo
-            </button>
+      {(toast || updateReady) && (
+        <div className="notification-stack">
+          {toast && (
+            <div
+              className={`toast toast--${toast.tone}${toast.batchId ? ' toast--undo' : ''}`}
+              role="status"
+            >
+              <span>
+                <Icon
+                  name={
+                    toast.tone === 'error'
+                      ? 'wifi-off'
+                      : toast.tone === 'success'
+                        ? 'check'
+                        : 'undo'
+                  }
+                />
+              </span>
+              <p>{toast.message}</p>
+              {toast.batchId && (
+                <button type="button" onClick={() => void undoLatest(toast.batchId!)}>
+                  <Icon name="undo" /> Undo
+                </button>
+              )}
+              <button
+                type="button"
+                className="toast__close"
+                onClick={() => setToast(null)}
+                aria-label="Dismiss"
+              >
+                <Icon name="close" />
+              </button>
+            </div>
           )}
-          <button
-            type="button"
-            className="toast__close"
-            onClick={() => setToast(null)}
-            aria-label="Dismiss"
-          >
-            <Icon name="close" />
-          </button>
+          {accessDialogOpen && (
+            <Suspense fallback={null}>
+              <OwnerAccessDialog
+                open
+                onClose={() => setAccessDialogOpen(false)}
+                onSubmit={unlock}
+              />
+            </Suspense>
+          )}
+          {updateReady && (
+            <aside className="update-prompt" role="status" aria-live="polite">
+              <Icon name="refresh" />
+              <div>
+                <strong>A CatchGrid update is ready</strong>
+                <p>Apply it now to use the newest catalog and app fixes.</p>
+              </div>
+              <button type="button" className="button button--primary" onClick={applyUpdate}>
+                Update now
+              </button>
+              <button
+                type="button"
+                className="icon-button"
+                aria-label="Dismiss update"
+                onClick={dismissUpdate}
+              >
+                <Icon name="close" />
+              </button>
+            </aside>
+          )}
         </div>
-      )}
-      {accessDialogOpen && (
-        <Suspense fallback={null}>
-          <OwnerAccessDialog open onClose={() => setAccessDialogOpen(false)} onSubmit={unlock} />
-        </Suspense>
-      )}
-      {updateReady && (
-        <aside className="update-prompt" role="status" aria-live="polite">
-          <Icon name="refresh" />
-          <div>
-            <strong>A CatchGrid update is ready</strong>
-            <p>Apply it now to use the newest catalog and app fixes.</p>
-          </div>
-          <button type="button" className="button button--primary" onClick={applyUpdate}>
-            Update now
-          </button>
-          <button
-            type="button"
-            className="icon-button"
-            aria-label="Dismiss update"
-            onClick={dismissUpdate}
-          >
-            <Icon name="close" />
-          </button>
-        </aside>
       )}
     </div>
   );

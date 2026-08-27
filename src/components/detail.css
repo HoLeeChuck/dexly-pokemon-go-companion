@@ -55,6 +55,17 @@
   color: var(--ink);
   background: var(--paper);
 }
+.compact-form-row > button > span {
+  display: grid;
+  gap: 0.08rem;
+}
+.compact-form-row > button small {
+  max-width: 9rem;
+  color: var(--muted);
+  font-size: 0.52rem;
+  line-height: 1.15;
+  text-transform: none;
+}
 .compact-form-row > button.is-collected {
   color: white;
   background: var(--brand-700);
@@ -420,12 +431,11 @@
 
 .detail-hero__copy h2 {
   margin: 0 0 0.55rem;
-  overflow: hidden;
   font-size: clamp(1.55rem, 8vw, 2.2rem);
   font-weight: 880;
   letter-spacing: -0.055em;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.04;
+  overflow-wrap: anywhere;
 }
 
 .type-row {
@@ -845,6 +855,12 @@
   min-width: 0;
   flex-direction: column;
   gap: 0.12rem;
+}
+
+.category-tile__copy small {
+  color: var(--muted);
+  font-size: 0.56rem;
+  line-height: 1.25;
 }
 
 .category-toggle-switch {

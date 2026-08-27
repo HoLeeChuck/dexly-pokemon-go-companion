@@ -23,7 +23,7 @@ flowchart LR
   prompts, CSV/full-profile portability, and the typed API client.
 - `src/app/` owns custom hash/`/cody` routing and PWA updates; `src/catalog/` owns the
   memoized catalog index and shared regional-medal calculations.
-- Dex, Search, Profile/Data, Pokémon detail, and owner API code are lazy boundaries. Their
+- Dex, Progress/Search Lab, Data, Pokémon detail, and owner API code are lazy boundaries. Their
   feature styles load with the route instead of the initial Home shell.
 - `src/lib/api/` separates public catalog, collection, private owner/import, and retained
   legacy-trade calls. Normal public visitors do not download owner/import clients.
@@ -69,8 +69,8 @@ supports one-way migration from `dexly:local-profile:v1` and legacy appearance k
 
 ## Catalog model
 
-Catalog version `2026-08-19.1` contains 1,025 stable National Dex representatives and 179
-reviewed collector forms, or 1,202 form records total. Of the standard representatives, 949
+Catalog version `2026-08-24.1` contains 1,025 stable National Dex representatives and 244
+reviewed collector forms, or 1,269 form records total. Of the standard representatives, 949
 are released in the dated snapshot; unreleased placeholders remain so completion and medal
 denominators never scale down to whatever happens to be available today.
 
@@ -116,21 +116,22 @@ Private responses are `no-store` and receive defensive content, frame, referrer,
 headers. Logs include request/release identifiers but not the secret. Production and staging
 must use distinct secrets and distinct D1 databases.
 
-## Search Lab
+## Search Lab search and sharing tools
 
 Search Lab generates collection-gap queries from the reviewed Pokémon GO inventory grammar and
-preserves the `!traded&` guard. Output is labeled `exact` or `candidate`; incomplete metadata never
-becomes a silent exact claim. Local profile v2 continues to validate and retain historical saved
-search records in portable backups, although the visual builder is no longer part of the public UI.
+provides personal, tradeable, Cody-recommended, and Discord-ready output. Local profile v2
+continues to validate and retain historical saved-search records in portable backups.
 
 Missing Normal, Shiny, XXL, and XXS strings remain collection helpers. Evolution-family
 data can add an eligible earlier stage when evolving it could
-fill a later XXL/XXS gap, while true targets remain present if family metadata is incomplete.
+fill a later XXL/XXS gap when the user enables that option, while true targets remain present if
+family metadata is incomplete. Discord messages use either the standard 2,000-character limit or
+the user-selected 4,000-character Nitro limit.
 
 ## PWA and failure behavior
 
-The service worker versions shell/runtime/catalog caches, precaches only initial hashed
-JavaScript/CSS, runtime-caches lazy chunks after a visit, serves a controlled offline
+The service worker versions shell/runtime/catalog caches, precaches every public hashed
+JavaScript/CSS route chunk, runtime-caches artwork after a visit, serves a controlled offline
 navigation fallback, and excludes private `/api` responses and `/cody`. A waiting worker is activated
 only after the user accepts the update prompt. Hashed build assets are immutable; HTML,
 bootstrap, manifest, and service-worker files revalidate. Failed sprites use a same-origin

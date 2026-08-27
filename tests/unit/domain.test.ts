@@ -3,6 +3,7 @@ import { describe, expect, expectTypeOf, it } from 'vitest';
 import {
   compressDexNumbers,
   deriveCollectionState,
+  formatMissingSearchString,
   generateMissingSearchStrings,
   generatePersonalSizeCatchSearchStrings,
   generateWantedTradeSearchStrings,
@@ -219,6 +220,21 @@ describe('generateMissingSearchStrings', () => {
       expect(result.explanation).toContain('not supported');
     },
   );
+});
+
+describe('formatMissingSearchString', () => {
+  it.each([
+    ['none', 'shiny&1-3'],
+    ['personal', '!#&shiny&1-3'],
+    ['tradeable', '!traded&shiny&1-3'],
+  ] as const)('applies the %s mode modifier', (mode, expected) => {
+    expect(formatMissingSearchString('!traded&shiny&1-3', mode)).toBe(expected);
+  });
+
+  it('leaves a string without the generator prefix unchanged', () => {
+    expect(formatMissingSearchString('#trade&', 'none')).toBe('#trade&');
+    expect(formatMissingSearchString('#trade&', 'personal')).toBe('#trade&');
+  });
 });
 
 describe('trade and sparse-update rules', () => {

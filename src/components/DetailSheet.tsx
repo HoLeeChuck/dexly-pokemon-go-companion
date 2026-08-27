@@ -46,6 +46,7 @@ export function DetailSheet({
   collectionEntries,
   pendingKeys,
   catalog,
+  navigationContext,
   onClose,
   onNavigate,
   onCollectionChange,
@@ -55,6 +56,7 @@ export function DetailSheet({
   collectionEntries: readonly CollectionEntry[];
   pendingKeys: ReadonlySet<string>;
   catalog?: readonly CatalogItem[];
+  navigationContext?: readonly CatalogItem[];
   onClose: () => void;
   onNavigate?: (item: CatalogItem) => void;
   onCollectionChange: (item: CatalogItem, categoryId: CategoryId, collected: boolean) => void;
@@ -87,15 +89,16 @@ export function DetailSheet({
       ),
     [collectionEntries, item.id],
   );
-  const speciesCatalog = useMemo(
-    () => catalog?.filter((catalogItem) => catalogItem.isDefault) ?? [],
-    [catalog],
+  const navigationCatalog = useMemo(
+    () =>
+      navigationContext?.length
+        ? [...navigationContext]
+        : (catalog?.filter((catalogItem) => catalogItem.isDefault) ?? []),
+    [catalog, navigationContext],
   );
-  const speciesIndex = speciesCatalog.findIndex(
-    (catalogItem) => catalogItem.speciesId === item.speciesId,
-  );
-  const previousItem = speciesIndex > 0 ? speciesCatalog[speciesIndex - 1] : undefined;
-  const nextItem = speciesIndex >= 0 ? speciesCatalog[speciesIndex + 1] : undefined;
+  const navigationIndex = navigationCatalog.findIndex((catalogItem) => catalogItem.id === item.id);
+  const previousItem = navigationIndex > 0 ? navigationCatalog[navigationIndex - 1] : undefined;
+  const nextItem = navigationIndex >= 0 ? navigationCatalog[navigationIndex + 1] : undefined;
   const collectorForms = collectorFormsForSpecies(catalog ?? [], item);
   const transformations = getTransformations(catalog ?? [], item);
   const costumes = getCostumes(catalog ?? [], item);
@@ -250,6 +253,19 @@ export function DetailSheet({
     navigateTo(deltaX < 0 ? nextItem : previousItem);
   }
 
+  function ruleReason(categoryId: CategoryId, rule: string): string | undefined {
+    if (rule === 'released') return undefined;
+    if (rule === 'unknown') return 'Data unavailable · needs review';
+    if (rule === 'unreleased') {
+      if (categoryId === 'shiny') return 'Shiny not released';
+      if (categoryId === 'shadow') return 'Shadow not released';
+      return `${collectionCategoryLabel(categories.find((entry) => entry.id === categoryId)!)} not released`;
+    }
+    if (categoryId === 'shadow') return 'Not eligible for Shadow';
+    if (categoryId === 'purified') return 'Not eligible for Purified';
+    return `Not eligible for ${collectionCategoryLabel(categories.find((entry) => entry.id === categoryId)!)}`;
+  }
+
   function renderFormRows(forms: readonly CatalogItem[], heading: string) {
     if (forms.length === 0) return null;
     return (
@@ -289,7 +305,12 @@ export function DetailSheet({
                     onClick={() => onCollectionChange(form, categoryId, !isCollected)}
                   >
                     <Icon name={rule === 'released' ? (isCollected ? 'check' : 'plus') : 'lock'} />
-                    <span>{categoryId === 'normal' ? 'Regular' : 'Shiny'}</span>
+                    <span>
+                      {categoryId === 'normal' ? 'Regular' : 'Shiny'}
+                      {ruleReason(categoryId, rule) && (
+                        <small>{ruleReason(categoryId, rule)}</small>
+                      )}
+                    </span>
                   </button>
                 );
               })}
@@ -337,7 +358,7 @@ export function DetailSheet({
           }
         }}
       >
-        {speciesIndex >= 0 && onNavigate && (
+        {navigationIndex >= 0 && onNavigate && (
           <>
             <button
               type="button"
@@ -450,6 +471,9 @@ export function DetailSheet({
                       </span>
                       <span className="category-tile__copy">
                         <strong>{collectionCategoryLabel(category)}</strong>
+                        {ruleReason(category.id, rule) && (
+                          <small>{ruleReason(category.id, rule)}</small>
+                        )}
                       </span>
                     </button>
                   );

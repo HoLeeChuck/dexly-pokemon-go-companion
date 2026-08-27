@@ -23,6 +23,8 @@ export function routeFromLocation(
     ? (value as CanonicalPublicRouteId)
     : 'home';
 }
-export function urlForRoute(route: RouteId): string {
-  return route === 'owner' ? '/cody' : `/#/${route}`;
+export function urlForRoute(route: RouteId, section?: string): string {
+  if (route === 'owner') return '/cody';
+  const query = section ? `?section=${encodeURIComponent(section)}` : '';
+  return `/#/${route}${query}`;
 }

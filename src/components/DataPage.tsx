@@ -11,6 +11,16 @@ import { APP_VERSION, PORTFOLIO_URL } from '../config/app';
 import '../routes/profile.css';
 import { RegionalAvailabilityPanel } from './RegionalAvailabilityPanel';
 import type { RegionPreference } from '../catalog/regionalAvailability';
+import type { LocalProfileSnapshot } from '../lib/localProfile';
+import {
+  RestoreReviewPanel,
+  reviewPortableBackup,
+  reviewSnapshot,
+  type PortableBackupReview,
+} from './RestoreReview';
+
+const ISSUE_PAGE_SIZE = 12;
+const CHANGE_PAGE_SIZE = 25;
 
 export function DataPage({
   catalog,
@@ -47,7 +57,7 @@ export function DataPage({
   onImport: (input: { csv: string; fileName: string; policy: CsvImportPolicy }) => Promise<void>;
   onExportBackup: () => void;
   onRestoreBackup: (json: string) => void;
-  snapshots: readonly { id: string; createdAt: string; reason: string }[];
+  snapshots: readonly LocalProfileSnapshot[];
   onRestoreSnapshot: (id: string) => void;
   onSetRegionNormal: (region: string, collected: boolean) => Promise<number>;
   regionPreference: string;
@@ -64,6 +74,10 @@ export function DataPage({
     tone: 'success' | 'error';
     text: string;
   } | null>(null);
+  const [issuePage, setIssuePage] = useState(0);
+  const [changePage, setChangePage] = useState(0);
+  const [backupReview, setBackupReview] = useState<PortableBackupReview | null>(null);
+  const [snapshotReview, setSnapshotReview] = useState<LocalProfileSnapshot | null>(null);
 
   const previewResult = useMemo(() => {
     if (!csv) return { preview: null, error: '' };
@@ -80,6 +94,19 @@ export function DataPage({
     }
   }, [csv, catalog, collectionEntries, policy]);
   const { preview } = previewResult;
+  const actionableChanges = useMemo(
+    () => preview?.changes.filter((change) => change.disposition !== 'ignored') ?? [],
+    [preview],
+  );
+  const blockingIssues = preview?.issues.some((issue) => issue.severity === 'error') ?? false;
+  const visibleIssues = preview?.issues.slice(
+    issuePage * ISSUE_PAGE_SIZE,
+    (issuePage + 1) * ISSUE_PAGE_SIZE,
+  );
+  const visibleChanges = actionableChanges.slice(
+    changePage * CHANGE_PAGE_SIZE,
+    (changePage + 1) * CHANGE_PAGE_SIZE,
+  );
 
   function exportCsv() {
     const content = exportCollectionCsv(catalog, collectionEntries);
@@ -99,13 +126,15 @@ export function DataPage({
       return;
     }
     setFileName(file.name);
+    setIssuePage(0);
+    setChangePage(0);
     setCsv(await file.text());
     setMessage('');
     setImportMessage(null);
   }
 
   async function applyImport() {
-    if (!preview || preview.summary.rejected > 0) return;
+    if (!preview || preview.summary.rejected > 0 || blockingIssues) return;
     setApplying(true);
     setImportMessage(null);
     try {
@@ -130,16 +159,21 @@ export function DataPage({
     }
   }
 
+  async function readBackup(file: File) {
+    try {
+      const review = reviewPortableBackup(await file.text(), file.name, catalogVersion);
+      setBackupReview(review);
+      setMessage('');
+    } catch (error) {
+      setBackupReview(null);
+      setMessage(error instanceof Error ? error.message : 'The backup file could not be read.');
+    }
+  }
+
   return (
     <section className="page page--data">
-      <header className="settings-header">
-        <div>
-          <span className="eyebrow">
-            <Icon name="settings" /> Settings
-          </span>
-          <h1>Settings</h1>
-          <p>Personalize CatchGrid and manage your collection data.</p>
-        </div>
+      <header className="settings-header simple-page-header">
+        <h1>Settings</h1>
       </header>
 
       {message && (
@@ -151,16 +185,10 @@ export function DataPage({
         </div>
       )}
 
-      <RegionalAvailabilityPanel
-        catalog={catalog}
-        preference={regionPreference}
-        onPreferenceChange={onRegionPreferenceChange}
-      />
-
       <details className="panel collection-setup-panel settings-disclosure">
         <summary className="panel-heading">
           <div>
-            <span className="eyebrow">Advanced setup</span>
+            <span className="eyebrow">Collection setup</span>
             <h2>Bulk collection setup</h2>
             <p>Mark or clear an entire region’s obtainable Normal entries.</p>
           </div>
@@ -313,10 +341,7 @@ export function DataPage({
             onChange={(event) => {
               const file = event.target.files?.[0];
               if (!file) return;
-              void file
-                .text()
-                .then(onRestoreBackup)
-                .catch(() => setMessage('The backup file could not be read.'));
+              void readBackup(file);
               event.currentTarget.value = '';
             }}
           />
@@ -336,6 +361,21 @@ export function DataPage({
             ? 'Local JSON restore is disabled while Cody Cloud is connected. Return to this browser first so a local backup cannot overwrite or diverge from cloud data.'
             : 'Full backups include default and alternate-form collection state, wanted and trade data, saved searches, appearance settings, catalog version, and migration history.'}
         </p>
+        {backupReview && (
+          <RestoreReviewPanel
+            summary={backupReview.summary}
+            confirmLabel="Confirm JSON restore"
+            onCancel={() => setBackupReview(null)}
+            onConfirm={() => {
+              try {
+                onRestoreBackup(backupReview.raw);
+                setBackupReview(null);
+              } catch (error) {
+                setMessage(error instanceof Error ? error.message : 'The backup was not restored.');
+              }
+            }}
+          />
+        )}
         {snapshots.length > 0 && (
           <details className="snapshot-list">
             <summary>Browser recovery snapshots ({snapshots.length})</summary>
@@ -348,13 +388,24 @@ export function DataPage({
                 <button
                   type="button"
                   className="button button--secondary"
-                  onClick={() => onRestoreSnapshot(snapshot.id)}
+                  onClick={() => setSnapshotReview(snapshot)}
                 >
-                  Restore
+                  Review
                 </button>
               </article>
             ))}
           </details>
+        )}
+        {snapshotReview && (
+          <RestoreReviewPanel
+            summary={reviewSnapshot(snapshotReview, catalogVersion)}
+            confirmLabel="Confirm snapshot restore"
+            onCancel={() => setSnapshotReview(null)}
+            onConfirm={() => {
+              onRestoreSnapshot(snapshotReview.id);
+              setSnapshotReview(null);
+            }}
+          />
         )}
       </section>
 
@@ -419,7 +470,11 @@ export function DataPage({
               Import policy
               <select
                 value={policy}
-                onChange={(event) => setPolicy(event.target.value as CsvImportPolicy)}
+                onChange={(event) => {
+                  setIssuePage(0);
+                  setChangePage(0);
+                  setPolicy(event.target.value as CsvImportPolicy);
+                }}
               >
                 <option value="merge">Merge · add true values only</option>
                 <option value="update">Update · apply explicit true and false</option>
@@ -437,21 +492,74 @@ export function DataPage({
                 <strong>{preview.summary.removed}</strong> remove
               </span>
               <span className={preview.summary.rejected ? 'is-error' : ''}>
-                <strong>{preview.summary.rejected}</strong> issues
+                <strong>{preview.issues.length}</strong> issues
               </span>
             </div>
             {preview.issues.length > 0 && (
-              <div className="issue-list">
-                {preview.issues.slice(0, 6).map((issue, index) => (
-                  <p
-                    key={`${issue.row}-${issue.code}-${index}`}
-                    className={`issue issue--${issue.severity}`}
-                  >
-                    <strong>Row {issue.row}</strong> {issue.message}
-                  </p>
-                ))}
+              <div className="review-page">
+                <div className="review-page__heading">
+                  <strong>
+                    Showing {issuePage * ISSUE_PAGE_SIZE + 1}–
+                    {Math.min((issuePage + 1) * ISSUE_PAGE_SIZE, preview.issues.length)} of{' '}
+                    {preview.issues.length} issues
+                  </strong>
+                  <div>
+                    <button
+                      type="button"
+                      disabled={issuePage === 0}
+                      onClick={() => setIssuePage((current) => Math.max(0, current - 1))}
+                    >
+                      Previous
+                    </button>
+                    <button
+                      type="button"
+                      disabled={(issuePage + 1) * ISSUE_PAGE_SIZE >= preview.issues.length}
+                      onClick={() => setIssuePage((current) => current + 1)}
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+                <div className="issue-list">
+                  {visibleIssues?.map((issue, index) => (
+                    <p
+                      key={`${issue.row}-${issue.code}-${issuePage}-${index}`}
+                      className={`issue issue--${issue.severity}`}
+                    >
+                      <strong>Row {issue.row}</strong> {issue.message}
+                    </p>
+                  ))}
+                </div>
               </div>
             )}
+            <div className="review-page__heading">
+              <strong>
+                {actionableChanges.length
+                  ? `Showing ${changePage * CHANGE_PAGE_SIZE + 1}–${Math.min(
+                      (changePage + 1) * CHANGE_PAGE_SIZE,
+                      actionableChanges.length,
+                    )} of ${actionableChanges.length} proposed changes`
+                  : 'No collection changes are proposed'}
+              </strong>
+              {actionableChanges.length > CHANGE_PAGE_SIZE && (
+                <div>
+                  <button
+                    type="button"
+                    disabled={changePage === 0}
+                    onClick={() => setChangePage((current) => Math.max(0, current - 1))}
+                  >
+                    Previous
+                  </button>
+                  <button
+                    type="button"
+                    disabled={(changePage + 1) * CHANGE_PAGE_SIZE >= actionableChanges.length}
+                    onClick={() => setChangePage((current) => current + 1)}
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+            </div>
             <div className="preview-table-wrap">
               <table>
                 <thead>
@@ -463,24 +571,21 @@ export function DataPage({
                   </tr>
                 </thead>
                 <tbody>
-                  {preview.changes
-                    .filter((change) => change.disposition !== 'ignored')
-                    .slice(0, 12)
-                    .map((change) => {
-                      const item = catalog.find((entry) => entry.id === change.formId);
-                      return (
-                        <tr key={`${change.row}-${change.formId}-${change.categoryId}`}>
-                          <td>{change.row}</td>
-                          <td>{item?.name ?? change.formId}</td>
-                          <td>{change.categoryId}</td>
-                          <td>
-                            <span className={`change-pill change-pill--${change.disposition}`}>
-                              {change.disposition}
-                            </span>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                  {visibleChanges.map((change) => {
+                    const item = catalog.find((entry) => entry.id === change.formId);
+                    return (
+                      <tr key={`${change.row}-${change.formId}-${change.categoryId}`}>
+                        <td>{change.row}</td>
+                        <td>{item?.name ?? change.formId}</td>
+                        <td>{change.categoryId}</td>
+                        <td>
+                          <span className={`change-pill change-pill--${change.disposition}`}>
+                            {change.disposition}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -496,7 +601,7 @@ export function DataPage({
             <button
               type="button"
               className="button button--primary button--full"
-              disabled={preview.summary.rejected > 0 || applying}
+              disabled={preview.summary.rejected > 0 || blockingIssues || applying}
               onClick={() => void applyImport()}
             >
               <Icon name="upload" />
@@ -534,6 +639,21 @@ export function DataPage({
           )}
         </section>
       )}
+
+      <details className="advanced-regional-settings">
+        <summary>
+          <span>
+            <strong>Advanced regional and Vivillon information</strong>
+            <small>Approximate regional recommendations and collector reference lists</small>
+          </span>
+          <Icon name="chevron-right" />
+        </summary>
+        <RegionalAvailabilityPanel
+          catalog={catalog}
+          preference={regionPreference}
+          onPreferenceChange={onRegionPreferenceChange}
+        />
+      </details>
 
       <footer className="attribution">
         <span className="eyebrow">About CatchGrid</span>

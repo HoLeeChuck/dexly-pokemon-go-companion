@@ -13,8 +13,8 @@ test('first install works offline and never caches private collection routes', a
   page.on('pageerror', (error) => errors.push(error.message));
   page.on('requestfailed', (request) => failedRequests.push(new URL(request.url()).pathname));
   await installFakeApi(page);
-  await page.goto('/#/dex');
-  await expect(page.getByRole('heading', { name: 'Pokédex' })).toBeVisible();
+  await page.goto('/#/home');
+  await expect(page.getByRole('heading', { name: 'Home', exact: true })).toBeVisible();
 
   await expect
     .poll(
@@ -43,6 +43,7 @@ test('first install works offline and never caches private collection routes', a
     return [...new Set(urls)].sort();
   });
   expect(cachedUrls.some((url) => /\/assets\/.*\.js$/.test(url))).toBe(true);
+  expect(cachedUrls.filter((url) => /\/assets\/.*\.js$/.test(url)).length).toBeGreaterThan(3);
   expect(cachedUrls.some((url) => /\/assets\/.*\.css$/.test(url))).toBe(true);
   expect(cachedUrls).toContain('/api/v1/catalog');
   expect(cachedUrls).not.toContain('/api/v1/bootstrap');
@@ -53,11 +54,25 @@ test('first install works offline and never caches private collection routes', a
     Boolean(navigator.serviceWorker.controller),
   );
   expect(controlledBeforeOffline).toBe(true);
-  // Visit the lazy Dex route once while controlled so its JS and CSS enter the runtime cache.
-  await page.reload();
-  await expect(page.getByRole('heading', { name: 'Pokédex' })).toBeVisible();
   await page.unrouteAll({ behavior: 'wait' });
   await context.setOffline(true);
+  await page.evaluate(() => {
+    window.location.hash = '#/dex';
+  });
+  await expect(page.getByRole('heading', { name: 'Pokédex' })).toBeVisible();
+  await page.evaluate(() => {
+    window.location.hash = '#/progress';
+  });
+  await expect(page.getByRole('heading', { name: 'Progress', exact: true })).toBeVisible();
+  await page.evaluate(() => {
+    window.location.hash = '#/search';
+  });
+  await expect(page.getByRole('heading', { name: 'Search Lab', exact: true })).toBeVisible();
+  await page.evaluate(() => {
+    window.location.hash = '#/settings';
+  });
+  await expect(page.getByRole('heading', { name: 'Settings', exact: true })).toBeVisible();
+
   const response = await page.reload({ waitUntil: 'domcontentloaded' });
   expect(response?.status()).toBe(200);
   const diagnostics = await page.evaluate(() => ({
@@ -69,8 +84,7 @@ test('first install works offline and never caches private collection routes', a
   expect(diagnostics).toMatchObject({ controlled: true });
   expect(diagnostics.htmlLength).toBeGreaterThan(1000);
   expect({ errors, failedRequests }).toEqual({ errors: [], failedRequests: [] });
-  await expect(page.getByRole('heading', { name: 'Pokédex' })).toBeVisible();
-  await expect(page.locator('.pokemon-card')).not.toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Settings', exact: true })).toBeVisible();
 });
 
 test('a waiting service worker updates only after the user accepts it', async ({ page }) => {
@@ -91,10 +105,18 @@ test('a waiting service worker updates only after the user accepts it', async ({
   const updatePrompt = page.getByText('A CatchGrid update is ready');
   await expect(updatePrompt).toBeVisible();
   const toastDismiss = page.locator('.toast__close');
-  if (await toastDismiss.isVisible()) await toastDismiss.click();
+  if (await toastDismiss.isVisible()) {
+    const layout = await page.locator('.notification-stack').evaluate((stack) => {
+      const toast = stack.querySelector('.toast')!.getBoundingClientRect();
+      const update = stack.querySelector('.update-prompt')!.getBoundingClientRect();
+      return { separated: toast.bottom <= update.top || update.bottom <= toast.top };
+    });
+    expect(layout.separated).toBe(true);
+    await toastDismiss.click();
+  }
   let reloadCount = 0;
-  page.on('framenavigated', (frame) => {
-    if (frame === page.mainFrame()) reloadCount += 1;
+  page.on('load', () => {
+    reloadCount += 1;
   });
   const navigation = page.waitForEvent('load');
   await page.getByRole('button', { name: 'Update now' }).click();

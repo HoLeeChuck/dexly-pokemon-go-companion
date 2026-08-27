@@ -21,11 +21,11 @@ account. Collection updates are manual or import-assisted.
 
 ## Current public navigation
 
-- **Home** — full National Dex and regional/category progress.
+- **Home** — orientation, collection snapshot, and direct workflow shortcuts.
 - **Dex** — category-aware species grid plus Mega/Primal and Gigantamax views.
-- **Search Lab** — missing Normal, Shiny, XXL, and XXS searches, collection-aware catch helpers,
-  and Discord/Web Share output.
-- **Profile** — themes, CSV import/export, full portable backup/restore, and recovery
+- **Progress** — National Dex species and category-aware regional progress.
+- **Search Lab** — missing, storage, trade, and Discord-ready Pokémon GO search tools.
+- **Settings** — collection setup, themes, reviewed CSV import, portable backup/restore, and recovery
   snapshots.
 
 The removed Trade page, Wanted tab, and For Trade tab are intentionally not part of the
@@ -70,18 +70,17 @@ Important invariants include:
 See [the catalog guide](../catalog/README.md) and the generated catalog change report
 for the exact snapshot, sources, hashes, and known asset-rights blocker.
 
-## Search Lab
+## Search Lab tools
 
-All CatchGrid-generated collection searches begin with `!traded&`. The visual builder
-supports include/exclude and AND/OR combinations for reviewed Pokémon GO terms, labels
-results Exact/Compressed/Candidate, and explains the query in plain language. Candidate
-queries require visual review when game syntax cannot identify an exact form or depends
-on current game state.
+Search Lab provides personal and tradeable collection-gap strings using reviewed Pokémon GO
+inventory terms. Missing-form output stays explicit when game syntax cannot identify an exact form
+or depends on current game state.
 
-XXL/XXS recommendations are evolution-aware: if an evolved size entry is missing, a
-catchable earlier family stage can remain in the search even when that earlier stage is
-already recorded. Discord output keeps each game query in a copyable code block, stays
-below Discord's message limit, and ends with the canonical CatchGrid link.
+An optional evolution-aware setting expands XXL/XXS missing searches with catchable earlier
+family stages when evolving them could fill a later size gap. Cody's recommended strings are
+kept separate from collection-gap output. Discord sharing supports the standard 2,000-character
+limit and an explicit Nitro option for 4,000-character messages; every message remains safely
+chunked and ends with the canonical CatchGrid link.
 
 ## Portability and recovery
 

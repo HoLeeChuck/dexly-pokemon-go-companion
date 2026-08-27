@@ -4,12 +4,7 @@ import type { CatalogItem, Category, CollectionEntry } from '../../shared/types'
 import type { RouteId } from '../app/routing';
 import { Icon } from './Icon';
 
-const GENERAL_SEARCHES = [
-  {
-    name: 'Recent Shinies',
-    value: '!traded&shiny&age0-7',
-    note: 'Review untraded Shiny Pokémon caught in the last seven days.',
-  },
+const CODY_RECOMMENDED_SEARCHES = [
   {
     name: 'Untagged review',
     value: '!traded&!#',
@@ -26,21 +21,42 @@ export function HomeDashboard({
   catalog: readonly CatalogItem[];
   categories: readonly Category[];
   entries: readonly CollectionEntry[];
-  onNavigate: (route: RouteId) => void;
+  onNavigate: (route: RouteId, section?: string) => void;
 }) {
   const [copied, setCopied] = useState<string | null>(null);
   const defaults = useMemo(() => catalog.filter((item) => item.isDefault), [catalog]);
   const normal = progressForCategory(defaults, entries, 'normal');
   const percent = normal.total ? Math.round((normal.collected / normal.total) * 100) : 0;
   const shortcuts = [
-    ['Browse the Dex', 'Mark Pokémon and collection states.', 'dex', 'grid'],
-    ['View Progress', 'Review completion by category and region.', 'progress', 'chart'],
-    ['Find missing Pokémon', 'Copy collection-aware storage searches.', 'progress', 'search'],
+    ['Browse the Dex', 'Mark Pokémon and collection states.', 'dex', 'grid', undefined],
+    ['View Progress', 'Review completion by category and region.', 'progress', 'chart', undefined],
+    [
+      'Find missing Pokémon',
+      'Copy collection-aware missing-Dex searches.',
+      'search',
+      'search',
+      'missing-searches',
+    ],
+    [
+      'Cody’s recommended strings',
+      'Open Cody’s handy Pokémon GO search strings.',
+      'search',
+      'sparkles',
+      'recommended-searches',
+    ],
+    [
+      'Generate search strings',
+      'Create Pokémon GO and Discord-ready lists.',
+      'search',
+      'clipboard',
+      'share-tools',
+    ],
     [
       'Import a collection',
       'Bring existing CSV or JSON data into CatchGrid.',
       'settings',
       'upload',
+      undefined,
     ],
   ] as const;
 
@@ -52,15 +68,8 @@ export function HomeDashboard({
 
   return (
     <section className="page page--dashboard home-orientation">
-      <header className="dashboard-hero home-welcome">
-        <div>
-          <span className="eyebrow eyebrow--light">Pokémon GO collection companion</span>
-          <h1>Build the collection you care about.</h1>
-          <p>
-            CatchGrid keeps your collection private in this browser while helping you track Pokémon,
-            spot gaps, and create useful Pokémon GO searches.
-          </p>
-        </div>
+      <header className="simple-page-header home-header">
+        <h1>Home</h1>
         <div className="home-welcome__actions">
           <button
             className="button button--primary"
@@ -78,7 +87,27 @@ export function HomeDashboard({
           </button>
         </div>
       </header>
-      <section className="home-section" aria-labelledby="how-title">
+      <section className="home-section home-shortcuts" aria-labelledby="shortcut-title">
+        <div className="section-heading">
+          <div>
+            <span className="eyebrow">Shortcuts</span>
+            <h2 id="shortcut-title">What would you like to do?</h2>
+          </div>
+        </div>
+        <div className="home-shortcut-grid">
+          {shortcuts.map(([title, note, route, icon, section]) => (
+            <button type="button" key={title} onClick={() => onNavigate(route, section)}>
+              <Icon name={icon} />
+              <span>
+                <strong>{title}</strong>
+                <small>{note}</small>
+              </span>
+              <Icon name="chevron-right" />
+            </button>
+          ))}
+        </div>
+      </section>
+      <section className="home-section home-guide" aria-labelledby="how-title">
         <div className="section-heading">
           <div>
             <span className="eyebrow">How CatchGrid works</span>
@@ -104,26 +133,6 @@ export function HomeDashboard({
           </li>
         </ol>
       </section>
-      <section className="home-section" aria-labelledby="shortcut-title">
-        <div className="section-heading">
-          <div>
-            <span className="eyebrow">Shortcuts</span>
-            <h2 id="shortcut-title">What would you like to do?</h2>
-          </div>
-        </div>
-        <div className="home-shortcut-grid">
-          {shortcuts.map(([title, note, route, icon]) => (
-            <button type="button" key={title} onClick={() => onNavigate(route)}>
-              <Icon name={icon} />
-              <span>
-                <strong>{title}</strong>
-                <small>{note}</small>
-              </span>
-              <Icon name="chevron-right" />
-            </button>
-          ))}
-        </div>
-      </section>
       <div className="home-lower-grid">
         <section className="home-section collection-snapshot" aria-labelledby="snapshot-title">
           <span className="eyebrow">Your collection</span>
@@ -140,11 +149,11 @@ export function HomeDashboard({
             Open full progress
           </button>
         </section>
-        <section className="home-section" aria-labelledby="search-title">
-          <span className="eyebrow">Useful searches</span>
-          <h2 id="search-title">Ready for Pokémon GO</h2>
+        <section className="home-section home-recommendations" aria-labelledby="search-title">
+          <span className="eyebrow">Cody’s picks</span>
+          <h2 id="search-title">Recommended Search Strings</h2>
           <div className="home-search-list">
-            {GENERAL_SEARCHES.map((search) => (
+            {CODY_RECOMMENDED_SEARCHES.map((search) => (
               <article key={search.name}>
                 <div>
                   <strong>{search.name}</strong>
