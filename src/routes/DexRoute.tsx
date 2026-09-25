@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import type { CSSProperties } from 'react';
 import { deriveCollectionState } from '../../shared/domain';
 import type {
   CatalogItem,
@@ -13,8 +14,10 @@ import { regionMedalProgresses, type MedalTier } from '../catalog/regionMedals';
 import { catalogDisplayName } from '../lib/catalogDisplay';
 import { Icon } from '../components/Icon';
 import { PokemonGrid } from '../components/PokemonGrid';
+import './dex-enhancements.css';
+import './dex-refresh.css';
 
-type CollectionFilter = 'all' | 'missing' | 'collected';
+type CollectionFilter = 'all' | 'missing' | 'collected' | 'wanted';
 type DexView = 'species' | 'mega' | 'gigantamax';
 
 const DEX_WORKSPACE_KEY = 'catchgrid:dex-workspace:v1';
@@ -44,13 +47,26 @@ const categoryGlyphs: Record<CategoryId, string> = {
   purified: '◇',
 };
 
+const categoryNotes: Record<CategoryId, string> = {
+  normal: 'Build your core species Pokédex and spot every gap.',
+  shiny: 'Track the rare color variants worth hunting next.',
+  lucky: 'Plan trades and finish your Lucky Pokédex.',
+  hundo: 'Keep a clean record of your perfect-IV catches.',
+  xxl: 'Collect showcase-ready giants across the National Dex.',
+  xxs: 'Track the tiniest specimens in your collection.',
+  shadow: 'Map the Shadow Pokémon still missing from your roster.',
+  purified: 'Follow your purified collection without mixing categories.',
+};
+
 interface DexWorkspaceState {
   query: string;
   region: string;
   collectionFilter: CollectionFilter;
   dexView: DexView;
-  searchOpen: boolean;
   quickCheck: boolean;
+  filtersOpen: boolean;
+  typeFilter: string;
+  generationFilter: string;
   scrollTop: number;
   renderCount: number;
   categoryId?: CategoryId;
@@ -69,8 +85,10 @@ function readDexWorkspace(): DexWorkspaceState {
     region: 'all',
     collectionFilter: 'all',
     dexView: 'species',
-    searchOpen: false,
     quickCheck: false,
+    filtersOpen: false,
+    typeFilter: 'all',
+    generationFilter: 'all',
     scrollTop: 0,
     renderCount: DEFAULT_RENDER_COUNT,
   };
@@ -83,6 +101,12 @@ function readDexWorkspace(): DexWorkspaceState {
     // A damaged temporary workspace must never prevent the Dex from opening.
   }
   const params = new URLSearchParams(window.location.hash.split('?')[1] ?? '');
+  // A dashboard shortcut starts a focused view, without old search or region filters.
+  if (params.get('section') === 'missing') {
+    stored = {};
+    params.set('collection', 'missing');
+    params.set('category', 'normal');
+  }
   const collection = params.get('collection') ?? stored.collectionFilter;
   const view = params.get('view') ?? stored.dexView;
   const category = params.get('category') ?? stored.categoryId ?? null;
@@ -90,12 +114,15 @@ function readDexWorkspace(): DexWorkspaceState {
     query: params.get('q') ?? stored.query ?? fallback.query,
     region: params.get('region') ?? stored.region ?? fallback.region,
     collectionFilter:
-      collection === 'missing' || collection === 'collected'
+      collection === 'missing' || collection === 'collected' || collection === 'wanted'
         ? collection
         : fallback.collectionFilter,
     dexView: view === 'mega' || view === 'gigantamax' ? view : fallback.dexView,
-    searchOpen: Boolean(stored.searchOpen || params.get('q')),
     quickCheck: Boolean(stored.quickCheck),
+    filtersOpen: Boolean(stored.filtersOpen || params.get('type') || params.get('generation')),
+    typeFilter: params.get('type') ?? stored.typeFilter ?? fallback.typeFilter,
+    generationFilter:
+      params.get('generation') ?? stored.generationFilter ?? fallback.generationFilter,
     scrollTop: Number.isFinite(stored.scrollTop) ? Math.max(0, stored.scrollTop ?? 0) : 0,
     renderCount: Number.isFinite(stored.renderCount)
       ? Math.max(DEFAULT_RENDER_COUNT, stored.renderCount ?? DEFAULT_RENDER_COUNT)
@@ -160,12 +187,15 @@ export default function DexRoute({
     initialWorkspace.collectionFilter,
   );
   const [dexView, setDexView] = useState<DexView>(initialWorkspace.dexView);
-  const [searchOpen, setSearchOpen] = useState(initialWorkspace.searchOpen);
   const [quickCheck, setQuickCheck] = useState(initialWorkspace.quickCheck);
+  const [filtersOpen, setFiltersOpen] = useState(initialWorkspace.filtersOpen);
+  const [typeFilter, setTypeFilter] = useState(initialWorkspace.typeFilter);
+  const [generationFilter, setGenerationFilter] = useState(initialWorkspace.generationFilter);
   const [renderCount, setRenderCount] = useState(initialWorkspace.renderCount);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
   const workspaceRef = useRef(initialWorkspace);
+  const didApplyInitialCategoryRef = useRef(false);
   const index = useMemo(() => createCatalogIndex(catalog), [catalog]);
   const collectedKeys = useMemo(
     () =>
@@ -183,6 +213,15 @@ export default function DexRoute({
   const regionMedals = useMemo(
     () => regionMedalProgresses(index, entries, activeCategory),
     [index, entries, activeCategory],
+  );
+  const availableTypes = useMemo(
+    () =>
+      [...new Set(catalog.flatMap((item) => item.types.map((type) => type.toLowerCase())))].sort(),
+    [catalog],
+  );
+  const availableGenerations = useMemo(
+    () => [...new Set(catalog.map((item) => item.generation))].sort((left, right) => left - right),
+    [catalog],
   );
   const viewedCatalog = useMemo(() => {
     if (dexView === 'species') return index.defaultForms;
@@ -216,22 +255,65 @@ export default function DexRoute({
       )
         return false;
       if (region !== 'all' && titleCase(item.region) !== region) return false;
+      if (
+        typeFilter !== 'all' &&
+        !item.types.some((itemType) => itemType.toLowerCase() === typeFilter)
+      )
+        return false;
+      if (generationFilter !== 'all' && item.generation !== Number(generationFilter)) return false;
       const state = deriveCollectionState(
         item.rules[activeCategory] ?? 'unknown',
         collectedKeys.has(collectionKey(item.id, activeCategory)),
       );
       if (collectionFilter === 'missing' && state !== 'missing') return false;
       if (collectionFilter === 'collected' && state !== 'collected') return false;
+      if (collectionFilter === 'wanted' && !wantedFormIds.has(item.id)) return false;
       return true;
     });
-  }, [activeCategory, catalog, collectedKeys, collectionFilter, query, region, viewedCatalog]);
+  }, [
+    activeCategory,
+    catalog,
+    collectedKeys,
+    collectionFilter,
+    generationFilter,
+    query,
+    region,
+    typeFilter,
+    viewedCatalog,
+    wantedFormIds,
+  ]);
   const selectedRegionMedal = region === 'all' ? null : regionMedals.get(region);
+  const advancedFilterCount = Number(typeFilter !== 'all') + Number(generationFilter !== 'all');
+  const categoryProgress = useMemo(
+    () =>
+      categories.map((category) => {
+        const available = viewedCatalog.filter((item) => item.rules[category.id] === 'released');
+        const collected = available.filter((item) =>
+          collectedKeys.has(collectionKey(item.id, category.id)),
+        ).length;
+        return {
+          category,
+          available: available.length,
+          collected,
+          percentage: available.length ? Math.round((collected / available.length) * 100) : 0,
+        };
+      }),
+    [categories, collectedKeys, viewedCatalog],
+  );
+  const activeProgress =
+    categoryProgress.find(({ category }) => category.id === activeCategory) ?? categoryProgress[0];
+  const activeAvailable = activeProgress?.available ?? 0;
+  const activeCollected = activeProgress?.collected ?? 0;
+  const activePercentage = activeProgress?.percentage ?? 0;
+  const activeMissing = Math.max(0, activeAvailable - activeCollected);
+  const activeCategoryLabel = activeProgress
+    ? collectionCategoryLabel(activeProgress.category)
+    : titleCase(activeCategory);
+  const scopedRegionLabel = region === 'all' ? 'Every region' : region;
 
   useEffect(() => {
-    if (searchOpen) searchInputRef.current?.focus();
-  }, [searchOpen]);
-
-  useEffect(() => {
+    if (didApplyInitialCategoryRef.current) return;
+    didApplyInitialCategoryRef.current = true;
     if (initialWorkspace.categoryId && initialWorkspace.categoryId !== activeCategory) {
       onCategoryChange(initialWorkspace.categoryId);
     }
@@ -243,8 +325,10 @@ export default function DexRoute({
       region,
       collectionFilter,
       dexView,
-      searchOpen,
       quickCheck,
+      filtersOpen,
+      typeFilter,
+      generationFilter,
       scrollTop: resultsRef.current?.scrollTop ?? workspaceRef.current.scrollTop,
       renderCount,
       categoryId: activeCategory,
@@ -261,17 +345,21 @@ export default function DexRoute({
     if (collectionFilter !== 'all') params.set('collection', collectionFilter);
     if (dexView !== 'species') params.set('view', dexView);
     if (activeCategory !== 'normal') params.set('category', activeCategory);
+    if (typeFilter !== 'all') params.set('type', typeFilter);
+    if (generationFilter !== 'all') params.set('generation', generationFilter);
     const suffix = params.size ? `?${params.toString()}` : '';
     window.history.replaceState(null, '', `/#/dex${suffix}`);
   }, [
     activeCategory,
     collectionFilter,
     dexView,
+    filtersOpen,
+    generationFilter,
     query,
     quickCheck,
     region,
     renderCount,
-    searchOpen,
+    typeFilter,
   ]);
 
   useLayoutEffect(() => {
@@ -310,24 +398,86 @@ export default function DexRoute({
 
   return (
     <section className="page page--dex">
-      <header className="dex-header">
-        <h1>Pokédex</h1>
-        <button
-          type="button"
-          className={`quick-toggle${quickCheck ? ' is-active' : ''}`}
-          aria-pressed={quickCheck}
-          onClick={() => setQuickCheck((value) => !value)}
-        >
-          <Icon name={quickCheck ? 'check' : 'grid'} />
-          <span>
-            <strong>Quick Check</strong>
-            <small>{quickCheck ? 'Tap cards to mark' : 'Browse safely'}</small>
+      <header className="dex-header dex-command-header">
+        <div className="dex-command-header__intro">
+          <span className="dex-command-header__eyebrow">
+            <Icon name="grid" /> Dex command center
           </span>
-        </button>
+          <h1>Pokédex</h1>
+          <p>{categoryNotes[activeCategory]}</p>
+        </div>
+        <div className="dex-command-header__status">
+          <div
+            className="dex-command-ring"
+            style={{ '--dex-progress': `${activePercentage * 3.6}deg` } as CSSProperties}
+            aria-label={`${activeCategoryLabel} ${activePercentage}% complete`}
+          >
+            <span>
+              <strong>{activePercentage}%</strong>
+              <small>{activeCategoryLabel}</small>
+            </span>
+          </div>
+          <div className="dex-command-stats" aria-label="Current Dex progress">
+            <span>
+              <strong>{activeCollected.toLocaleString()}</strong>
+              <small>Caught</small>
+            </span>
+            <span>
+              <strong>{activeMissing.toLocaleString()}</strong>
+              <small>Missing</small>
+            </span>
+            <span>
+              <strong>{filtered.length.toLocaleString()}</strong>
+              <small>Results</small>
+            </span>
+          </div>
+        </div>
       </header>
+      <div className="dex-mode-bar">
+        <div className="dex-mode-switch" role="group" aria-label="Card interaction">
+          <button type="button" aria-pressed={!quickCheck} onClick={() => setQuickCheck(false)}>
+            <Icon name="grid" /> Browse
+          </button>
+          <button type="button" aria-pressed={quickCheck} onClick={() => setQuickCheck(true)}>
+            <Icon name="check" /> Mark collected
+          </button>
+        </div>
+        <p>{quickCheck ? 'Tap a card to mark or unmark it.' : 'Tap a card to view its details.'}</p>
+      </div>
       <section className="dex-browser" aria-label="Collection browser">
+        <div className="dex-category-rail" aria-label="Collection lanes">
+          <div className="dex-category-rail__lead" aria-hidden="true">
+            <span>{scopedRegionLabel}</span>
+            <strong>Choose a lane</strong>
+          </div>
+          <div className="dex-category-rail__track">
+            {categoryProgress.map(({ category, available, collected, percentage }) => (
+              <button
+                type="button"
+                key={category.id}
+                className={category.id === activeCategory ? 'is-active' : ''}
+                aria-pressed={category.id === activeCategory}
+                aria-label={`${collectionCategoryLabel(category)}: ${collected} of ${available} caught`}
+                onClick={() => {
+                  resetResults();
+                  onCategoryChange(category.id);
+                }}
+              >
+                <span className="dex-category-rail__glyph" aria-hidden="true">
+                  {categoryGlyphs[category.id]}
+                </span>
+                <span className="dex-category-rail__copy">
+                  <strong>{collectionCategoryLabel(category)}</strong>
+                  <small>
+                    {percentage}% · {collected}/{available}
+                  </small>
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
         <section className="dex-controls" aria-label="Pokédex filters">
-          <div className={`dex-compact-bar${searchOpen || query ? ' is-searching' : ''}`}>
+          <div className="dex-compact-bar dex-compact-bar--visible-search">
             <label className="standard-filter-select region-standard-select">
               <span className="sr-only">Region</span>
               <RegionMedal
@@ -391,15 +541,7 @@ export default function DexRoute({
               </select>
               <Icon name="chevron-right" />
             </label>
-            <div className={`collapsible-search${searchOpen || query ? ' is-open' : ''}`}>
-              <button
-                type="button"
-                className="collapsible-search__trigger"
-                aria-label="Open Pokémon search"
-                onClick={() => setSearchOpen(true)}
-              >
-                <Icon name="search" />
-              </button>
+            <div className="collapsible-search is-open">
               <label className="search-field">
                 <Icon name="search" />
                 <input
@@ -413,35 +555,100 @@ export default function DexRoute({
                   placeholder="Species, form, alias, or number"
                   aria-label="Search Pokémon"
                 />
-                <button
-                  type="button"
-                  onClick={() => {
-                    resetResults();
-                    setQuery('');
-                    setSearchOpen(false);
-                  }}
-                  aria-label="Close search"
-                >
-                  <Icon name="close" />
-                </button>
+                {query && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      resetResults();
+                      setQuery('');
+                      searchInputRef.current?.focus();
+                    }}
+                    aria-label="Clear search"
+                  >
+                    <Icon name="close" />
+                  </button>
+                )}
               </label>
             </div>
           </div>
-          <div className="state-filter" role="group" aria-label="Collection state">
-            {(['all', 'missing', 'collected'] as const).map((value) => (
+          <div className="dex-filter-toolbar">
+            <div className="state-filter" role="group" aria-label="Collection state">
+              {(['all', 'missing', 'collected', 'wanted'] as const).map((value) => (
+                <button
+                  type="button"
+                  key={value}
+                  aria-pressed={collectionFilter === value}
+                  onClick={() => {
+                    resetResults();
+                    setCollectionFilter(value);
+                  }}
+                >
+                  {value === 'all' ? 'All' : titleCase(value)}
+                </button>
+              ))}
+            </div>
+            <button
+              type="button"
+              className={`advanced-filter-trigger${filtersOpen ? ' is-active' : ''}`}
+              aria-expanded={filtersOpen}
+              aria-controls="dex-advanced-filters"
+              onClick={() => setFiltersOpen((value) => !value)}
+            >
+              <Icon name="sliders" />
+              Filters
+              {advancedFilterCount > 0 && <span>{advancedFilterCount}</span>}
+            </button>
+          </div>
+          {filtersOpen && (
+            <div className="dex-advanced-filters" id="dex-advanced-filters">
+              <label>
+                <span>Pokémon type</span>
+                <select
+                  value={typeFilter}
+                  onChange={(event) => {
+                    resetResults();
+                    setTypeFilter(event.target.value);
+                  }}
+                >
+                  <option value="all">All types</option>
+                  {availableTypes.map((type) => (
+                    <option key={type} value={type}>
+                      {titleCase(type)}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                <span>Generation</span>
+                <select
+                  value={generationFilter}
+                  onChange={(event) => {
+                    resetResults();
+                    setGenerationFilter(event.target.value);
+                  }}
+                >
+                  <option value="all">All generations</option>
+                  {availableGenerations.map((generation) => (
+                    <option key={generation} value={generation}>
+                      Generation {generation}
+                    </option>
+                  ))}
+                </select>
+              </label>
               <button
                 type="button"
-                key={value}
-                aria-pressed={collectionFilter === value}
+                disabled={advancedFilterCount === 0}
                 onClick={() => {
                   resetResults();
-                  setCollectionFilter(value);
+                  setTypeFilter('all');
+                  setGenerationFilter('all');
                 }}
               >
-                {value === 'all' ? 'All' : titleCase(value)}
+                <Icon name="refresh" /> Reset filters
               </button>
-            ))}
-          </div>
+              <p>{filtered.length.toLocaleString()} matching entries</p>
+            </div>
+          )}
         </section>
         <div
           ref={resultsRef}

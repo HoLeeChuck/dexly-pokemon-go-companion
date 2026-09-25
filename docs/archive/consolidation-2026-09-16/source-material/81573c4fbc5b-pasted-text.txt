@@ -1,0 +1,700 @@
+# CatchGrid Legacy Cleanup and Optimization
+
+Act as a senior React, TypeScript, Cloudflare Workers, and repository-maintenance engineer. Perform a careful cleanup and optimization pass on the CatchGrid Pokémon GO companion.
+
+## Repository
+
+GitHub repository:
+
+`https://github.com/HoLeeChuck/dexly-pokemon-go-companion`
+
+Production site:
+
+`https://dex.cjdev.app/`
+
+## Primary objective
+
+Identify and remove genuinely unused, retired, duplicated, or redundant code while preserving all intentional compatibility, user-data migration, recovery, production deployment, and Cloudflare infrastructure behavior.
+
+This is an implementation task, not only an audit. Make the code changes, add or update tests, validate the result, push the work to a dedicated branch, and open a pull request for review.
+
+Do not merge the pull request.
+
+## Required Git workflow
+
+1. Fetch the latest remote repository state.
+
+2. Start from the latest `main`.
+
+3. Confirm the current commit SHA before making changes.
+
+4. Create a new branch named:
+
+   `codex/catchgrid-cleanup-optimization`
+
+5. Keep commits logically separated by cleanup category.
+
+6. Push the branch.
+
+7. Open a draft pull request targeting `main`.
+
+8. Do not merge it.
+
+Do not rewrite existing migration history or force-push shared branches.
+
+## Mandatory discovery before editing
+
+Inspect the latest repository rather than relying only on this prompt.
+
+Review at minimum:
+
+* `src/App.tsx`
+* `src/styles.css`
+* `src/components/`
+* `src/lib/`
+* `shared/`
+* `worker/`
+* `public/`
+* `migrations/`
+* `tests/`
+* `vite.config.ts`
+* `package.json`
+* `.github/workflows/ci.yml`
+* `README.md`
+* `docs/ARCHITECTURE.md`
+
+Before deleting anything, verify its references through imports, dynamic imports, tests, CSS selectors, documentation, build scripts, storage migrations, API routes, and portable-backup schemas.
+
+Classify findings into:
+
+* Confirmed dead code
+* Production code that should be refactored
+* Intentional legacy compatibility
+* Historical documentation
+* Uncertain code that must remain until proven unused
+
+Do not treat code as dead only because it is old or not visible in public navigation.
+
+# Phase 1 — Confirmed low-risk cleanup
+
+## 1. Remove retired page components
+
+Verify that the following components are not imported, routed to, dynamically loaded, or required by tests:
+
+* `src/components/CommunityHome.tsx`
+* `src/components/TradePage.tsx`
+
+When confirmed unused:
+
+* Delete both files.
+* Remove CSS that exists exclusively for those retired pages.
+* Remove tests or fixtures that exclusively support those deleted interfaces.
+* Do not remove shared trade domain types, storage fields, Worker endpoints, migrations, or backup compatibility merely because the public Trade page is retired.
+
+For CSS cleanup, carefully map selectors to active markup before removal.
+
+Likely retired selector families include:
+
+* `.smna-*`
+* `.page--home` rules written specifically for the retired SMNA page
+* `.page--trade`
+* `.trade-hero*`
+* `.trade-stats*`
+* `.trade-trait-strip*`
+* `.trade-wanted-*`
+* `.trade-request-*`
+* `.offer-list`
+* Trade-page-only responsive layout rules
+
+Do not globally delete every selector containing the word `trade`. Some detail-sheet, owner, compatibility, or domain interfaces may still use trade-related styles.
+
+## 2. Remove unused type-theme helper
+
+Verify that `src/lib/typeTheme.ts` has no importer.
+
+When confirmed unused:
+
+* Delete `src/lib/typeTheme.ts`.
+* Confirm that Pokémon type styling still works through the existing data attributes and CSS variables.
+* Add or preserve a visual or DOM-level test proving type styling hooks remain present.
+
+## 3. Resolve the retired visual Search Builder
+
+Inspect:
+
+* `shared/searchBuilder.ts`
+* `tests/unit/search-builder.test.ts`
+* `src/lib/savedSearches.ts`
+* `src/components/SearchLab.tsx`
+
+Determine whether `shared/searchBuilder.ts` is used by production code or only by its own unit tests.
+
+When it is confirmed that the visual builder is retired:
+
+* Delete `shared/searchBuilder.ts`.
+* Delete its dedicated tests.
+* Remove exports or types that exist exclusively for it.
+* Preserve the current missing-Pokémon search generation used by `SearchLab`.
+* Preserve validation required for historical saved searches and portable backups.
+
+Do not remove `src/lib/savedSearches.ts` merely because the old visual builder is gone. Historical saved-search records must remain readable and portable unless an explicit migration proves they are no longer needed.
+
+## 4. Remove redundant React trade state
+
+Inspect the state pattern equivalent to:
+
+```ts
+const [, setTradeSpecimens] = useState<TradeSpecimen[]>([]);
+```
+
+The current rendered application appears to keep trade specimens in `tradeRef.current` and profile compatibility data while discarding the React state value.
+
+When confirmed:
+
+* Remove the unused React state.
+* Remove calls that only update that discarded state.
+* Continue preserving trade specimens in local-profile data, cloud bootstrap data, backups, restores, migrations, and refs where required.
+* Add or update tests proving trade compatibility data survives:
+
+  * Local profile load
+  * Portable backup
+  * Portable restore
+  * Legacy migration
+  * Owner/cloud bootstrap
+
+## 5. Replace duplicated literal lists
+
+Use shared constants rather than repeating category and theme values.
+
+At minimum:
+
+* Replace manually repeated collection category strings with `CATEGORY_IDS` where appropriate.
+* Introduce or centralize an `ACCENT_THEME_IDS` constant.
+* Use that constant in TypeScript validation.
+* Keep `public/app-bootstrap.js` compatible with the browser before the React bundle starts.
+
+Because the bootstrap script is plain JavaScript, use one of these approaches:
+
+1. Generate its allowed accent list during the build, or
+2. Add a contract test proving the bootstrap list and TypeScript list match.
+
+Avoid introducing a large or fragile build system solely for this small constant.
+
+# Phase 2 — Refactor the oversized application shell
+
+`src/App.tsx` currently owns too many unrelated responsibilities. Refactor it without changing product behavior.
+
+## Required separation
+
+Move cohesive responsibilities into focused modules or hooks. A reasonable target structure is:
+
+```text
+src/
+  app/
+    routing.ts
+    AppShell.tsx
+    useAppNavigation.ts
+    usePwaUpdates.ts
+  catalog/
+    catalogIndex.ts
+    regionMedals.ts
+    useCatalogView.ts
+  profile/
+    useLocalProfile.ts
+    useCollectionMutations.ts
+    usePortableBackups.ts
+    useProfileRecovery.ts
+  owner/
+    OwnerRoute.tsx
+    ownerApi.ts
+    useOwnerProfile.ts
+  routes/
+    HomeRoute.tsx
+    DexRoute.tsx
+    SearchRoute.tsx
+    ProfileRoute.tsx
+```
+
+The exact names may differ, but the resulting architecture must:
+
+* Reduce the responsibilities and size of `App.tsx`.
+* Keep routing behavior identical.
+* Keep scroll restoration behavior identical.
+* Preserve recovery, owner access, import, export, and PWA update behavior.
+* Avoid moving complexity into a single equally oversized replacement module.
+
+Do not add a routing dependency unless there is a clear benefit that outweighs the migration risk. The current hash and `/cody` routing may remain custom.
+
+# Phase 3 — Route-level code splitting
+
+Create real route boundaries using `React.lazy`, dynamic imports, or equivalent Vite-supported splitting.
+
+At minimum, evaluate lazy-loading:
+
+* Dex route
+* Search Lab route
+* Profile/Data route
+* Owner `/cody` route
+* Pokémon detail sheet
+* Backup and restore utilities
+* Owner API and import utilities
+
+The Home route may remain eager if it is the default route.
+
+## Important requirement
+
+Simply lazy-loading a component is insufficient if all supporting owner, import, backup, and migration logic remains imported by `App.tsx`.
+
+Move route-specific code behind the lazy boundary so that it is not present in the initial public bundle.
+
+The private `/cody` route should not cause normal public visitors to download:
+
+* Owner authentication UI
+* Owner mutation API methods
+* Cloud CSV import logic
+* Private backup logic that is not needed by the public profile
+* Legacy D1 workflow code used only by the owner route
+
+Do not break public local-profile backup and recovery functionality. Distinguish public profile portability from private owner/D1 functionality.
+
+# Phase 4 — Catalog computation optimization
+
+Create a memoized catalog index instead of repeatedly scanning the complete catalog on unrelated renders.
+
+A possible shape is:
+
+```ts
+interface CatalogIndex {
+  defaultForms: readonly CatalogItem[];
+  regions: readonly string[];
+  formsByRegion: ReadonlyMap<string, readonly CatalogItem[]>;
+  formsByVariant: ReadonlyMap<string, readonly CatalogItem[]>;
+  formsBySpecies: ReadonlyMap<string, readonly CatalogItem[]>;
+  formsById: ReadonlyMap<string, CatalogItem>;
+}
+```
+
+Use the index to optimize:
+
+* Default National Dex filtering
+* Mega and Primal filtering
+* Gigantamax filtering
+* Region lists
+* Region medal calculations
+* Species form lookup
+* Detail-sheet previous and next navigation
+* Search and collection filtering
+
+Memoize calculations using the smallest correct dependency set.
+
+Avoid premature micro-optimization. The goals are:
+
+* Eliminate obvious repeated full-catalog scans.
+* Centralize catalog derivation.
+* Improve code clarity.
+* Preserve deterministic behavior.
+
+## Region medal consolidation
+
+Medal calculations currently appear in more than one location.
+
+Create one shared medal utility that handles:
+
+* Threshold lookup
+* Tier calculation
+* Full-Dex denominator
+* Collected counts
+* Available counts
+* Display labels
+
+Use it in both the Home dashboard and Dex region picker.
+
+Add unit tests for:
+
+* No medal
+* Bronze
+* Silver
+* Gold
+* Platinum
+* Regions with unavailable species
+* Category-specific thresholds
+
+# Phase 5 — API boundary cleanup
+
+Split the client API surface by responsibility.
+
+Suggested modules:
+
+```text
+src/lib/api/
+  request.ts
+  publicCatalogApi.ts
+  collectionApi.ts
+  ownerApi.ts
+  legacyTradeApi.ts
+```
+
+Requirements:
+
+* The public catalog route should import only public catalog functions.
+* Collection mutations should be separate from owner/import operations.
+* Retired trade client methods should not be in the eager public bundle.
+* Worker trade endpoints may remain for backward compatibility.
+* Preserve existing error-envelope behavior and typed `ApiClientError`.
+* Avoid unnecessary API signature changes.
+
+Delete inactive client API methods only when they are proven unused and their removal does not break migration, owner, or test workflows.
+
+# Phase 6 — CSS organization and reduction
+
+`src/styles.css` is a large global stylesheet.
+
+After removing dead selectors:
+
+* Split CSS by route or feature where Vite can associate styles with lazy-loaded modules.
+* Keep truly global variables, resets, typography, focus behavior, buttons, and app-shell rules in a global stylesheet.
+* Move Dex-specific styles into the Dex route.
+* Move Search Lab styles into the Search route.
+* Move Profile/Data styles into the Profile route.
+* Move owner-only styles into the Owner route.
+* Move detail-sheet styles with the detail component.
+
+Do not convert the entire project to CSS Modules or another styling system unless that is demonstrably safer and simpler than the current architecture.
+
+Preserve:
+
+* Light and dark themes
+* All accent themes
+* Reduced-motion handling
+* Responsive behavior
+* 320-pixel minimum layout
+* 44-pixel touch targets
+* Focus-visible states
+* Safe-area handling
+* Existing accessibility semantics
+
+Record before-and-after generated CSS sizes.
+
+# Phase 7 — Service-worker optimization
+
+The current service worker precaches generated JavaScript and CSS assets.
+
+After introducing route chunks:
+
+* Do not automatically precache every lazy route chunk unless it is necessary for the offline contract.
+* Precache the application shell and critical default-route assets.
+* Runtime-cache lazy route chunks after they are visited.
+* Continue excluding:
+
+  * Private API responses
+  * Owner `/cody` navigation
+  * Owner data
+  * Mutation endpoints
+* Preserve explicit update acceptance through `SKIP_WAITING`.
+* Preserve offline navigation fallback.
+* Preserve catalog fallback behavior.
+* Ensure private responses never enter caches.
+
+Add or update PWA tests covering:
+
+* Initial service-worker install
+* Waiting update prompt
+* User-approved update
+* Offline Home
+* Offline Dex after it has been visited
+* Lazy route chunk loading
+* Owner route exclusion
+* Private API exclusion
+* Catalog cache fallback
+
+# Phase 8 — Build configuration cleanup
+
+## Vite public-directory copying
+
+Inspect the custom `writeBundle()` copying logic in `vite.config.ts`.
+
+Vite normally copies `public/` assets into the output directory. Determine whether the project’s custom copying duplicates Vite’s existing behavior.
+
+Perform a controlled comparison:
+
+1. Build the current configuration.
+2. Record the complete `dist/client` file list and hashes.
+3. Test a branch-local version without redundant manual copies.
+4. Compare the output.
+5. Remove only copying that is proven redundant.
+6. Preserve the custom service-worker version and generated-asset injection.
+
+Do not change production output paths without updating Cloudflare deployment and tests.
+
+## Double production build
+
+Inspect the release commands in `package.json`.
+
+The current release process appears to build during preflight and then build again before deployment. Refactor toward:
+
+```text
+validate source
+→ build one final artifact with final release metadata
+→ validate that exact artifact
+→ deploy that exact artifact
+→ smoke test
+```
+
+Requirements:
+
+* The artifact validated by dry-run should be the artifact deployed.
+* Build metadata must remain accurate.
+* The process must still create the D1 Time Travel bookmark before migration.
+* Production migration ordering must remain safe.
+* Rollback commands must remain available.
+* Do not reduce release safety merely to save build time.
+
+Update deployment documentation when command behavior changes.
+
+# Phase 9 — CI optimization
+
+Inspect `.github/workflows/ci.yml`.
+
+The current browser matrix appears to create five separate jobs.
+
+Evaluate consolidating it into:
+
+* One Chromium job for:
+
+  * Mobile Chromium
+  * Desktop Chromium
+  * PWA Chromium
+* One WebKit job for:
+
+  * Mobile WebKit
+  * Desktop WebKit
+
+Only make this change when:
+
+* All existing project tests still run.
+* Failure output clearly identifies the failed Playwright project.
+* Artifacts still upload on failure.
+* Branch-protection implications are documented in the pull request.
+
+Do not silently rename required checks without explicitly reporting the GitHub branch-protection changes that will be required after merge.
+
+Add a bundle-size reporting step. It should record, at minimum:
+
+* Initial JavaScript chunk size
+* Total JavaScript size
+* Initial CSS size
+* Total CSS size
+* Gzip sizes when practical
+
+A hard failure threshold may be added only when based on the current measured baseline and with enough tolerance to avoid noisy failures.
+
+# Intentional compatibility that must remain
+
+Do not delete or rewrite these as ordinary legacy code:
+
+* Existing D1 migrations
+* Historical catalog migrations
+* Catalog provenance data
+* Current catalog-generation process
+* `dexly-db`
+* `dexly-db-staging`
+* Worker name `dexly-companion`
+* Legacy Workers.dev origin handling
+* Repository slug
+* Legacy localStorage keys
+* One-way profile migration logic
+* Corrupt-profile preservation
+* Recovery snapshots
+* Portable JSON backup support
+* Existing user collection data
+* Wanted-entry data in historical profiles
+* Trade-specimen data in historical profiles
+* Owner `/cody` compatibility route
+* Owner D1 profile
+* Existing Worker wanted/trade endpoints unless a separate deprecation plan proves they are safe to remove
+* Legacy origin export-before-migration behavior
+* Security headers
+* Owner authentication and rate limits
+
+Do not modify an existing checked-in migration. New schema changes must use a new additive migration.
+
+# Testing requirements
+
+Run the full existing verification pipeline after changes:
+
+```powershell
+pnpm install --frozen-lockfile
+pnpm cf-typegen
+pnpm cf-typegen:check
+pnpm lint
+pnpm format
+pnpm test
+pnpm catalog:verify
+pnpm build
+pnpm test:e2e
+pnpm exec wrangler deploy --dry-run --strict
+pnpm audit --audit-level high
+```
+
+Use the project’s pinned Node.js and pnpm versions.
+
+## Required focused tests
+
+Add or update automated tests for:
+
+* Deleted components having no remaining routes or imports
+* Current Home route
+* Current Dex route
+* Search Lab
+* Profile CSV import/export
+* Portable backup export and restore
+* Snapshot restore
+* Corrupt-profile recovery
+* Legacy localStorage migration
+* Owner access
+* Owner session expiration fallback
+* Collection mutation and undo
+* Form collection tracking
+* Retained wanted/trade compatibility data
+* Theme and accent persistence
+* Route lazy loading
+* PWA lazy-chunk behavior
+* Private route and API cache exclusion
+* Region medal calculations
+* Catalog indexing
+* Mobile and desktop accessibility
+* No horizontal overflow
+* No browser-console errors
+
+Do not weaken existing assertions merely to make refactoring pass.
+
+# Manual verification requirements
+
+Perform and document manual or Playwright-backed checks for:
+
+1. Fresh public visitor with no stored profile.
+2. Existing browser-local collection.
+3. Browser with legacy `dexly:*` storage keys.
+4. Browser with a corrupt primary profile.
+5. Portable backup export.
+6. Portable backup restore.
+7. Snapshot restore.
+8. Owner `/cody` authentication.
+9. Owner session expiration.
+10. Legacy Workers.dev hostname migration notice.
+11. PWA first installation.
+12. PWA waiting update.
+13. Accepted PWA update.
+14. Offline Home.
+15. Offline Dex after visiting it.
+16. Mobile layout at 390×844.
+17. Desktop layout.
+18. Keyboard navigation.
+19. Reduced-motion preference.
+20. 200% zoom or equivalent responsive stress test.
+
+# Performance evidence
+
+Capture before-and-after values for:
+
+* Client JavaScript files and gzip sizes
+* Client CSS files and gzip sizes
+* Number of generated chunks
+* Initial route chunk size
+* Search route chunk size
+* Profile route chunk size
+* Owner route chunk size
+* Service-worker precache entry count
+* Test duration
+* GitHub Actions job count
+* Any measurable catalog-filter rendering improvement
+
+Do not claim an improvement without measured evidence.
+
+# Documentation updates
+
+Update documentation to reflect the implemented structure:
+
+* `README.md`
+* `docs/ARCHITECTURE.md`
+* `docs/DEPLOYMENT.md` when release commands change
+* Any PWA caching documentation
+* Any compatibility documentation
+
+Add a cleanup report such as:
+
+`docs/CLEANUP_OPTIMIZATION_REPORT_2026-08.md`
+
+The report should list:
+
+* Deleted files
+* Deleted CSS selector groups
+* Refactored modules
+* Intentional legacy retained
+* Bundle measurements
+* CI measurements
+* Test results
+* Known limitations
+* Deferred work
+
+Historical launch documentation may be moved into an archive directory when links remain valid and no release process depends on the existing path.
+
+# Commit structure
+
+Use focused commits similar to:
+
+1. `chore: remove retired community and trade UI`
+2. `chore: remove unused search and theme helpers`
+3. `refactor: split app responsibilities and catalog indexing`
+4. `perf: lazy load public and owner routes`
+5. `perf: split route styles and refine pwa caching`
+6. `build: remove redundant asset and release work`
+7. `ci: consolidate browser checks and report bundles`
+8. `docs: record cleanup and optimization evidence`
+
+Adjust the exact commits to match the actual implementation, but do not place the entire cleanup into one undifferentiated commit.
+
+# Pull request requirements
+
+Open a draft pull request targeting `main`.
+
+The pull request description must include:
+
+* Base commit
+* Branch name
+* Summary of changes
+* Confirmed dead code removed
+* Compatibility code deliberately retained
+* Before-and-after bundle table
+* Service-worker cache changes
+* Build/release changes
+* CI changes
+* Required branch-protection updates
+* Full validation results
+* Manual verification results
+* Risks
+* Rollback approach
+* Deferred recommendations
+
+Do not merge the pull request.
+
+# Final response
+
+After completing the work, report:
+
+* Branch
+* Pull request URL
+* Base and head commits
+* Files deleted
+* Major files refactored
+* Bundle-size comparison
+* CSS-size comparison
+* Generated chunk comparison
+* Service-worker precache comparison
+* Tests run and exact results
+* CI status
+* Compatibility behavior retained
+* Anything not completed
+* Any branch-protection or Cloudflare follow-up required
+
+Do not report a check as passed unless it was actually executed successfully.

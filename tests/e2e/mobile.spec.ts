@@ -6,6 +6,40 @@ import { installFakeApi } from './support/fake-api';
 
 const fixtureDirectory = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'fixtures');
 
+test('Home metrics and Search presets use compact rows, and Progress categories stay inside their cards', async ({
+  page,
+}) => {
+  await installFakeApi(page);
+  await page.goto('/#/home');
+  const metrics = page.locator('.home-metric-strip');
+  await expect(metrics).toBeVisible();
+  expect((await metrics.boundingBox())!.height).toBeLessThan(220);
+
+  await page.goto('/#/progress');
+  const categories = page.locator('.progress-summary-grid');
+  await expect(categories.locator('button')).toHaveCount(8);
+  const layout = await categories.evaluate((element) => {
+    const bounds = element.getBoundingClientRect();
+    return [...element.querySelectorAll('button')].every((button) => {
+      const card = button.getBoundingClientRect();
+      const bar = button.querySelector('progress')!.getBoundingClientRect();
+      return (
+        card.left >= bounds.left - 1 && card.right <= bounds.right + 1 && bar.right <= card.right
+      );
+    });
+  });
+  expect(layout).toBe(true);
+  const lastCategory = categories.locator('button').last();
+  await lastCategory.scrollIntoViewIfNeeded();
+  await lastCategory.click();
+  await expect(lastCategory).toHaveAttribute('aria-pressed', 'true');
+
+  await page.goto('/#/search');
+  const presets = page.locator('.search-preset-grid');
+  await expect(presets.locator('button')).toHaveCount(4);
+  expect((await presets.boundingBox())!.height).toBeLessThan(270);
+});
+
 async function openDex(page: import('@playwright/test').Page) {
   await page.goto('/#/dex');
   await expect(page.getByRole('heading', { name: 'Pokédex' })).toBeVisible();
@@ -92,12 +126,14 @@ test.describe('mobile collection experience', () => {
   test('Home explains CatchGrid and fits the mobile viewport', async ({ page }) => {
     await installFakeApi(page);
     await page.goto('/#/home');
-    await expect(page.getByRole('heading', { name: 'Home', exact: true })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Four simple steps' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Open Dex' })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: /Your collection starts here|Ready for your next catch/ }),
+    ).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Continue your National Dex' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Continue tracking' })).toBeVisible();
 
     const layout = await page.locator('.page--dashboard').evaluate((dashboard) => {
-      const cards = [...dashboard.querySelectorAll('.home-shortcut-grid > button')].slice(0, 2);
+      const cards = [...dashboard.querySelectorAll('.home-launch-grid > button')].slice(0, 2);
       const rectangles = cards.map((card) => card.getBoundingClientRect());
       return {
         pageOverflows: document.documentElement.scrollWidth > document.documentElement.clientWidth,
@@ -122,11 +158,14 @@ test.describe('mobile collection experience', () => {
     await page.addInitScript(() => localStorage.setItem('dexly:theme', 'dark'));
     await openDex(page);
 
-    await expect(page.locator('.quick-toggle')).not.toHaveCSS(
+    await expect(page.getByRole('button', { name: 'Mark collected', exact: true })).not.toHaveCSS(
       'background-color',
       'rgb(255, 255, 255)',
     );
-    await expect(page.locator('.quick-toggle')).toHaveCSS('color', 'rgb(231, 243, 238)');
+    await expect(page.getByRole('button', { name: 'Mark collected', exact: true })).toHaveCSS(
+      'color',
+      'rgb(231, 243, 238)',
+    );
     await expect(page.locator('.dex-results')).toHaveCSS('color', 'rgb(231, 243, 238)');
     await expect(
       page.getByRole('group', { name: 'Collection state' }).getByRole('button', { name: 'All' }),
@@ -223,12 +262,12 @@ test.describe('mobile collection experience', () => {
     const stateFilter = page.getByRole('group', { name: 'Collection state' });
     await expect(stateFilter.getByRole('button', { name: 'Available' })).toHaveCount(0);
 
-    const searchTrigger = page.getByRole('button', { name: 'Open Pokémon search' });
-    await searchTrigger.click();
-    await expect(page.getByLabel('Search Pokémon')).toBeVisible();
-    await expect(page.locator('.dex-compact-bar')).toHaveClass(/is-searching/);
-    await page.getByRole('button', { name: 'Close search' }).click();
-    await expect(searchTrigger).toBeVisible();
+    const search = page.getByRole('searchbox', { name: 'Search Pokémon' });
+    await expect(search).toBeVisible();
+    await search.fill('Pikachu');
+    await page.getByRole('button', { name: 'Clear search' }).click();
+    await expect(search).toHaveValue('');
+    await expect(search).toBeVisible();
 
     const regionPicker = page.locator('.region-standard-select select');
     await expect(regionPicker.locator('option[value="all"]')).toHaveText('All');
@@ -260,7 +299,7 @@ test.describe('mobile collection experience', () => {
       };
     });
     expect(menuLayout).toEqual({ fillsWidth: true, fillsBelowHeader: true });
-    for (const route of ['Home', 'Dex', 'Progress', 'Settings']) {
+    for (const route of ['Home', 'Dex', 'Progress', 'Search Lab', 'Settings']) {
       await expect(menu.getByRole('button', { name: route, exact: true })).toBeVisible();
     }
     await expect(menu.getByRole('button', { name: 'Trade', exact: true })).toHaveCount(0);
@@ -336,7 +375,7 @@ test.describe('mobile collection experience', () => {
     const api = await installFakeApi(page);
     await openDex(page);
 
-    const quickCheck = page.getByRole('button', { name: /^Quick Check/ });
+    const quickCheck = page.getByRole('button', { name: 'Mark collected', exact: true });
     await quickCheck.click();
     await expect(quickCheck).toHaveAttribute('aria-pressed', 'true');
     await expect(page.getByText('Quick Check is on')).toHaveCount(0);
@@ -373,7 +412,7 @@ test.describe('mobile collection experience', () => {
     await openDex(page);
 
     await page.getByLabel('Collection category').selectOption('shadow');
-    await page.getByRole('button', { name: /^Quick Check/ }).click();
+    await page.getByRole('button', { name: 'Mark collected', exact: true }).click();
     const ineligible = page.getByTestId('pokemon-card-2');
     await expect(ineligible).toHaveAttribute('data-state', 'unknown');
     await expect(ineligible).toBeEnabled();
@@ -391,7 +430,7 @@ test.describe('mobile collection experience', () => {
     const api = await installFakeApi(page, { catalogCopies: 10 });
     await openDex(page);
 
-    await page.getByRole('button', { name: /^Quick Check/ }).click();
+    await page.getByRole('button', { name: 'Mark collected', exact: true }).click();
     await page
       .getByRole('group', { name: 'Collection state' })
       .getByRole('button', { name: 'Missing' })
@@ -423,8 +462,7 @@ test.describe('mobile collection experience', () => {
 
     await page.getByLabel('Region').selectOption('Kanto');
     await page.getByLabel('Collection category').selectOption('shiny');
-    await page.getByRole('button', { name: /^Quick Check/ }).click();
-    await page.getByRole('button', { name: 'Open Pokémon search' }).click();
+    await page.getByRole('button', { name: 'Mark collected', exact: true }).click();
     await page.getByRole('searchbox', { name: 'Search Pokémon' }).fill('a');
     const results = page.locator('.dex-results');
     await results.evaluate((element) => element.scrollTo(0, 520));
@@ -436,11 +474,28 @@ test.describe('mobile collection experience', () => {
     await expect(page.getByRole('searchbox', { name: 'Search Pokémon' })).toHaveValue('a');
     await expect(page.getByLabel('Region')).toHaveValue('Kanto');
     await expect(page.getByLabel('Collection category')).toHaveValue('shiny');
-    await expect(page.getByRole('button', { name: /^Quick Check/ })).toHaveAttribute(
+    await expect(page.getByRole('button', { name: 'Mark collected', exact: true })).toHaveAttribute(
       'aria-pressed',
       'true',
     );
     await expect.poll(() => results.evaluate((element) => element.scrollTop)).toBeGreaterThan(200);
+  });
+
+  test('a restored Dex category can still be changed after reload', async ({ page }) => {
+    await installFakeApi(page);
+    await openDex(page);
+
+    await page.getByLabel('Collection category').selectOption('shiny');
+    await expect(page.getByLabel('Collection category')).toHaveValue('shiny');
+    await page.reload();
+    await expect(page.getByLabel('Collection category')).toHaveValue('shiny');
+
+    await page.getByLabel('Collection category').selectOption('xxl');
+    await expect(page.getByLabel('Collection category')).toHaveValue('xxl');
+    await expect(page.locator('.dex-command-ring')).toHaveAttribute(
+      'aria-label',
+      /XXL .* complete/,
+    );
   });
 
   test('Progress accuracy and Search Lab tools stay separate', async ({ page }) => {
@@ -452,6 +507,11 @@ test.describe('mobile collection experience', () => {
     await expect(page).toHaveURL(/#\/progress$/);
     await expect(page.getByRole('heading', { name: 'Progress', exact: true })).toBeVisible();
     await expect(page.locator('.generator-panel')).toHaveCount(0);
+    await expect(page.locator('.progress-command-hero')).toContainText('Collection intelligence');
+
+    await page.locator('.progress-summary-grid button[data-category="shiny"]').click();
+    await expect(page.locator('.progress-focus-card')).toContainText('Shiny');
+    await expect(page.locator('.regional-detail')).toBeVisible();
 
     const kanto = page.locator('.region-shortcut-grid button').filter({ hasText: 'Kanto' });
     await expect(kanto).toContainText('4/8');
@@ -463,7 +523,7 @@ test.describe('mobile collection experience', () => {
     await expect(page).toHaveURL(/#\/search$/);
     await expect(page.locator('.generator-panel')).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Search Lab', exact: true })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Visual search builder' })).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'Visual Search Builder' })).toBeVisible();
 
     const output = page
       .locator('.all-category-searches .search-output')

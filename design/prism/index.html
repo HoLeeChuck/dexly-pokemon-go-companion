@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="color-scheme" content="dark light" />
+    <script src="/prism-bootstrap.js"></script>
+    <script src="/pwa-bootstrap.js" defer></script>
+    <meta name="theme-color" content="#141318" />
+    <meta
+      name="description"
+      content="Track your Pokémon GO collection, forms, Shinies, sizes, and missing Pokémon. Save your collection privately on your browser."
+    />
+    <meta property="og:title" content="CatchGrid · Pokémon GO Collection Companion" />
+    <meta
+      property="og:description"
+      content="Your Pokémon GO collection, in full color. Track your Dex and find what comes next."
+    />
+    <meta property="og:image" content="https://dex.cjdev.app/catchgrid-social.png" />
+    <link rel="canonical" href="https://dex.cjdev.app/" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/icons/catchgrid-192.png" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>CatchGrid · Pokémon GO Collection Companion</title>
+    <link rel="stylesheet" href="./prism.css" />
+  </head>
+  <body>
+    <a href="#main" class="skip">Skip to collection</a>
+    <header class="masthead">
+      <a class="brand" href="#home" aria-label="CatchGrid Home"
+        ><span class="brand-mark" aria-hidden="true">C<span>G</span></span
+        >CatchGrid</a
+      >
+      <button class="menu-toggle quiet" aria-expanded="false" aria-controls="main-nav">
+        Menu <span aria-hidden="true">☰</span>
+      </button>
+      <nav id="main-nav" aria-label="Primary navigation">
+        <a href="#home">Home</a><a href="#dex">Dex</a
+        ><a href="#progress" aria-current="page">Progress</a><a href="#search">Search Lab</a
+        ><a href="#settings">Settings</a>
+      </nav>
+      <button class="theme-toggle quiet" aria-label="Switch to light appearance">
+        ◐ <span>Appearance</span>
+      </button>
+    </header>
+    <section id="app-update" class="update-notice" aria-label="Application update" hidden>
+      <span>A new version of CatchGrid is ready.</span
+      ><button class="primary" data-apply-update>Update now</button
+      ><button class="quiet" data-dismiss-update>Later</button>
+    </section>
+    <noscript>CatchGrid needs JavaScript to manage your collection.</noscript>
+    <main id="main" tabindex="-1"></main>
+    <footer>
+      <span>Independent Pokémon GO collection companion.</span
+      ><span>Independent fan project · no game connection.</span>
+    </footer>
+    <div class="toast" role="status" aria-live="polite" hidden>
+      <span></span>
+    </div>
+    <dialog id="inspect-dialog" aria-label="Pokémon collection details">
+      <button class="dialog-close quiet" aria-label="Close Pokémon details">✕</button>
+      <div id="dialog-content"></div>
+    </dialog>
+    <script type="module" src="./prism.js"></script>
+  </body>
+</html>

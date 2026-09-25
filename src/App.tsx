@@ -475,6 +475,11 @@ export default function App() {
   const [wantedEntries, setWantedEntries] = useState<WantedEntry[]>([]);
   const [pendingKeys, setPendingKeys] = useState<Set<string>>(new Set());
   const [toast, setToast] = useState<ToastState | null>(null);
+  useEffect(() => {
+    if (!toast || toast.tone === 'error' || toast.batchId) return;
+    const timer = window.setTimeout(() => setToast(null), 6000);
+    return () => window.clearTimeout(timer);
+  }, [toast]);
   const revisionRef = useRef(0);
   const collectionRef = useRef<CollectionEntry[]>([]);
   const wantedRef = useRef<WantedEntry[]>([]);
@@ -1122,13 +1127,28 @@ export default function App() {
           </aside>
         )}
         <main>
-          <Suspense fallback={<LoadingScreen />}>
+          <Suspense
+            fallback={
+              <section className="route-loading" role="status" aria-live="polite">
+                <p>
+                  Loading{' '}
+                  {route === 'settings'
+                    ? 'Settings'
+                    : (PRIMARY_ROUTES.find((item) => item.id === route)?.label ?? 'page')}
+                  …
+                </p>
+                <div className="route-loading__heading" aria-hidden="true" />
+                <div className="route-loading__panel" aria-hidden="true" />
+              </section>
+            }
+          >
             {route === 'home' && (
               <HomeDashboard
                 catalog={bootstrap.catalog}
                 categories={bootstrap.categories}
                 entries={collectionEntries}
                 onNavigate={navigate}
+                onOpen={openDetail}
               />
             )}
             {route === 'progress' && (

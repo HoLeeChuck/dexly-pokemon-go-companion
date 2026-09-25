@@ -2,12 +2,12 @@
   "id": "/",
   "name": "CatchGrid · Pokémon GO Collection Companion",
   "short_name": "CatchGrid",
-  "description": "A private-by-default visual Pokémon GO collection and progress companion.",
+  "description": "A private-by-default Pokémon GO collection, progress, and search companion.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#0c2723",
-  "theme_color": "#0c2723",
+  "background_color": "#141318",
+  "theme_color": "#141318",
   "orientation": "any",
   "categories": ["games", "utilities"],
   "icons": [
@@ -25,11 +25,20 @@
     }
   ],
   "shortcuts": [
-    { "name": "Open Pokédex", "short_name": "Dex", "url": "/#/dex" },
+    {
+      "name": "Open Pokédex",
+      "short_name": "Dex",
+      "url": "/#/dex"
+    },
     {
       "name": "Open Search Lab",
       "short_name": "Search Lab",
       "url": "/#/search?section=missing-searches"
+    },
+    {
+      "name": "Open Search Builder",
+      "short_name": "Search Builder",
+      "url": "/#/search?section=search-builder"
     }
   ]
 }

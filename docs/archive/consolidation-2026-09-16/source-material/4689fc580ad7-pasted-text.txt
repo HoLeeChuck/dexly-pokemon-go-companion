@@ -1,0 +1,414 @@
+CatchGrid Pokémon Data & Detail View — Implementation Plan
+Goal
+Correct CatchGrid’s Pokémon collection metadata and bring the Pokémon detail experience into alignment with the intended collection model.
+This work should accomplish four things:
+1. Fix known incorrect/missing collection availability.
+2. Audit the entire Pokémon dataset so we do not continue finding errors manually.
+3. Correct the Pokémon detail UI ordering, terminology, costumes, and navigation.
+4. Preserve all existing user collection data and import/export compatibility.
+Milestone 1 — Audit the existing data model
+Before changing data, Codex should determine exactly how CatchGrid currently represents:
+- Species
+- Evolution families
+- Default forms
+- Alternate forms
+- Regional forms
+- Normal availability
+- Shiny availability
+- Shadow availability
+- Purified availability
+- Mega
+- Multiple Mega variants
+- Primal
+- Gigantamax
+- Costumes
+- Costume shiny availability
+- Collection-state keys such as hundo
+Identify whether these are currently represented as:
+- booleans,
+- arrays,
+- form records,
+- transformation records,
+- separate Pokémon entries,
+- or a mixture.
+Important requirement
+Do not begin by hard-coding UI exceptions for the Pokémon listed below.
+Fix the authoritative Pokémon metadata so every consumer automatically receives the corrected information:
+- Dex
+- Pokémon detail dialog
+- Progress
+- Search generators
+- Filters
+- Import/export
+Milestone 2 — Preserve internal compatibility
+The UI terminology is changing, but existing saved data should not be unnecessarily migrated.
+For example:
+If the internal collection key is currently:
+hundo
+keep that internal key unless there is a compelling technical reason to change it.
+Only change its display representation to:
+★ 100%
+This avoids breaking:
+- local collection state,
+- imports,
+- exports,
+- backups,
+- tests,
+- URLs,
+- existing persisted records.
+Do the same wherever an internal stable identifier can remain unchanged while its UI label changes.
+Milestone 3 — Establish canonical collection ordering
+The Pokémon detail view must use this exact ordering:
+Normal
+Shiny
+★ 100%
+Lucky
+XXL
+XXS
+Mega        ← only if applicable
+G-Max       ← only if applicable
+Shadow
+Purified
+Requirements
+- Use the literal black Unicode star character:
+★
+- Do not use an emoji star such as ⭐.
+- The star should inherit the normal text color.
+- User-facing Hundo labels should become ★ 100%.
+- Internal hundo identifiers may remain unchanged.
+- Mega and G-Max must only appear when supported for that Pokémon.
+- Shadow and Purified remain after transformation categories.
+If Mega/G-Max are displayed as subsections rather than identical toggle cards, their logical position in the page should still respect this order.
+Milestone 4 — Correct transformation modeling
+The data model must support more than a simple:
+hasMega: true
+because Pokémon can have multiple transformation variants.
+At minimum it needs to represent cases such as:
+Raichu
+├── Mega Raichu X
+└── Mega Raichu Y
+Official Pokémon GO material confirms both Mega Raichu X and Mega Raichu Y are available. [Pokémon GO](https://pokemongolive.com/news/raichu-super-mega-raid-day-2026)
+Each transformation should independently contain relevant metadata such as:
+- canonical ID
+- display name
+- sprite/art
+- availability
+- shiny availability
+- transformation type
+Conceptually:
+transformations:
+  - type: mega
+    id: mega-raichu-x
+    name: Mega Raichu X
+    shinyAvailable: true/false
+
+  - type: mega
+    id: mega-raichu-y
+    name: Mega Raichu Y
+    shinyAvailable: true/false
+Do not assume that every species can have only one Mega.
+The same architecture should accommodate:
+- Mega
+- Mega X
+- Mega Y
+- Primal
+- G-Max
+without adding species-specific UI hacks.
+Milestone 5 — Implement Costumes as a real category
+The previous idea of Costumes (Coming Soon) is superseded.
+CatchGrid already contains costume data, especially for Pikachu, so the Costumes tab should now be functional.
+Pokémon detail navigation should become:
+Collection | Costumes
+Only show Costumes when costume records exist, unless the existing design benefits from keeping the tab visible consistently.
+Costumes belong outside the normal Collection view
+Examples:
+- Party Hat Pikachu
+- Witch Hat Pikachu
+- Summer Style Pikachu
+- Mimikyu Costume Pikachu
+- GO Fest Pikachu variants
+- World Championships Pikachu
+- other event-costumed Pikachu
+These should live under:
+Costumes
+and not be mixed into alternate forms.
+Each costume row should support:
+- Small sprite
+- Costume name
+- Normal/Regular collected state
+- Shiny collected state if that costume has been shiny-eligible
+- Availability metadata
+Important separation
+These are not costumes:
+- Gigantamax Pikachu
+- regional forms
+- true alternate forms
+- Mega forms
+Gigantamax Pikachu remains under Collection → G-Max.
+Milestone 6 — Full historical Shadow/Purified audit
+Do not continue correcting Shadow availability one Pokémon at a time.
+Perform a complete dataset audit.
+CatchGrid needs to answer:
+Has this Pokémon/form ever been legitimately obtainable as a Shadow Pokémon in Pokémon GO?
+
+Current Rocket rotation alone is insufficient because CatchGrid tracks historical collection availability.
+Source hierarchy
+Codex should use a reproducible source/audit process.
+Prefer:
+1. Official Pokémon GO announcements wherever available.
+2. A reputable historical Shadow Pokémon database/list for complete historical coverage.
+3. A second independent source for questionable entries.
+Document where the final dataset came from and when it was audited.
+Purified logic
+Generally, a legitimate Shadow Pokémon should also support Purified tracking when purification is possible.
+Do not maintain independent arbitrary Shadow/Purified lists unless Pokémon GO mechanics actually require an exception.
+Milestone 7 — Evolution-line handling
+When a Shadow Pokémon can legitimately be evolved while remaining Shadow, its evolved family members need appropriate Shadow/Purified availability.
+Do not, however, blindly enable every form sharing the same species family.
+Respect distinctions such as:
+- standard form
+- Alolan form
+- Galarian form
+- Hisuian form
+- other alternate forms
+Evolution propagation should operate against the correct form family.
+Known Shadow/Purified corrections
+These are known test cases from the manual review.
+They should be correct after the full audit.
+Pidgey family
+Pidgey
+Pidgeotto
+Pidgeot
+Enable:
+- Shadow
+- Purified
+Mankey family
+Mankey
+Primeape
+Annihilape
+Enable:
+- Shadow
+- Purified
+Tentacool family
+Tentacool
+Tentacruel
+Enable:
+- Shadow
+- Purified
+Ponyta family
+Ponyta
+Rapidash
+Enable:
+- Shadow
+- Purified
+Be careful about regional Ponyta/Rapidash forms. Do not infer form eligibility from the standard form without validation.
+Seel family
+Seel
+Dewgong
+Enable:
+- Shadow
+- Purified
+Shadow Seel is independently confirmed by an official 2026 Pokémon GO announcement. [Pokémon GO](https://pokemongolive.com/news/flying-taxi-taken-over-2026)
+Gastly family
+Gastly
+Haunter
+Gengar
+Enable:
+- Shadow
+- Purified
+Onix family
+Onix
+Steelix
+Enable:
+- Shadow
+- Purified
+Krabby family
+Krabby
+Kingler
+Enable:
+- Shadow
+- Purified
+Explicit correction: Doduo
+Do not use Doduo/Dodrio as a manual correction.
+Doduo was initially mentioned and then explicitly withdrawn.
+Its availability should be determined by the full source audit rather than by the manual notes.
+Milestone 8 — Audit Shiny availability
+Perform the same systematic audit for Shiny availability.
+For every:
+- species,
+- alternate form,
+- regional form,
+- Mega,
+- G-Max,
+- costume,
+determine whether Shiny has actually been obtainable in Pokémon GO.
+Do not assume:
+species shiny available
+=
+every form shiny available
+Shiny eligibility needs to be form-specific.
+Milestone 9 — Audit Mega / Primal / G-Max
+Perform a complete transformation availability audit covering:
+- Mega
+- Mega X
+- Mega Y
+- Primal
+- Gigantamax
+For every transformation, determine:
+- whether it exists in Pokémon GO,
+- whether it is currently/historically obtainable,
+- whether its shiny state is supported,
+- its canonical parent species,
+- its correct sprite/art mapping.
+Raichu X/Y should serve as a regression case because both are officially present in Pokémon GO. [Pokémon GO](https://pokemongolive.com/news/raichu-super-mega-raid-day-2026)
+Milestone 10 — Costume audit
+Audit all known CatchGrid costume records.
+For each costume store:
+- Parent species
+- Unique costume ID
+- Display name
+- Sprite
+- Historical availability
+- Shiny availability
+- Any gender/form restriction if relevant
+Avoid representing costumes merely as arbitrary form-name strings.
+The architecture should support species with many costumes without cluttering the base Collection tab.
+Pikachu is the primary regression case.
+Milestone 11 — Pokémon dialog arrow correction
+The previous/next Pokémon controls currently appear outside the dialog correctly, but still visually use circular buttons.
+Remove the visible circles.
+Desired desktop appearance:
+‹      [ Pokémon dialog ]      ›
+Requirements:
+- Standalone left/right chevrons
+- No visible circular outline
+- No circle background
+- Large invisible hit target for usability
+- Vertically centered
+- Outside the dialog
+- Keyboard accessible
+- Appropriate aria-label
+- Subtle hover/focus treatment
+- Do not recreate a visible circle during hover
+Mobile can continue using an appropriate inline or touch-safe implementation.
+Milestone 12 — Centralize availability logic
+Avoid components checking arbitrary combinations like:
+if (pokemon.name === "Raichu")
+or:
+if (dexNumber === 25)
+UI components should ask the metadata layer things like:
+getCollectionCapabilities(pokemon)
+getTransformations(pokemon)
+getCostumes(pokemon)
+canTrackShadow(form)
+canTrackPurified(form)
+canTrackShiny(form)
+The Pokémon data should remain the source of truth.
+Milestone 13 — Data validation tooling
+Add a validation script/test suite that catches bad metadata before future releases.
+Examples of integrity rules:
+- Purified cannot exist without corresponding Shadow eligibility unless explicitly whitelisted.
+- Transformation IDs must be unique.
+- Costume IDs must be unique.
+- Default form must not duplicate an alternate form.
+- No Unown + Unown A duplication.
+- Every transformation references a valid parent species.
+- Every costume references a valid parent species.
+- Shiny availability belongs to an actual species/form/transformation/costume.
+- Evolution-family Shadow propagation doesn't cross regional-form boundaries accidentally.
+- No duplicate Mega Raichu X/Y records.
+Ideally provide something like:
+pnpm validate:pokemon-data
+or the equivalent appropriate to the repository.
+Milestone 14 — Preserve user data during normalization
+If canonical IDs need to change, add migrations.
+Important cases include:
+- Old costume IDs
+- Default-form normalization
+- Unown A normalization
+- transformation IDs
+- any Shadow/Purified field restructuring
+Migration behavior should:
+- merge duplicate states safely,
+- never turn true into false,
+- preserve Normal/Shiny ownership,
+- preserve special collection states,
+- remain compatible with old imports/backups.
+Test old exported data against the new version.
+Milestone 15 — Regression tests
+At minimum add automated regression coverage for:
+Display order
+Expect:
+Normal
+Shiny
+★ 100%
+Lucky
+XXL
+XXS
+Mega
+G-Max
+Shadow
+Purified
+with conditional transformation entries.
+Star
+Assert the label contains:
+★ 100%
+and does not contain:
+⭐
+Raichu
+Assert:
+Mega Raichu X
+Mega Raichu Y
+exist as independent transformation entries.
+Pikachu
+Assert:
+- costumes appear in Costumes,
+- costumes don't appear as ordinary alternate forms,
+- Gigantamax Pikachu remains in Collection.
+Shadow regression families
+Check the known manual families above.
+Doduo
+Do not hard-code it based on the withdrawn manual note; its result must come from the verified audit dataset.
+Unown
+Ensure:
+Unown A
+appears once.
+Navigation
+Assert desktop previous/next controls don't contain the old visible circular-button styling.
+Milestone 16 — Final dataset audit report
+Codex should produce an audit artifact summarizing what changed.
+For example:
+Pokemon availability audit
+--------------------------
+
+Shadow flags added:        X
+Purified flags added:      X
+Shiny corrections:         X
+Mega records added:        X
+G-Max records added:       X
+Costumes corrected:        X
+Duplicate forms removed:   X
+Migration mappings added:  X
+Include a machine-readable or text list of changed Pokémon/forms so future updates can be reviewed rather than silently altering hundreds of entries.
+Recommended implementation sequence
+I would have Codex execute it in this order:
+1. Audit current schema and Pokémon datasets.
+2. Add metadata integrity tests before modifying records.
+3. Normalize collection capability helpers.
+4. Fix ★ 100% terminology and display ordering.
+5. Correct transformation architecture for multiple variants.
+6. Implement functional Costumes tab.
+7. Perform complete Shadow/Purified historical audit.
+8. Perform Shiny audit.
+9. Perform Mega/Primal/G-Max audit.
+10. Perform costume audit.
+11. Apply known regression cases.
+12. Fix previous/next arrow appearance.
+13. Add migrations where required.
+14. Test old imports/exports/backups.
+15. Run dataset validator.
+16. Run full application test/build suite.
+17. Generate final audit report.
+Definition of done
+This should not be considered complete merely because Pidgey, Mankey, Tentacool, etc. look correct.
+It is complete when CatchGrid has a systematically audited Pokémon availability dataset, the known mistakes are fixed as regression cases, Pokémon forms/costumes/transformations are correctly separated, existing collection data remains intact, and future availability mistakes can be detected through validation rather than visual inspection.

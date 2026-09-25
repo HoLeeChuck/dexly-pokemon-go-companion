@@ -1,0 +1,53 @@
+ M README.md
+ M THIRD_PARTY_NOTICES.md
+ M index.html
+ M package.json
+ M public/manifest.webmanifest
+ M public/sw.js
+ M src/App.tsx
+ M src/app/routing.ts
+ M src/app/useAppNavigation.ts
+ M src/components/DataPage.tsx
+ M src/components/HomeDashboard.tsx
+ M src/components/Icon.tsx
+ M src/components/SearchLab.tsx
+ M src/routes/DexRoute.tsx
+ M src/routes/profile.css
+ M src/routes/search.css
+ M src/styles.css
+ M tests/e2e/accessibility.spec.ts
+ M tests/e2e/desktop.spec.ts
+ M tests/e2e/mobile.spec.ts
+ M tests/e2e/pwa.spec.ts
+ M tests/e2e/resilience.spec.ts
+ M tests/e2e/restore.mobile.spec.ts
+ M tests/e2e/support/fake-api.ts
+ M tests/e2e/vite.config.ts
+ M tests/unit/pwa.test.ts
+ M tests/unit/routing.test.ts
+ M tests/worker/api.test.ts
+ M vite.config.ts
+ M vitest.worker.config.ts
+ M worker/auth.ts
+ M worker/index.ts
+?? docs/archive/
+?? docs/consolidation-2026-09-16/
+?? shared/events.ts
+?? src/components/AdvancedSearchBuilder.tsx
+?? src/lib/api/eventsApi.ts
+?? src/lib/eventPlanner.ts
+?? src/lib/fieldKit.ts
+?? src/routes/EventsPage.tsx
+?? src/routes/FieldKitPage.tsx
+?? src/routes/dex-enhancements.css
+?? src/routes/dex-refresh.css
+?? src/routes/events.css
+?? src/routes/field-kit.css
+?? src/routes/home-refresh.css
+?? src/routes/progress-refresh.css
+?? src/routes/search-builder.css
+?? tests/fixtures/events.ts
+?? tests/unit/event-planner.test.ts
+?? tests/unit/field-kit.test.ts
+?? tests/worker/events.test.ts
+?? worker/events.ts

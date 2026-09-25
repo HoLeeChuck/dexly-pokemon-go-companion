@@ -206,7 +206,7 @@
   border-radius: 11px;
   color: var(--muted);
   background: transparent;
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   font-weight: 750;
 }
 
@@ -238,7 +238,7 @@
   justify-content: space-between;
   margin-bottom: 0.5rem;
   color: var(--brand-200);
-  font-size: 0.58rem;
+  font-size: 0.75rem;
   font-weight: 680;
 }
 
@@ -259,7 +259,7 @@
   color: var(--lime);
   background: rgb(255 255 255 / 5%);
   font-family: 'SFMono-Regular', Consolas, monospace;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -268,7 +268,7 @@
   min-width: 74px;
   color: var(--brand-950);
   background: var(--lime);
-  font-size: 0.66rem;
+  font-size: 0.75rem;
 }
 
 .button--copy svg {
@@ -280,7 +280,7 @@
   gap: 0.45rem;
   margin: 0.65rem 0 0;
   color: var(--brand-200);
-  font-size: 0.6rem;
+  font-size: 0.75rem;
   line-height: 1.5;
 }
 
@@ -296,7 +296,7 @@
   border-radius: 8px;
   color: #f7dca1;
   background: rgb(255 255 255 / 7%);
-  font-size: 0.59rem;
+  font-size: 0.75rem;
   line-height: 1.4;
 }
 
@@ -321,7 +321,7 @@
 
 .search-empty span {
   color: color-mix(in srgb, var(--brand-200) 72%, transparent);
-  font-size: 0.6rem;
+  font-size: 0.75rem;
 }
 
 .recommended-list article {
@@ -346,7 +346,7 @@
 .recommended-description {
   margin: 0.2rem 0 0.5rem;
   color: var(--muted);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   line-height: 1.45;
 }
 
@@ -383,7 +383,7 @@
   min-width: 72px;
   min-height: 36px;
   padding: 0.42rem 0.62rem;
-  font-size: 0.64rem;
+  font-size: 0.75rem;
   white-space: nowrap;
 }
 
@@ -391,7 +391,7 @@
 .recommended-empty {
   margin: 0.52rem 0 0;
   color: var(--muted);
-  font-size: 0.64rem;
+  font-size: 0.75rem;
   line-height: 1.45;
 }
 
@@ -413,7 +413,7 @@
   border-radius: 12px;
   color: #6c5a29;
   background: #fff6d9;
-  font-size: 0.62rem;
+  font-size: 0.75rem;
   line-height: 1.45;
 }
 
@@ -439,13 +439,13 @@
 
 .inline-empty strong {
   color: var(--ink);
-  font-size: 0.73rem;
+  font-size: 0.75rem;
 }
 
 .inline-empty p {
   margin: 0.15rem 0 0;
   color: var(--muted);
-  font-size: 0.61rem;
+  font-size: 0.75rem;
   line-height: 1.45;
 }
 
@@ -478,7 +478,7 @@
 .discord-share-panel__intro {
   margin: -0.25rem 0 0.9rem;
   color: var(--muted);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   line-height: 1.5;
 }
 
@@ -515,12 +515,12 @@
 
 .discord-category-picker button strong {
   color: var(--ink);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
 }
 
 .discord-category-picker button small {
   color: var(--muted);
-  font-size: 0.56rem;
+  font-size: 0.75rem;
 }
 
 .discord-category-picker button[aria-pressed='true'] {
@@ -558,12 +558,12 @@
 }
 
 .discord-message-list article > div strong {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
 }
 
 .discord-message-list article > div small {
   color: var(--muted);
-  font-size: 0.57rem;
+  font-size: 0.75rem;
 }
 
 .discord-message-list pre {
@@ -639,7 +639,7 @@
   max-width: 680px;
   margin: 0.35rem 0 0;
   color: var(--muted);
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   line-height: 1.45;
 }
 
@@ -688,7 +688,7 @@
   color: var(--ink);
   background: var(--paper);
   font: inherit;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 750;
 }
 
@@ -706,7 +706,7 @@
 
 .page--progress .region-shortcut-grid button > span {
   color: var(--muted);
-  font-size: 0.62rem;
+  font-size: 0.75rem;
 }
 
 .page--progress .region-shortcut-grid button.is-active {
@@ -732,7 +732,7 @@
 .page--progress .regional-detail > div:first-child span,
 .regional-progress__empty {
   color: var(--muted);
-  font-size: 0.68rem;
+  font-size: 0.75rem;
 }
 
 .regional-progress__empty {
@@ -800,7 +800,7 @@
   border-radius: 0.5rem;
   color: var(--muted);
   background: transparent;
-  font-size: 0.64rem;
+  font-size: 0.75rem;
   font-weight: 800;
 }
 
@@ -812,7 +812,7 @@
 .missing-search-mode__help {
   margin: -0.25rem 0 0.75rem;
   color: var(--muted);
-  font-size: 0.64rem;
+  font-size: 0.75rem;
   line-height: 1.45;
 }
 
@@ -850,12 +850,12 @@
 
 .search-option-toggle strong {
   color: var(--ink);
-  font-size: 0.68rem;
+  font-size: 0.75rem;
 }
 
 .search-option-toggle small {
   color: var(--muted);
-  font-size: 0.58rem;
+  font-size: 0.75rem;
   line-height: 1.35;
 }
 
@@ -967,13 +967,13 @@
 
   .discord-category-picker button strong {
     overflow: hidden;
-    font-size: 0.66rem;
+    font-size: 0.75rem;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
   .discord-category-picker button small {
-    font-size: 0.52rem;
+    font-size: 0.75rem;
     white-space: nowrap;
   }
 
@@ -993,7 +993,7 @@
   }
 
   .recommended-query {
-    font-size: 0.74rem;
+    font-size: 0.75rem;
   }
 
   .recommended-query-row {
@@ -1076,7 +1076,7 @@
 }
 
 .progress-card__top strong {
-  font-size: 0.68rem;
+  font-size: 0.75rem;
 }
 
 .progress-card__top span {
@@ -1084,7 +1084,7 @@
   border-radius: 999px;
   color: var(--brand-700);
   background: var(--paper);
-  font-size: 0.56rem;
+  font-size: 0.75rem;
   font-weight: 850;
 }
 
@@ -1095,7 +1095,7 @@
 
 .progress-card__count span {
   color: var(--muted);
-  font-size: 0.6rem;
+  font-size: 0.75rem;
   font-weight: 700;
 }
 
@@ -1141,13 +1141,13 @@
 
 .region-shortcut__top strong {
   overflow: hidden;
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   text-overflow: ellipsis;
 }
 
 .page--progress .region-shortcut-grid button > small {
   color: var(--muted);
-  font-size: 0.54rem;
+  font-size: 0.75rem;
 }
 
 .page--progress .region-shortcut-grid button.is-active {
@@ -1178,12 +1178,12 @@
 
 .regional-progress__empty strong {
   color: var(--ink);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
 }
 
 .regional-progress__empty small {
   color: var(--muted);
-  font-size: 0.61rem;
+  font-size: 0.75rem;
 }
 
 .page--search-lab .tool-panel {
@@ -1264,7 +1264,7 @@
 
 .page--search-lab .search-output__meta strong {
   color: white;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
 }
 
 .page--search-lab .search-output__meta span {
@@ -1292,7 +1292,7 @@
   }
 }
 
-@media (min-width: 1320px) {
+@container workspace (min-width: 1100px) {
   .page.page--progress,
   .page.page--search-lab {
     grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -1327,9 +1327,6 @@
 
   .page--search-lab > .generator-panel,
   .page--search-lab > .recommended-panel {
-    max-height: calc(100dvh - 8.5rem);
-    overflow-x: hidden;
-    overflow-y: auto;
-    overscroll-behavior: contain;
+    align-self: start;
   }
 }

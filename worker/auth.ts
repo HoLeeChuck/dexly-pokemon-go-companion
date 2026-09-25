@@ -1,9 +1,9 @@
 import { ApiError } from './http';
 
-export interface AppEnv extends Env {
+export type AppEnv = Omit<Env, 'APP_ACCESS_TOKEN'> & {
   /** Production secret set with `wrangler secret put APP_ACCESS_TOKEN`. */
   APP_ACCESS_TOKEN?: string;
-}
+};
 
 export interface Actor {
   userId: string;

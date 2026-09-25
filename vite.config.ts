@@ -1,5 +1,6 @@
 import { cloudflare } from '@cloudflare/vite-plugin';
 import react from '@vitejs/plugin-react';
+import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { relative, resolve } from 'node:path';
@@ -36,19 +37,42 @@ function publicClientAssets(directory: string): string[] {
 }
 
 export default defineConfig({
+  environments: {
+    client: {
+      build: {
+        rolldownOptions: {
+          input: {
+            app: resolve('index.html'),
+            prism: resolve('design/prism/index.html'),
+            advanced: resolve('advanced/index.html'),
+            owner: resolve('cody/index.html'),
+          },
+        },
+      },
+    },
+  },
   plugins: [
     react(),
     cloudflare(),
     {
       name: 'catchgrid-service-worker-version',
       closeBundle() {
+        if (this.environment.name !== 'client') return;
         const serviceWorkerPath = resolve('dist/client/sw.js');
         if (!existsSync(serviceWorkerPath)) return;
         const source = readFileSync(serviceWorkerPath, 'utf8');
+        const buildId = createHash('sha256')
+          .update(readFileSync(resolve('dist/client/index.html')))
+          .update(publicClientAssets(resolve('dist/client')).sort().join('\n'))
+          .update(readFileSync(resolve('dist/client/prism-bootstrap.js')))
+          .update(readFileSync(resolve('dist/client/pwa-bootstrap.js')))
+          .update(source)
+          .digest('hex')
+          .slice(0, 16);
         writeFileSync(
           serviceWorkerPath,
           source
-            .replace('__CATCHGRID_BUILD_VERSION__', gitSha().slice(0, 12))
+            .replace('__CATCHGRID_BUILD_VERSION__', buildId)
             .replace(
               '/* __CATCHGRID_GENERATED_ASSETS__ */ []',
               JSON.stringify(publicClientAssets(resolve('dist/client')).sort()),
@@ -64,6 +88,8 @@ export default defineConfig({
   },
   server: {
     host: '127.0.0.1',
+    // Playwright rewrites reports while the local app is open; they are not app source.
+    watch: { ignored: ['**/playwright-report/**', '**/test-results/**'] },
   },
   preview: {
     host: '127.0.0.1',

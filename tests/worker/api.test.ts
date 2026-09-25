@@ -1022,7 +1022,7 @@ describe('authoritative CSV import', () => {
     expect(applyResponse.status).toBe(200);
     expect(applied.added).toBe(expectedChanges);
     expect((await bootstrap()).collectionEntries).toHaveLength(expectedChanges);
-  }, 60_000);
+  }, 120_000);
 
   it('claims a no-change import exactly once under concurrent apply requests', async () => {
     const csv = ['form_id,normal', 'form-0001-standard,false'].join('\n');

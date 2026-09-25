@@ -1,0 +1,62 @@
+[
+  {
+    "path": "index.html",
+    "status": 200,
+    "matches": true,
+    "sha256": "1221dfd90ade82f1a3b9786b5b7a652477ed5c76b0f1af421470fd338875d05c"
+  },
+  {
+    "path": "sw.js",
+    "status": 200,
+    "matches": true,
+    "sha256": "d3e51b2b00cba7120ad89bb3f174c016989b2ed3fa8bc953154292df8d4b1efc"
+  },
+  {
+    "path": "advanced/index.html",
+    "status": 200,
+    "matches": true,
+    "sha256": "4adf8c81287c4a065c319785fc61ddbcba3a477a1085564c1277f45147b3f01f"
+  },
+  {
+    "path": "cody/index.html",
+    "status": 200,
+    "matches": true,
+    "sha256": "4adf8c81287c4a065c319785fc61ddbcba3a477a1085564c1277f45147b3f01f"
+  },
+  {
+    "path": "prism-bootstrap.js",
+    "status": 200,
+    "matches": true,
+    "sha256": "910d1a76b5b77d15f8331d57e6b1fe7b3539af852945c1f7e9df27b968665ab8"
+  },
+  {
+    "path": "pwa-bootstrap.js",
+    "status": 200,
+    "matches": true,
+    "sha256": "2c53f7bab603bd6b387567025474d4ccbb1d6972e70a861040d2d05ae7d6bd34"
+  },
+  {
+    "path": "assets/csv-MfARA_t3.js",
+    "status": 200,
+    "matches": true,
+    "sha256": "4c68664e174d53fdd705ddd2b5cd2c675474545e9e6e482c38f5bd7209f6c55b"
+  },
+  {
+    "path": "assets/evolution-families.v1-Dn9RiPnv.js",
+    "status": 200,
+    "matches": true,
+    "sha256": "944ba0be1bc5f3f7cd2588c9098fdab80ed4865224efff50dbc8e0a76f9bf574"
+  },
+  {
+    "path": "assets/prism-DMLXAoNf.js",
+    "status": 200,
+    "matches": true,
+    "sha256": "fc71e1408e633b0a3006576652ab85d03b70d5a0587e93118725cf8ef5bc682b"
+  },
+  {
+    "path": "assets/prism-DhOvxRcv.css",
+    "status": 200,
+    "matches": true,
+    "sha256": "41737a4a91621b31ec6d82fd25365437a4184f8f802d8762e3dcaf0446b467e2"
+  }
+]

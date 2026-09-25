@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   exportCollectionCsv,
   previewCanonicalWideCsv,
@@ -65,6 +65,16 @@ export function DataPage({
 }) {
   const fileRef = useRef<HTMLInputElement>(null);
   const backupRef = useRef<HTMLInputElement>(null);
+  const importRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const section = new URLSearchParams(window.location.hash.split('?')[1] ?? '').get('section');
+    if (section !== 'import') return;
+    const frame = window.requestAnimationFrame(() => {
+      importRef.current?.scrollIntoView({ block: 'start' });
+      importRef.current?.focus({ preventScroll: true });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
   const [fileName, setFileName] = useState('');
   const [csv, setCsv] = useState('');
   const [policy, setPolicy] = useState<CsvImportPolicy>('merge');
@@ -173,7 +183,17 @@ export function DataPage({
   return (
     <section className="page page--data">
       <header className="settings-header simple-page-header">
-        <h1>Settings</h1>
+        <div>
+          <h1>Settings</h1>
+          <p>
+            {storageMode === 'browser'
+              ? 'Your collection is saved in this browser. Export a backup to keep a copy.'
+              : 'Manage your collection and appearance.'}
+          </p>
+        </div>
+        <button type="button" className="button button--secondary" onClick={onExportBackup}>
+          <Icon name="download" /> Export backup
+        </button>
       </header>
 
       {message && (
@@ -409,7 +429,12 @@ export function DataPage({
         )}
       </section>
 
-      <section className="panel import-panel">
+      <section
+        className="panel import-panel"
+        ref={importRef}
+        tabIndex={-1}
+        aria-label="Import collection"
+      >
         <div className="panel-heading">
           <div>
             <span className="eyebrow">Preview before writing</span>

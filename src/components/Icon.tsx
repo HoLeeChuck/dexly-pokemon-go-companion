@@ -7,6 +7,7 @@ export type IconName =
   | 'chevron-right'
   | 'clipboard'
   | 'close'
+  | 'compass'
   | 'database'
   | 'download'
   | 'filter'
@@ -21,11 +22,13 @@ export type IconName =
   | 'refresh'
   | 'search'
   | 'shield'
+  | 'sliders'
   | 'settings'
   | 'sparkles'
   | 'moon'
   | 'sun'
   | 'swap'
+  | 'timer'
   | 'undo'
   | 'upload'
   | 'user'
@@ -43,6 +46,12 @@ const paths: Record<IconName, ReactNode> = {
     </>
   ),
   close: <path d="M6 6l12 12M18 6 6 18" />,
+  compass: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="m15.5 8.5-2.1 4.9-4.9 2.1 2.1-4.9 4.9-2.1Z" />
+    </>
+  ),
   database: (
     <>
       <ellipse cx="12" cy="5" rx="7" ry="3" />
@@ -82,6 +91,14 @@ const paths: Record<IconName, ReactNode> = {
   refresh: <path d="M20 7v5h-5M4 17v-5h5m9.5-4A8 8 0 0 0 6 5l-2 2m2 10a8 8 0 0 0 12.5 0L20 15" />,
   search: <path d="m21 21-4.3-4.3M19 11a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z" />,
   shield: <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Zm-3-10 2 2 4-5" />,
+  sliders: (
+    <>
+      <path d="M4 6h7M15 6h5M4 12h3M11 12h9M4 18h9M17 18h3" />
+      <circle cx="13" cy="6" r="2" />
+      <circle cx="9" cy="12" r="2" />
+      <circle cx="15" cy="18" r="2" />
+    </>
+  ),
   settings: (
     <>
       <circle cx="12" cy="12" r="3" />
@@ -98,6 +115,12 @@ const paths: Record<IconName, ReactNode> = {
     </>
   ),
   swap: <path d="m7 7-4 4 4 4M3 11h13M17 17l4-4-4-4M21 13H8" />,
+  timer: (
+    <>
+      <circle cx="12" cy="13" r="8" />
+      <path d="M9 2h6M12 5v2M17.5 7.5 19 6M12 13l3-2" />
+    </>
+  ),
   undo: <path d="m9 7-5 5 5 5M4 12h9a6 6 0 0 1 6 6" />,
   upload: <path d="M12 16V4m0 0L8 8m4-4 4 4M5 20h14" />,
   user: (

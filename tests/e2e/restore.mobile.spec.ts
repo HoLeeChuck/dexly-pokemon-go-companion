@@ -53,7 +53,7 @@ test.describe('portable backup restore safety', () => {
     await page.locator('.toast__close').click();
 
     await page.goto('/#/dex');
-    await page.getByRole('button', { name: /^Quick Check/ }).click();
+    await page.getByRole('button', { name: 'Mark collected', exact: true }).click();
     await page.getByTestId('pokemon-card-2').click();
     await expect(page.locator('.toast').filter({ hasText: /Ivysaur marked/ })).toHaveCount(0);
 

@@ -1,7 +1,7 @@
 {
   "name": "catchgrid-pokemon-go-companion",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.3.0",
   "type": "module",
   "description": "A visual, Cloudflare-native Pokemon GO collection companion.",
   "scripts": {

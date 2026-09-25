@@ -31,3 +31,9 @@
 
 https://:version.:subdomain.workers.dev/*
   X-Robots-Tag: noindex
+
+/prism-bootstrap.js
+  Cache-Control: public, max-age=0, must-revalidate
+
+/pwa-bootstrap.js
+  Cache-Control: public, max-age=0, must-revalidate

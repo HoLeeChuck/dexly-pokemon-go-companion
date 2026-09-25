@@ -1,0 +1,33 @@
+:root {
+  color-scheme: light;
+  --bg: #f3f2ee;
+  --surface: #fcfcfa;
+  --ink: #25232b;
+  --muted: #696570;
+  --line: #d9d6dd;
+  --violet: #385b72;
+  --tint: #e5edf2;
+  --query-muted: #c9c3d4;
+  --query-accent: #d7c5ff;
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #101115;
+  --surface: #15171d;
+  --ink: #eceef1;
+  --muted: #a4afbf;
+  --line: #303640;
+  --violet: #c4deec;
+  --tint: #25313d;
+  --query-muted: #a4afbf;
+  --query-accent: #c4deec;
+}
+:root[data-theme='dark'] .primary {
+  color: #17101f;
+}
+:root[data-theme='dark'] .query-board .primary {
+  color: white;
+}
+:root[data-theme='dark'] .toast button {
+  color: white;
+}

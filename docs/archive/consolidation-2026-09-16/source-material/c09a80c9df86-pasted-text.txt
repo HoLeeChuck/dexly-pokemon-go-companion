@@ -1,0 +1,291 @@
+I want you to build a new project: a Pokémon GO collection companion that combines a visual Pokédex, collection checklist, search-string builder, CSV importing, and trading tools.
+
+The complete product vision is in:
+
+docs/PROJECT_OVERVIEW.md
+
+Read that document completely before making architectural or product decisions. Treat it as the product source of truth.
+
+PROJECT AND HOSTING REQUIREMENTS
+
+- GitHub will be the canonical source repository.
+- Cloudflare will host and publish the application.
+- Do not use GitHub Pages unless I explicitly request it.
+- Do not use OpenAI Sites.
+- Do not invoke the Sites building or hosting skills.
+- Do not create `.openai/hosting.json`.
+- Do not introduce any OpenAI Sites deployment workflow.
+- Use a Cloudflare-native architecture suitable for a public application.
+- Production data must not depend on a local SQLite file stored on a Worker filesystem.
+
+PREFERRED TECHNICAL STACK
+
+Unless current official Cloudflare documentation gives a strong reason to adjust it, use:
+
+- React
+- TypeScript
+- Vite
+- Cloudflare Vite plugin
+- Cloudflare Workers
+- Workers Static Assets
+- Cloudflare D1 for persistent production data
+- Wrangler for local development, migrations, and deployment
+- Drizzle ORM or another lightweight D1-compatible typed data layer
+- Vitest for unit tests
+- Playwright for important user flows
+- ESLint and Prettier
+- A responsive, accessible CSS system appropriate for a custom Pokémon GO-inspired interface
+
+Use local D1/Miniflare during development and D1 bindings in production.
+
+Before choosing package versions or Cloudflare configuration, check the current official documentation. Prefer supported, current Cloudflare patterns over outdated tutorials.
+
+PRODUCT PRINCIPLE
+
+This should feel like a mobile Pokédex, not a spreadsheet.
+
+The primary collection interface should be a visual three-column Pokémon grid inspired by the Pokémon GO Pokédex experience. It should be optimized for quickly seeing what is collected, what is missing, and checking entries off.
+
+Core collection categories include:
+
+- Normal
+- Shiny
+- Lucky
+- Hundo / Perfect
+- XXL
+- XXS
+- Shadow
+- Purified
+
+The data model must be extensible for:
+
+- Nundo
+- Dynamax
+- Gigantamax
+- Mega
+- Costumes
+- Regional forms
+- Alternate forms
+- Gender differences
+- Backgrounds
+- Living Dex
+- Custom user-created categories
+
+COLLECTION UX
+
+Build the collection experience around:
+
+- A mobile-first, three-column sprite grid
+- Full-color collected entries
+- Clearly dimmed or silhouetted missing entries
+- A different state for unreleased or category-ineligible entries
+- A category selector for Normal, Shiny, Lucky, Hundo, XXL, and so on
+- Search and filtering by name, Pokédex number, generation, region, type, form, and collection state
+- Pokémon detail sheets with Collection, Wanted, and For Trade sections
+- Form and costume galleries
+- An explicit Quick Check mode for rapid one-tap toggling
+- Immediate undo after a checklist change
+- Touch targets of at least 44px
+- Good keyboard and screen-reader accessibility
+- Preservation of scroll position and active filters
+
+Do not silently toggle collection state during ordinary browsing. One-tap toggling belongs in the clearly labeled Quick Check mode.
+
+DATA MODEL
+
+Use stable internal identifiers that do not depend on sprite filenames.
+
+The catalog should distinguish:
+
+- Pokémon species
+- Forms
+- Costumes
+- Gender variants where relevant
+- Collection categories
+- Whether a category is eligible
+- Whether a form/category is released in Pokémon GO
+- Sprite asset references
+- User collection records
+- Wanted records
+- Trade inventory or individual trade specimens
+
+Keep collection records sparse: store meaningful user state rather than generating every Pokémon/category combination.
+
+Trading inventory must support specimens with combined traits. For example, a single trade item may be Shiny + Costume + XXL. Do not flatten that into unrelated category totals.
+
+Pokémon GO trade rules must be represented correctly:
+
+- IVs reroll during trading, so a Hundo cannot be promised as a post-trade Hundo
+- Lucky status is not transferred from an already Lucky Pokémon
+- Shadow Pokémon cannot be traded
+
+ASSETS
+
+Use PokeMiners Pokémon GO sprite assets for this passion project.
+
+Requirements:
+
+- Build a maintainable asset manifest or synchronization pipeline
+- Do not hard-code GitHub directory URLs throughout UI components
+- Keep internal form identifiers independent from upstream filenames
+- Lazy-load sprites
+- Render only visible or nearby grid entries
+- Provide missing-image fallbacks
+- Add attribution and a clear unofficial/fan-project disclaimer
+- Do not collect or request Pokémon GO account credentials
+- Do not scrape private player data
+
+For the first implementation, it is acceptable to use a small representative catalog slice while the import pipeline is being built, but the architecture must support the full Pokémon GO catalog without manually entering every Pokémon.
+
+CSV IMPORT AND EXPORT
+
+Design the import system early, even if the full importer lands after the first collection screen.
+
+It must eventually support:
+
+- Wide format, such as one row per Pokémon with category columns
+- Long format, such as one row per Pokémon/category status
+- Flexible column mapping
+- Preview before applying changes
+- Merge
+- Replace
+- Update-only
+- Duplicate detection
+- Unmatched Pokémon and form reporting
+- Validation errors
+- Automatic backup before import
+- Rollback
+- CSV export for portability
+
+SEARCH STRING LAB
+
+Create a first-class Search Lab with:
+
+- My Missing
+- Visual Builder
+- Recommended Strings
+- Saved Strings
+- Resources and keyword reference
+
+The builder should support:
+
+- Pokémon GO-compatible search keywords
+- AND, OR, and NOT logic
+- Category and attribute filters
+- Selecting visible Pokémon or forms
+- Missing-only strings
+- Pokédex number range compression
+- Splitting strings that become too long
+- Copy-to-clipboard
+- Plain-language explanation of the generated string
+- Clear distinction between exact matches and candidate/result-narrowing strings
+- Saved and reusable templates
+
+Treat search strings as two different workflows:
+
+1. Reconciliation strings for checking Pokémon GO against this application
+2. Trade and planning strings for narrowing in-game inventory
+
+Do not imply that generated strings can perfectly prove every trait when Pokémon GO search syntax cannot represent it exactly.
+
+TRADING
+
+Prepare the data model for:
+
+- Wanted lists
+- For-trade inventories
+- Public trainer profiles
+- Comparing two trainers’ lists
+- Mutual match results
+- A future trading board
+- Discord usernames or profile links
+- Later Discord webhook or bot integration
+
+Begin with safe contact links. Do not build automatic direct messaging until identity, abuse prevention, privacy, rate limiting, and consent have been designed.
+
+PUBLIC AND PRIVATE DATA
+
+The site will eventually be public, so separate:
+
+- Public catalog data
+- Private collection data
+- Public profile data that a user deliberately shares
+- Private contact and account data
+
+Do not expose private collection or contact information by default.
+
+Structure authentication and authorization so multiple users can be supported later. If authentication would block the initial visual MVP, implement a clearly documented local development user abstraction first, but do not expose unprotected production write endpoints.
+
+MVP SCOPE
+
+Build the first useful vertical slice with:
+
+1. Cloudflare-compatible project foundation
+2. D1 schema and migrations
+3. Seed/catalog import structure
+4. Responsive application shell
+5. Three-column visual Pokédex grid
+6. Category selector
+7. Collected, missing, ineligible, and unreleased states
+8. Search and basic filters
+9. Quick Check mode with undo
+10. Pokémon detail sheet
+11. Local development persistence through D1
+12. A basic Search Lab capable of generating and copying simple missing strings
+13. CSV export
+14. Tests for collection changes, category eligibility, and string generation
+15. README with local setup and deployment instructions
+
+Do not attempt the entire trading board or Discord bot before the collection loop is solid.
+
+ENGINEERING EXPECTATIONS
+
+- Inspect the project folder before creating files.
+- Preserve any existing user files.
+- Create and maintain a concise implementation plan.
+- Make reasonable decisions without repeatedly asking me questions.
+- Ask only when a missing choice would materially change the product or cause an external side effect that has not already been authorized.
+- Keep modules focused and typed.
+- Validate all server inputs.
+- Never commit secrets.
+- Provide `.dev.vars.example` or equivalent examples.
+- Keep D1 migrations under version control.
+- Add useful loading, empty, error, and offline/network-failure states.
+- Avoid loading thousands of images or DOM nodes at once.
+- Use virtualization or incremental rendering where appropriate.
+- Test the actual responsive UI, not only individual functions.
+- Check mobile layouts at common iPhone and Android widths.
+- Document architectural decisions that future contributors need to understand.
+
+GITHUB AND CLOUDFLARE DELIVERY
+
+Once the local MVP is working and verified:
+
+- Initialize Git if needed
+- Prepare a clean initial commit
+- Create or connect the GitHub repository
+- Configure a safe Cloudflare deployment workflow
+- Prefer a current Cloudflare-supported GitHub integration or GitHub Actions using Wrangler
+- Keep Cloudflare account IDs, API tokens, and other secrets in GitHub/Cloudflare secret storage
+- Configure D1 bindings and migrations
+- Deploy the Worker and static assets to Cloudflare
+- Verify the deployed application
+- Report the GitHub repository URL and Cloudflare deployment URL
+
+I authorize creating the GitHub repository and Cloudflare deployment after the local implementation and tests pass. Ask me only for account access, repository naming, domain choices, or approvals that cannot be inferred or completed safely.
+
+Do not publish an unfinished or broken build merely to produce a URL.
+
+WORKING STYLE
+
+Start by:
+
+1. Reading `docs/PROJECT_OVERVIEW.md` completely
+2. Inspecting the new project folder
+3. Reviewing current official Cloudflare guidance
+4. Producing a short phased plan
+5. Implementing the first vertical slice
+6. Running tests and visually checking the application
+7. Continuing through deployment while safe progress remains
+
+Keep me updated during the work, but focus on delivering a working application rather than only producing plans or mockups.

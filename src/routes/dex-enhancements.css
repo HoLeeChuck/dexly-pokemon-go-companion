@@ -1,0 +1,148 @@
+.dex-filter-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.dex-filter-toolbar .state-filter {
+  min-width: 0;
+  flex: 1;
+}
+
+.advanced-filter-trigger {
+  position: relative;
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.65rem;
+  border: 0;
+  border-radius: 12px;
+  color: var(--muted);
+  background: transparent;
+  font-size: 0.75rem;
+  font-weight: 760;
+}
+
+.advanced-filter-trigger.is-active {
+  color: var(--brand-800);
+  background: var(--paper);
+  box-shadow: var(--shadow-sm);
+}
+
+.advanced-filter-trigger svg {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.advanced-filter-trigger span {
+  display: grid;
+  width: 18px;
+  height: 18px;
+  place-items: center;
+  border-radius: 50%;
+  color: white;
+  background: var(--brand-700);
+  font-size: 0.75rem;
+}
+
+.dex-advanced-filters {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(150px, 1fr)) auto minmax(120px, auto);
+  align-items: end;
+  gap: 0.55rem;
+  padding: 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--paper) 88%, var(--canvas));
+  box-shadow: var(--shadow-sm);
+}
+
+.dex-advanced-filters label {
+  display: grid;
+  min-width: 0;
+  gap: 0.28rem;
+}
+
+.dex-advanced-filters label > span {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.dex-advanced-filters select {
+  width: 100%;
+  min-height: 38px;
+  padding: 0 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  color: var(--ink);
+  background: var(--paper);
+  font-size: 0.75rem;
+}
+
+.dex-advanced-filters > button {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  color: var(--ink);
+  background: var(--paper);
+  font-size: 0.75rem;
+  font-weight: 760;
+}
+
+.dex-advanced-filters > button:disabled {
+  opacity: 0.45;
+}
+
+.dex-advanced-filters > button svg {
+  width: 0.8rem;
+}
+
+.dex-advanced-filters > p {
+  margin: 0;
+  padding: 0 0.2rem 0.65rem;
+  color: var(--muted);
+  font-size: 0.75rem;
+  text-align: right;
+}
+
+@media (max-width: 700px) {
+  .dex-filter-toolbar {
+    align-items: stretch;
+  }
+
+  .advanced-filter-trigger {
+    padding-inline: 0.55rem;
+  }
+
+  .dex-advanced-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dex-advanced-filters > button,
+  .dex-advanced-filters > p {
+    min-width: 0;
+  }
+
+  .dex-advanced-filters > p {
+    align-self: center;
+    padding: 0;
+  }
+}
+
+@media (max-width: 410px) {
+  .dex-advanced-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .dex-advanced-filters > p {
+    text-align: left;
+  }
+}

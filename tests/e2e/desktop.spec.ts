@@ -1,6 +1,33 @@
 import { expect, test } from '@playwright/test';
 import { installFakeApi } from './support/fake-api';
 
+test('home missing shortcut clears stale filters and opens missing Normal species', async ({
+  page,
+}) => {
+  await installFakeApi(page);
+  await page.goto('/#/dex');
+  await page.getByLabel('Region').selectOption('Johto');
+  await page.getByLabel('Collection category').selectOption('shiny');
+  await page.getByRole('searchbox', { name: 'Search Pokémon' }).fill('Cyndaquil');
+  await page.getByRole('button', { name: 'Mark collected', exact: true }).click();
+  await page.getByRole('button', { name: 'Go to home page' }).click();
+  await page.getByRole('button', { name: 'Open missing view' }).click();
+  await expect(page.getByLabel('Region')).toHaveValue('all');
+  await expect(page.getByLabel('Collection category')).toHaveValue('normal');
+  await expect(page.getByRole('searchbox', { name: 'Search Pokémon' })).toHaveValue('');
+  await expect(
+    page
+      .getByRole('group', { name: 'Collection state' })
+      .getByRole('button', { name: 'Missing', exact: true }),
+  ).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByRole('button', { name: 'Browse', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
+  await expect(page.getByTestId('pokemon-card-4')).toBeVisible();
+  await expect(page.getByTestId('pokemon-card-1')).toHaveCount(0);
+});
+
 test('legacy workers.dev visitors receive a safe export path without an automatic redirect', async ({
   baseURL,
   page,
@@ -79,7 +106,7 @@ test('appearance settings combine a persistent color theme with light and dark m
 
   await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(17, 12, 22)');
   await page.goto('/#/home');
-  await expect(page.locator('.home-section').first()).not.toHaveCSS(
+  await expect(page.locator('.home-card').first()).not.toHaveCSS(
     'background-color',
     'rgb(255, 255, 255)',
   );
@@ -89,7 +116,7 @@ test('appearance settings combine a persistent color theme with light and dark m
   await expect(page.locator('html')).toHaveAttribute('data-accent', 'blue');
   await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(8, 18, 23)');
   await page.goto('/#/home');
-  await expect(page.locator('.home-section').first()).not.toHaveCSS(
+  await expect(page.locator('.home-card').first()).not.toHaveCSS(
     'background-color',
     'rgb(255, 255, 255)',
   );
@@ -122,17 +149,23 @@ test('settings uses a compact dashboard and keeps Cody Cloud access unlisted', a
     return {
       setupTop: Math.round(setup.top),
       appearanceTop: Math.round(appearance.top),
+      appearanceBottom: Math.round(appearance.bottom),
       importTop: Math.round(importPanel.top),
       exportTop: Math.round(exportPanel.top),
       appearanceLeft: Math.round(appearance.left),
       importLeft: Math.round(importPanel.left),
       exportLeft: Math.round(exportPanel.left),
+      importWidth: Math.round(importPanel.width),
+      topRowWidth: Math.round(exportPanel.right - appearance.left),
+      setupHeight: setup.height,
     };
   });
   expect(Math.abs(layout.appearanceTop - layout.exportTop)).toBeLessThan(2);
-  expect(Math.abs(layout.appearanceTop - layout.importTop)).toBeLessThan(2);
+  expect(layout.importTop).toBeGreaterThan(layout.appearanceBottom);
   expect(layout.appearanceLeft).toBeLessThan(layout.exportLeft);
-  expect(layout.exportLeft).toBeLessThan(layout.importLeft);
+  expect(layout.importLeft).toBe(layout.appearanceLeft);
+  expect(Math.abs(layout.importWidth - layout.topRowWidth)).toBeLessThan(2);
+  expect(layout.setupHeight).toBeLessThan(120);
   expect(layout.importTop).toBeLessThan(layout.setupTop);
   await expect(page.locator('.collection-setup-panel')).not.toHaveAttribute('open', '');
 
@@ -153,35 +186,46 @@ test('first launch opens the all-in-one Home without exposing the unfinished Tra
   const api = await installFakeApi(page);
   await page.goto('/');
 
-  await expect(page.getByRole('heading', { name: 'Home', exact: true })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Recommended Search Strings' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: /Your collection starts here|Ready for your next catch/ }),
+  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Trainer-ready strings' })).toBeVisible();
   await expect(page.getByText('Recent Shinies')).toHaveCount(0);
   const dashboardLayout = await page.locator('.page--dashboard').evaluate((dashboard) => {
-    const header = dashboard.querySelector('.home-header')!.getBoundingClientRect();
-    const shortcuts = dashboard.querySelector('.home-shortcuts')!.getBoundingClientRect();
-    const guide = dashboard.querySelector('.home-guide')!.getBoundingClientRect();
-    const lower = dashboard.querySelector('.home-lower-grid')!.getBoundingClientRect();
+    const hero = dashboard.querySelector('.home-command-hero')!.getBoundingClientRect();
+    const metricStrip = dashboard.querySelector('.home-metric-strip')!.getBoundingClientRect();
+    const cards = [...dashboard.querySelectorAll('.home-command-grid > .home-card')].map((card) =>
+      card.getBoundingClientRect(),
+    );
+    const lower = dashboard.querySelector('.home-next-targets')!.getBoundingClientRect();
     return {
       pageOverflows: document.documentElement.scrollWidth > document.documentElement.clientWidth,
-      headerWidth: Math.round(header.width),
-      headerHeight: Math.round(header.height),
+      heroWidth: Math.round(hero.width),
+      heroHeight: Math.round(hero.height),
       lowerWidth: Math.round(lower.width),
-      panelsShareRow: Math.abs(shortcuts.top - guide.top) < 2 && shortcuts.right < guide.left,
+      metricWidth: Math.round(metricStrip.width),
+      panelsShareRow:
+        cards.length === 3 && cards.every((card) => Math.abs(card.top - cards[0].top) < 2),
     };
   });
   expect(dashboardLayout.pageOverflows).toBe(false);
-  expect(dashboardLayout.headerHeight).toBeLessThan(100);
+  expect(dashboardLayout.heroHeight).toBeLessThan(320);
   expect(dashboardLayout.panelsShareRow).toBe(true);
-  expect(Math.abs(dashboardLayout.headerWidth - dashboardLayout.lowerWidth)).toBeLessThan(2);
+  expect(Math.abs(dashboardLayout.heroWidth - dashboardLayout.lowerWidth)).toBeLessThan(2);
+  expect(Math.abs(dashboardLayout.heroWidth - dashboardLayout.metricWidth)).toBeLessThan(2);
   const navigation = page.getByRole('navigation', { name: 'Primary navigation' });
   await expect(navigation.getByRole('button')).toHaveCount(4);
   await expect(navigation.getByRole('button', { name: 'Home' })).toBeVisible();
   await expect(navigation.getByRole('button', { name: 'Progress' })).toBeVisible();
+  await expect(navigation.getByRole('button', { name: 'Live Events' })).toHaveCount(0);
   await expect(navigation.getByRole('button', { name: 'Search Lab' })).toBeVisible();
+  await expect(navigation.getByRole('button', { name: 'Field Kit' })).toHaveCount(0);
   await expect(navigation.getByRole('button', { name: 'Trade' })).toHaveCount(0);
 
   await page.goto('/#/trade');
-  await expect(page.getByRole('heading', { name: 'Home', exact: true })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: /Your collection starts here|Ready for your next catch/ }),
+  ).toBeVisible();
   expect(api.unexpectedWriteCount).toBe(0);
 });
 
@@ -208,7 +252,7 @@ test('primary pages fill the viewport stage and use responsive wide-screen works
     });
     expect(shell.documentScrollHeight).toBeLessThanOrEqual(shell.documentClientHeight + 1);
     expect(shell.mainOverflowY).toBe('auto');
-    expect(Math.abs(shell.stageWidth - shell.pageWidth)).toBeLessThanOrEqual(18);
+    expect(Math.abs(Math.min(shell.stageWidth, 1440) - shell.pageWidth)).toBeLessThanOrEqual(18);
   }
 
   await page.goto('/#/progress');
@@ -263,7 +307,7 @@ test('critical routes fit every public launch viewport without horizontal overfl
     await page.setViewportSize(viewport);
     for (const route of routes) {
       await page.goto(`/#/${route}`);
-      await expect(page.locator('main')).toBeVisible();
+      await expect(page.locator('.page')).toBeVisible();
       const layout = await page.evaluate(() => ({
         clientWidth: document.documentElement.clientWidth,
         scrollWidth: document.documentElement.scrollWidth,
@@ -274,6 +318,38 @@ test('critical routes fit every public launch viewport without horizontal overfl
         clientWidth: viewport.width,
         scrollWidth: viewport.width,
       });
+      const clippedPanels = await page.evaluate(() => {
+        const selectors = [
+          '.home-metric-strip',
+          '.home-command-grid',
+          '.progress-summary-grid',
+          '.progress-summary-grid button',
+          '.region-shortcut-grid',
+          '.region-shortcut-grid button',
+          '.search-preset-grid',
+          '.search-builder__workspace',
+          '.page--data > .panel',
+        ];
+        return [...document.querySelectorAll<HTMLElement>(selectors.join(','))]
+          .filter((element) => {
+            const bounds = element.getBoundingClientRect();
+            return (
+              // Category cards deliberately clip a decorative ::after circle.
+              // Check their actual controls below instead of the decoration's scroll width.
+              (!element.matches('.progress-summary-grid button') &&
+                element.scrollWidth > element.clientWidth + 1) ||
+              [...element.children].some((child) => {
+                const childBounds = child.getBoundingClientRect();
+                return (
+                  childBounds.width > 0 &&
+                  (childBounds.left < bounds.left - 1 || childBounds.right > bounds.right + 1)
+                );
+              })
+            );
+          })
+          .map((element) => element.className);
+      });
+      expect.soft(clippedPanels, `${route} panels at ${viewport.width}px`).toEqual([]);
     }
   }
 });
@@ -299,7 +375,9 @@ test('multi-form details track alternate Regular and Shiny without inflating spe
 
   await page.getByRole('button', { name: 'Close details' }).click();
   await page.goto('/#/home');
-  await expect(page.getByRole('heading', { name: 'A quick snapshot' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: /Your collection starts here|Ready for your next catch/ }),
+  ).toBeVisible();
 });
 
 test('desktop shell shows its sidebar and navigates without the mobile bar', async ({ page }) => {
@@ -381,7 +459,9 @@ test('desktop shell shows its sidebar and navigates without the mobile bar', asy
 
   await sidebar.getByRole('button', { name: 'Go to home page' }).click();
   await expect(page).toHaveURL(/#\/home$/);
-  await expect(page.getByRole('heading', { name: 'Home', exact: true })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: /Your collection starts here|Ready for your next catch/ }),
+  ).toBeVisible();
   expect(api.collectionMutationCount).toBe(0);
   expect(api.unexpectedWriteCount).toBe(0);
 });
@@ -414,25 +494,57 @@ test('Progress and Search Lab remain distinct public destinations', async ({ pag
   await expect(page.locator('.generator-panel')).toBeVisible();
 });
 
-test('Search Lab keeps its desktop sections stacked without overlap', async ({ page }) => {
+test('Visual Search Builder composes presets and custom Pokémon GO terms', async ({ page }) => {
+  await installFakeApi(page);
+  await page.goto('/#/search?section=search-builder');
+
+  const builder = page.getByRole('region', { name: 'Visual Search Builder' });
+  await expect(builder).toBeVisible();
+  await builder.getByRole('button', { name: /Daily catch review/ }).click();
+  await expect(builder.getByText('age0&!#&!traded', { exact: true })).toBeVisible();
+  await builder.getByLabel('Custom Pokémon GO search keyword').fill('buddy3-5');
+  await builder.getByRole('button', { name: 'Add' }).click();
+  await expect(builder.getByText('age0&!#&!traded&buddy3-5', { exact: true })).toBeVisible();
+});
+
+test('Dex advanced filters narrow by type, generation, and wanted status', async ({ page }) => {
+  await installFakeApi(page);
+  await page.goto('/#/dex');
+
+  await page.getByRole('button', { name: /Filters/ }).click();
+  await page.getByLabel('Pokémon type').selectOption('fire');
+  await page.getByLabel('Generation').selectOption('1');
+  await expect(page).toHaveURL(/type=fire/);
+  await expect(page).toHaveURL(/generation=1/);
+  await page
+    .getByRole('group', { name: 'Collection state' })
+    .getByRole('button', { name: 'Wanted' })
+    .click();
+  await expect(page).toHaveURL(/collection=wanted/);
+});
+
+test('Search Lab keeps its desktop workspace aligned without overlap', async ({ page }) => {
   await installFakeApi(page);
   await page.goto('/#/search');
 
   const searchLab = page.locator('.page--search-lab');
-  const [labBox, generatorBox, recommendedBox, discordBox] = await Promise.all([
+  const [labBox, builderBox, generatorBox, recommendedBox, discordBox] = await Promise.all([
     searchLab.boundingBox(),
+    page.locator('#search-builder').boundingBox(),
     page.locator('#missing-searches').boundingBox(),
     page.locator('#recommended-searches').boundingBox(),
     page.locator('#share-tools').boundingBox(),
   ]);
 
-  expect([labBox, generatorBox, recommendedBox, discordBox].every(Boolean)).toBe(true);
-  expect(generatorBox!.y + generatorBox!.height).toBeLessThanOrEqual(recommendedBox!.y + 1);
-  expect(recommendedBox!.y + recommendedBox!.height).toBeLessThanOrEqual(discordBox!.y + 1);
-  expect(Math.abs(recommendedBox!.x - generatorBox!.x)).toBeLessThan(2);
-  expect(Math.abs(discordBox!.x - generatorBox!.x)).toBeLessThan(2);
-  expect(Math.abs(recommendedBox!.width - generatorBox!.width)).toBeLessThan(2);
-  expect(Math.abs(discordBox!.width - generatorBox!.width)).toBeLessThan(2);
+  expect([labBox, builderBox, generatorBox, recommendedBox, discordBox].every(Boolean)).toBe(true);
+  expect(builderBox!.y + builderBox!.height).toBeLessThanOrEqual(generatorBox!.y + 1);
+  expect(Math.abs(recommendedBox!.y - generatorBox!.y)).toBeLessThan(2);
+  expect(generatorBox!.x + generatorBox!.width).toBeLessThanOrEqual(recommendedBox!.x + 1);
+  expect(
+    Math.max(generatorBox!.y + generatorBox!.height, recommendedBox!.y + recommendedBox!.height),
+  ).toBeLessThanOrEqual(discordBox!.y + 1);
+  expect(Math.abs(discordBox!.x - builderBox!.x)).toBeLessThan(2);
+  expect(Math.abs(discordBox!.width - builderBox!.width)).toBeLessThan(2);
 });
 
 test('species-first search discovers named alternate forms directly', async ({ page }) => {

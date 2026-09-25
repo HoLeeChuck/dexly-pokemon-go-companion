@@ -1,0 +1,18 @@
+{
+  "checkedAt": "2026-09-24",
+  "baseline": "2026-08-24.1",
+  "feeds": {
+    "released_pokemon": {
+      "url": "https://pogoapi.net/api/v1/released_pokemon.json",
+      "error": "HTTP Error 403: Forbidden"
+    },
+    "shiny_pokemon": {
+      "url": "https://pogoapi.net/api/v1/shiny_pokemon.json",
+      "error": "HTTP Error 403: Forbidden"
+    },
+    "shadow_pokemon": {
+      "url": "https://pogoapi.net/api/v1/shadow_pokemon.json",
+      "error": "HTTP Error 403: Forbidden"
+    }
+  }
+}

@@ -461,6 +461,7 @@ p {
 }
 
 .app-stage > main {
+  container: workspace / inline-size;
   min-height: 0;
   overflow-x: hidden;
   overflow-y: auto;
@@ -497,7 +498,7 @@ p {
   gap: 0.38rem;
   margin-bottom: 0.35rem;
   color: var(--brand-700);
-  font-size: 0.69rem;
+  font-size: 0.75rem;
   font-weight: 800;
   letter-spacing: 0.115em;
   line-height: 1.3;
@@ -514,6 +515,8 @@ p {
 }
 
 .attribution > .eyebrow {
+  display: block;
+  margin-bottom: 0.4rem;
   color: var(--ink);
 }
 
@@ -654,7 +657,7 @@ p {
 .app-brand small {
   margin-top: 0.18rem;
   color: var(--brand-200);
-  font-size: 0.58rem;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -745,7 +748,7 @@ p {
   margin-top: auto;
   padding: 0 0.8rem;
   border-radius: 14px;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 750;
 }
 
@@ -808,7 +811,7 @@ p {
 
 .mobile-nav-panel__heading .eyebrow {
   margin-bottom: 0.2rem;
-  font-size: 0.58rem;
+  font-size: 0.75rem;
 }
 
 .mobile-nav-panel__heading strong {
@@ -891,7 +894,7 @@ p {
 .origin-migration-banner p {
   margin: 0.15rem 0 0;
   color: var(--muted);
-  font-size: 0.64rem;
+  font-size: 0.75rem;
   line-height: 1.4;
 }
 
@@ -977,13 +980,13 @@ p {
 }
 
 .recovery-screen__snapshots strong {
-  font-size: 0.65rem;
+  font-size: 0.75rem;
 }
 
 .recovery-screen__snapshots small {
   overflow: hidden;
   color: var(--muted);
-  font-size: 0.58rem;
+  font-size: 0.75rem;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -1000,7 +1003,7 @@ p {
   padding: 0.7rem;
   color: var(--muted);
   cursor: pointer;
-  font-size: 0.65rem;
+  font-size: 0.75rem;
 }
 
 .button--danger {
@@ -1052,12 +1055,12 @@ p {
 }
 
 .quick-toggle strong {
-  font-size: 0.73rem;
+  font-size: 0.75rem;
 }
 
 .quick-toggle small {
   color: var(--muted);
-  font-size: 0.6rem;
+  font-size: 0.75rem;
 }
 
 .quick-toggle.is-active {
@@ -1136,7 +1139,7 @@ p {
 
 .progress-ring span {
   color: var(--brand-200);
-  font-size: 0.56rem;
+  font-size: 0.75rem;
   font-weight: 650;
 }
 
@@ -1167,7 +1170,7 @@ p {
 .progress-copy p {
   margin: 0;
   color: var(--brand-200);
-  font-size: 0.67rem;
+  font-size: 0.75rem;
   line-height: 1.4;
 }
 
@@ -1213,7 +1216,7 @@ p {
 .dashboard-overview small {
   overflow: hidden;
   color: var(--brand-200);
-  font-size: 0.56rem;
+  font-size: 0.75rem;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -1281,7 +1284,7 @@ p {
 
 .region-progress-card > header > strong {
   color: var(--brand-700);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
 }
 
 .region-category-grid {
@@ -1294,13 +1297,13 @@ p {
   display: flex;
   justify-content: space-between;
   gap: 0.25rem;
-  font-size: 0.66rem;
+  font-size: 0.75rem;
 }
 
 .region-category-progress small,
 .region-category-progress p {
   color: var(--muted);
-  font-size: 0.58rem;
+  font-size: 0.75rem;
 }
 
 .region-category-progress progress {
@@ -1399,7 +1402,7 @@ p {
   border-radius: 10px;
   color: var(--muted);
   background: transparent;
-  font-size: 0.66rem;
+  font-size: 0.75rem;
   font-weight: 800;
 }
 
@@ -1476,7 +1479,7 @@ p {
   border-radius: 999px;
   color: var(--muted);
   background: color-mix(in srgb, var(--paper) 75%, transparent);
-  font-size: 0.71rem;
+  font-size: 0.75rem;
   font-weight: 720;
 }
 
@@ -1488,7 +1491,7 @@ p {
   border-radius: 50%;
   color: var(--brand-800);
   background: var(--brand-100);
-  font-size: 0.59rem;
+  font-size: 0.75rem;
   font-weight: 900;
 }
 
@@ -1537,14 +1540,14 @@ p {
   border-radius: 50%;
   color: var(--brand-950);
   background: var(--lime);
-  font-size: 0.58rem;
+  font-size: 0.75rem;
   font-weight: 900;
 }
 
 .category-picker__toggle strong {
   min-width: 0;
   overflow: hidden;
-  font-size: 0.67rem;
+  font-size: 0.75rem;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -1700,7 +1703,7 @@ p {
   border-radius: 50%;
   color: var(--brand-950);
   background: var(--lime);
-  font-size: 0.58rem;
+  font-size: 0.75rem;
   font-weight: 900;
 }
 
@@ -1728,14 +1731,14 @@ p {
 }
 
 .picker-copy strong {
-  font-size: 0.69rem;
+  font-size: 0.75rem;
   line-height: 1.15;
 }
 
 .picker-copy small {
   margin-top: 0.12rem;
   color: var(--muted);
-  font-size: 0.52rem;
+  font-size: 0.75rem;
   line-height: 1.15;
 }
 
@@ -1777,7 +1780,7 @@ p {
   box-shadow:
     0 0 0 1px rgb(38 71 63 / 18%),
     0 3px 7px rgb(20 54 47 / 16%);
-  font-size: 0.64rem;
+  font-size: 0.75rem;
   font-weight: 900;
 }
 
@@ -1882,13 +1885,13 @@ p {
 }
 
 .region-options strong {
-  font-size: 0.72rem;
+  font-size: 0.75rem;
 }
 
 .region-options small {
   margin-top: 0.08rem;
   color: var(--muted);
-  font-size: 0.57rem;
+  font-size: 0.75rem;
 }
 
 .search-field {
@@ -1972,7 +1975,7 @@ p {
   outline: 0;
   color: var(--muted);
   background: transparent;
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   font-weight: 700;
   text-overflow: ellipsis;
 }
@@ -1993,7 +1996,7 @@ p {
   border-radius: 12px;
   color: var(--muted);
   background: transparent;
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   font-weight: 730;
 }
 
@@ -2020,14 +2023,14 @@ p {
 
 .grid-heading > div:first-child > span {
   color: var(--muted);
-  font-size: 0.63rem;
+  font-size: 0.75rem;
 }
 
 .state-legend {
   display: none;
   gap: 0.75rem;
   color: var(--muted);
-  font-size: 0.62rem;
+  font-size: 0.75rem;
 }
 
 .state-legend span {
@@ -2095,8 +2098,8 @@ p {
 .pokemon-card__number {
   align-self: flex-start;
   margin-left: 0.16rem;
-  color: var(--faint);
-  font-size: 0.54rem;
+  color: var(--muted);
+  font-size: 0.75rem;
   font-weight: 780;
   letter-spacing: 0.035em;
 }
@@ -2158,7 +2161,7 @@ p {
   width: 100%;
   min-height: 2.6em;
   margin-top: 0.1rem;
-  font-size: clamp(0.62rem, 2.7vw, 0.74rem);
+  font-size: 0.875rem;
   font-weight: 820;
   letter-spacing: -0.02em;
   line-height: 1.3;
@@ -2168,7 +2171,7 @@ p {
 .pokemon-card__representative {
   margin-top: 0.18rem;
   color: var(--muted);
-  font-size: 0.48rem;
+  font-size: 0.75rem;
   font-weight: 750;
   line-height: 1.2;
 }
@@ -2183,7 +2186,7 @@ p {
   border-radius: 999px;
   color: var(--muted);
   background: color-mix(in srgb, var(--paper) 68%, var(--line));
-  font-size: 0.49rem;
+  font-size: 0.75rem;
   font-weight: 760;
   letter-spacing: 0.01em;
 }
@@ -2196,6 +2199,12 @@ p {
 .state-pill--collected {
   color: var(--brand-800);
   background: var(--brand-100);
+}
+
+.state-pill--missing {
+  border: 1px solid color-mix(in srgb, var(--muted) 50%, var(--line));
+  background: var(--paper);
+  color: var(--ink);
 }
 
 .state-pill--unreleased,
@@ -2272,8 +2281,8 @@ p {
 }
 
 .pokemon-card--missing .pokemon-card__sprite {
-  opacity: 0.42;
-  filter: grayscale(1) saturate(0.25) drop-shadow(0 5px 4px rgb(24 54 47 / 7%));
+  opacity: 1;
+  filter: drop-shadow(0 5px 4px rgb(24 54 47 / 10%));
 }
 
 .pokemon-card--missing .pokemon-card__halo {
@@ -2437,7 +2446,7 @@ p {
 .section-heading > span,
 .panel-heading > span {
   color: var(--muted);
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   font-weight: 700;
 }
 
@@ -2530,12 +2539,12 @@ p {
 }
 
 .notice strong {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
 }
 
 .notice p {
   margin: 0.12rem 0 0;
-  font-size: 0.66rem;
+  font-size: 0.75rem;
   line-height: 1.48;
 }
 
@@ -2583,11 +2592,11 @@ p {
 .update-prompt p {
   margin: 0.1rem 0 0;
   color: var(--muted);
-  font-size: 0.6rem;
+  font-size: 0.75rem;
 }
 
 .update-prompt strong {
-  font-size: 0.72rem;
+  font-size: 0.75rem;
 }
 
 .toast {
@@ -2635,7 +2644,7 @@ p {
   min-width: 0;
   flex: 1;
   margin: 0;
-  font-size: 0.67rem;
+  font-size: 0.75rem;
   line-height: 1.35;
 }
 
@@ -2649,7 +2658,7 @@ p {
   border-radius: 10px;
   color: var(--brand-950);
   background: var(--lime);
-  font-size: 0.63rem;
+  font-size: 0.75rem;
   font-weight: 800;
 }
 
@@ -2708,7 +2717,7 @@ p {
 .access-dialog > form > p {
   margin-bottom: 1rem;
   color: var(--muted);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   line-height: 1.5;
 }
 
@@ -2754,7 +2763,7 @@ p {
 .loading-screen p,
 .locked-screen p {
   color: var(--brand-200);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
 }
 
 .loading-orbit {
@@ -2827,8 +2836,8 @@ p {
 
 .error-screen small {
   margin-top: 0.8rem;
-  color: var(--faint);
-  font-size: 0.6rem;
+  color: var(--muted);
+  font-size: 0.75rem;
 }
 
 @keyframes spin {
@@ -2914,7 +2923,7 @@ p {
     border-radius: 13px;
     color: white;
     background: rgb(255 255 255 / 8%);
-    font-size: 0.64rem;
+    font-size: 0.75rem;
     font-weight: 750;
   }
 
@@ -3012,7 +3021,7 @@ p {
     border-radius: 12px;
     color: var(--brand-200);
     background: transparent;
-    font-size: 0.74rem;
+    font-size: 0.75rem;
     font-weight: 720;
     text-align: left;
   }
@@ -3059,20 +3068,20 @@ p {
   }
 
   .sidebar-card strong {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
   }
 
   .sidebar-card p {
     margin: 0.12rem 0 0;
     color: color-mix(in srgb, var(--brand-200) 72%, transparent);
-    font-size: 0.59rem;
+    font-size: 0.75rem;
   }
 
   .sidebar-foot {
     margin: 0.8rem 0 0;
     padding: 0 0.2rem;
     color: color-mix(in srgb, var(--brand-200) 52%, transparent);
-    font-size: 0.52rem;
+    font-size: 0.75rem;
     line-height: 1.5;
   }
 
@@ -3095,7 +3104,7 @@ p {
   }
 
   .sidebar-card--smna > span {
-    font-size: 0.65rem;
+    font-size: 0.75rem;
     font-weight: 950;
   }
 
@@ -3349,7 +3358,7 @@ p {
   .state-pill {
     padding-right: 0.34rem;
     padding-left: 0.34rem;
-    font-size: 0.45rem;
+    font-size: 0.75rem;
   }
 
   .quick-toggle {
@@ -3440,7 +3449,7 @@ p {
   border-radius: 12px;
   color: var(--brand-200);
   background: transparent;
-  font-size: 0.74rem;
+  font-size: 0.75rem;
   font-weight: 720;
   text-align: left;
 }
@@ -3462,13 +3471,13 @@ p {
 }
 .sidebar-secondary .sidebar-foot {
   margin: 0.6rem 0.65rem 0;
-  font-size: 0.58rem;
+  font-size: 0.75rem;
   color: var(--muted);
 }
 .sidebar-secondary > a {
   margin: 0 0.65rem;
   color: var(--muted);
-  font-size: 0.6rem;
+  font-size: 0.75rem;
 }
 .mobile-nav-footer {
   margin-top: auto;
@@ -3508,7 +3517,7 @@ p {
 .mobile-nav-footer a {
   margin: 0 0.65rem;
   color: var(--muted);
-  font-size: 0.6rem;
+  font-size: 0.75rem;
 }
 .mobile-menu-button {
   background: transparent !important;
@@ -3542,7 +3551,7 @@ p {
   min-height: 42px;
   padding: 0.55rem 0.8rem;
   border-radius: 0.85rem;
-  font-size: 0.66rem;
+  font-size: 0.75rem;
 }
 .home-section {
   padding: clamp(1.2rem, 3vw, 2rem);
@@ -3717,7 +3726,7 @@ p {
   border-radius: 50%;
   color: var(--brand-950);
   background: var(--lime);
-  font-size: 0.58rem;
+  font-size: 0.75rem;
   font-weight: 900;
 }
 
@@ -4047,5 +4056,82 @@ p {
 
   .forms-gallery__grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Shared reading scale and page rhythm. */
+:root .app-stage .page {
+  max-width: 1440px;
+}
+:root .page > .simple-page-header {
+  margin-bottom: 0.5rem;
+}
+:root .page > .simple-page-header h1 {
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  line-height: 1.15;
+}
+:root .page .panel-heading h2 {
+  font-size: 1.125rem;
+  line-height: 1.3;
+}
+:root .button {
+  font-size: 0.875rem;
+}
+:root .desktop-sidebar nav button {
+  font-size: 0.875rem;
+}
+:root .page .settings-header p {
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+:root .toast p {
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+:root .state-pill svg {
+  width: 0.875rem;
+  height: 0.875rem;
+  flex-shrink: 0;
+}
+.route-loading {
+  padding: 2rem;
+}
+.route-loading p {
+  color: var(--muted);
+}
+.route-loading__heading,
+.route-loading__panel {
+  background: var(--line);
+  border-radius: 16px;
+}
+.route-loading__heading {
+  width: min(60%, 320px);
+  height: 40px;
+  margin: 1rem 0;
+}
+.route-loading__panel {
+  height: 220px;
+  opacity: 0.5;
+}
+@media (max-width: 700px) {
+  :root .settings-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  :root .pokemon-grid {
+    gap: 0.5rem;
+  }
+  :root .pokemon-card {
+    padding: 0.5rem 0.25rem;
+  }
+  :root .pokemon-card__number {
+    font-size: 0.75rem;
+  }
+  :root .pokemon-card__name {
+    font-size: 0.8125rem;
+  }
+  :root .state-pill {
+    font-size: 0.75rem;
+    padding-inline: 0.35rem;
   }
 }

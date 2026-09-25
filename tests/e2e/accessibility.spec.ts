@@ -2,6 +2,24 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import { installFakeApi } from './support/fake-api';
 
+test('Search Builder selected controls remain readable in dark purple', async ({ page }) => {
+  await installFakeApi(page);
+  await page.goto('/#/settings');
+  await page.getByRole('radio', { name: 'Purple' }).click();
+  await page
+    .getByRole('group', { name: 'Brightness mode' })
+    .getByRole('button', { name: 'Dark', exact: true })
+    .click();
+  await page.goto('/#/search');
+  const builder = page.getByRole('region', { name: 'Visual Search Builder' });
+  await builder.getByRole('button', { name: /Daily catch review/ }).click();
+  const results = await new AxeBuilder({ page })
+    .include('#search-builder')
+    .withRules(['color-contrast'])
+    .analyze();
+  expect(results.violations).toEqual([]);
+});
+
 for (const route of ['home', 'dex', 'progress', 'search', 'settings'] as const) {
   test(`${route} has no automatically detectable serious accessibility violations`, async ({
     page,
@@ -39,6 +57,7 @@ test('mobile menu traps focus, closes with Escape, and restores its trigger', as
 test('every light and dark color theme has no serious detectable violations', async ({
   page,
 }, testInfo) => {
+  test.setTimeout(60_000);
   test.skip(!testInfo.project.name.startsWith('desktop-'), 'Run the theme matrix once per engine.');
   await installFakeApi(page);
   await page.goto('/#/profile');

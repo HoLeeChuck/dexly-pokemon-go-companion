@@ -14,7 +14,9 @@ test('first install works offline and never caches private collection routes', a
   page.on('requestfailed', (request) => failedRequests.push(new URL(request.url()).pathname));
   await installFakeApi(page);
   await page.goto('/#/home');
-  await expect(page.getByRole('heading', { name: 'Home', exact: true })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: /Your collection starts here|Ready for your next catch/ }),
+  ).toBeVisible();
 
   await expect
     .poll(
@@ -46,6 +48,7 @@ test('first install works offline and never caches private collection routes', a
   expect(cachedUrls.filter((url) => /\/assets\/.*\.js$/.test(url)).length).toBeGreaterThan(3);
   expect(cachedUrls.some((url) => /\/assets\/.*\.css$/.test(url))).toBe(true);
   expect(cachedUrls).toContain('/api/v1/catalog');
+  expect(cachedUrls).not.toContain('/api/v1/events');
   expect(cachedUrls).not.toContain('/api/v1/bootstrap');
   expect(cachedUrls).not.toContain('/api/v1/collection');
   expect(cachedUrls).not.toContain('/cody');

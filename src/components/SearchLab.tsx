@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import type { CSSProperties } from 'react';
 import evolutionFamilyData from '../../catalog/evolution-families.v1.json';
 import {
   formatMissingSearchString,
@@ -15,8 +16,11 @@ import {
 import { createCatalogIndex } from '../catalog/catalogIndex';
 import { collectionCategoryLabel } from '../catalog/capabilities';
 import { defaultRegionCatalog } from '../catalog/regionMedals';
+import { AdvancedSearchBuilder } from './AdvancedSearchBuilder';
 import { Icon } from './Icon';
+import { PokemonSprite } from './PokemonSprite';
 import '../routes/search.css';
+import '../routes/progress-refresh.css';
 
 const SEARCH_CATEGORY_IDS = [
   'normal',
@@ -24,6 +28,28 @@ const SEARCH_CATEGORY_IDS = [
   'xxl',
   'xxs',
 ] as const satisfies readonly CategoryId[];
+
+const progressCategoryGlyphs: Record<CategoryId, string> = {
+  normal: '◒',
+  shiny: '✦',
+  lucky: '♢',
+  hundo: '100',
+  xxl: 'XL',
+  xxs: 'XS',
+  shadow: '◐',
+  purified: '◇',
+};
+
+const progressCategoryPrompts: Record<CategoryId, string> = {
+  normal: 'Complete the core National Dex one species at a time.',
+  shiny: 'Turn rare encounters into a complete color collection.',
+  lucky: 'Use trades strategically to close your Lucky Dex gaps.',
+  hundo: 'Keep sight of every perfect-IV trophy still out there.',
+  xxl: 'Build a showcase-ready collection of giant specimens.',
+  xxs: 'Track the smallest Pokémon hiding in your storage.',
+  shadow: 'See which Team GO Rocket catches remain on your list.',
+  purified: 'Measure your purified roster as its own collection lane.',
+};
 
 interface SearchRecommendation {
   id: string;
@@ -65,76 +91,208 @@ export function ProgressPage({
   const catalogIndex = useMemo(() => createCatalogIndex(catalog), [catalog]);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
   const [regionalCategory, setRegionalCategory] = useState<CategoryId>('normal');
-  const regionCatalog = useMemo(
-    () => (selectedRegion ? defaultRegionCatalog(catalogIndex, selectedRegion) : []),
-    [catalogIndex, selectedRegion],
-  );
-  const regionalMissing = useMemo(
+  const [focusCategory, setFocusCategory] = useState<CategoryId>('normal');
+  const collectedKeys = useMemo(
     () =>
-      regionCatalog.filter(
-        (item) =>
-          item.rules[regionalCategory] === 'released' &&
-          !entries.some(
-            (entry) =>
-              entry.formId === item.id && entry.categoryId === regionalCategory && entry.collected,
-          ),
+      new Set(
+        entries
+          .filter((entry) => entry.collected)
+          .map((entry) => `${entry.formId}:${entry.categoryId}`),
       ),
-    [entries, regionCatalog, regionalCategory],
+    [entries],
   );
   const categoryProgress = useMemo(
     () =>
       categories.map((category) => {
         const available = nationalCatalog.filter((item) => item.rules[category.id] === 'released');
         const collected = available.filter((item) =>
-          entries.some(
-            (entry) =>
-              entry.formId === item.id && entry.categoryId === category.id && entry.collected,
-          ),
+          collectedKeys.has(`${item.id}:${category.id}`),
         ).length;
         return {
           category,
           available: available.length,
           collected,
+          missing: Math.max(0, available.length - collected),
           percentage: available.length ? Math.round((collected / available.length) * 100) : 0,
         };
       }),
-    [categories, entries, nationalCatalog],
+    [categories, collectedKeys, nationalCatalog],
   );
+  const regionProgress = useMemo(
+    () =>
+      catalogIndex.regions
+        .filter((region) => region.toLowerCase() !== 'unknown')
+        .map((region) => {
+          const scoped = defaultRegionCatalog(catalogIndex, region);
+          const available = scoped.filter((item) => item.rules[regionalCategory] === 'released');
+          const collected = available.filter((item) =>
+            collectedKeys.has(`${item.id}:${regionalCategory}`),
+          ).length;
+          return {
+            region,
+            available: available.length,
+            collected,
+            missing: Math.max(0, available.length - collected),
+            percentage: available.length ? Math.round((collected / available.length) * 100) : 0,
+          };
+        }),
+    [catalogIndex, collectedKeys, regionalCategory],
+  );
+  const closestRegion = useMemo(
+    () =>
+      [...regionProgress]
+        .filter(({ available, percentage }) => available > 0 && percentage < 100)
+        .sort(
+          (left, right) => right.percentage - left.percentage || left.missing - right.missing,
+        )[0] ?? regionProgress[0],
+    [regionProgress],
+  );
+  const activeRegion = selectedRegion ?? closestRegion?.region ?? null;
+  const activeRegionProgress =
+    regionProgress.find(({ region }) => region === activeRegion) ?? closestRegion;
+  const regionCatalog = useMemo(
+    () => (activeRegion ? defaultRegionCatalog(catalogIndex, activeRegion) : []),
+    [activeRegion, catalogIndex],
+  );
+  const regionalMissing = useMemo(
+    () =>
+      regionCatalog.filter(
+        (item) =>
+          item.rules[regionalCategory] === 'released' &&
+          !collectedKeys.has(`${item.id}:${regionalCategory}`),
+      ),
+    [collectedKeys, regionCatalog, regionalCategory],
+  );
+  const focusProgress =
+    categoryProgress.find(({ category }) => category.id === focusCategory) ?? categoryProgress[0];
+  const normalProgress =
+    categoryProgress.find(({ category }) => category.id === 'normal') ?? categoryProgress[0];
+  const overallScore = categoryProgress.length
+    ? Math.round(
+        categoryProgress.reduce((total, progress) => total + progress.percentage, 0) /
+          categoryProgress.length,
+      )
+    : 0;
+  const nextMilestone = focusProgress
+    ? focusProgress.percentage >= 100
+      ? 100
+      : Math.min(100, (Math.floor(focusProgress.percentage / 10) + 1) * 10)
+    : 0;
+  const nextMilestoneCount = focusProgress
+    ? Math.ceil((focusProgress.available * nextMilestone) / 100)
+    : 0;
+  const catchesToMilestone = focusProgress
+    ? Math.max(0, nextMilestoneCount - focusProgress.collected)
+    : 0;
+  const activeRegionLabel = activeRegion
+    ? activeRegion.charAt(0).toUpperCase() + activeRegion.slice(1).toLowerCase()
+    : 'Region';
+  const regionalCategoryLabel =
+    categories.find((item) => item.id === regionalCategory)?.label ?? regionalCategory;
+
   return (
     <section className="page page--progress">
-      <header className="tool-page-header progress-page-header simple-page-header">
-        <h1>Progress</h1>
+      <header className="tool-page-header progress-page-header simple-page-header progress-command-hero">
+        <div className="progress-command-hero__intro">
+          <span className="progress-command-hero__eyebrow">
+            <Icon name="chart" /> Collection intelligence
+          </span>
+          <h1>Progress</h1>
+          <p>
+            Turn your Pokédex into a plan. See the closest wins, pick a collection lane, and know
+            exactly what to hunt next.
+          </p>
+        </div>
+        <div
+          className="progress-score-ring"
+          style={{ '--progress-score': `${overallScore * 3.6}deg` } as CSSProperties}
+          aria-label={`Collection score ${overallScore}%`}
+        >
+          <span>
+            <strong>{overallScore}%</strong>
+            <small>Score</small>
+          </span>
+        </div>
+        <div className="progress-command-hero__signals">
+          <article>
+            <span>Core Dex</span>
+            <strong>{normalProgress?.collected.toLocaleString() ?? 0}</strong>
+            <small>of {normalProgress?.available.toLocaleString() ?? 0} species</small>
+          </article>
+          <article>
+            <span>Closest finish</span>
+            <strong>{closestRegion?.region ?? '—'}</strong>
+            <small>{closestRegion?.missing.toLocaleString() ?? 0} catches away</small>
+          </article>
+          <article>
+            <span>Active goal</span>
+            <strong>{focusProgress ? `${nextMilestone}%` : '—'}</strong>
+            <small>{catchesToMilestone} catches to milestone</small>
+          </article>
+        </div>
       </header>
 
       <section className="progress-overview" aria-labelledby="progress-overview-title">
         <div className="section-heading">
           <div>
-            <span className="eyebrow">Overall collection</span>
-            <h2 id="progress-overview-title">National Dex species progress</h2>
+            <span className="eyebrow">Collection lanes</span>
+            <h2 id="progress-overview-title">Pick your next goal</h2>
             <p className="section-scope-note">
-              Counts default National Dex species only; collector forms and transformations are
-              tracked separately in the Dex.
+              Each lane counts released default National Dex species. Select one to reveal its next
+              milestone.
             </p>
           </div>
         </div>
+        {focusProgress && (
+          <div className="progress-focus-card" data-category={focusProgress.category.id}>
+            <span className="progress-focus-card__glyph" aria-hidden="true">
+              {progressCategoryGlyphs[focusProgress.category.id]}
+            </span>
+            <div>
+              <span>Focused lane</span>
+              <strong>{collectionCategoryLabel(focusProgress.category)}</strong>
+              <small>{progressCategoryPrompts[focusProgress.category.id]}</small>
+            </div>
+            <div className="progress-focus-card__goal">
+              <strong>
+                {focusProgress.percentage >= 100 ? 'Complete' : `+${catchesToMilestone}`}
+              </strong>
+              <span>
+                {focusProgress.percentage >= 100
+                  ? 'Milestone cleared'
+                  : `to reach ${nextMilestone}%`}
+              </span>
+            </div>
+          </div>
+        )}
         <div className="progress-summary-grid">
-          {categoryProgress.map(({ category, available, collected, percentage }) => {
+          {categoryProgress.map(({ category, available, collected, missing, percentage }) => {
             return (
-              <article key={category.id}>
+              <button
+                type="button"
+                key={category.id}
+                className={focusCategory === category.id ? 'is-active' : ''}
+                data-category={category.id}
+                aria-pressed={focusCategory === category.id}
+                onClick={() => setFocusCategory(category.id)}
+              >
                 <div className="progress-card__top">
-                  <strong>{collectionCategoryLabel(category)}</strong>
+                  <span className="progress-card__identity">
+                    <i aria-hidden="true">{progressCategoryGlyphs[category.id]}</i>
+                    <strong>{collectionCategoryLabel(category)}</strong>
+                  </span>
                   <span>{percentage}%</span>
                 </div>
                 <div className="progress-card__count">
                   <strong>{collected}</strong>
-                  <span>of {available}</span>
+                  <span>{missing} left</span>
                 </div>
                 <progress
                   value={collected}
                   max={available || 1}
                   aria-label={`${collectionCategoryLabel(category)} ${percentage}% complete`}
                 />
-              </article>
+              </button>
             );
           })}
         </div>
@@ -144,87 +302,106 @@ export function ProgressPage({
         <div className="section-heading regional-progress__heading">
           <div>
             <span className="eyebrow">Regional explorer</span>
-            <h2 id="regional-progress-title">Where are your gaps?</h2>
+            <h2 id="regional-progress-title">Find the fastest regional win</h2>
+            <p className="section-scope-note">Jump between regions and open any missing target.</p>
           </div>
-          {selectedRegion && (
-            <label>
-              <span className="sr-only">Regional collection category</span>
-              <select
-                aria-label="Regional collection category"
-                value={regionalCategory}
-                onChange={(event) => setRegionalCategory(event.target.value as CategoryId)}
-              >
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {collectionCategoryLabel(category)}
-                  </option>
-                ))}
-              </select>
-            </label>
-          )}
+          <label>
+            <span>Track lane</span>
+            <select
+              aria-label="Regional collection category"
+              value={regionalCategory}
+              onChange={(event) => setRegionalCategory(event.target.value as CategoryId)}
+            >
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {collectionCategoryLabel(category)}
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
         <div className="region-shortcut-grid">
-          {catalogIndex.regions.map((region) => {
-            const scoped = defaultRegionCatalog(catalogIndex, region);
-            const available = scoped.filter(
-              (entry) => entry.rules[regionalCategory] === 'released',
-            );
-            const collected = available.filter((entry) =>
-              entries.some(
-                (owned) =>
-                  owned.formId === entry.id &&
-                  owned.categoryId === regionalCategory &&
-                  owned.collected,
-              ),
-            ).length;
-            const percentage = available.length
-              ? Math.round((collected / available.length) * 100)
-              : 0;
+          {regionProgress.map(({ region, available, collected, missing, percentage }) => {
             const label = region.charAt(0).toUpperCase() + region.slice(1).toLowerCase();
             return (
               <button
                 type="button"
                 key={region}
-                className={selectedRegion === region ? 'is-active' : ''}
-                aria-pressed={selectedRegion === region}
+                className={activeRegion === region ? 'is-active' : ''}
+                aria-pressed={activeRegion === region}
                 onClick={() => setSelectedRegion(region)}
               >
+                <span className="region-shortcut__mark" aria-hidden="true">
+                  {label.slice(0, 2)}
+                </span>
                 <span className="region-shortcut__top">
                   <strong>{label}</strong>
                   <span>{percentage}%</span>
                 </span>
                 <progress
                   value={collected}
-                  max={available.length || 1}
+                  max={available || 1}
                   aria-label={`${label} ${percentage}% complete`}
                 />
                 <small>
-                  {collected}/{available.length} caught
+                  {collected}/{available} caught · {missing} left
                 </small>
               </button>
             );
           })}
         </div>
-        {selectedRegion ? (
+        {activeRegion ? (
           <div className="regional-detail">
-            <div>
-              <strong>
-                {selectedRegion.charAt(0).toUpperCase() + selectedRegion.slice(1).toLowerCase()} ·{' '}
-                {collectionCategoryLabel(categories.find((item) => item.id === regionalCategory)!)}
-              </strong>
-              <span>{regionalMissing.length} obtainable Pokémon missing</span>
+            <div className="regional-detail__summary">
+              <span className="regional-detail__medal" aria-hidden="true">
+                {activeRegionLabel.slice(0, 2)}
+              </span>
+              <div>
+                <span>Your {regionalCategoryLabel} route</span>
+                <strong>{activeRegionLabel}</strong>
+                <small>
+                  {regionalMissing.length
+                    ? `${regionalMissing.length} obtainable targets remain`
+                    : 'Every available target is caught'}
+                </small>
+              </div>
+              <div className="regional-detail__score">
+                <strong>{activeRegionProgress?.percentage ?? 0}%</strong>
+                <span>complete</span>
+              </div>
             </div>
-            <div className="regional-missing-list">
-              {regionalMissing.map((pokemon) => (
-                <button
-                  type="button"
-                  key={pokemon.id}
-                  onClick={() => onOpen?.(pokemon, regionalMissing)}
-                >
-                  <span>#{String(pokemon.dexNumber).padStart(4, '0')}</span> {pokemon.name}
-                </button>
-              ))}
-            </div>
+            {regionalMissing.length ? (
+              <div className="regional-target-board">
+                <div className="regional-target-board__heading">
+                  <span>Next targets</span>
+                  <small>Tap a Pokémon for collection details</small>
+                </div>
+                <div className="regional-missing-list">
+                  {regionalMissing.map((pokemon) => (
+                    <button
+                      type="button"
+                      key={pokemon.id}
+                      onClick={() => onOpen?.(pokemon, regionalMissing)}
+                    >
+                      <PokemonSprite item={pokemon} />
+                      <span>
+                        <small>#{String(pokemon.dexNumber).padStart(4, '0')}</small>
+                        <strong>{pokemon.name}</strong>
+                      </span>
+                      <Icon name="chevron-right" />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="regional-detail__complete">
+                <Icon name="check" />
+                <span>
+                  <strong>Region complete</strong>
+                  <small>Switch lanes to find the next challenge.</small>
+                </span>
+              </div>
+            )}
           </div>
         ) : (
           <div className="regional-progress__empty">
@@ -421,7 +598,9 @@ export function SearchLabPage({
     const section = query ? new URLSearchParams(query).get('section') : null;
     if (!section) return;
     const frame = window.requestAnimationFrame(() =>
-      document.getElementById(section)?.scrollIntoView({ block: 'start', behavior: 'auto' }),
+      document
+        .getElementById(section)
+        ?.scrollIntoView({ block: 'start', inline: 'start', behavior: 'auto' }),
     );
     return () => window.cancelAnimationFrame(frame);
   }, []);
@@ -431,6 +610,8 @@ export function SearchLabPage({
       <header className="tool-page-header search-page-header simple-page-header">
         <h1 id="search-lab-title">Search Lab</h1>
       </header>
+
+      <AdvancedSearchBuilder />
 
       <section
         className="panel generator-panel tool-panel tool-panel--missing"

@@ -8,6 +8,8 @@ export default defineConfig({
       wrangler: { configPath: './wrangler.jsonc' },
       miniflare: {
         bindings: {
+          // Worker tests must not inherit a developer's local owner secret.
+          APP_ACCESS_TOKEN: '',
           TEST_MIGRATIONS: await readD1Migrations(
             fileURLToPath(new URL('./migrations', import.meta.url)),
           ),
