@@ -1,25 +1,42 @@
 # Architecture
 
-CatchGrid is a local-first Cloudflare Worker application. Vite builds the React SPA and
-Worker module, D1 holds the shared catalog and one optional owner profile, and normal
-trainer state remains in the browser under the validated
-`catchgrid:local-profile:v2` schema.
+CatchGrid is a local-first Cloudflare Worker application. The public site is a
+framework-free ES-module app in `app/` that bundles the reviewed catalog and keeps every
+trainer's collection in the browser under the validated `catchgrid:local-profile:v2`
+schema. The private `/cody` route is a React app in `src/` that talks to authenticated
+Worker APIs backed by D1.
 
 ```mermaid
 flowchart LR
-  B["React + TypeScript PWA"] -->|"profile-free catalog GET"| W["Cloudflare Worker"]
-  B --> L[("Local profile v2 + recovery snapshots")]
-  W --> C["Cloudflare Cache API"]
-  C -->|"cache miss"| R["Typed D1 repository"]
-  R --> D[("Shared catalog in D1")]
-  O["Unlisted owner route"] -->|"separate bearer secret"| W
-  W --> P[("Legacy owner profile in D1")]
-  B --> S["Service worker + static assets"]
+  A["Public app (app/)"] --> L[("Local profile v2 + recovery snapshots")]
+  A --> C["Bundled catalog + reviewed overlay"]
+  A --> S["Service worker + static assets"]
+  O["/cody React app (src/)"] -->|"separate bearer secret"| W["Cloudflare Worker"]
+  W --> R["Typed D1 repository"]
+  R --> D[("Catalog + owner profile in D1")]
 ```
+
+## Public app
+
+- `app/main.js` owns hash routing, state, rendering and events. Rendering builds markup
+  strings and reconciles them with `app/dom.js` by `data-key`, so artwork, focus and form
+  state survive updates. Because reconciliation can morph a clicked element into a
+  different control, the click handler decides behavior from a clone of the clicked
+  element (`probe`).
+- `app/data.js` is the only writer of collection data. It reuses the storage, snapshot,
+  backup and CSV contracts from `src/lib` and `shared/`. `setMany` applies bulk changes
+  (paint mode, region setup, undo) in one save with a forced recovery snapshot.
+  New entries carry `updatedAt`, which powers recaps.
+- `app/insights.js` (medals, almost complete, evolution hints, recaps), `app/share.js`
+  (compare-link bitsets in the URL fragment), `app/poster.js` (canvas images),
+  `app/recommendations.js` (Cody's picks and Discord messages) and `app/legacy-moves.js`
+  are read-only helpers.
+- Preferences that are not collection data (appearance, accent, silhouettes, trainer
+  name) live under `catchgrid:prism:*` keys in browser storage.
 
 ## Runtime boundaries
 
-- `src/` owns presentation, accessible interaction, local profile coordination, PWA update
+- `src/` is the `/cody` owner app and also provides the shared local-profile, backup and PWA update
   prompts, CSV/full-profile portability, and the typed API client.
 - `src/app/` owns custom hash/`/cody` routing and PWA updates; `src/catalog/` owns the
   memoized catalog index and shared regional-medal calculations.

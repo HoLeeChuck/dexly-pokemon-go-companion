@@ -24,7 +24,7 @@ Catalog `2026-08-13.1` was first deployed from protected `main` application-rele
 species, 177 reviewed collector forms, and 1,202 form rows total. Later reviewed documentation
 and operations descendants preserve those application assets while receiving their own release
 metadata. Unreleased standard placeholders remain in denominators. Exact staging and production evidence is retained in
-[`RELEASE_EVIDENCE_2026-08-13.md`](RELEASE_EVIDENCE_2026-08-13.md); repeat the runbook for every
+the 2026-08-13 release record (in Git history before the September 2026 cleanup); repeat the runbook for every
 later release rather than treating that evidence as permanent.
 
 ## Local release gate
@@ -57,7 +57,7 @@ The staging D1 resource is provisioned with its real UUID. The August 13 Phase B
 migrated, deployed, smoke-tested, and rollback-rehearsed. Its final deployment version is
 `0977a8ee-57d6-4cb4-9dda-291f88b622e6`, serving source
 `29dbbb0078c0379ec16ba2637caaf07f311b46fa`; see
-[`RELEASE_EVIDENCE_2026-08-13.md`](RELEASE_EVIDENCE_2026-08-13.md). Repeat the same gates for every
+the 2026-08-13 release record (in Git history before the September 2026 cleanup). Repeat the same gates for every
 new release candidate rather than treating historical evidence as permanent.
 Never substitute the production UUID.
 

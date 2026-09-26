@@ -1,0 +1,300 @@
+import { expect, test, type Page } from '@playwright/test';
+
+// Every test starts from an empty, isolated browser profile.
+const isMobile = (page: Page) => (page.viewportSize()?.width ?? 1440) <= 800;
+
+async function open(page: Page, hash: string) {
+  await page.goto(`/#${hash}`);
+  await expect(page.locator('main')).not.toBeEmpty();
+}
+
+test('marks a Pokémon from the Dex grid and keeps it after reload', async ({ page }) => {
+  await open(page, 'dex?r=kanto');
+  await page.getByRole('button', { name: 'Grid' }).click();
+  await page.getByRole('button', { name: /^Toggle Bulbasaur Normal, missing/ }).click();
+  await expect(
+    page.getByRole('button', { name: /^Toggle Bulbasaur Normal, collected/ }),
+  ).toBeVisible();
+  await page.reload();
+  await page.getByRole('button', { name: 'Grid' }).click();
+  await expect(
+    page.getByRole('button', { name: /^Toggle Bulbasaur Normal, collected/ }),
+  ).toBeVisible();
+});
+
+test('viewing details never changes collection state', async ({ page }) => {
+  await open(page, 'dex?r=kanto');
+  await page.getByRole('button', { name: 'Grid' }).click();
+  await page.getByRole('button', { name: 'View details for Ivysaur' }).click();
+  const inspector = page.getByRole('complementary', { name: 'Ivysaur collection inspector' });
+  await expect(inspector).toBeVisible();
+  await expect(inspector.getByRole('button', { name: 'Toggle Normal: missing' })).toBeVisible();
+});
+
+test('the Pokédex shelf opens a region device with a working scanner', async ({ page }) => {
+  await open(page, 'dex');
+  await expect(page.locator('.device-card')).toHaveCount(12);
+  await page.getByRole('link', { name: /^Open the Johto Pokédex/ }).click();
+  await expect(page).toHaveURL(/#dex\?r=johto$/);
+  await expect(page.getByRole('heading', { name: 'Johto Pokédex' })).toBeVisible();
+  const name = page.locator('.hud-readout h3');
+  await expect(name).toHaveText('Chikorita');
+  await page.getByRole('button', { name: 'Inspect next Pokémon' }).click();
+  await expect(name).toHaveText('Bayleef');
+  await page.locator('#dex-dial').fill('100');
+  await expect(name).toHaveText('Celebi');
+  await expect(page.locator('.official-link')).toHaveAttribute(
+    'href',
+    'https://www.pokemon.com/us/pokedex/celebi',
+  );
+  await page.getByRole('link', { name: 'All Pokédexes' }).click();
+  await expect(page.locator('.device-card')).toHaveCount(12);
+});
+
+test('the National Dex grid is paged instead of one endless list', async ({ page }) => {
+  await open(page, 'dex?r=national');
+  await page.getByRole('button', { name: 'Grid' }).click();
+  await expect(page.locator('#dex-results .target-wrap')).toHaveCount(100);
+  await page.locator('.pager').first().getByRole('button', { name: '#1001–#1025' }).click();
+  await expect(page.locator('#dex-results .target-wrap')).toHaveCount(25);
+});
+
+test('the footer links to sources and credits', async ({ page }) => {
+  await open(page, 'home');
+  await page.locator('footer').getByRole('link', { name: 'Sources & credits' }).click();
+  await expect(page.locator('main')).toHaveAttribute('data-route', 'about');
+  await expect(page.getByRole('heading', { name: 'Copyright and trademarks' })).toBeVisible();
+});
+
+test('Search Lab keeps Cody’s eight recommendations in order', async ({ page }) => {
+  await open(page, 'search?section=recommended-searches');
+  await expect(page.locator('.recommendation h3')).toHaveText([
+    'Trade',
+    'Megas',
+    'Tag',
+    'Evolve',
+    'Special Moves',
+    'Untagged',
+    'XXL',
+    'XXS',
+  ]);
+  await expect(page.locator('.recommendation code').first()).toHaveText('#trade&');
+});
+
+test('Discord output stays within the message limit', async ({ page }) => {
+  await open(page, 'search?section=discord');
+  const messages = page.locator('.discord-message pre');
+  await expect(messages.first()).toBeVisible();
+  for (const text of await messages.allTextContents())
+    expect(text.length).toBeLessThanOrEqual(2000);
+});
+
+test('builder composes an exact query without touching the collection', async ({ page }) => {
+  await open(page, 'search');
+  await page.getByLabel('Add a Pokémon GO keyword').fill('buddy3-5');
+  await page.getByRole('button', { name: 'Add', exact: true }).click();
+  await expect(page.locator('#query-text')).toHaveText('age0&!#&buddy3-5');
+  const stored = await page.evaluate(() => localStorage.getItem('catchgrid:local-profile:v2'));
+  expect(stored).toBeNull();
+});
+
+test('dragging down a grid column fills a range in one save and can be undone', async ({
+  page,
+}) => {
+  test.skip(isMobile(page), 'Drag-fill is a mouse gesture; touch scrolls the grid instead.');
+  await open(page, 'progress');
+  await page.locator('[data-region]').selectOption('Kanto');
+  const shiny = page.locator('.gcell[data-cat="shiny"]');
+  const first = (await shiny.nth(0).boundingBox())!;
+  const last = (await shiny.nth(5).boundingBox())!;
+  await page.mouse.move(first.x + 8, first.y + 8);
+  await page.mouse.down();
+  await page.mouse.move(last.x + 8, last.y + 8, { steps: 12 });
+  await page.mouse.up();
+  await expect(page.locator('.gcell.on[data-cat="shiny"]')).toHaveCount(6);
+  await expect(page.locator('.toast')).toContainText('6 Shiny entries collected');
+  await page.getByRole('button', { name: 'Undo' }).click();
+  await expect(page.locator('.gcell.on[data-cat="shiny"]')).toHaveCount(0);
+});
+
+test('the grid marks cells by click and keyboard and updates the search string', async ({
+  page,
+}) => {
+  await open(page, 'progress');
+  await page.locator('[data-region]').selectOption('Kanto');
+  const string = page.locator('#grid-string');
+  await expect(string).toContainText(/^1,2,3,/);
+  const doneBar = page.locator('tr[data-key="row-form-0001-standard"] td.grid-done .meter b');
+  const before = (await doneBar.boundingBox())!.width;
+  await page.getByRole('button', { name: 'Bulbasaur Normal', exact: true }).click();
+  // The row's progress bar animates up rather than jumping.
+  await expect.poll(async () => (await doneBar.boundingBox())!.width).toBeGreaterThan(before);
+  // One of ten categories (with Male and Female).
+  await expect(page.locator('tr[data-key="row-form-0001-standard"] td.grid-done span')).toHaveText(
+    '10%',
+  );
+  await expect(page.getByRole('button', { name: 'Bulbasaur Normal', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
+  await expect(string).toContainText(/^2,3,/);
+  await page.keyboard.press('ArrowDown');
+  await expect(page.getByRole('button', { name: 'Ivysaur Normal', exact: true })).toBeFocused();
+  await page.keyboard.press('Space');
+  await expect(string).toContainText(/^3,/);
+  await page.getByRole('button', { name: 'Tradeable' }).click();
+  await expect(string).toContainText(/^!traded&3,/);
+  await page.reload();
+  await page.locator('[data-region]').selectOption('Kanto');
+  await expect(page.locator('.gcell.on[data-cat="normal"]')).toHaveCount(2);
+});
+
+test('Progress fits the window with equal-width category columns', async ({ page }) => {
+  test.skip(isMobile(page), 'On narrow screens the page scrolls and the grid scrolls sideways.');
+  await open(page, 'progress');
+  const fits = await page.evaluate(
+    () => document.documentElement.scrollHeight <= window.innerHeight,
+  );
+  expect(fits).toBe(true);
+  const widths = await page
+    .locator('.collection-grid tbody tr:first-child .gcell')
+    .evaluateAll((cells) => cells.map((c) => Math.round(c.getBoundingClientRect().width)));
+  expect(new Set(widths).size).toBe(1);
+});
+
+test('a name in the grid opens details without changing the collection', async ({ page }) => {
+  await open(page, 'progress');
+  await page.getByRole('button', { name: 'View details for Charmander' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Pokémon collection details' });
+  await expect(dialog.getByRole('heading', { name: 'Charmander' })).toBeVisible();
+  await expect(dialog.getByRole('button', { name: 'Toggle Normal: missing' })).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.gcell.on')).toHaveCount(0);
+});
+
+test('the Home dashboard shows rings, the region heatmap and activity', async ({ page }) => {
+  await open(page, 'progress');
+  await page.getByRole('button', { name: 'Charmander Normal', exact: true }).click();
+  await open(page, 'home');
+  await expect(page.locator('.rings-art .ring-value')).toHaveCount(10);
+  await expect(page.locator('.ring-legend-item')).toHaveCount(10);
+  await expect(page.locator('.ring-legend-item.cat-normal strong')).toHaveText('<1%');
+  await expect(page.locator('.ring-legend-item.cat-normal small')).toHaveText(/^1 \/ /);
+  await expect(page.locator('[data-key="kpi-week"] .kpi-value')).toHaveText('1');
+  await expect(page.locator('[data-key="kpi-species"] .kpi-value')).toHaveText('1');
+  await page.getByRole('link', { name: /^Kanto Shiny: 0 of/ }).click();
+  await expect(page.locator('main')).toHaveAttribute('data-route', 'progress');
+  await expect(page.locator('[data-region]')).toHaveValue('Kanto');
+  await expect(page.locator('.string-scope')).toHaveText('Missing Shiny · Kanto');
+});
+
+test('rows pasted from the community spreadsheet are reviewed, then added', async ({ page }) => {
+  await open(page, 'settings');
+  await page.getByText('Or paste rows from your spreadsheet').click();
+  await page
+    .getByLabel('Rows copied from your spreadsheet')
+    .fill(
+      [
+        'Number\tPokémon\tGender\t\tShiny\t100%\tLucky\tXXL\tXXS\tShadow\tPurified',
+        '1\tBulbasaur\tM\tF\tShiny\t\tLucky\t\t\t\t',
+        '29\tNidoran♀️\tFemale\t\t\t100%\t\t\t\t\t',
+        '81\tMagnemite\tNeutral\t\t\t\t\tXXL\t\t\t',
+        '132\tDitto\tNeutral\t\t\t\t\t\t\tShadow\t',
+      ].join('\n'),
+    );
+  await page.getByRole('button', { name: 'Review pasted rows' }).click();
+  const review = page.locator('#import-review');
+  await expect(review).toContainText('11 new entries from 4 rows');
+  await expect(review).toContainText('1 cells aren’t available in Pokémon GO');
+  await review.getByText('See skipped cells').click();
+  await expect(review.locator('.sheet-skipped dd')).toContainText('#132 Ditto');
+  // Nothing is saved until the review is applied.
+  expect(await page.evaluate(() => localStorage.getItem('catchgrid:local-profile:v2'))).toBeNull();
+  await page.getByRole('button', { name: 'Apply reviewed import' }).click();
+  await expect(page.locator('.toast')).toContainText('Import saved');
+  await open(page, 'progress');
+  await page.locator('[data-region]').selectOption('Kanto');
+  for (const name of ['Bulbasaur Male', 'Bulbasaur Female', 'Bulbasaur Lucky', 'Nidoran♀ Female'])
+    await expect(page.getByRole('button', { name, exact: true })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+  await expect(page.getByRole('button', { name: 'Magnemite Male', exact: true })).toHaveCount(0);
+});
+
+test('the collection downloads as the community spreadsheet', async ({ page }) => {
+  await open(page, 'settings');
+  const download = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Download spreadsheet (.xlsx)' }).click();
+  const file = await download;
+  expect(file.suggestedFilename()).toMatch(/^CatchGrid-Pokedex-\d{4}-\d{2}-\d{2}\.xlsx$/);
+  const size = (await (await import('node:fs/promises')).stat((await file.path())!)).size;
+  expect(size).toBeGreaterThan(50_000);
+});
+
+test('medals, poster and compare link are available on Home', async ({ page, context }) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']).catch(() => {});
+  await open(page, 'home');
+  await expect(page.locator('.medal')).toHaveCount(10);
+  const download = page.waitForEvent('download');
+  await page.getByRole('button', { name: /Create poster/ }).click();
+  expect((await download).suggestedFilename()).toMatch(/^CatchGrid-.*\.png$/);
+});
+
+test('a compare link shows who can help whom', async ({ page }) => {
+  // Friend has registered Bulbasaur (#1) in Normal: first bit set.
+  await open(page, 'compare?v=1&c=normal&d=AQ&n=Misty');
+  await expect(page.getByRole('heading', { name: 'Misty has 1 of 954' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Misty could help you with 1' })).toBeVisible();
+  await open(page, 'compare?v=1&c=normal&d=%3Cbad%3E');
+  await expect(page.getByRole('heading', { name: /can’t be read/ })).toBeVisible();
+});
+
+test('a compare link is shown for manual copy when the clipboard is unavailable', async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    navigator.clipboard.writeText = () => Promise.reject(new Error('blocked'));
+  });
+  await open(page, 'home');
+  await page.getByRole('button', { name: 'Copy compare link' }).click();
+  const field = page.getByRole('textbox', { name: 'Text to copy' });
+  await expect(field).toBeVisible();
+  await expect(field).toHaveValue(/#compare\?v=1&c=normal&d=/);
+  await expect(field).toBeFocused();
+});
+
+test('quick jump opens a Pokémon from anywhere', async ({ page }) => {
+  await open(page, 'home');
+  await page.getByRole('button', { name: 'Jump to a Pokémon' }).click();
+  await page.locator('#jump-input').fill('garchomp');
+  await page.keyboard.press('Enter');
+  await expect(
+    page.getByRole('complementary', { name: /Garchomp collection inspector/ }).last(),
+  ).toBeVisible();
+});
+
+test('bulk region setup asks before changing anything', async ({ page }) => {
+  await open(page, 'settings');
+  await page.locator('[data-bulk="Hisui"][data-bulk-collected="true"]').click();
+  expect(await page.evaluate(() => localStorage.getItem('catchgrid:local-profile:v2'))).toBeNull();
+  await page.getByRole('button', { name: /^Mark all/ }).click();
+  await expect(page.locator('.toast')).toContainText('Normal entries collected');
+});
+
+test('retired and unknown routes fall back to Home', async ({ page }) => {
+  for (const hash of ['events', 'field-kit', 'advanced']) {
+    await open(page, hash);
+    await expect(page.locator('main')).toHaveAttribute('data-route', 'home');
+  }
+});
+
+test('no horizontal overflow on any destination', async ({ page }) => {
+  for (const hash of ['home', 'dex', 'dex?r=national', 'progress', 'search', 'settings', 'about']) {
+    await open(page, hash);
+    const width = await page.evaluate(() => document.documentElement.scrollWidth);
+    expect(width).toBeLessThanOrEqual(page.viewportSize()!.width);
+    // Production CSP is style-src 'self': markup must use data-style, never style attributes.
+    await expect(page.locator('body [style]:not([data-style])')).toHaveCount(0);
+  }
+});

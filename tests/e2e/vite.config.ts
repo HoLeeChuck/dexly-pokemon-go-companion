@@ -3,8 +3,9 @@ import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import type { Connect } from 'vite';
 import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
-import { createBootstrapFixture } from '../fixtures/bootstrap.ts';
 
+// Frontend-only production build for browser tests. The public app bundles its catalog and
+// keeps collections in browser storage, so no Worker or D1 is needed here.
 const outputDirectory = resolve('dist/e2e-client');
 
 function generatedAssets(directory: string, relative = ''): string[] {
@@ -15,18 +16,18 @@ function generatedAssets(directory: string, relative = ''): string[] {
   });
 }
 
-function catalogMiddleware(): Connect.NextHandleFunction {
-  let serviceWorkerUpdateEnabled = false;
+/** Lets the PWA test publish a changed service worker on demand. */
+function serviceWorkerUpdate(): Connect.NextHandleFunction {
+  let updateEnabled = false;
   return (request, response, next) => {
     const pathname = request.url?.split('?')[0];
     if (pathname === '/__test/enable-sw-update' && request.method === 'POST') {
-      serviceWorkerUpdateEnabled = true;
+      updateEnabled = true;
       response.statusCode = 204;
-      response.setHeader('Cache-Control', 'no-store');
       response.end();
       return;
     }
-    if (pathname === '/sw.js' && serviceWorkerUpdateEnabled) {
+    if (pathname === '/sw.js' && updateEnabled) {
       response.statusCode = 200;
       response.setHeader('Content-Type', 'text/javascript; charset=utf-8');
       response.setHeader('Cache-Control', 'no-store');
@@ -35,41 +36,27 @@ function catalogMiddleware(): Connect.NextHandleFunction {
       );
       return;
     }
-    if (pathname !== '/api/v1/catalog') return next();
-    const fixture = createBootstrapFixture();
-    response.statusCode = 200;
-    response.setHeader('Content-Type', 'application/json; charset=utf-8');
-    response.setHeader('Cache-Control', 'public, max-age=60');
-    response.end(
-      JSON.stringify({
-        catalogVersion: fixture.catalogVersion,
-        categories: fixture.categories,
-        catalog: fixture.catalog,
-      }),
-    );
+    next();
   };
 }
 
-// Browser tests mock the versioned API before navigation. Using the frontend-only
-// Vite plugin keeps E2E state ephemeral and leaves Worker/D1 coverage to the Worker suite.
 export default defineConfig({
   plugins: [
     react(),
     {
       name: 'catchgrid-e2e-production-shell',
       configureServer(server) {
-        server.middlewares.use(catalogMiddleware());
+        server.middlewares.use(serviceWorkerUpdate());
       },
       configurePreviewServer(server) {
-        server.middlewares.use(catalogMiddleware());
+        server.middlewares.use(serviceWorkerUpdate());
       },
       closeBundle() {
         const serviceWorkerPath = resolve(outputDirectory, 'sw.js');
         if (!existsSync(serviceWorkerPath)) return;
-        const source = readFileSync(serviceWorkerPath, 'utf8');
         writeFileSync(
           serviceWorkerPath,
-          source
+          readFileSync(serviceWorkerPath, 'utf8')
             .replace('__CATCHGRID_BUILD_VERSION__', 'e2e-production')
             .replace(
               '/* __CATCHGRID_GENERATED_ASSETS__ */ []',
@@ -79,16 +66,7 @@ export default defineConfig({
       },
     },
   ],
-  build: {
-    outDir: outputDirectory,
-    emptyOutDir: true,
-  },
-  server: {
-    host: '127.0.0.1',
-    strictPort: true,
-  },
-  preview: {
-    host: '127.0.0.1',
-    strictPort: true,
-  },
+  build: { outDir: outputDirectory, emptyOutDir: true },
+  server: { host: '127.0.0.1', strictPort: true },
+  preview: { host: '127.0.0.1', strictPort: true },
 });

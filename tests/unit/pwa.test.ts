@@ -22,6 +22,7 @@ describe('offline and update safety', () => {
     expect(serviceWorker).toContain('...GENERATED_ASSETS');
     expect(serviceWorker).toContain("cache.put('/api/v1/catalog'");
     expect(serviceWorker).not.toContain('/api/v1/events');
+    expect(serviceWorker).not.toContain('/advanced/');
   });
 
   it('includes every built JavaScript and CSS route chunk without precaching artwork', () => {

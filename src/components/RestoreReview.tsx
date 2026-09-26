@@ -1,65 +1,20 @@
 /* eslint-disable react-refresh/only-export-components */
-import type { LocalProfile, LocalProfileSnapshot } from '../lib/localProfile';
-import { parsePortableProfileBackup, type PortableProfileBackup } from '../lib/profileBackup';
+import type { LocalProfileSnapshot } from '../lib/localProfile';
+import {
+  parsePortableProfileBackup,
+  profileRestoreSummary,
+  type PortableProfileBackup,
+  type RestoreReviewSummary,
+} from '../lib/profileBackup';
+
+export { profileRestoreSummary, type RestoreReviewSummary };
 import { Icon } from './Icon';
 import '../routes/profile.css';
-
-export interface RestoreReviewSummary {
-  sourceName: string;
-  createdAt: string;
-  catalogVersion?: string;
-  catalogCompatibility: 'current' | 'different' | 'unknown';
-  collectionRecords: number;
-  savedSearches: number;
-  wantedEntries: number;
-  tradeSpecimens: number;
-  settings: readonly string[];
-}
 
 export interface PortableBackupReview {
   raw: string;
   backup: PortableProfileBackup;
   summary: RestoreReviewSummary;
-}
-
-function settingLabels(profile: LocalProfile): string[] {
-  const labels: Record<keyof LocalProfile['settings'], string> = {
-    theme: 'light/dark mode',
-    accentTheme: 'accent theme',
-    activeCategory: 'active collection category',
-    regionPreference: 'regional preference',
-  };
-  return (Object.keys(profile.settings) as (keyof LocalProfile['settings'])[])
-    .filter((key) => profile.settings[key] !== undefined)
-    .map((key) => labels[key]);
-}
-
-export function profileRestoreSummary(
-  profile: LocalProfile,
-  input: {
-    sourceName: string;
-    createdAt: string;
-    catalogVersion?: string;
-    currentCatalogVersion?: string;
-  },
-): RestoreReviewSummary {
-  const catalogVersion = input.catalogVersion ?? profile.catalogVersion;
-  return {
-    sourceName: input.sourceName,
-    createdAt: input.createdAt,
-    catalogVersion,
-    catalogCompatibility:
-      !catalogVersion || !input.currentCatalogVersion
-        ? 'unknown'
-        : catalogVersion === input.currentCatalogVersion
-          ? 'current'
-          : 'different',
-    collectionRecords: profile.collectionEntries.length + profile.formCollectionEntries.length,
-    savedSearches: profile.savedSearches.length,
-    wantedEntries: profile.wantedEntries.length,
-    tradeSpecimens: profile.tradeSpecimens.length,
-    settings: settingLabels(profile),
-  };
 }
 
 export function reviewPortableBackup(

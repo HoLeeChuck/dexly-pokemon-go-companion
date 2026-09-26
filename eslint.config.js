@@ -13,6 +13,7 @@ export default tseslint.config(
       'playwright-report',
       'test-results',
       'worker-configuration.d.ts',
+      '_legacy-backup',
     ],
   },
   js.configs.recommended,
@@ -30,6 +31,13 @@ export default tseslint.config(
     rules: {
       ...reactHooks.configs.recommended.rules,
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+    },
+  },
+  {
+    files: ['app/**/*.{js,ts}', 'public/**/*.js'],
+    languageOptions: {
+      ecmaVersion: 2023,
+      globals: globals.browser,
     },
   },
   {

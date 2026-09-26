@@ -20,7 +20,8 @@ export default defineConfig({
     : [['list'], ['html', { open: 'never' }]],
   use: {
     baseURL,
-    colorScheme: 'light',
+    colorScheme: 'dark',
+    acceptDownloads: true,
     locale: 'en-US',
     channel: browserChannel,
     serviceWorkers: 'block',
@@ -31,7 +32,7 @@ export default defineConfig({
   projects: [
     {
       name: 'mobile-chromium',
-      testMatch: /(mobile|accessibility|resilience)\.spec\.ts/,
+      testMatch: /(app|accessibility)\.spec\.ts/,
       use: {
         ...devices['Desktop Chrome'],
         viewport: { width: 390, height: 844 },
@@ -41,27 +42,18 @@ export default defineConfig({
     },
     {
       name: 'desktop-chromium',
-      testMatch: /(desktop|accessibility|resilience)\.spec\.ts/,
-      use: {
-        ...devices['Desktop Chrome'],
-        viewport: { width: 1440, height: 900 },
-      },
+      testMatch: /(app|accessibility)\.spec\.ts/,
+      use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 } },
     },
     {
       name: 'mobile-webkit',
-      testMatch: /(mobile|accessibility|resilience)\.spec\.ts/,
-      use: {
-        ...devices['iPhone 13'],
-        viewport: { width: 390, height: 844 },
-      },
+      testMatch: /app\.spec\.ts/,
+      use: { ...devices['iPhone 13'], viewport: { width: 390, height: 844 } },
     },
     {
       name: 'desktop-webkit',
-      testMatch: /(desktop|accessibility|resilience)\.spec\.ts/,
-      use: {
-        ...devices['Desktop Safari'],
-        viewport: { width: 1440, height: 900 },
-      },
+      testMatch: /app\.spec\.ts/,
+      use: { ...devices['Desktop Safari'], viewport: { width: 1440, height: 900 } },
     },
     {
       name: 'pwa-chromium',

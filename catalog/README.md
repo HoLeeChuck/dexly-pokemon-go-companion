@@ -14,6 +14,28 @@
 
 `catalog/catchgrid-update.v1.json` is the reviewed availability/form source, `catalog/catalog-base-2026-08-19.v1.json` is the immutable stable-ID baseline, and `catalog/home-artwork-manifest.v1.json` pins the artwork inventory. Migration `0011` contains additive schema changes and upserts; it never deletes form or collection rows.
 
+## Recording a Pokémon GO release
+
+When Niantic announces a debut (a new species, a Shiny, a Shadow, …), add one entry to `catalog/releases.v1.json`. No catalog regeneration or migration is needed; the public app applies the ledger on top of `catalog.v1.json` at build time.
+
+```json
+{
+  "date": "2026-10-10",
+  "dex": 848,
+  "categories": ["normal", "shiny"],
+  "source": "https://pokemongo.com/news/…",
+  "note": "Toxel hatches from 7 km Eggs."
+}
+```
+
+- `date`: when it became available (YYYY-MM-DD, not in the future).
+- `dex` for the default species, or `formId` (for example `form-0052-galar`) for one form.
+- `categories`: any of `normal`, `shiny`, `lucky`, `hundo`, `xxl`, `xxs`, `shadow`, `purified`. Male and Female follow Normal and `genders.v1.json` automatically.
+- `source`: an official https link (pokemongo.com, niantic.helpshift.com, nianticlabs.com, pokemon.com). Community sites are not accepted here.
+- `status` (optional): `released` by default; `unreleased` or `ineligible` corrects an earlier mistake. When entries disagree, the newest date wins.
+
+`pnpm test` validates the ledger (tests/unit/app-releases.test.ts) and fails on a bad date, a non-official source, an unknown Pokémon or category, or a duplicate. Deploying publishes the change to everyone; each person’s collection is kept as is, and newly released cells simply become markable. The private `/cody` cloud catalog is still updated through migrations.
+
 ## Artwork synchronization
 
 Pokémon HOME art comes from the [Bulbagarden Archives HOME artwork category](https://archives.bulbagarden.net/wiki/Category:HOME_artwork). Run:

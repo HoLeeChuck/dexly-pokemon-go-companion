@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "catchgrid-dev",
+      "runtimeExecutable": "pnpm.cmd",
+      "runtimeArgs": ["exec", "vite", "--host", "127.0.0.1", "--port", "5191", "--strictPort"],
+      "port": 5191,
+      "url": "http://127.0.0.1:5191"
+    },
+    {
+      "name": "catchgrid-dev-check",
+      "runtimeExecutable": "pnpm.cmd",
+      "runtimeArgs": ["exec", "vite", "--host", "127.0.0.1", "--port", "5193", "--strictPort"],
+      "port": 5193,
+      "url": "http://127.0.0.1:5193"
+    }
+  ]
+}

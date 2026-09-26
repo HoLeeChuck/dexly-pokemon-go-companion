@@ -1,0 +1,978 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-09-26",
+  "source": {
+    "name": "Bulbagarden Archives — Category:HOME artwork",
+    "url": "https://archives.bulbagarden.net/wiki/Category:HOME_artwork",
+    "rightsNotice": "https://archives.bulbagarden.net/wiki/Archives:Copyrights",
+    "hotlinking": false
+  },
+  "note": "Pokémon HOME artwork for each form (Megas, Gigantamax, regional, gender and other forms). File names were read from the Archives category listing and matched by form; every file listed here was confirmed to exist. Images are downloaded by scripts/sync-form-artwork.mjs into public/artwork/pokemon-home and recorded in form-artwork-manifest.v1.json. The public app shows these instead of the species fallback.",
+  "forms": {
+    "form-0003-mega": {
+      "normal": "HOME0003M.png",
+      "shiny": "HOME0003M s.png"
+    },
+    "form-0003-gigantamax": {
+      "normal": "HOME0003Gi.png",
+      "shiny": "HOME0003Gi s.png"
+    },
+    "form-0006-mega-x": {
+      "normal": "HOME0006MX.png",
+      "shiny": "HOME0006MX s.png"
+    },
+    "form-0006-mega-y": {
+      "normal": "HOME0006MY.png",
+      "shiny": "HOME0006MY s.png"
+    },
+    "form-0006-gigantamax": {
+      "normal": "HOME0006Gi.png",
+      "shiny": "HOME0006Gi s.png"
+    },
+    "form-0009-mega": {
+      "normal": "HOME0009M.png",
+      "shiny": "HOME0009M s.png"
+    },
+    "form-0009-gigantamax": {
+      "normal": "HOME0009Gi.png",
+      "shiny": "HOME0009Gi s.png"
+    },
+    "form-0012-gigantamax": {
+      "normal": "HOME0012Gi.png",
+      "shiny": "HOME0012Gi s.png"
+    },
+    "form-0015-mega": {
+      "normal": "HOME0015M.png",
+      "shiny": "HOME0015M s.png"
+    },
+    "form-0018-mega": {
+      "normal": "HOME0018M.png",
+      "shiny": "HOME0018M s.png"
+    },
+    "form-0019-alola": {
+      "normal": "HOME0019A.png",
+      "shiny": "HOME0019A s.png"
+    },
+    "form-0020-alola": {
+      "normal": "HOME0020A.png",
+      "shiny": "HOME0020A s.png"
+    },
+    "form-0025-gigantamax": {
+      "normal": "HOME0025Gi.png",
+      "shiny": "HOME0025Gi s.png"
+    },
+    "form-0026-alola": {
+      "normal": "HOME0026A.png",
+      "shiny": "HOME0026A s.png"
+    },
+    "form-0026-mega-x": {
+      "normal": "HOME0026MX.png",
+      "shiny": "HOME0026MX s.png"
+    },
+    "form-0026-mega-y": {
+      "normal": "HOME0026MY.png",
+      "shiny": "HOME0026MY s.png"
+    },
+    "form-0027-alola": {
+      "normal": "HOME0027A.png",
+      "shiny": "HOME0027A s.png"
+    },
+    "form-0028-alola": {
+      "normal": "HOME0028A.png",
+      "shiny": "HOME0028A s.png"
+    },
+    "form-0037-alola": {
+      "normal": "HOME0037A.png",
+      "shiny": "HOME0037A s.png"
+    },
+    "form-0038-alola": {
+      "normal": "HOME0038A.png",
+      "shiny": "HOME0038A s.png"
+    },
+    "form-0050-alola": {
+      "normal": "HOME0050A.png",
+      "shiny": "HOME0050A s.png"
+    },
+    "form-0051-alola": {
+      "normal": "HOME0051A.png",
+      "shiny": "HOME0051A s.png"
+    },
+    "form-0052-alola": {
+      "normal": "HOME0052A.png",
+      "shiny": "HOME0052A s.png"
+    },
+    "form-0052-galar": {
+      "normal": "HOME0052G.png",
+      "shiny": "HOME0052G s.png"
+    },
+    "form-0052-gigantamax": {
+      "normal": "HOME0052Gi.png",
+      "shiny": "HOME0052Gi s.png"
+    },
+    "form-0053-alola": {
+      "normal": "HOME0053A.png",
+      "shiny": "HOME0053A s.png"
+    },
+    "form-0058-hisui": {
+      "normal": "HOME0058H.png",
+      "shiny": "HOME0058H s.png"
+    },
+    "form-0059-hisui": {
+      "normal": "HOME0059H.png",
+      "shiny": "HOME0059H s.png"
+    },
+    "form-0065-mega": {
+      "normal": "HOME0065M.png",
+      "shiny": "HOME0065M s.png"
+    },
+    "form-0068-gigantamax": {
+      "normal": "HOME0068Gi.png",
+      "shiny": "HOME0068Gi s.png"
+    },
+    "form-0071-mega": {
+      "normal": "HOME0071M.png",
+      "shiny": "HOME0071M s.png"
+    },
+    "form-0074-alola": {
+      "normal": "HOME0074A.png",
+      "shiny": "HOME0074A s.png"
+    },
+    "form-0075-alola": {
+      "normal": "HOME0075A.png",
+      "shiny": "HOME0075A s.png"
+    },
+    "form-0076-alola": {
+      "normal": "HOME0076A.png",
+      "shiny": "HOME0076A s.png"
+    },
+    "form-0077-galar": {
+      "normal": "HOME0077G.png",
+      "shiny": "HOME0077G s.png"
+    },
+    "form-0078-galar": {
+      "normal": "HOME0078G.png",
+      "shiny": "HOME0078G s.png"
+    },
+    "form-0079-galar": {
+      "normal": "HOME0079G.png",
+      "shiny": "HOME0079G s.png"
+    },
+    "form-0080-galar": {
+      "normal": "HOME0080G.png",
+      "shiny": "HOME0080G s.png"
+    },
+    "form-0080-mega": {
+      "normal": "HOME0080M.png",
+      "shiny": "HOME0080M s.png"
+    },
+    "form-0083-galar": {
+      "normal": "HOME0083G.png",
+      "shiny": "HOME0083G s.png"
+    },
+    "form-0088-alola": {
+      "normal": "HOME0088A.png",
+      "shiny": "HOME0088A s.png"
+    },
+    "form-0089-alola": {
+      "normal": "HOME0089A.png",
+      "shiny": "HOME0089A s.png"
+    },
+    "form-0094-mega": {
+      "normal": "HOME0094M.png",
+      "shiny": "HOME0094M s.png"
+    },
+    "form-0094-gigantamax": {
+      "normal": "HOME0094Gi.png",
+      "shiny": "HOME0094Gi s.png"
+    },
+    "form-0099-gigantamax": {
+      "normal": "HOME0099Gi.png",
+      "shiny": "HOME0099Gi s.png"
+    },
+    "form-0100-hisui": {
+      "normal": "HOME0100H.png",
+      "shiny": "HOME0100H s.png"
+    },
+    "form-0101-hisui": {
+      "normal": "HOME0101H.png",
+      "shiny": "HOME0101H s.png"
+    },
+    "form-0103-alola": {
+      "normal": "HOME0103A.png",
+      "shiny": "HOME0103A s.png"
+    },
+    "form-0105-alola": {
+      "normal": "HOME0105A.png",
+      "shiny": "HOME0105A s.png"
+    },
+    "form-0110-galar": {
+      "normal": "HOME0110G.png",
+      "shiny": "HOME0110G s.png"
+    },
+    "form-0115-mega": {
+      "normal": "HOME0115M.png",
+      "shiny": "HOME0115M s.png"
+    },
+    "form-0122-galar": {
+      "normal": "HOME0122G.png",
+      "shiny": "HOME0122G s.png"
+    },
+    "form-0127-mega": {
+      "normal": "HOME0127M.png",
+      "shiny": "HOME0127M s.png"
+    },
+    "form-0128-paldea-combat": {
+      "normal": "HOME0128PC.png",
+      "shiny": "HOME0128PC s.png"
+    },
+    "form-0128-paldea-blaze": {
+      "normal": "HOME0128PB.png",
+      "shiny": "HOME0128PB s.png"
+    },
+    "form-0128-paldea-aqua": {
+      "normal": "HOME0128PA.png",
+      "shiny": "HOME0128PA s.png"
+    },
+    "form-0130-mega": {
+      "normal": "HOME0130M.png",
+      "shiny": "HOME0130M s.png"
+    },
+    "form-0131-gigantamax": {
+      "normal": "HOME0131Gi.png",
+      "shiny": "HOME0131Gi s.png"
+    },
+    "form-0142-mega": {
+      "normal": "HOME0142M.png",
+      "shiny": "HOME0142M s.png"
+    },
+    "form-0143-gigantamax": {
+      "normal": "HOME0143Gi.png",
+      "shiny": "HOME0143Gi s.png"
+    },
+    "form-0144-galar": {
+      "normal": "HOME0144G.png",
+      "shiny": "HOME0144G s.png"
+    },
+    "form-0145-galar": {
+      "normal": "HOME0145G.png",
+      "shiny": "HOME0145G s.png"
+    },
+    "form-0146-galar": {
+      "normal": "HOME0146G.png",
+      "shiny": "HOME0146G s.png"
+    },
+    "form-0149-mega": {
+      "normal": "HOME0149M.png",
+      "shiny": "HOME0149M s.png"
+    },
+    "form-0150-mega-x": {
+      "normal": "HOME0150MX.png",
+      "shiny": "HOME0150MX s.png"
+    },
+    "form-0150-mega-y": {
+      "normal": "HOME0150MY.png",
+      "shiny": "HOME0150MY s.png"
+    },
+    "form-0157-hisui": {
+      "normal": "HOME0157H.png",
+      "shiny": "HOME0157H s.png"
+    },
+    "form-0181-mega": {
+      "normal": "HOME0181M.png",
+      "shiny": "HOME0181M s.png"
+    },
+    "form-0194-paldea": {
+      "normal": "HOME0194P.png",
+      "shiny": "HOME0194P s.png"
+    },
+    "form-0199-galar": {
+      "normal": "HOME0199G.png",
+      "shiny": "HOME0199G s.png"
+    },
+    "form-0201-unown-a": {
+      "normal": "HOME0201.png",
+      "shiny": "HOME0201 s.png"
+    },
+    "form-0201-unown-b": {
+      "normal": "HOME0201B.png",
+      "shiny": "HOME0201B s.png"
+    },
+    "form-0201-unown-c": {
+      "normal": "HOME0201C.png",
+      "shiny": "HOME0201C s.png"
+    },
+    "form-0201-unown-d": {
+      "normal": "HOME0201D.png",
+      "shiny": "HOME0201D s.png"
+    },
+    "form-0201-unown-e": {
+      "normal": "HOME0201E.png",
+      "shiny": "HOME0201E s.png"
+    },
+    "form-0201-unown-f": {
+      "normal": "HOME0201F.png",
+      "shiny": "HOME0201F s.png"
+    },
+    "form-0201-unown-g": {
+      "normal": "HOME0201G.png",
+      "shiny": "HOME0201G s.png"
+    },
+    "form-0201-unown-h": {
+      "normal": "HOME0201H.png",
+      "shiny": "HOME0201H s.png"
+    },
+    "form-0201-unown-i": {
+      "normal": "HOME0201I.png",
+      "shiny": "HOME0201I s.png"
+    },
+    "form-0201-unown-j": {
+      "normal": "HOME0201J.png",
+      "shiny": "HOME0201J s.png"
+    },
+    "form-0201-unown-k": {
+      "normal": "HOME0201K.png",
+      "shiny": "HOME0201K s.png"
+    },
+    "form-0201-unown-l": {
+      "normal": "HOME0201L.png",
+      "shiny": "HOME0201L s.png"
+    },
+    "form-0201-unown-m": {
+      "normal": "HOME0201M.png",
+      "shiny": "HOME0201M s.png"
+    },
+    "form-0201-unown-n": {
+      "normal": "HOME0201N.png",
+      "shiny": "HOME0201N s.png"
+    },
+    "form-0201-unown-o": {
+      "normal": "HOME0201O.png",
+      "shiny": "HOME0201O s.png"
+    },
+    "form-0201-unown-p": {
+      "normal": "HOME0201P.png"
+    },
+    "form-0201-unown-q": {
+      "normal": "HOME0201Q.png",
+      "shiny": "HOME0201Q s.png"
+    },
+    "form-0201-unown-r": {
+      "normal": "HOME0201R.png",
+      "shiny": "HOME0201R s.png"
+    },
+    "form-0201-unown-s": {
+      "normal": "HOME0201S.png",
+      "shiny": "HOME0201S s.png"
+    },
+    "form-0201-unown-u": {
+      "normal": "HOME0201U.png",
+      "shiny": "HOME0201U s.png"
+    },
+    "form-0201-unown-v": {
+      "normal": "HOME0201V.png",
+      "shiny": "HOME0201V s.png"
+    },
+    "form-0201-unown-w": {
+      "normal": "HOME0201W.png",
+      "shiny": "HOME0201W s.png"
+    },
+    "form-0201-unown-x": {
+      "normal": "HOME0201X.png",
+      "shiny": "HOME0201X s.png"
+    },
+    "form-0201-unown-y": {
+      "normal": "HOME0201Y.png",
+      "shiny": "HOME0201Y s.png"
+    },
+    "form-0201-unown-z": {
+      "normal": "HOME0201Z.png",
+      "shiny": "HOME0201Z s.png"
+    },
+    "form-0201-unown-exclamation": {
+      "normal": "HOME0201EX.png",
+      "shiny": "HOME0201EX s.png"
+    },
+    "form-0201-unown-question": {
+      "normal": "HOME0201QU.png",
+      "shiny": "HOME0201QU s.png"
+    },
+    "form-0208-mega": {
+      "normal": "HOME0208M.png",
+      "shiny": "HOME0208M s.png"
+    },
+    "form-0211-hisui": {
+      "normal": "HOME0211H.png",
+      "shiny": "HOME0211H s.png"
+    },
+    "form-0212-mega": {
+      "normal": "HOME0212M.png",
+      "shiny": "HOME0212M s.png"
+    },
+    "form-0214-mega": {
+      "normal": "HOME0214M.png",
+      "shiny": "HOME0214M s.png"
+    },
+    "form-0215-hisui": {
+      "normal": "HOME0215H.png",
+      "shiny": "HOME0215H s.png"
+    },
+    "form-0222-galar": {
+      "normal": "HOME0222G.png",
+      "shiny": "HOME0222G s.png"
+    },
+    "form-0229-mega": {
+      "normal": "HOME0229M.png",
+      "shiny": "HOME0229M s.png"
+    },
+    "form-0248-mega": {
+      "normal": "HOME0248M.png",
+      "shiny": "HOME0248M s.png"
+    },
+    "form-0254-mega": {
+      "normal": "HOME0254M.png",
+      "shiny": "HOME0254M s.png"
+    },
+    "form-0257-mega": {
+      "normal": "HOME0257M.png",
+      "shiny": "HOME0257M s.png"
+    },
+    "form-0260-mega": {
+      "normal": "HOME0260M.png",
+      "shiny": "HOME0260M s.png"
+    },
+    "form-0263-galar": {
+      "normal": "HOME0263G.png",
+      "shiny": "HOME0263G s.png"
+    },
+    "form-0264-galar": {
+      "normal": "HOME0264G.png",
+      "shiny": "HOME0264G s.png"
+    },
+    "form-0282-mega": {
+      "normal": "HOME0282M.png",
+      "shiny": "HOME0282M s.png"
+    },
+    "form-0302-mega": {
+      "normal": "HOME0302M.png",
+      "shiny": "HOME0302M s.png"
+    },
+    "form-0303-mega": {
+      "normal": "HOME0303M.png",
+      "shiny": "HOME0303M s.png"
+    },
+    "form-0306-mega": {
+      "normal": "HOME0306M.png",
+      "shiny": "HOME0306M s.png"
+    },
+    "form-0308-mega": {
+      "normal": "HOME0308M.png",
+      "shiny": "HOME0308M s.png"
+    },
+    "form-0310-mega": {
+      "normal": "HOME0310M.png",
+      "shiny": "HOME0310M s.png"
+    },
+    "form-0319-mega": {
+      "normal": "HOME0319M.png",
+      "shiny": "HOME0319M s.png"
+    },
+    "form-0323-mega": {
+      "normal": "HOME0323M.png",
+      "shiny": "HOME0323M s.png"
+    },
+    "form-0334-mega": {
+      "normal": "HOME0334M.png",
+      "shiny": "HOME0334M s.png"
+    },
+    "form-0354-mega": {
+      "normal": "HOME0354M.png",
+      "shiny": "HOME0354M s.png"
+    },
+    "form-0359-mega": {
+      "normal": "HOME0359M.png",
+      "shiny": "HOME0359M s.png"
+    },
+    "form-0362-mega": {
+      "normal": "HOME0362M.png",
+      "shiny": "HOME0362M s.png"
+    },
+    "form-0373-mega": {
+      "normal": "HOME0373M.png",
+      "shiny": "HOME0373M s.png"
+    },
+    "form-0376-mega": {
+      "normal": "HOME0376M.png",
+      "shiny": "HOME0376M s.png"
+    },
+    "form-0380-mega": {
+      "normal": "HOME0380M.png",
+      "shiny": "HOME0380M s.png"
+    },
+    "form-0381-mega": {
+      "normal": "HOME0381M.png",
+      "shiny": "HOME0381M s.png"
+    },
+    "form-0382-primal": {
+      "normal": "HOME0382P.png",
+      "shiny": "HOME0382P s.png"
+    },
+    "form-0383-primal": {
+      "normal": "HOME0383P.png",
+      "shiny": "HOME0383P s.png"
+    },
+    "form-0384-mega": {
+      "normal": "HOME0384M.png",
+      "shiny": "HOME0384M s.png"
+    },
+    "form-0445-mega": {
+      "normal": "HOME0445M.png",
+      "shiny": "HOME0445M s.png"
+    },
+    "form-0448-mega": {
+      "normal": "HOME0448M.png",
+      "shiny": "HOME0448M s.png"
+    },
+    "form-0460-mega": {
+      "normal": "HOME0460M.png",
+      "shiny": "HOME0460M s.png"
+    },
+    "form-0475-mega": {
+      "normal": "HOME0475M.png",
+      "shiny": "HOME0475M s.png"
+    },
+    "form-0479-heat": {
+      "normal": "HOME0479O.png",
+      "shiny": "HOME0479O s.png"
+    },
+    "form-0479-wash": {
+      "normal": "HOME0479W.png",
+      "shiny": "HOME0479W s.png"
+    },
+    "form-0479-frost": {
+      "normal": "HOME0479R.png",
+      "shiny": "HOME0479R s.png"
+    },
+    "form-0479-fan": {
+      "normal": "HOME0479F.png",
+      "shiny": "HOME0479F s.png"
+    },
+    "form-0479-mow": {
+      "normal": "HOME0479L.png",
+      "shiny": "HOME0479L s.png"
+    },
+    "form-0503-hisui": {
+      "normal": "HOME0503H.png",
+      "shiny": "HOME0503H s.png"
+    },
+    "form-0531-mega": {
+      "normal": "HOME0531M.png",
+      "shiny": "HOME0531M s.png"
+    },
+    "form-0549-hisui": {
+      "normal": "HOME0549H.png",
+      "shiny": "HOME0549H s.png"
+    },
+    "form-0554-galar": {
+      "normal": "HOME0554G.png",
+      "shiny": "HOME0554G s.png"
+    },
+    "form-0555-galar-standard": {
+      "normal": "HOME0555G.png",
+      "shiny": "HOME0555G s.png"
+    },
+    "form-0562-galar": {
+      "normal": "HOME0562G.png",
+      "shiny": "HOME0562G s.png"
+    },
+    "form-0569-gigantamax": {
+      "normal": "HOME0569Gi.png",
+      "shiny": "HOME0569Gi s.png"
+    },
+    "form-0570-hisui": {
+      "normal": "HOME0570H.png",
+      "shiny": "HOME0570H s.png"
+    },
+    "form-0571-hisui": {
+      "normal": "HOME0571H.png",
+      "shiny": "HOME0571H s.png"
+    },
+    "form-0618-galar": {
+      "normal": "HOME0618G.png",
+      "shiny": "HOME0618G s.png"
+    },
+    "form-0628-hisui": {
+      "normal": "HOME0628H.png",
+      "shiny": "HOME0628H s.png"
+    },
+    "form-0646-black": {
+      "normal": "HOME0646B.png",
+      "shiny": "HOME0646B s.png"
+    },
+    "form-0646-white": {
+      "normal": "HOME0646W.png",
+      "shiny": "HOME0646W s.png"
+    },
+    "form-0666-archipelago": {
+      "normal": "HOME0666Arc.png",
+      "shiny": "HOME0666Arc s.png"
+    },
+    "form-0666-continental": {
+      "normal": "HOME0666Con.png",
+      "shiny": "HOME0666Con s.png"
+    },
+    "form-0666-elegant": {
+      "normal": "HOME0666Ele.png",
+      "shiny": "HOME0666Ele s.png"
+    },
+    "form-0666-garden": {
+      "normal": "HOME0666Gar.png",
+      "shiny": "HOME0666Gar s.png"
+    },
+    "form-0666-high-plains": {
+      "normal": "HOME0666Hig.png",
+      "shiny": "HOME0666Hig s.png"
+    },
+    "form-0666-icy-snow": {
+      "normal": "HOME0666Icy.png",
+      "shiny": "HOME0666Icy s.png"
+    },
+    "form-0666-jungle": {
+      "normal": "HOME0666Jun.png",
+      "shiny": "HOME0666Jun s.png"
+    },
+    "form-0666-marine": {
+      "normal": "HOME0666Mar.png",
+      "shiny": "HOME0666Mar s.png"
+    },
+    "form-0666-modern": {
+      "normal": "HOME0666Mod.png",
+      "shiny": "HOME0666Mod s.png"
+    },
+    "form-0666-monsoon": {
+      "normal": "HOME0666Mon.png",
+      "shiny": "HOME0666Mon s.png"
+    },
+    "form-0666-ocean": {
+      "normal": "HOME0666Oce.png",
+      "shiny": "HOME0666Oce s.png"
+    },
+    "form-0666-polar": {
+      "normal": "HOME0666Pol.png",
+      "shiny": "HOME0666Pol s.png"
+    },
+    "form-0666-river": {
+      "normal": "HOME0666Riv.png",
+      "shiny": "HOME0666Riv s.png"
+    },
+    "form-0666-sandstorm": {
+      "normal": "HOME0666San.png",
+      "shiny": "HOME0666San s.png"
+    },
+    "form-0666-savanna": {
+      "normal": "HOME0666Sav.png",
+      "shiny": "HOME0666Sav s.png"
+    },
+    "form-0666-sun": {
+      "normal": "HOME0666Sun.png",
+      "shiny": "HOME0666Sun s.png"
+    },
+    "form-0666-tundra": {
+      "normal": "HOME0666Tun.png",
+      "shiny": "HOME0666Tun s.png"
+    },
+    "form-0668-female": {
+      "normal": "HOME0668 f.png",
+      "shiny": "HOME0668 f s.png"
+    },
+    "form-0669-blue-flower": {
+      "normal": "HOME0669B.png",
+      "shiny": "HOME0669B s.png"
+    },
+    "form-0669-yellow-flower": {
+      "normal": "HOME0669Y.png",
+      "shiny": "HOME0669Y s.png"
+    },
+    "form-0669-white-flower": {
+      "normal": "HOME0669W.png",
+      "shiny": "HOME0669W s.png"
+    },
+    "form-0669-orange-flower": {
+      "normal": "HOME0669O.png",
+      "shiny": "HOME0669O s.png"
+    },
+    "form-0670-blue-flower": {
+      "normal": "HOME0670B.png",
+      "shiny": "HOME0670B s.png"
+    },
+    "form-0670-yellow-flower": {
+      "normal": "HOME0670Y.png",
+      "shiny": "HOME0670Y s.png"
+    },
+    "form-0670-white-flower": {
+      "normal": "HOME0670W.png",
+      "shiny": "HOME0670W s.png"
+    },
+    "form-0670-orange-flower": {
+      "normal": "HOME0670O.png",
+      "shiny": "HOME0670O s.png"
+    },
+    "form-0671-blue-flower": {
+      "normal": "HOME0671B.png",
+      "shiny": "HOME0671B s.png"
+    },
+    "form-0671-yellow-flower": {
+      "normal": "HOME0671Y.png",
+      "shiny": "HOME0671Y s.png"
+    },
+    "form-0671-white-flower": {
+      "normal": "HOME0671W.png",
+      "shiny": "HOME0671W s.png"
+    },
+    "form-0671-orange-flower": {
+      "normal": "HOME0671O.png",
+      "shiny": "HOME0671O s.png"
+    },
+    "form-0676-matron-trim": {
+      "normal": "HOME0676Ma.png",
+      "shiny": "HOME0676Ma s.png"
+    },
+    "form-0676-dandy-trim": {
+      "normal": "HOME0676Da.png",
+      "shiny": "HOME0676Da s.png"
+    },
+    "form-0676-debutante-trim": {
+      "normal": "HOME0676De.png",
+      "shiny": "HOME0676De s.png"
+    },
+    "form-0676-diamond-trim": {
+      "normal": "HOME0676Di.png",
+      "shiny": "HOME0676Di s.png"
+    },
+    "form-0676-star-trim": {
+      "normal": "HOME0676St.png",
+      "shiny": "HOME0676St s.png"
+    },
+    "form-0676-la-reine-trim": {
+      "normal": "HOME0676La.png",
+      "shiny": "HOME0676La s.png"
+    },
+    "form-0676-kabuki-trim": {
+      "normal": "HOME0676Ka.png",
+      "shiny": "HOME0676Ka s.png"
+    },
+    "form-0676-pharaoh-trim": {
+      "normal": "HOME0676Ph.png",
+      "shiny": "HOME0676Ph s.png"
+    },
+    "form-0676-heart-trim": {
+      "normal": "HOME0676He.png",
+      "shiny": "HOME0676He s.png"
+    },
+    "form-0678-female": {
+      "normal": "HOME0678 f.png",
+      "shiny": "HOME0678 f s.png"
+    },
+    "form-0687-mega": {
+      "normal": "HOME0687M.png",
+      "shiny": "HOME0687M s.png"
+    },
+    "form-0705-hisui": {
+      "normal": "HOME0705H.png",
+      "shiny": "HOME0705H s.png"
+    },
+    "form-0706-hisui": {
+      "normal": "HOME0706H.png",
+      "shiny": "HOME0706H s.png"
+    },
+    "form-0710-small": {
+      "normal": "HOME0710Sm.png",
+      "shiny": "HOME0710Sm s.png"
+    },
+    "form-0710-large": {
+      "normal": "HOME0710La.png",
+      "shiny": "HOME0710La s.png"
+    },
+    "form-0710-super": {
+      "normal": "HOME0710Su.png",
+      "shiny": "HOME0710Su s.png"
+    },
+    "form-0711-small": {
+      "normal": "HOME0711Sm.png",
+      "shiny": "HOME0711Sm s.png"
+    },
+    "form-0711-large": {
+      "normal": "HOME0711La.png",
+      "shiny": "HOME0711La s.png"
+    },
+    "form-0711-super": {
+      "normal": "HOME0711Su.png",
+      "shiny": "HOME0711Su s.png"
+    },
+    "form-0713-hisui": {
+      "normal": "HOME0713H.png",
+      "shiny": "HOME0713H s.png"
+    },
+    "form-0718-ten-percent": {
+      "normal": "HOME0718T.png",
+      "shiny": "HOME0718T s.png"
+    },
+    "form-0718-complete": {
+      "normal": "HOME0718C.png",
+      "shiny": "HOME0718C s.png"
+    },
+    "form-0719-mega": {
+      "normal": "HOME0719M.png",
+      "shiny": "HOME0719M s.png"
+    },
+    "form-0720-unbound": {
+      "normal": "HOME0720U.png",
+      "shiny": "HOME0720U s.png"
+    },
+    "form-0724-hisui": {
+      "normal": "HOME0724H.png",
+      "shiny": "HOME0724H s.png"
+    },
+    "form-0741-pom-pom": {
+      "normal": "HOME0741Po.png",
+      "shiny": "HOME0741Po s.png"
+    },
+    "form-0741-pau": {
+      "normal": "HOME0741Pa.png",
+      "shiny": "HOME0741Pa s.png"
+    },
+    "form-0741-sensu": {
+      "normal": "HOME0741Se.png",
+      "shiny": "HOME0741Se s.png"
+    },
+    "form-0745-midnight": {
+      "normal": "HOME0745Mn.png",
+      "shiny": "HOME0745Mn s.png"
+    },
+    "form-0745-dusk": {
+      "normal": "HOME0745D.png",
+      "shiny": "HOME0745D s.png"
+    },
+    "form-0800-dusk-mane": {
+      "normal": "HOME0800DM.png",
+      "shiny": "HOME0800DM s.png"
+    },
+    "form-0800-dawn-wings": {
+      "normal": "HOME0800DW.png",
+      "shiny": "HOME0800DW s.png"
+    },
+    "form-0812-gigantamax": {
+      "normal": "HOME0812Gi.png",
+      "shiny": "HOME0812Gi s.png"
+    },
+    "form-0815-gigantamax": {
+      "normal": "HOME0815Gi.png",
+      "shiny": "HOME0815Gi s.png"
+    },
+    "form-0818-gigantamax": {
+      "normal": "HOME0818Gi.png",
+      "shiny": "HOME0818Gi s.png"
+    },
+    "form-0849-gigantamax": {
+      "normal": "HOME0849Gi.png",
+      "shiny": "HOME0849Gi s.png"
+    },
+    "form-0849-low-key": {
+      "normal": "HOME0849L.png",
+      "shiny": "HOME0849L s.png"
+    },
+    "form-0854-antique": {
+      "normal": "HOME0854A b.png",
+      "shiny": "HOME0854A b s.png"
+    },
+    "form-0855-antique": {
+      "normal": "HOME0855A b.png",
+      "shiny": "HOME0855A b s.png"
+    },
+    "form-0861-gigantamax": {
+      "normal": "HOME0861Gi.png",
+      "shiny": "HOME0861Gi s.png"
+    },
+    "form-0870-mega": {
+      "normal": "HOME0870M.png",
+      "shiny": "HOME0870M s.png"
+    },
+    "form-0888-crowned-sword": {
+      "normal": "HOME0888C.png",
+      "shiny": "HOME0888C s.png"
+    },
+    "form-0889-crowned-shield": {
+      "normal": "HOME0889C.png",
+      "shiny": "HOME0889C s.png"
+    },
+    "form-0892-rapid-strike": {
+      "normal": "HOME0892R.png",
+      "shiny": "HOME0892R s.png"
+    },
+    "form-0901-bloodmoon": {
+      "normal": "HOME0901B.png",
+      "shiny": "HOME0901B s.png"
+    },
+    "form-0905-therian": {
+      "normal": "HOME0905T.png",
+      "shiny": "HOME0905T s.png"
+    },
+    "form-0916-female": {
+      "normal": "HOME0916 f.png",
+      "shiny": "HOME0916 f s.png"
+    },
+    "form-0978-droopy": {
+      "normal": "HOME0978D.png",
+      "shiny": "HOME0978D s.png"
+    },
+    "form-0978-stretchy": {
+      "normal": "HOME0978S.png",
+      "shiny": "HOME0978S s.png"
+    },
+    "form-1012-artisan": {
+      "normal": "HOME1012A b.png",
+      "shiny": "HOME1012A b s.png"
+    },
+    "form-1013-masterpiece": {
+      "normal": "HOME1013M b.png",
+      "shiny": "HOME1013M b s.png"
+    },
+    "form-0227-mega": {
+      "normal": "HOME0227M.png",
+      "shiny": "HOME0227M s.png"
+    },
+    "form-0121-mega": {
+      "normal": "HOME0121M.png",
+      "shiny": "HOME0121M s.png"
+    },
+    "form-0652-mega": {
+      "normal": "HOME0652M.png",
+      "shiny": "HOME0652M s.png"
+    },
+    "form-0655-mega": {
+      "normal": "HOME0655M.png",
+      "shiny": "HOME0655M s.png"
+    },
+    "form-0658-mega": {
+      "normal": "HOME0658M.png",
+      "shiny": "HOME0658M s.png"
+    },
+    "form-0398-mega": {
+      "normal": "HOME0398M.png",
+      "shiny": "HOME0398M s.png"
+    }
+  },
+  "unavailable": [
+    {
+      "file": "HOME0201T.png",
+      "reason": "Archives media server answers 403 for this file (2026-09-26); left on species artwork."
+    },
+    {
+      "file": "HOME0201P s.png",
+      "reason": "Archives media server answers 403 for this file (2026-09-26); left on species artwork."
+    },
+    {
+      "file": "HOME0428M.png",
+      "reason": "Archives media server answers 403 for this file (2026-09-26); left on species artwork."
+    }
+  ]
+}

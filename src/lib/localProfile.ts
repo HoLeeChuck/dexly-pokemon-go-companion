@@ -1,4 +1,9 @@
-import { CATEGORY_IDS, TRADE_OFFER_TRAIT_IDS, TRADE_REQUEST_TRAIT_IDS } from '../../shared/types';
+import {
+  CATEGORY_IDS,
+  GENDER_CATEGORY_IDS,
+  TRADE_OFFER_TRAIT_IDS,
+  TRADE_REQUEST_TRAIT_IDS,
+} from '../../shared/types';
 import type {
   CatalogItem,
   CategoryId,
@@ -26,6 +31,8 @@ const LEGACY_ACTIVE_CATEGORY_STORAGE_KEY = 'dexly:active-category';
 const SNAPSHOT_SCHEMA_VERSION = 1 as const;
 const AUTOMATIC_SNAPSHOT_INTERVAL_MS = 60_000;
 const CATEGORY_ID_SET = new Set<string>(CATEGORY_IDS);
+// Browser profiles may also record gender on default species (public app only).
+const PROFILE_COLLECTION_CATEGORY_SET = new Set<string>([...CATEGORY_IDS, ...GENDER_CATEGORY_IDS]);
 const TRADE_REQUEST_TRAIT_SET = new Set<string>(TRADE_REQUEST_TRAIT_IDS);
 const TRADE_OFFER_TRAIT_SET = new Set<string>(TRADE_OFFER_TRAIT_IDS);
 const FORM_COLLECTION_CATEGORY_SET = new Set<string>(['normal', 'shiny']);
@@ -466,7 +473,7 @@ export function validateLocalProfile(value: unknown): LocalProfileValidationResu
     ...validateCollectionEntries(
       value.collectionEntries,
       'profile.collectionEntries',
-      CATEGORY_ID_SET,
+      PROFILE_COLLECTION_CATEGORY_SET,
     ),
   );
   errors.push(

@@ -1,4 +1,3 @@
-/* global CustomEvent, console, navigator, window */
 (() => {
   if (!('serviceWorker' in navigator)) return;
 

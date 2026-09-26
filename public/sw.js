@@ -1,5 +1,3 @@
-/* global Response, URL, caches, fetch, self */
-
 const CACHE_VERSION = 'catchgrid-__CATCHGRID_BUILD_VERSION__';
 const SHELL_CACHE = `${CACHE_VERSION}-shell`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
@@ -14,7 +12,6 @@ const PRECACHE_URLS = [
   '/app-bootstrap.js',
   '/prism-bootstrap.js',
   '/pwa-bootstrap.js',
-  '/advanced/',
   '/manifest.webmanifest',
   '/favicon.svg',
   '/icons/catchgrid-192.png',

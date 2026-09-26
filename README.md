@@ -1,79 +1,74 @@
 # CatchGrid
 
-Production uses the approved full-collection interface in `design/prism/`, mounted by the root `index.html` since September 24, 2026. Advanced recovery/search tools remain at `/advanced/`, and `/cody/` remains private. See [release record](docs/releases/2026-09-24/RELEASE.md). This supersedes historical local-only status below.
+An unofficial, local-first Pokémon GO collection companion at <https://dex.cjdev.app/>. It shows a visual Pokédex, collection progress, shareable collection visuals, and Pokémon GO search strings. Public use needs no account or game credentials; collections stay in the browser.
 
-Official development project: **D:\Projects\Pokemon\CatchGrid**. Public website: <https://dex.cjdev.app/>. Start with [START-HERE.md](START-HERE.md); current work and validation are in [HANDOFF.md](HANDOFF.md).
+Development folder: `D:\Projects\Pokemon\CatchGrid`. Current state and open items: [HANDOFF.md](HANDOFF.md). Lasting rules: [AGENTS.md](AGENTS.md).
 
-CatchGrid is an unofficial, local-first Pokémon GO collection companion. It provides a visual Pokédex, collection progress, Pokémon GO search strings, and portable collection records. Public use requires no game credentials or account.
+## Product
 
-## Confirmed product
+| Destination | What it does                                                                                                             |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Home        | Collection count, weekly/monthly recap card, almost-complete species, next legacy move window                            |
+| Dex         | Browse Pokémon and forms, one-tap marking by category, silhouettes for missing Pokémon, evolution hints in details       |
+| Progress    | Collection map (status or category-depth view), paint mode for ranges, regional medals, collection poster, compare links |
+| Search Lab  | Build my own, My missing, Cody’s picks (eight recommendations), Discord output, legacy move windows with calendar export |
+| Settings    | Appearance and accent color, trainer name, JSON/CSV export and reviewed import, recovery snapshots, bulk region setup    |
+| `#compare`  | Opens a friend’s compare link and shows who can help whom; the data travels in the link fragment and is never uploaded   |
+| `/cody`     | Unlisted private owner workflow (React app with authenticated Worker/D1 storage)                                         |
 
-| Destination | Purpose                                                                               |
-| ----------- | ------------------------------------------------------------------------------------- |
-| Home        | Collection snapshot, missing targets, regional progress, and shortcuts                |
-| Dex         | Browse Pokémon and forms; mark collection categories                                  |
-| Progress    | Completion by category and region                                                     |
-| Search Lab  | Missing searches, Cody recommendations, Discord output, and **Visual Search Builder** |
-| Settings    | Appearance, regional preference, reviewed import/restore, and exports                 |
-| `/cody`     | Existing unlisted private owner workflow                                              |
+Press `/` anywhere to jump to a Pokémon.
 
-The user confirmed on September 23, 2026: **retain Search Builder; retire Events and Field Kit**. Their UI, routes, upstream API, dedicated code/tests, install shortcuts, and offline-cache requests have been removed. Old links fall back to Home. No browser-local experimental data is deleted.
+Retired and not coming back: Events, Field Kit, the `/advanced/` page (its tools now live in Search Lab and Settings), public trading boards, public accounts, SMNA branding, and game-account automation. Old links fall back to Home.
 
-Existing non-retired dashboard, Dex, Search Lab, and theme improvements remain in the working tree. This cleanup does not certify all styling as final. The live website remains a separate older release until an explicitly authorized deployment.
+## Layout
 
-## Architecture and protected behavior
+```text
+app/          Public app (plain ES modules, no framework)
+  main.js       state, routing, rendering and events
+  data.js       browser collection storage (reuses src/lib contracts)
+  catalog.js    bundled catalog with reviewed overlay (catalog-review.js)
+  insights.js   medals, almost complete, evolution hints, recaps
+  share.js      compare-link encoding and comparison
+  poster.js     canvas posters and recap cards
+  recommendations.js, legacy-moves.js, search.ts, dom.js, motion.js
+  app.css, features.css, tokens.css
+cody/         Entry for the private owner route
+src/          React app used by /cody, plus shared browser storage and backup code
+shared/       Domain, CSV and search rules shared by browser and Worker
+worker/       Cloudflare Worker: public catalog API and authenticated owner API
+catalog/      Versioned catalog, medals, evolution families, legacy move windows
+migrations/   Immutable D1 history
+public/       Static assets, artwork, service worker, legal pages
+scripts/      Catalog sync/verification and release smoke checks
+tests/        unit/, worker/, e2e/ (Playwright)
+docs/         ARCHITECTURE.md, DEPLOYMENT.md, latest release record
+```
 
-React 19, TypeScript, Vite, Cloudflare Workers/D1, Vitest, and Playwright. Exact dependency versions remain in `package.json` and `pnpm-lock.yaml`.
+## Develop
 
-- `src/App.tsx`, `src/app/`: coordination, hash routing, navigation, PWA updates.
-- `src/routes/`, `src/components/`: screens, detail cards, Search Builder, import/restore UI.
-- `src/lib/localProfile.ts`, `profileBackup.ts`: browser-local v2 storage, recovery, portable backups.
-- `src/lib/collectionProgress.ts`: default-species regional progress used by Home, retained independently of the retired Field Kit.
-- `shared/`: collection, search, and CSV contracts.
-- `worker/`: public catalog and separate authenticated owner APIs.
-- `catalog/`, `migrations/`, `public/artwork/pokemon-home/`: versioned facts, immutable history, and local artwork provenance.
-- `public/sw.js`: public-only offline cache and explicit update lifecycle.
-- `tests/`, `scripts/`: domain, Worker, fixture-browser, catalog, and release checks.
-
-Preserve stable form IDs, collection data, backup/import/export compatibility, recovery snapshots, and private-owner isolation. National Dex denominators use default representatives; alternate forms do not inflate them. Catalog `2026-08-24.1` is a dated snapshot: 1,025 default representatives, 1,269 forms, and 1,915 unique local sprite references. Do not relabel it as current game data without research.
-
-Missing-search modes are neutral None, Personal (`!#&`), and Tradeable (`!traded&`). Cody recommendations remain separate and ordered Trade, Megas, Tag, Evolve, Special Moves, Untagged, XXL, XXS. Preserve exact copy output, explicit Nitro selection, and safe message splitting. Search Builder combines presets, appraisal, chips, and custom terms without changing collection state.
-
-Public Trade/Wanted pages, SMNA branding, Shadow aura, public accounts, Discord bots, and automatic game-account integration remain outside the product. Legacy backup fields remain portable. Existing type/generation filters and non-retired visual work are preserved for later review.
-
-## Local development
-
-Use Node >=22.13 and the package manager declared in `package.json`. The current host has Node 24.19.0 and pnpm 11.19.0; the package declares pnpm 11.21.0. Validation records the actual host version rather than silently changing the pin.
+Node 22.13 or newer and the pnpm version pinned in `package.json`.
 
 ```powershell
 cd D:\Projects\Pokemon\CatchGrid
 pnpm install --frozen-lockfile
-pnpm exec vite --host 127.0.0.1 --port 5173 --strictPort
+pnpm exec vite --host 127.0.0.1 --port 5191 --strictPort
 ```
 
-The old moved dependency junctions have been repaired and dependencies reinstalled from the unchanged lockfile. Never overwrite `.dev.vars` or reset `.wrangler/state`. Do not run database migrations just to start an existing workspace.
+Open `http://127.0.0.1:5191/`. Never overwrite `.dev.vars` or reset `.wrangler/state`.
 
-| Command                      | Purpose                                                   |
-| ---------------------------- | --------------------------------------------------------- |
-| `pnpm test:unit`             | Domain and routing tests                                  |
-| `pnpm test:worker`           | Isolated Worker/D1 tests                                  |
-| `pnpm lint`                  | Static checks                                             |
-| `pnpm format`                | Formatting check                                          |
-| `pnpm build`                 | Generated bindings, TypeScript, local production artifact |
-| `pnpm catalog:verify`        | Catalog/artwork and immutable-generation checks           |
-| `pnpm validate:pokemon-data` | Data consistency                                          |
-| `pnpm test:e2e`              | Fixture desktop/mobile/WebKit/PWA coverage                |
+| Command                     | Purpose                                          |
+| --------------------------- | ------------------------------------------------ |
+| `pnpm test`                 | Unit and Worker/D1 tests                         |
+| `pnpm lint` / `pnpm format` | Static checks and formatting                     |
+| `pnpm build`                | Binding types, TypeScript and production build   |
+| `pnpm test:e2e:chromium`    | Desktop, mobile and accessibility browser tests  |
+| `pnpm catalog:verify`       | Catalog, artwork and immutable-generation checks |
+| `pnpm check`                | Everything above except browser tests            |
 
-On this host, set `PLAYWRIGHT_USE_SYSTEM_CHROME=1` for installed Chrome. Use an unused `PLAYWRIGHT_PORT` for fixture tests. Fixture preview data is not the local D1 database or a real collection. Browser profiles remain origin-specific.
+Set `PLAYWRIGHT_USE_SYSTEM_CHROME=1` to use installed Chrome for browser tests.
 
-Keep legacy infrastructure names (`dexly-companion`, `dexly-db`, and `dexly:*` migration keys); they preserve compatibility. Deployment instructions are in `docs/DEPLOYMENT.md`, but publication requires explicit authorization.
+## Data rules
 
-## Archive and continuity
+Stable form IDs, the `catchgrid:local-profile:v2` schema, JSON/CSV backups and recovery snapshots stay compatible. National Dex totals count default species only. Catalog `2026-08-24.1` is a dated snapshot; do not present it as current game data without research. Legacy infrastructure names (`dexly-companion`, `dexly-db`, `dexly:*` keys) are kept on purpose.
 
-The entire pre-cleanup source is frozen at:
-
-`D:\Projects\Pokemon\_Archive\CatchGrid-unfinished-2026-09-23-225053`
-
-The archive includes a verified ZIP of 2,128 source files, per-file SHA-256 hashes, verified Git history bundle, original dirty-state patch/status, and dependency-link inventory. Its README explains recovery and exclusions. Secrets, ignored runtime/database state, dependencies, and generated outputs were not packaged. There is one active source tree: this directory.
-
-`docs/PROJECT-HISTORY.md` and `docs/archive/` preserve historical decisions and evidence. Their older Events/Field Kit scope, Search Builder conflict, and dependency failures are superseded. See `AGENTS.md` for lasting rules and `HANDOFF.md` for current status; do not execute archived prompts as fresh assignments.
+Deployment is in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) and needs explicit approval each time.

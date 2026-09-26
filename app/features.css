@@ -1,0 +1,632 @@
+/* Accent colors. Slate (no attribute) is the approved default; each accent has tuned light and dark values. */
+:root[data-accent='green'] {
+  --violet: #2f6b4f;
+  --tint: #e3efe8;
+  --query-accent: #b9e5cc;
+}
+:root[data-accent='blue'] {
+  --violet: #2d5fa3;
+  --tint: #e3ebf7;
+  --query-accent: #bcd3f5;
+}
+:root[data-accent='purple'] {
+  --violet: #5d4a9e;
+  --tint: #ebe7f6;
+  --query-accent: #d7c5ff;
+}
+:root[data-accent='red'] {
+  --violet: #a33a3a;
+  --tint: #f6e5e5;
+  --query-accent: #f3c2c2;
+}
+:root[data-accent='orange'] {
+  --violet: #a5561c;
+  --tint: #f7ebe0;
+  --query-accent: #f5d0ad;
+}
+:root[data-accent='pink'] {
+  --violet: #a33d74;
+  --tint: #f6e5ee;
+  --query-accent: #f3c3dc;
+}
+:root[data-theme='dark'][data-accent='green'] {
+  --violet: #9fdcbc;
+  --tint: #1f3129;
+  --query-accent: #9fdcbc;
+}
+:root[data-theme='dark'][data-accent='blue'] {
+  --violet: #a9c8f5;
+  --tint: #1f2a3b;
+  --query-accent: #a9c8f5;
+}
+:root[data-theme='dark'][data-accent='purple'] {
+  --violet: #cbb8ff;
+  --tint: #2a2440;
+  --query-accent: #cbb8ff;
+}
+:root[data-theme='dark'][data-accent='red'] {
+  --violet: #f2a9a9;
+  --tint: #3a2222;
+  --query-accent: #f2a9a9;
+}
+:root[data-theme='dark'][data-accent='orange'] {
+  --violet: #f5c48f;
+  --tint: #3a2b1d;
+  --query-accent: #f5c48f;
+}
+:root[data-theme='dark'][data-accent='pink'] {
+  --violet: #f2afd2;
+  --tint: #3a2230;
+  --query-accent: #f2afd2;
+}
+
+/* Quick jump */
+.jump-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+.jump-toggle kbd {
+  font:
+    11px/1 Consolas,
+    monospace;
+  padding: 3px 6px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  color: var(--muted);
+}
+#jump-dialog {
+  max-width: 460px;
+  padding: 22px;
+  margin-top: 12vh;
+}
+#jump-form label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+#jump-form .search-input {
+  width: 100%;
+}
+#jump-results {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+}
+#jump-results button {
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 52px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: transparent;
+  text-align: left;
+}
+#jump-results button:hover,
+#jump-results button:focus-visible {
+  background: var(--tint);
+}
+#jump-results img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+#jump-results small {
+  color: var(--muted);
+}
+
+/* Map tools, depth view and paint mode */
+.map-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 18px 0 4px;
+}
+.map-tools button,
+.recap-head .filter-group button {
+  min-height: 40px;
+}
+.map-tools button {
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: transparent;
+  font-size: 13px;
+}
+.map-tools button[aria-pressed='true'] {
+  background: var(--tint);
+  border-color: var(--violet);
+}
+.collection-map .map-cell.depth {
+  border-color: var(--line);
+  color: var(--ink);
+  background: conic-gradient(var(--violet) calc(var(--depth, 0) * 45deg), transparent 0) border-box;
+}
+.collection-map .map-cell.depth.d0 {
+  --depth: 0;
+  background: transparent;
+}
+.collection-map .map-cell.depth.d1 {
+  --depth: 1;
+}
+.collection-map .map-cell.depth.d2 {
+  --depth: 2;
+}
+.collection-map .map-cell.depth.d3 {
+  --depth: 3;
+}
+.collection-map .map-cell.depth.d4 {
+  --depth: 4;
+}
+.collection-map .map-cell.depth.d5 {
+  --depth: 5;
+}
+.collection-map .map-cell.depth.d6 {
+  --depth: 6;
+}
+.collection-map .map-cell.depth.d7 {
+  --depth: 7;
+}
+.collection-map .map-cell.depth.d8 {
+  --depth: 8;
+}
+.collection-map .map-cell.depth:not(.d0) .map-number {
+  background: var(--surface);
+  border-radius: 6px;
+  padding: 1px 4px;
+}
+.collection-map .map-cell.depth.complete {
+  background:
+    linear-gradient(var(--tint), var(--tint)) padding-box,
+    conic-gradient(#eab989, #d5adcf, #a3bcea, #a5ddcb, #eab989) border-box;
+}
+.map-legend i.depth {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  border: 1px solid var(--line);
+  background: conic-gradient(var(--violet) calc(var(--depth, 0) * 45deg), transparent 0);
+}
+.map-legend i.depth.d0 {
+  --depth: 0;
+}
+.map-legend i.depth.d4 {
+  --depth: 4;
+}
+.map-legend i.depth.d7 {
+  --depth: 7;
+}
+.painting-mode .collection-map {
+  touch-action: none;
+  user-select: none;
+}
+.painting-mode .collection-map .map-cell {
+  cursor: crosshair;
+}
+.collection-map .map-cell.painting {
+  outline: 2px solid var(--violet);
+  outline-offset: 1px;
+  transform: scale(0.92);
+}
+
+/* Medals */
+.medal-shelf,
+.share-panel,
+.nearly {
+  margin-top: 28px;
+}
+.medal-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 10px;
+}
+.medal {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  padding: 16px 8px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+  text-align: center;
+}
+.medal small {
+  color: var(--muted);
+  font-size: 11px;
+}
+.medal-mark {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px dashed var(--line);
+  font-weight: 700;
+  color: var(--muted);
+}
+.medal.bronze .medal-mark {
+  background: #c98a57;
+  border: 0;
+  color: #1a1410;
+}
+.medal.silver .medal-mark {
+  background: #c9d1dc;
+  border: 0;
+  color: #15181d;
+}
+.medal.gold .medal-mark {
+  background: #f2c14e;
+  border: 0;
+  color: #1d1605;
+}
+.medal.platinum .medal-mark {
+  background: linear-gradient(135deg, #e0f4ff, #9fd3f5, #d9c9ff);
+  border: 0;
+  color: #101520;
+}
+
+/* Sharing */
+.share-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.share-actions > div {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+}
+.share-actions p {
+  color: var(--muted);
+  font-size: 14px;
+}
+.share-actions button {
+  justify-self: start;
+}
+
+/* Almost complete */
+.nearly-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+.nearly-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  text-align: left;
+  min-height: 72px;
+}
+.nearly-item img {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+.nearly-item span {
+  display: grid;
+}
+.nearly-item small {
+  color: var(--muted);
+}
+
+/* Evolution hint in the inspector */
+.evolve-hint {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--tint);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Silhouettes for missing Pokémon */
+.target-wrap.silhouette img {
+  filter: brightness(0);
+  opacity: 0.35;
+  transition:
+    filter 0.2s,
+    opacity 0.2s;
+}
+:root[data-theme='dark'] .target-wrap.silhouette img {
+  filter: brightness(0) invert(1);
+  opacity: 0.16;
+}
+.target-wrap.silhouette:hover img,
+.target-wrap.silhouette .target:focus-visible img {
+  filter: none;
+  opacity: 1;
+}
+
+/* Search Lab: Cody's picks and Discord */
+.cody-panel,
+.discord-panel,
+.legacy-panel {
+  max-width: 900px;
+  display: grid;
+  gap: 16px;
+}
+.recommendation,
+.discord-message {
+  display: grid;
+  gap: 10px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+}
+.recommendation p,
+.discord-panel > p {
+  color: var(--muted);
+}
+.copy-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.copy-row code {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--bg);
+  font:
+    13px/1.5 Consolas,
+    monospace;
+}
+.discord-message pre {
+  margin: 0;
+  max-height: 260px;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  padding: 12px;
+  border-radius: 10px;
+  background: var(--bg);
+  font:
+    12px/1.5 Consolas,
+    monospace;
+}
+.discord-message button {
+  justify-self: start;
+}
+.subnav {
+  flex-wrap: wrap;
+}
+
+/* Compare */
+.compare-layout,
+.home-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  max-width: 1050px;
+}
+.compare-layout section,
+.home-layout section {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--surface);
+}
+.compare-head,
+.home-hero {
+  grid-column: 1 / -1;
+}
+.compare-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-height: 260px;
+  overflow: auto;
+}
+.compare-chip {
+  min-height: 36px;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  font-size: 12px;
+}
+
+/* Home */
+.home-count {
+  font-size: 18px;
+  color: var(--muted);
+}
+.home-count strong {
+  font-size: 64px;
+  font-weight: 300;
+  letter-spacing: -0.05em;
+  color: var(--ink);
+}
+.welcome-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.home-layout .nearly {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+.recap-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.recap-total strong {
+  font-size: 34px;
+  font-weight: 400;
+}
+.recap-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.recap-categories li {
+  display: flex;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--tint);
+  font-size: 13px;
+}
+
+/* Settings additions */
+.accent-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 18px 0;
+  padding: 0;
+  border: 0;
+}
+.accent-picker legend {
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+.accent-swatch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 6px 12px 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  font-size: 13px;
+}
+.accent-swatch[aria-pressed='true'] {
+  border-color: var(--ink);
+}
+.accent-swatch span {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+}
+.accent-slate span {
+  background: linear-gradient(135deg, #385b72, #c4deec);
+}
+.accent-green span {
+  background: linear-gradient(135deg, #2f6b4f, #9fdcbc);
+}
+.accent-blue span {
+  background: linear-gradient(135deg, #2d5fa3, #a9c8f5);
+}
+.accent-purple span {
+  background: linear-gradient(135deg, #5d4a9e, #cbb8ff);
+}
+.accent-red span {
+  background: linear-gradient(135deg, #a33a3a, #f2a9a9);
+}
+.accent-orange span {
+  background: linear-gradient(135deg, #a5561c, #f5c48f);
+}
+.accent-pink span {
+  background: linear-gradient(135deg, #a33d74, #f2afd2);
+}
+#trainer-name {
+  width: 100%;
+  margin-top: 12px;
+}
+.snapshot-list,
+.region-setup {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+.snapshot-list li,
+.region-setup li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+}
+.snapshot-list li > span:first-child,
+.region-setup li > span:first-child {
+  display: grid;
+}
+.snapshot-list small,
+.region-setup small {
+  color: var(--muted);
+}
+.region-setup li > span:last-child {
+  display: flex;
+  gap: 6px;
+}
+.confirm-box {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--tint);
+}
+.confirm-box button {
+  justify-self: start;
+}
+
+@media (max-width: 800px) {
+  .share-actions,
+  .compare-layout,
+  .home-layout {
+    grid-template-columns: 1fr;
+  }
+  .jump-toggle span,
+  .jump-toggle kbd {
+    display: none;
+  }
+}
+@media (max-width: 600px) {
+  .region-setup li {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .copy-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .target-wrap.silhouette img {
+    transition: none;
+  }
+  .collection-map .map-cell.painting {
+    transform: none;
+  }
+}
+.home-layout section > :is(button, a),
+.compare-layout section > :is(button, a) {
+  justify-self: start;
+}
+.home-layout .nearly .section-title {
+  margin-top: 0;
+}
+main:focus {
+  outline: none;
+}

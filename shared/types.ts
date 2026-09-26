@@ -11,6 +11,13 @@ export const CATEGORY_IDS = [
 
 export type CategoryId = (typeof CATEGORY_IDS)[number];
 
+/**
+ * Gender registration for default species. Browser profiles only: the private cloud
+ * schema and catalog rules keep the eight categories above.
+ */
+export const GENDER_CATEGORY_IDS = ['male', 'female'] as const;
+export type GenderCategoryId = (typeof GENDER_CATEGORY_IDS)[number];
+
 export const TRADE_REQUEST_TRAIT_IDS = ['normal', 'shiny', 'xxl', 'xxs', 'costume'] as const;
 export type TradeRequestTrait = (typeof TRADE_REQUEST_TRAIT_IDS)[number];
 

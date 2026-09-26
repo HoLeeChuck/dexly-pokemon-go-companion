@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-09-26",
+  "note": "Which genders each National Dex species can be. Species not listed can be male or female. Applies to default species only; gender forms (Pyroar, Meowstic, Oinkologne) keep their own form entries.",
+  "sources": [
+    {
+      "kind": "secondary",
+      "url": "https://docs.google.com/spreadsheets/d/15M4u8l1Gwm_5STKhnDg5VgGwQfWnBiRX",
+      "note": "Community Pokédex list spreadsheet (JackLeeXD) shared by the project owner on 2026-09-26: merged Male/Female/Neutral gender cells mark single-gender and genderless species. Spot-checked against well-known species; no conflicts between tabs."
+    },
+    {
+      "kind": "official",
+      "url": "https://www.pokemon.com/us/pokedex",
+      "note": "Official Pokédex pages show each species' possible genders; use them to review corrections."
+    }
+  ],
+  "male": [
+    32, 33, 34, 106, 107, 128, 236, 237, 313, 381, 414, 475, 538, 539, 627, 628, 641, 642, 645, 859,
+    860, 861, 1014, 1015, 1016
+  ],
+  "female": [
+    29, 30, 31, 113, 115, 124, 238, 241, 242, 314, 380, 413, 416, 440, 478, 488, 548, 549, 629, 630,
+    669, 670, 671, 758, 761, 762, 763, 856, 857, 858, 868, 869, 905, 957, 958, 959, 1017
+  ],
+  "none": [
+    81, 82, 100, 101, 120, 121, 132, 137, 144, 145, 146, 150, 151, 201, 233, 243, 244, 245, 249,
+    250, 251, 292, 337, 338, 343, 344, 374, 375, 376, 377, 378, 379, 382, 383, 384, 385, 386, 436,
+    437, 462, 474, 479, 480, 481, 482, 483, 484, 486, 487, 489, 490, 491, 492, 493, 494, 599, 600,
+    601, 615, 622, 623, 638, 639, 640, 643, 644, 646, 647, 648, 649, 703, 716, 717, 718, 719, 720,
+    721, 772, 773, 774, 781, 785, 786, 787, 788, 789, 790, 791, 792, 793, 794, 795, 796, 797, 798,
+    799, 800, 801, 802, 803, 804, 805, 806, 807, 808, 809, 854, 855, 870, 880, 881, 882, 883, 888,
+    889, 890, 893, 894, 895, 896, 897, 898, 924, 925, 984, 985, 986, 987, 988, 989, 990, 991, 992,
+    993, 994, 995, 999, 1000, 1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010, 1012,
+    1013, 1020, 1021, 1022, 1023, 1025
+  ]
+}

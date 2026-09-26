@@ -22,7 +22,10 @@
     <link rel="apple-touch-icon" href="/icons/catchgrid-192.png" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>CatchGrid · Pokémon GO Collection Companion</title>
-    <link rel="stylesheet" href="/design/prism/prism.css" />
+    <link rel="stylesheet" href="/app/app.css" />
+    <link rel="stylesheet" href="/app/features.css" />
+    <link rel="stylesheet" href="/app/pokedex.css" />
+    <link rel="stylesheet" href="/app/dashboard.css" />
   </head>
   <body>
     <a href="#main" class="skip">Skip to collection</a>
@@ -39,6 +42,9 @@
         ><a href="#progress" aria-current="page">Progress</a><a href="#search">Search Lab</a
         ><a href="#settings">Settings</a>
       </nav>
+      <button class="jump-toggle quiet" aria-label="Jump to a Pokémon" aria-keyshortcuts="/">
+        ⌕ <span>Jump</span><kbd aria-hidden="true">/</kbd>
+      </button>
       <button class="theme-toggle quiet" aria-label="Switch to light appearance">
         ◐ <span>Appearance</span>
       </button>
@@ -51,16 +57,33 @@
     <noscript>CatchGrid needs JavaScript to manage your collection.</noscript>
     <main id="main" tabindex="-1"></main>
     <footer>
-      <span>Independent Pokémon GO collection companion.</span
-      ><span>Independent fan project · no game connection.</span>
+      <span
+        >Unofficial fan project · not affiliated with Niantic, Nintendo or The Pokémon Company.
+        Pokémon © Nintendo / Creatures Inc. / GAME FREAK inc.</span
+      ><span><a href="#about">Sources &amp; credits</a> · No game connection</span>
     </footer>
     <div class="toast" role="status" aria-live="polite" hidden>
-      <span></span>
+      <span></span><button class="quiet" data-undo hidden>Undo</button>
+      <textarea class="toast-copy" aria-label="Text to copy" readonly hidden></textarea>
     </div>
     <dialog id="inspect-dialog" aria-label="Pokémon collection details">
       <button class="dialog-close quiet" aria-label="Close Pokémon details">✕</button>
       <div id="dialog-content"></div>
     </dialog>
-    <script type="module" src="/design/prism/prism.js"></script>
+    <dialog id="jump-dialog" aria-label="Jump to a Pokémon">
+      <button class="dialog-close quiet" aria-label="Close jump">✕</button>
+      <form id="jump-form" role="search">
+        <label for="jump-input">Jump to a Pokémon</label>
+        <input
+          id="jump-input"
+          class="search-input"
+          type="search"
+          autocomplete="off"
+          placeholder="Name or Dex number, then Enter"
+        />
+      </form>
+      <ul id="jump-results" aria-label="Matching Pokémon"></ul>
+    </dialog>
+    <script type="module" src="/app/main.js"></script>
   </body>
 </html>

@@ -12,3 +12,6 @@ coverage/
 *.log
 .DS_Store
 Thumbs.db
+
+# Local holding area for files removed during cleanups; safe to delete.
+_legacy-backup/

@@ -279,3 +279,55 @@ export function restorePortableProfileBackup(
     preRestoreSnapshotId: saved.snapshotId,
   };
 }
+
+export interface RestoreReviewSummary {
+  sourceName: string;
+  createdAt: string;
+  catalogVersion?: string;
+  catalogCompatibility: 'current' | 'different' | 'unknown';
+  collectionRecords: number;
+  savedSearches: number;
+  wantedEntries: number;
+  tradeSpecimens: number;
+  settings: readonly string[];
+}
+
+function settingLabels(profile: LocalProfile): string[] {
+  const labels: Record<keyof LocalProfile['settings'], string> = {
+    theme: 'light/dark mode',
+    accentTheme: 'accent theme',
+    activeCategory: 'active collection category',
+    regionPreference: 'regional preference',
+  };
+  return (Object.keys(profile.settings) as (keyof LocalProfile['settings'])[])
+    .filter((key) => profile.settings[key] !== undefined)
+    .map((key) => labels[key]);
+}
+
+export function profileRestoreSummary(
+  profile: LocalProfile,
+  input: {
+    sourceName: string;
+    createdAt: string;
+    catalogVersion?: string;
+    currentCatalogVersion?: string;
+  },
+): RestoreReviewSummary {
+  const catalogVersion = input.catalogVersion ?? profile.catalogVersion;
+  return {
+    sourceName: input.sourceName,
+    createdAt: input.createdAt,
+    catalogVersion,
+    catalogCompatibility:
+      !catalogVersion || !input.currentCatalogVersion
+        ? 'unknown'
+        : catalogVersion === input.currentCatalogVersion
+          ? 'current'
+          : 'different',
+    collectionRecords: profile.collectionEntries.length + profile.formCollectionEntries.length,
+    savedSearches: profile.savedSearches.length,
+    wantedEntries: profile.wantedEntries.length,
+    tradeSpecimens: profile.tradeSpecimens.length,
+    settings: settingLabels(profile),
+  };
+}

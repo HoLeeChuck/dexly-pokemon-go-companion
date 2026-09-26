@@ -43,8 +43,6 @@ export default defineConfig({
         rolldownOptions: {
           input: {
             app: resolve('index.html'),
-            prism: resolve('design/prism/index.html'),
-            advanced: resolve('advanced/index.html'),
             owner: resolve('cody/index.html'),
           },
         },

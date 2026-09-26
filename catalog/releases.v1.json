@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "note": "Dated Pokémon GO release corrections applied on top of catalog.v1.json. `forms` adds forms the generated catalog lacks (Normal and Shiny only). `entries` changes availability: the date it took effect, the Pokémon (dex for the default species, or formId), the categories, and the official link. status defaults to \"released\"; use \"unreleased\" or \"ineligible\" to correct a mistake. Newer entries win. See catalog/README.md.",
+  "forms": [
+    {
+      "date": "2026-06-27",
+      "formId": "form-0227-mega",
+      "dex": 227,
+      "formName": "Mega Skarmory",
+      "variantKind": "mega",
+      "types": ["steel", "flying"],
+      "categories": ["normal", "shiny"],
+      "source": "https://pokemongo.com/news/skarmory-super-mega-raid-day-2026",
+      "note": "Debuted in Skarmory Super Mega Raid Day."
+    },
+    {
+      "date": "2026-08-22",
+      "formId": "form-0121-mega",
+      "dex": 121,
+      "formName": "Mega Starmie",
+      "variantKind": "mega",
+      "types": ["water", "psychic"],
+      "categories": ["normal", "shiny"],
+      "source": "https://pokemongo.com/news/starmie-super-mega-raid-day-2026",
+      "note": "Debuted in Ultra Unlock: Starmie Super Mega Raid Day."
+    },
+    {
+      "date": "2026-08-31",
+      "formId": "form-0652-mega",
+      "dex": 652,
+      "formName": "Mega Chesnaught",
+      "variantKind": "mega",
+      "types": ["grass", "fighting"],
+      "categories": ["normal", "shiny"],
+      "source": "https://pokemongo.com/gofest/megafinale",
+      "note": "Mega Finale lead-up Timed Research for Trainers everywhere, from August 31, 2026."
+    },
+    {
+      "date": "2026-08-31",
+      "formId": "form-0655-mega",
+      "dex": 655,
+      "formName": "Mega Delphox",
+      "variantKind": "mega",
+      "types": ["fire", "psychic"],
+      "categories": ["normal", "shiny"],
+      "source": "https://pokemongo.com/gofest/megafinale",
+      "note": "Mega Finale lead-up Timed Research for Trainers everywhere, from August 31, 2026."
+    },
+    {
+      "date": "2026-08-31",
+      "formId": "form-0658-mega",
+      "dex": 658,
+      "formName": "Mega Greninja",
+      "variantKind": "mega",
+      "types": ["water", "dark"],
+      "categories": ["normal", "shiny"],
+      "source": "https://pokemongo.com/gofest/megafinale",
+      "note": "Mega Finale lead-up Timed Research for Trainers everywhere, from August 31, 2026."
+    },
+    {
+      "date": "2026-09-19",
+      "formId": "form-0398-mega",
+      "dex": 398,
+      "formName": "Mega Staraptor",
+      "variantKind": "mega",
+      "types": ["fighting", "flying"],
+      "categories": ["normal", "shiny"],
+      "source": "https://pokemongo.com/news/staraptor-super-mega-raid-day-2026",
+      "note": "Debuted in Staraptor Super Mega Raid Day. Moved here from app/catalog-review.js."
+    }
+  ],
+  "entries": []
+}

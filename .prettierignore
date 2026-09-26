@@ -4,3 +4,5 @@ node_modules/
 playwright-report/
 test-results/
 pnpm-lock.yaml
+docs/releases/
+_legacy-backup/

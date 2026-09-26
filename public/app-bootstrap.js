@@ -1,5 +1,3 @@
-/* global CustomEvent, console, document, localStorage, matchMedia, navigator, window */
-
 (() => {
   const root = document.documentElement;
   try {
