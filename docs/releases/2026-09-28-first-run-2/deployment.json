@@ -1,0 +1,15 @@
+{
+  "workerVersion": "0891c9e5-8a9c-4736-beae-2e796325dfef",
+  "checkedAt": "2026-09-28T06:16:01.4417792Z",
+  "source": "c49945a04d9b822e27c9a2af1cc41bcf68883d99",
+  "rollbackVersion": "257fbfc0-bcc2-4b45-8125-3f079ebf475b",
+  "status": "live",
+  "operatorIncident": {
+    "reason": "Windows PowerShell 5 treated pnpm stderr command banners as terminating NativeCommandError under ErrorActionPreference Stop; the child deployment and rollback still completed.",
+    "candidateVersion": "cb4f225f-1a92-4378-b0f6-c13958c37722",
+    "candidateDeploymentAt": "2026-09-28T06:14:01.303875Z",
+    "rollbackAt": "2026-09-28T06:14:05.563543Z",
+    "recoveryChecksPassed": 11,
+    "resolution": "Verified recovery, required PowerShell 7, checked native exit codes, and retried the identical dry-run artifact. All final live checks passed."
+  }
+}

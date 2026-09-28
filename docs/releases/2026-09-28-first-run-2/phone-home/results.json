@@ -1,0 +1,30 @@
+[
+  {
+    "engine": "chromium",
+    "state": "empty",
+    "file": "phone-empty-chromium.png",
+    "height": 2564,
+    "width": 390
+  },
+  {
+    "engine": "chromium",
+    "state": "seeded",
+    "file": "phone-seeded-chromium.png",
+    "height": 2438,
+    "width": 390
+  },
+  {
+    "engine": "webkit",
+    "state": "empty",
+    "file": "phone-empty-webkit.png",
+    "height": 2564,
+    "width": 390
+  },
+  {
+    "engine": "webkit",
+    "state": "seeded",
+    "file": "phone-seeded-webkit.png",
+    "height": 2438,
+    "width": 390
+  }
+]

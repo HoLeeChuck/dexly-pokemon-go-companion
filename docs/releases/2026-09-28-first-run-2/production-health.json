@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "service": "catchgrid",
+  "runtime": "cloudflare-workers",
+  "gitSha": "c49945a04d9b822e27c9a2af1cc41bcf68883d99",
+  "buildTime": "2026-09-28T06:07:35.550Z",
+  "environment": "production",
+  "workerVersionId": "0891c9e5-8a9c-4736-beae-2e796325dfef",
+  "workerVersionTag": "",
+  "workerVersionTime": "2026-09-28T06:15:49.602291Z"
+}

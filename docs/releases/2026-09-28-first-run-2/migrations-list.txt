@@ -1,0 +1,6 @@
+
+ ⛅️ wrangler 4.120.1 (update available 4.142.0)
+───────────────────────────────────────────────
+Resource location: remote 
+
+✅ No migrations to apply!

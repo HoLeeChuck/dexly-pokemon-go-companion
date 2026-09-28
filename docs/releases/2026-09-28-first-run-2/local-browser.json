@@ -1,0 +1,106 @@
+{
+  "base": "http://127.0.0.1:5187",
+  "checkedAt": "2026-09-28T06:09:08.191Z",
+  "ok": true,
+  "views": [
+    {
+      "file": "desktop-empty-dark.png",
+      "width": 1440,
+      "pageWidth": 1440,
+      "height": 1421,
+      "brokenArtwork": 0
+    },
+    {
+      "file": "desktop-empty-light.png",
+      "width": 1440,
+      "pageWidth": 1440,
+      "height": 1421,
+      "brokenArtwork": 0
+    },
+    {
+      "file": "desktop-seeded-dark.png",
+      "width": 1440,
+      "pageWidth": 1440,
+      "height": 1982,
+      "brokenArtwork": 0
+    },
+    {
+      "file": "desktop-seeded-light.png",
+      "width": 1440,
+      "pageWidth": 1440,
+      "height": 1982,
+      "brokenArtwork": 0
+    },
+    {
+      "file": "phone-empty-dark.png",
+      "width": 390,
+      "pageWidth": 390,
+      "height": 2564,
+      "brokenArtwork": 0
+    },
+    {
+      "file": "phone-empty-light.png",
+      "width": 390,
+      "pageWidth": 390,
+      "height": 2564,
+      "brokenArtwork": 0
+    },
+    {
+      "file": "phone-seeded-dark.png",
+      "width": 390,
+      "pageWidth": 390,
+      "height": 2545,
+      "brokenArtwork": 0
+    },
+    {
+      "file": "phone-seeded-light.png",
+      "width": 390,
+      "pageWidth": 390,
+      "height": 2545,
+      "brokenArtwork": 0
+    }
+  ],
+  "contexts": [
+    {
+      "name": "desktop",
+      "state": "empty",
+      "csp": [],
+      "errors": [],
+      "consoleErrors": [],
+      "failedResponses": [],
+      "ownershipPreserved": true,
+      "normalMotionAndImportChecked": true
+    },
+    {
+      "name": "desktop",
+      "state": "seeded",
+      "csp": [],
+      "errors": [],
+      "consoleErrors": [],
+      "failedResponses": [],
+      "ownershipPreserved": true,
+      "normalMotionAndImportChecked": false
+    },
+    {
+      "name": "phone",
+      "state": "empty",
+      "csp": [],
+      "errors": [],
+      "consoleErrors": [],
+      "failedResponses": [],
+      "ownershipPreserved": true,
+      "normalMotionAndImportChecked": true
+    },
+    {
+      "name": "phone",
+      "state": "seeded",
+      "csp": [],
+      "errors": [],
+      "consoleErrors": [],
+      "failedResponses": [],
+      "ownershipPreserved": true,
+      "normalMotionAndImportChecked": false
+    }
+  ],
+  "artifacts": []
+}

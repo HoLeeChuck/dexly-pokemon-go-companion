@@ -1,0 +1,24 @@
+$ node scripts/smoke-production.mjs https://dex.cjdev.app
+[smoke] checking GET /api/health
+[smoke] GET /api/health -> 200
+[smoke] checking HEAD /api/health
+[smoke] HEAD /api/health -> 200
+[smoke] checking GET /api/ready
+[smoke] GET /api/ready -> 200
+[smoke] checking HEAD /api/ready
+[smoke] HEAD /api/ready -> 200
+[smoke] checking GET /api/v1/catalog/version
+[smoke] GET /api/v1/catalog/version -> 200
+[smoke] checking HEAD /api/v1/catalog/version
+[smoke] HEAD /api/v1/catalog/version -> 200
+[smoke] checking GET /api/v1/catalog
+[smoke] GET /api/v1/catalog -> 200
+[smoke] checking HEAD /api/v1/catalog
+[smoke] HEAD /api/v1/catalog -> 200
+[smoke] checking GET /manifest.webmanifest
+[smoke] GET /manifest.webmanifest -> 200
+[smoke] checking GET /robots.txt
+[smoke] GET /robots.txt -> 200
+[smoke] checking GET /api/v1/bootstrap
+[smoke] GET /api/v1/bootstrap -> 401
+{"ok":true,"baseUrl":"https://dex.cjdev.app","checks":11,"timeoutMs":15000,"environment":"production","gitSha":"a8d0f722ea4dd6ede7a63ca43d85378e5be7168d","workerVersionId":"257fbfc0-bcc2-4b45-8125-3f079ebf475b","catalogVersion":"2026-08-24.1","catalogEntries":1269,"privateBootstrapStatus":401}

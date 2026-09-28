@@ -1,0 +1,70 @@
+{
+  "source": "c49945a04d9b822e27c9a2af1cc41bcf68883d99",
+  "baseline": {
+    "run": 36381020076,
+    "attempt": 2,
+    "allTestsCompleted": true,
+    "passed": 49,
+    "failed": 18,
+    "flaky": 1,
+    "existingSkipped": 2
+  },
+  "diagnosticRun": {
+    "run": 36383891646,
+    "source": "e14abfe",
+    "purpose": "Failure-only cross-engine section measurements",
+    "cancelledAfterMeasurements": true,
+    "releaseGate": false
+  },
+  "finalLinux": {
+    "run": 36384734840,
+    "webkit": {
+      "passed": 68,
+      "retries": 0,
+      "existingSkipped": 2
+    },
+    "chromiumPwa": {
+      "passed": 89,
+      "retries": 0,
+      "existingSkipped": 2
+    },
+    "quality": "All source, test, build and dry-run checks passed; existing dependency audit failed and was explicitly accepted by owner for this release"
+  },
+  "local": {
+    "unit": 241,
+    "worker": 40,
+    "browserPassed": 152,
+    "existingSkipped": 4,
+    "webkitFailures": 5,
+    "overflowRerunPassed": true,
+    "remaining": "Four Windows WebKit native link-Tab focus failures; full Linux coverage passes unchanged"
+  },
+  "preflight": {
+    "preflightExit": 1,
+    "source": "c49945a04d9b822e27c9a2af1cc41bcf68883d99",
+    "restoredPlanSha256": "AB176AD8234090549DACE98E3CB90782D2FE625BFEB04EB3A07E3BA6A8CD4398",
+    "originalPlanSha256": "AB176AD8234090549DACE98E3CB90782D2FE625BFEB04EB3A07E3BA6A8CD4398"
+  },
+  "artifact": {
+    "source": "c49945a04d9b822e27c9a2af1cc41bcf68883d99",
+    "files": 2427,
+    "sha256": "d9e4c7e7a3965fc9f3e5d0610e9e51f84a15151810dac1c8eaebee8db82a1927"
+  },
+  "heightLimit": 2400,
+  "windowsSeededContentHeight": 2361,
+  "navigationClearance": 77,
+  "addedSkips": 0,
+  "dependenciesChanged": false,
+  "migrationsApplied": 0,
+  "bookmark": "000000c8-00000000-000050f4-4e75e891f94c011f875f3c1f83b429f1",
+  "finalLive": {
+    "ok": true,
+    "checkedAt": "2026-09-28T06:16:01.4417792Z",
+    "workerVersion": "0891c9e5-8a9c-4736-beae-2e796325dfef",
+    "smokeChecks": 11,
+    "matchingArtifacts": 11,
+    "browserContexts": 4,
+    "screenshots": 8,
+    "cspViolations": 0
+  }
+}

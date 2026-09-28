@@ -1,0 +1,184 @@
+{
+  "base": "https://dex.cjdev.app",
+  "checkedAt": "2026-09-28T06:15:54.831Z",
+  "ok": true,
+  "views": [
+    {
+      "file": "desktop-empty-dark.png",
+      "width": 1440,
+      "pageWidth": 1440,
+      "height": 1421,
+      "brokenArtwork": 0
+    },
+    {
+      "file": "desktop-empty-light.png",
+      "width": 1440,
+      "pageWidth": 1440,
+      "height": 1421,
+      "brokenArtwork": 0
+    },
+    {
+      "file": "desktop-seeded-dark.png",
+      "width": 1440,
+      "pageWidth": 1440,
+      "height": 1982,
+      "brokenArtwork": 0
+    },
+    {
+      "file": "desktop-seeded-light.png",
+      "width": 1440,
+      "pageWidth": 1440,
+      "height": 1982,
+      "brokenArtwork": 0
+    },
+    {
+      "file": "phone-empty-dark.png",
+      "width": 390,
+      "pageWidth": 390,
+      "height": 2564,
+      "brokenArtwork": 0
+    },
+    {
+      "file": "phone-empty-light.png",
+      "width": 390,
+      "pageWidth": 390,
+      "height": 2564,
+      "brokenArtwork": 0
+    },
+    {
+      "file": "phone-seeded-dark.png",
+      "width": 390,
+      "pageWidth": 390,
+      "height": 2545,
+      "brokenArtwork": 0
+    },
+    {
+      "file": "phone-seeded-light.png",
+      "width": 390,
+      "pageWidth": 390,
+      "height": 2545,
+      "brokenArtwork": 0
+    }
+  ],
+  "contexts": [
+    {
+      "name": "desktop",
+      "state": "empty",
+      "csp": [],
+      "errors": [],
+      "consoleErrors": [],
+      "failedResponses": [],
+      "ownershipPreserved": true,
+      "normalMotionAndImportChecked": true
+    },
+    {
+      "name": "desktop",
+      "state": "seeded",
+      "csp": [],
+      "errors": [],
+      "consoleErrors": [],
+      "failedResponses": [],
+      "ownershipPreserved": true,
+      "normalMotionAndImportChecked": false
+    },
+    {
+      "name": "phone",
+      "state": "empty",
+      "csp": [],
+      "errors": [],
+      "consoleErrors": [],
+      "failedResponses": [],
+      "ownershipPreserved": true,
+      "normalMotionAndImportChecked": true
+    },
+    {
+      "name": "phone",
+      "state": "seeded",
+      "csp": [],
+      "errors": [],
+      "consoleErrors": [],
+      "failedResponses": [],
+      "ownershipPreserved": true,
+      "normalMotionAndImportChecked": false
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "/",
+      "localHash": "870204a928eb33a71e76cdd50380ed21cc98e01f3dcd8f8bbc023234aeeba230",
+      "liveHash": "870204a928eb33a71e76cdd50380ed21cc98e01f3dcd8f8bbc023234aeeba230",
+      "matches": true
+    },
+    {
+      "path": "/cody/",
+      "localHash": "5355d8cda841d62dd002b17574e21c4d2b40456ccc2231a0459bc97bc11bc7ca",
+      "liveHash": "5355d8cda841d62dd002b17574e21c4d2b40456ccc2231a0459bc97bc11bc7ca",
+      "matches": true
+    },
+    {
+      "path": "/prism-bootstrap.js",
+      "localHash": "5add112c4a1970e3bf386f0643d4c8b149cbdb35d5ce736ab73fdb003996b069",
+      "liveHash": "5add112c4a1970e3bf386f0643d4c8b149cbdb35d5ce736ab73fdb003996b069",
+      "matches": true
+    },
+    {
+      "path": "/pwa-bootstrap.js",
+      "localHash": "e40563d10f1281453ba664bb3cffa394e09d58211a38ff65b26693b1c4588bbd",
+      "liveHash": "e40563d10f1281453ba664bb3cffa394e09d58211a38ff65b26693b1c4588bbd",
+      "matches": true
+    },
+    {
+      "path": "/sw.js",
+      "localHash": "2390d424caf9628f467c327bca0723c36f283061754646d0e5b6aa3f4279b706",
+      "liveHash": "2390d424caf9628f467c327bca0723c36f283061754646d0e5b6aa3f4279b706",
+      "matches": true
+    },
+    {
+      "path": "/manifest.webmanifest",
+      "localHash": "faaa7ea4c8e0d8f934f8134e06bec396afcc1898d9408f9c809d193a7e8bc93b",
+      "liveHash": "faaa7ea4c8e0d8f934f8134e06bec396afcc1898d9408f9c809d193a7e8bc93b",
+      "matches": true
+    },
+    {
+      "path": "/assets/app-MbIUbv4s.js",
+      "localHash": "71b119349f7ea286dca8f7313cdf0e43ae3f2c4c10c2b19015b988b9471bdb92",
+      "liveHash": "71b119349f7ea286dca8f7313cdf0e43ae3f2c4c10c2b19015b988b9471bdb92",
+      "matches": true
+    },
+    {
+      "path": "/assets/domain-Ba_Sgqka.js",
+      "localHash": "386f05575e14b8941634a1f661c5f76c6477b30a047150850063074acc182309",
+      "liveHash": "386f05575e14b8941634a1f661c5f76c6477b30a047150850063074acc182309",
+      "matches": true
+    },
+    {
+      "path": "/assets/discordShare-6zPr9k6Q.js",
+      "localHash": "ae980d160e4f123289bb916ba3d0729d2f9459aa13c86ec1247d645e3669522f",
+      "liveHash": "ae980d160e4f123289bb916ba3d0729d2f9459aa13c86ec1247d645e3669522f",
+      "matches": true
+    },
+    {
+      "path": "/assets/region-medals.v1-Cdn3XPRU.js",
+      "localHash": "1efe28652e03454cfefb201383639113fa133a683b71e476ef9b65bed676d86f",
+      "liveHash": "1efe28652e03454cfefb201383639113fa133a683b71e476ef9b65bed676d86f",
+      "matches": true
+    },
+    {
+      "path": "/assets/app-BEdYtDa4.css",
+      "localHash": "1c8a09cabde5357640f08f5ce709e9f9ff6ae2b2710d28c52569f93092cd5565",
+      "liveHash": "1c8a09cabde5357640f08f5ce709e9f9ff6ae2b2710d28c52569f93092cd5565",
+      "matches": true
+    }
+  ],
+  "health": {
+    "ok": true,
+    "service": "catchgrid",
+    "runtime": "cloudflare-workers",
+    "gitSha": "c49945a04d9b822e27c9a2af1cc41bcf68883d99",
+    "buildTime": "2026-09-28T06:07:35.550Z",
+    "environment": "production",
+    "workerVersionId": "0891c9e5-8a9c-4736-beae-2e796325dfef",
+    "workerVersionTag": "",
+    "workerVersionTime": "2026-09-28T06:15:49.602291Z"
+  }
+}

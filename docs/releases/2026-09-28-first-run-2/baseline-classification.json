@@ -1,0 +1,255 @@
+{
+  "run": 36381020076,
+  "attempt": 2,
+  "job": 108801981690,
+  "source": "32b6e14c608c5333ac2931b12f5a5e062405c8d3",
+  "passed": 49,
+  "flaky": 1,
+  "failed": 18,
+  "existingSkipped": 2,
+  "allTestsCompleted": true,
+  "failures": [
+    {
+      "classification": "REAL",
+      "project": "mobile-webkit",
+      "location": "tests/e2e/app.spec.ts:31:1",
+      "test": "returning Home has recent artwork, medal partners and an accessible responsive heatmap",
+      "line": 29,
+      "failedAttempts": 3,
+      "errors": [
+        "Error: expect(received).toBeLessThanOrEqual(expected)"
+      ]
+    },
+    {
+      "classification": "REAL",
+      "project": "mobile-webkit",
+      "location": "tests/e2e/app.spec.ts:189:1",
+      "test": "first-run backup action focuses the existing reviewed import and restores the dashboard",
+      "line": 145,
+      "failedAttempts": 3,
+      "errors": [
+        "Test timeout of 30000ms exceeded.",
+        "Error: expect(locator).not.toBeEmpty() failed",
+        "Error: locator.click: Test timeout of 30000ms exceeded."
+      ]
+    },
+    {
+      "classification": "REAL",
+      "project": "mobile-webkit",
+      "location": "tests/e2e/app.spec.ts:301:1",
+      "test": "the footer links to sources and credits",
+      "line": 244,
+      "failedAttempts": 3,
+      "errors": [
+        "Test timeout of 30000ms exceeded.",
+        "Error: expect(locator).not.toBeEmpty() failed",
+        "Error: locator.click: Test timeout of 30000ms exceeded."
+      ]
+    },
+    {
+      "classification": "REAL",
+      "project": "mobile-webkit",
+      "location": "tests/e2e/app.spec.ts:532:1",
+      "test": "retired and unknown routes fall back to Home",
+      "line": 343,
+      "failedAttempts": 3,
+      "errors": [
+        "Test timeout of 30000ms exceeded.",
+        "Error: expect(locator).not.toBeEmpty() failed",
+        "Error: expect(locator).toHaveAttribute(expected) failed"
+      ]
+    },
+    {
+      "classification": "REAL",
+      "project": "mobile-webkit",
+      "location": "tests/e2e/app.spec.ts:514:1",
+      "test": "quick jump opens a Pokémon from anywhere",
+      "line": 448,
+      "failedAttempts": 3,
+      "errors": [
+        "Test timeout of 30000ms exceeded.",
+        "Error: locator.click: Test timeout of 30000ms exceeded."
+      ]
+    },
+    {
+      "classification": "REAL",
+      "project": "mobile-webkit",
+      "location": "tests/e2e/app.spec.ts:539:1",
+      "test": "no horizontal overflow on any destination",
+      "line": 545,
+      "failedAttempts": 3,
+      "errors": [
+        "Test timeout of 30000ms exceeded.",
+        "Error: expect(locator).not.toBeEmpty() failed"
+      ]
+    },
+    {
+      "classification": "REAL",
+      "project": "mobile-webkit",
+      "location": "tests/e2e/navigation.app.spec.ts:72:1",
+      "test": "phone destinations, keyboard access and Menu remain usable across the 700px boundary",
+      "line": 650,
+      "failedAttempts": 3,
+      "errors": [
+        "Test timeout of 30000ms exceeded.",
+        "Error: page.setViewportSize: Test timeout of 30000ms exceeded.",
+        "Error: expect(locator).toHaveCSS(expected) failed"
+      ]
+    },
+    {
+      "classification": "REAL",
+      "project": "mobile-webkit",
+      "location": "tests/e2e/navigation.app.spec.ts:40:1",
+      "test": "blocked session storage cannot break navigation or replay the Dex cue",
+      "line": 737,
+      "failedAttempts": 3,
+      "errors": [
+        "Test timeout of 30000ms exceeded.",
+        "Error: expect(locator).toBeVisible() failed",
+        "Error: locator.click: Test timeout of 30000ms exceeded."
+      ]
+    },
+    {
+      "classification": "REAL",
+      "project": "mobile-webkit",
+      "location": "tests/e2e/navigation.app.spec.ts:123:1",
+      "test": "a hidden Dex link does not consume its first-visit cue",
+      "line": 830,
+      "failedAttempts": 3,
+      "errors": [
+        "Test timeout of 30000ms exceeded.",
+        "Error: locator.click: Test timeout of 30000ms exceeded."
+      ]
+    },
+    {
+      "classification": "REAL",
+      "project": "desktop-webkit",
+      "location": "tests/e2e/app.spec.ts:189:1",
+      "test": "first-run backup action focuses the existing reviewed import and restores the dashboard",
+      "line": 951,
+      "failedAttempts": 3,
+      "errors": [
+        "Error: locator.click: Target page, context or browser has been closed",
+        "Test timeout of 30000ms exceeded.",
+        "Error: locator.click: Test timeout of 30000ms exceeded."
+      ]
+    },
+    {
+      "classification": "REAL",
+      "project": "desktop-webkit",
+      "location": "tests/e2e/app.spec.ts:154:1",
+      "test": "first-run Home introduces the app without empty progress and has a logical tab order",
+      "line": 1041,
+      "failedAttempts": 3,
+      "errors": [
+        "Test timeout of 30000ms exceeded.",
+        "Error: expect(locator).toBeVisible() failed",
+        "Error: expect(locator).toHaveCount(expected) failed"
+      ]
+    },
+    {
+      "classification": "REAL",
+      "project": "desktop-webkit",
+      "location": "tests/e2e/app.spec.ts:514:1",
+      "test": "quick jump opens a Pokémon from anywhere",
+      "line": 1131,
+      "failedAttempts": 3,
+      "errors": [
+        "Test timeout of 30000ms exceeded.",
+        "Error: locator.click: Test timeout of 30000ms exceeded.",
+        "Error: locator.click: Target page, context or browser has been closed"
+      ]
+    },
+    {
+      "classification": "REAL",
+      "project": "desktop-webkit",
+      "location": "tests/e2e/app.spec.ts:301:1",
+      "test": "the footer links to sources and credits",
+      "line": 1224,
+      "failedAttempts": 3,
+      "errors": [
+        "Test timeout of 30000ms exceeded.",
+        "Error: locator.click: Test timeout of 30000ms exceeded."
+      ]
+    },
+    {
+      "classification": "FLAKY",
+      "project": "desktop-webkit",
+      "location": "tests/e2e/app.spec.ts:532:1",
+      "test": "retired and unknown routes fall back to Home",
+      "line": 1321,
+      "failedAttempts": 1,
+      "errors": [
+        "Test timeout of 30000ms exceeded.",
+        "Error: expect(locator).toHaveAttribute(expected) failed"
+      ]
+    },
+    {
+      "classification": "REAL",
+      "project": "desktop-webkit",
+      "location": "tests/e2e/app.spec.ts:539:1",
+      "test": "no horizontal overflow on any destination",
+      "line": 1362,
+      "failedAttempts": 3,
+      "errors": [
+        "Test timeout of 30000ms exceeded.",
+        "Error: page.evaluate: Target page, context or browser has been closed",
+        "Error: expect(locator).toHaveCount(expected) failed",
+        "Error: expect(locator).not.toBeEmpty() failed"
+      ]
+    },
+    {
+      "classification": "REAL",
+      "project": "desktop-webkit",
+      "location": "tests/e2e/navigation.app.spec.ts:72:1",
+      "test": "phone destinations, keyboard access and Menu remain usable across the 700px boundary",
+      "line": 1458,
+      "failedAttempts": 3,
+      "errors": [
+        "Test timeout of 30000ms exceeded.",
+        "Error: page.setViewportSize: Test timeout of 30000ms exceeded.",
+        "Error: locator.click: Test timeout of 30000ms exceeded.",
+        "Error: expect(locator).toBeVisible() failed"
+      ]
+    },
+    {
+      "classification": "REAL",
+      "project": "desktop-webkit",
+      "location": "tests/e2e/navigation.app.spec.ts:40:1",
+      "test": "blocked session storage cannot break navigation or replay the Dex cue",
+      "line": 1553,
+      "failedAttempts": 3,
+      "errors": [
+        "Test timeout of 30000ms exceeded.",
+        "Error: locator.click: Test timeout of 30000ms exceeded."
+      ]
+    },
+    {
+      "classification": "REAL",
+      "project": "desktop-webkit",
+      "location": "tests/e2e/navigation.app.spec.ts:4:1",
+      "test": "Dex cue is confined to empty Home and runs once per tab session",
+      "line": 1647,
+      "failedAttempts": 3,
+      "errors": [
+        "Test timeout of 30000ms exceeded.",
+        "Error: locator.evaluate: Test timeout of 30000ms exceeded.",
+        "Error: locator.click: Test timeout of 30000ms exceeded."
+      ]
+    },
+    {
+      "classification": "REAL",
+      "project": "desktop-webkit",
+      "location": "tests/e2e/navigation.app.spec.ts:123:1",
+      "test": "a hidden Dex link does not consume its first-visit cue",
+      "line": 1744,
+      "failedAttempts": 3,
+      "errors": [
+        "Test timeout of 30000ms exceeded.",
+        "Error: locator.click: Test timeout of 30000ms exceeded.",
+        "Error: locator.click: Target page, context or browser has been closed",
+        "Error: expect(locator).toHaveCount(expected) failed"
+      ]
+    }
+  ]
+}

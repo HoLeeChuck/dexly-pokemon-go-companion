@@ -1,0 +1,664 @@
+{
+  "webkit": {
+    "documentHeight": 2563,
+    "contentHeight": 2486,
+    "navigationClearance": 77,
+    "sections": [
+      {
+        "name": "masthead",
+        "width": 390,
+        "height": 81,
+        "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+        "fontSize": "15px",
+        "lineHeight": "22.5px",
+        "children": [
+          {
+            "name": "brand",
+            "width": 159.375,
+            "height": 34.5,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+            "fontSize": "23px",
+            "lineHeight": "34.5px"
+          },
+          {
+            "name": "menu-toggle quiet",
+            "width": 73.53125,
+            "height": 44,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+            "fontSize": "12px",
+            "lineHeight": "18px"
+          },
+          {
+            "name": "nav",
+            "width": 0,
+            "height": 0,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "22.5px"
+          },
+          {
+            "name": "jump-toggle quiet",
+            "width": 32.734375,
+            "height": 44,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+            "fontSize": "12px",
+            "lineHeight": "18px"
+          },
+          {
+            "name": "theme-toggle quiet",
+            "width": 44,
+            "height": 44,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+            "fontSize": "12px",
+            "lineHeight": "18px"
+          }
+        ]
+      },
+      {
+        "name": "dash-top",
+        "width": 351,
+        "height": 73.5,
+        "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+        "fontSize": "15px",
+        "lineHeight": "22.5px",
+        "children": [
+          {
+            "name": "hero-eyebrow",
+            "width": 108.28125,
+            "height": 19.5,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+            "fontSize": "13px",
+            "lineHeight": "19.5px"
+          },
+          {
+            "name": "hero-actions",
+            "width": 271.828125,
+            "height": 44,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "22.5px"
+          }
+        ]
+      },
+      {
+        "name": "kpi-row",
+        "width": 351,
+        "height": 255.15625,
+        "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+        "fontSize": "15px",
+        "lineHeight": "22.5px",
+        "children": [
+          {
+            "name": "kpi",
+            "width": 111.65625,
+            "height": 121.375,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "22.5px"
+          },
+          {
+            "name": "kpi",
+            "width": 111.671875,
+            "height": 121.375,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "22.5px"
+          },
+          {
+            "name": "kpi",
+            "width": 111.671875,
+            "height": 121.375,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "22.5px"
+          },
+          {
+            "name": "kpi",
+            "width": 171.5,
+            "height": 125.78125,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "22.5px"
+          },
+          {
+            "name": "kpi",
+            "width": 171.5,
+            "height": 125.78125,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "22.5px"
+          }
+        ]
+      },
+      {
+        "name": "dash-card ring-card",
+        "width": 351,
+        "height": 290.75,
+        "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+        "fontSize": "15px",
+        "lineHeight": "22.5px",
+        "children": [
+          {
+            "name": "card-head",
+            "width": 321,
+            "height": 40.84375,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "18.75px"
+          },
+          {
+            "name": "rings",
+            "width": 321,
+            "height": 209.90625,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "22.5px"
+          }
+        ]
+      },
+      {
+        "name": "dash-card heat-card",
+        "width": 350.984375,
+        "height": 506.84375,
+        "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+        "fontSize": "15px",
+        "lineHeight": "22.5px",
+        "children": [
+          {
+            "name": "card-head",
+            "width": 320.984375,
+            "height": 40.84375,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "18.75px"
+          },
+          {
+            "name": "heat-desktop",
+            "width": 0,
+            "height": 0,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "22.5px"
+          },
+          {
+            "name": "heat-mobile",
+            "width": 320.984375,
+            "height": 426,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "22.5px"
+          }
+        ]
+      },
+      {
+        "name": "dash-card activity-card",
+        "width": 350.984375,
+        "height": 179.25,
+        "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+        "fontSize": "15px",
+        "lineHeight": "22.5px",
+        "children": [
+          {
+            "name": "card-head",
+            "width": 320.984375,
+            "height": 21.25,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "18.75px"
+          },
+          {
+            "name": "activity-chart",
+            "width": 320.984375,
+            "height": 64,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "22.5px"
+          },
+          {
+            "name": "activity-foot",
+            "width": 320.984375,
+            "height": 44,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "22.5px"
+          }
+        ]
+      },
+      {
+        "name": "nearly",
+        "width": 350.984375,
+        "height": 102.84375,
+        "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+        "fontSize": "15px",
+        "lineHeight": "22.5px",
+        "children": [
+          {
+            "name": "section-title",
+            "width": 320.984375,
+            "height": 21.25,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "18.75px"
+          },
+          {
+            "name": "annotation",
+            "width": 320.984375,
+            "height": 33.59375,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+            "fontSize": "12px",
+            "lineHeight": "16.799999px"
+          }
+        ]
+      },
+      {
+        "name": "medal-shelf",
+        "width": 350.984375,
+        "height": 461.28125,
+        "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+        "fontSize": "15px",
+        "lineHeight": "22.5px",
+        "children": [
+          {
+            "name": "section-title",
+            "width": 320.984375,
+            "height": 40.84375,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "18.75px"
+          },
+          {
+            "name": "medal-row",
+            "width": 320.984375,
+            "height": 380.4375,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "22.5px"
+          }
+        ]
+      },
+      {
+        "name": "dash-card tools-card",
+        "width": 350.984375,
+        "height": 294.484375,
+        "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+        "fontSize": "15px",
+        "lineHeight": "22.5px",
+        "children": [
+          {
+            "name": "card-head",
+            "width": 320.984375,
+            "height": 21.25,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "18.75px"
+          },
+          {
+            "name": "tool-list",
+            "width": 320.984375,
+            "height": 233.234375,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "22.5px"
+          }
+        ]
+      },
+      {
+        "name": "footer",
+        "width": 358.8125,
+        "height": 111,
+        "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+        "fontSize": "10px",
+        "lineHeight": "15px",
+        "children": [
+          {
+            "name": "span",
+            "width": 358.8125,
+            "height": 45,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+            "fontSize": "10px",
+            "lineHeight": "15px"
+          },
+          {
+            "name": "span",
+            "width": 358.8125,
+            "height": 15,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+            "fontSize": "10px",
+            "lineHeight": "15px"
+          }
+        ]
+      }
+    ]
+  },
+  "chromium": {
+    "documentHeight": 2457,
+    "contentHeight": 2380,
+    "navigationClearance": 77,
+    "sections": [
+      {
+        "name": "masthead",
+        "width": 390,
+        "height": 81,
+        "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+        "fontSize": "15px",
+        "lineHeight": "22.5px",
+        "children": [
+          {
+            "name": "brand",
+            "width": 142.59375,
+            "height": 34.5,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "fontSize": "23px",
+            "lineHeight": "34.5px"
+          },
+          {
+            "name": "menu-toggle quiet",
+            "width": 70.359375,
+            "height": 44,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "fontSize": "12px",
+            "lineHeight": "18px"
+          },
+          {
+            "name": "nav",
+            "width": 0,
+            "height": 0,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "22.5px"
+          },
+          {
+            "name": "jump-toggle quiet",
+            "width": 33,
+            "height": 44,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "fontSize": "12px",
+            "lineHeight": "18px"
+          },
+          {
+            "name": "theme-toggle quiet",
+            "width": 44,
+            "height": 44,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "fontSize": "12px",
+            "lineHeight": "18px"
+          }
+        ]
+      },
+      {
+        "name": "dash-top",
+        "width": 351,
+        "height": 44,
+        "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+        "fontSize": "15px",
+        "lineHeight": "22.5px",
+        "children": [
+          {
+            "name": "hero-eyebrow",
+            "width": 92.9375,
+            "height": 19.5,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "fontSize": "13px",
+            "lineHeight": "19.5px"
+          },
+          {
+            "name": "hero-actions",
+            "width": 250.109375,
+            "height": 44,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "22.5px"
+          }
+        ]
+      },
+      {
+        "name": "kpi-row",
+        "width": 351,
+        "height": 255.15625,
+        "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+        "fontSize": "15px",
+        "lineHeight": "22.5px",
+        "children": [
+          {
+            "name": "kpi",
+            "width": 111.65625,
+            "height": 121.375,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "22.5px"
+          },
+          {
+            "name": "kpi",
+            "width": 111.671875,
+            "height": 121.375,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "22.5px"
+          },
+          {
+            "name": "kpi",
+            "width": 111.65625,
+            "height": 121.375,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "22.5px"
+          },
+          {
+            "name": "kpi",
+            "width": 171.484375,
+            "height": 125.78125,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "22.5px"
+          },
+          {
+            "name": "kpi",
+            "width": 171.5,
+            "height": 125.78125,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "22.5px"
+          }
+        ]
+      },
+      {
+        "name": "dash-card ring-card",
+        "width": 351,
+        "height": 290.75,
+        "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+        "fontSize": "15px",
+        "lineHeight": "22.5px",
+        "children": [
+          {
+            "name": "card-head",
+            "width": 321,
+            "height": 40.84375,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "18.75px"
+          },
+          {
+            "name": "rings",
+            "width": 321,
+            "height": 209.90625,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "22.5px"
+          }
+        ]
+      },
+      {
+        "name": "dash-card heat-card",
+        "width": 351,
+        "height": 506.84375,
+        "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+        "fontSize": "15px",
+        "lineHeight": "22.5px",
+        "children": [
+          {
+            "name": "card-head",
+            "width": 321,
+            "height": 40.84375,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "18.75px"
+          },
+          {
+            "name": "heat-desktop",
+            "width": 0,
+            "height": 0,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "22.5px"
+          },
+          {
+            "name": "heat-mobile",
+            "width": 321,
+            "height": 426,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "22.5px"
+          }
+        ]
+      },
+      {
+        "name": "dash-card activity-card",
+        "width": 351,
+        "height": 179.25,
+        "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+        "fontSize": "15px",
+        "lineHeight": "22.5px",
+        "children": [
+          {
+            "name": "card-head",
+            "width": 321,
+            "height": 21.25,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "18.75px"
+          },
+          {
+            "name": "activity-chart",
+            "width": 321,
+            "height": 64,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "22.5px"
+          },
+          {
+            "name": "activity-foot",
+            "width": 321,
+            "height": 44,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "22.5px"
+          }
+        ]
+      },
+      {
+        "name": "nearly",
+        "width": 351,
+        "height": 102.84375,
+        "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+        "fontSize": "15px",
+        "lineHeight": "22.5px",
+        "children": [
+          {
+            "name": "section-title",
+            "width": 321,
+            "height": 21.25,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "18.75px"
+          },
+          {
+            "name": "annotation",
+            "width": 321,
+            "height": 33.59375,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "fontSize": "12px",
+            "lineHeight": "16.8px"
+          }
+        ]
+      },
+      {
+        "name": "medal-shelf",
+        "width": 351,
+        "height": 448.09375,
+        "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+        "fontSize": "15px",
+        "lineHeight": "22.5px",
+        "children": [
+          {
+            "name": "section-title",
+            "width": 321,
+            "height": 40.84375,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "18.75px"
+          },
+          {
+            "name": "medal-row",
+            "width": 321,
+            "height": 367.25,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "22.5px"
+          }
+        ]
+      },
+      {
+        "name": "dash-card tools-card",
+        "width": 351,
+        "height": 246.40625,
+        "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+        "fontSize": "15px",
+        "lineHeight": "22.5px",
+        "children": [
+          {
+            "name": "card-head",
+            "width": 321,
+            "height": 21.25,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "18.75px"
+          },
+          {
+            "name": "tool-list",
+            "width": 321,
+            "height": 185.15625,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "22.5px"
+          }
+        ]
+      },
+      {
+        "name": "footer",
+        "width": 358.8125,
+        "height": 96,
+        "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+        "fontSize": "10px",
+        "lineHeight": "15px",
+        "children": [
+          {
+            "name": "span",
+            "width": 358.8125,
+            "height": 30,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "fontSize": "10px",
+            "lineHeight": "15px"
+          },
+          {
+            "name": "span",
+            "width": 358.8125,
+            "height": 15,
+            "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "fontSize": "10px",
+            "lineHeight": "15px"
+          }
+        ]
+      }
+    ]
+  }
+}

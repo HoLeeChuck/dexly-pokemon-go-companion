@@ -1,0 +1,108 @@
+2026-09-28T06:06:58.0942441Z ##[group]Run pnpm exec playwright test --project=mobile-chromium --project=desktop-chromium --project=pwa-chromium
+2026-09-28T06:06:58.0943054Z pnpm exec playwright test --project=mobile-chromium --project=desktop-chromium --project=pwa-chromium
+2026-09-28T06:06:58.0977833Z shell: /usr/bin/bash -e {0}
+2026-09-28T06:06:58.0978068Z env:
+2026-09-28T06:06:58.0978276Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-28T06:06:58.0978522Z ##[endgroup]
+2026-09-28T06:07:01.5288136Z [WebServer] [plugin builtin:vite-reporter] 
+2026-09-28T06:07:01.5288754Z [WebServer] (!) Some chunks are larger than 500 kB after minification. Consider:
+2026-09-28T06:07:01.5289261Z [WebServer] - Using dynamic import() to code-split the application
+2026-09-28T06:07:01.5289899Z [WebServer] - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+2026-09-28T06:07:01.5290647Z [WebServer] - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+2026-09-28T06:07:01.5290930Z 
+2026-09-28T06:07:03.1496100Z 
+2026-09-28T06:07:03.1496972Z Running 91 tests using 4 workers
+2026-09-28T06:07:03.1497222Z 
+2026-09-28T06:07:03.9388994Z [1/91] [mobile-chromium] › tests/e2e/accessibility.spec.ts:14:3 › progress has no serious automatically detectable accessibility violations
+2026-09-28T06:07:03.9711945Z [2/91] [mobile-chromium] › tests/e2e/accessibility.spec.ts:14:3 › dex?r=kanto has no serious automatically detectable accessibility violations
+2026-09-28T06:07:04.0639212Z [3/91] [mobile-chromium] › tests/e2e/accessibility.spec.ts:14:3 › dex has no serious automatically detectable accessibility violations
+2026-09-28T06:07:04.0868437Z [4/91] [mobile-chromium] › tests/e2e/accessibility.spec.ts:14:3 › home has no serious automatically detectable accessibility violations
+2026-09-28T06:07:08.8782892Z [5/91] [mobile-chromium] › tests/e2e/accessibility.spec.ts:14:3 › search has no serious automatically detectable accessibility violations
+2026-09-28T06:07:09.0900459Z [6/91] [mobile-chromium] › tests/e2e/accessibility.spec.ts:14:3 › search?section=recommended-searches has no serious automatically detectable accessibility violations
+2026-09-28T06:07:09.2600478Z [7/91] [mobile-chromium] › tests/e2e/accessibility.spec.ts:14:3 › settings has no serious automatically detectable accessibility violations
+2026-09-28T06:07:10.5692425Z [8/91] [mobile-chromium] › tests/e2e/accessibility.spec.ts:14:3 › about has no serious automatically detectable accessibility violations
+2026-09-28T06:07:10.7350867Z [9/91] [mobile-chromium] › tests/e2e/accessibility.spec.ts:28:1 › the Progress grid is a single tab stop with arrow-key movement
+2026-09-28T06:07:11.0198794Z [10/91] [mobile-chromium] › tests/e2e/app.spec.ts:32:1 › returning Home has recent artwork, medal partners and an accessible responsive heatmap
+2026-09-28T06:07:11.9340033Z [11/91] [mobile-chromium] › tests/e2e/app.spec.ts:91:1 › almost-complete cards show missing categories and open details without modifying ownership
+2026-09-28T06:07:12.1084983Z [12/91] [mobile-chromium] › tests/e2e/app.spec.ts:126:1 › medal partners fill with the earned tier and weekly artwork disappears for old entries
+2026-09-28T06:07:14.0353203Z [13/91] [mobile-chromium] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+2026-09-28T06:07:14.2807668Z [14/91] [mobile-chromium] › tests/e2e/app.spec.ts:192:1 › first-run backup action focuses the existing reviewed import and restores the dashboard
+2026-09-28T06:07:15.9372501Z [15/91] [mobile-chromium] › tests/e2e/app.spec.ts:224:1 › first-run parade is static and full colour with reduced motion in both themes
+2026-09-28T06:07:16.7402323Z [16/91] [mobile-chromium] › tests/e2e/app.spec.ts:240:1 › the first marked catch switches Home to the dashboard and removing it restores onboarding
+2026-09-28T06:07:16.9610024Z [17/91] [mobile-chromium] › tests/e2e/app.spec.ts:253:1 › marks a Pokémon from the Dex grid and keeps it after reload
+2026-09-28T06:07:17.2987497Z [18/91] [mobile-chromium] › tests/e2e/app.spec.ts:267:1 › viewing details never changes collection state
+2026-09-28T06:07:18.2691041Z [19/91] [mobile-chromium] › tests/e2e/app.spec.ts:276:1 › the Pokédex shelf opens a region device with a working scanner
+2026-09-28T06:07:18.6354115Z [20/91] [mobile-chromium] › tests/e2e/app.spec.ts:296:1 › the National Dex grid is paged instead of one endless list
+2026-09-28T06:07:18.7433123Z [21/91] [mobile-chromium] › tests/e2e/app.spec.ts:304:1 › the footer links to sources and credits
+2026-09-28T06:07:19.6557766Z [22/91] [mobile-chromium] › tests/e2e/app.spec.ts:311:1 › Search Lab keeps Cody’s eight recommendations in order
+2026-09-28T06:07:19.8266489Z [23/91] [mobile-chromium] › tests/e2e/app.spec.ts:326:1 › Discord output stays within the message limit
+2026-09-28T06:07:20.4250804Z [24/91] [mobile-chromium] › tests/e2e/app.spec.ts:334:1 › builder composes an exact query without touching the collection
+2026-09-28T06:07:20.5440011Z [25/91] [mobile-chromium] › tests/e2e/app.spec.ts:343:1 › dragging down a grid column fills a range in one save and can be undone
+2026-09-28T06:07:20.6946609Z [26/91] [mobile-chromium] › tests/e2e/app.spec.ts:362:1 › the grid marks cells by click and keyboard and updates the search string
+2026-09-28T06:07:20.9929602Z [27/91] [mobile-chromium] › tests/e2e/app.spec.ts:407:1 › a name in the grid opens details without changing the collection
+2026-09-28T06:07:21.0066174Z [28/91] [mobile-chromium] › tests/e2e/app.spec.ts:394:1 › Progress fits the window with equal-width category columns
+2026-09-28T06:07:21.0712876Z [29/91] [mobile-chromium] › tests/e2e/app.spec.ts:417:1 › the Home dashboard shows rings, the region heatmap and activity
+2026-09-28T06:07:21.1668757Z [30/91] [mobile-chromium] › tests/e2e/app.spec.ts:435:1 › rows pasted from the community spreadsheet are reviewed, then added
+2026-09-28T06:07:22.1668901Z [31/91] [mobile-chromium] › tests/e2e/app.spec.ts:469:1 › the collection downloads as the community spreadsheet
+2026-09-28T06:07:23.1521104Z [32/91] [mobile-chromium] › tests/e2e/app.spec.ts:479:1 › medals, poster and compare link are available on Home
+2026-09-28T06:07:23.2360686Z [33/91] [mobile-chromium] › tests/e2e/app.spec.ts:493:1 › a compare link shows who can help whom
+2026-09-28T06:07:23.2397686Z [34/91] [mobile-chromium] › tests/e2e/app.spec.ts:502:1 › a compare link is shown for manual copy when the clipboard is unavailable
+2026-09-28T06:07:23.7247672Z [35/91] [mobile-chromium] › tests/e2e/app.spec.ts:517:1 › quick jump opens a Pokémon from anywhere
+2026-09-28T06:07:23.9422693Z [36/91] [mobile-chromium] › tests/e2e/app.spec.ts:527:1 › bulk region setup asks before changing anything
+2026-09-28T06:07:24.6420954Z [37/91] [mobile-chromium] › tests/e2e/app.spec.ts:535:1 › retired and unknown routes fall back to Home
+2026-09-28T06:07:24.7633791Z [38/91] [mobile-chromium] › tests/e2e/app.spec.ts:542:1 › no horizontal overflow on any destination
+2026-09-28T06:07:24.8931732Z [39/91] [mobile-chromium] › tests/e2e/navigation.app.spec.ts:4:1 › Dex cue is confined to empty Home and runs once per tab session
+2026-09-28T06:07:25.1118818Z [40/91] [mobile-chromium] › tests/e2e/navigation.app.spec.ts:40:1 › blocked session storage cannot break navigation or replay the Dex cue
+2026-09-28T06:07:25.5723707Z [41/91] [mobile-chromium] › tests/e2e/navigation.app.spec.ts:58:1 › returning Home never advertises the first-run Dex cue
+2026-09-28T06:07:26.6744107Z [42/91] [mobile-chromium] › tests/e2e/navigation.app.spec.ts:72:1 › phone destinations, keyboard access and Menu remain usable across the 700px boundary
+2026-09-28T06:07:27.1241791Z [43/91] [mobile-chromium] › tests/e2e/navigation.app.spec.ts:123:1 › a hidden Dex link does not consume its first-visit cue
+2026-09-28T06:07:27.1457078Z [44/91] [mobile-chromium] › tests/e2e/navigation.app.spec.ts:133:1 › phone dialogs and actionable toasts stay above the navigation
+2026-09-28T06:07:28.8247998Z [45/91] [desktop-chromium] › tests/e2e/accessibility.spec.ts:14:3 › home has no serious automatically detectable accessibility violations
+2026-09-28T06:07:29.1779681Z [46/91] [desktop-chromium] › tests/e2e/accessibility.spec.ts:14:3 › dex has no serious automatically detectable accessibility violations
+2026-09-28T06:07:30.7998054Z [47/91] [desktop-chromium] › tests/e2e/accessibility.spec.ts:14:3 › dex?r=kanto has no serious automatically detectable accessibility violations
+2026-09-28T06:07:31.9693893Z [48/91] [desktop-chromium] › tests/e2e/accessibility.spec.ts:14:3 › search has no serious automatically detectable accessibility violations
+2026-09-28T06:07:32.5571943Z [49/91] [desktop-chromium] › tests/e2e/accessibility.spec.ts:14:3 › search?section=recommended-searches has no serious automatically detectable accessibility violations
+2026-09-28T06:07:33.3589392Z [50/91] [desktop-chromium] › tests/e2e/accessibility.spec.ts:14:3 › progress has no serious automatically detectable accessibility violations
+2026-09-28T06:07:34.0160007Z [51/91] [desktop-chromium] › tests/e2e/accessibility.spec.ts:14:3 › settings has no serious automatically detectable accessibility violations
+2026-09-28T06:07:34.9077517Z [52/91] [desktop-chromium] › tests/e2e/accessibility.spec.ts:14:3 › about has no serious automatically detectable accessibility violations
+2026-09-28T06:07:34.9499399Z [53/91] [desktop-chromium] › tests/e2e/accessibility.spec.ts:28:1 › the Progress grid is a single tab stop with arrow-key movement
+2026-09-28T06:07:36.2104180Z [54/91] [desktop-chromium] › tests/e2e/app.spec.ts:32:1 › returning Home has recent artwork, medal partners and an accessible responsive heatmap
+2026-09-28T06:07:36.2784117Z [55/91] [desktop-chromium] › tests/e2e/app.spec.ts:91:1 › almost-complete cards show missing categories and open details without modifying ownership
+2026-09-28T06:07:36.8199178Z [56/91] [desktop-chromium] › tests/e2e/app.spec.ts:126:1 › medal partners fill with the earned tier and weekly artwork disappears for old entries
+2026-09-28T06:07:38.2999062Z [57/91] [desktop-chromium] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+2026-09-28T06:07:39.0877687Z [58/91] [desktop-chromium] › tests/e2e/app.spec.ts:192:1 › first-run backup action focuses the existing reviewed import and restores the dashboard
+2026-09-28T06:07:40.1673194Z [59/91] [desktop-chromium] › tests/e2e/app.spec.ts:224:1 › first-run parade is static and full colour with reduced motion in both themes
+2026-09-28T06:07:41.4669587Z [60/91] [desktop-chromium] › tests/e2e/app.spec.ts:240:1 › the first marked catch switches Home to the dashboard and removing it restores onboarding
+2026-09-28T06:07:41.5709679Z [61/91] [desktop-chromium] › tests/e2e/app.spec.ts:253:1 › marks a Pokémon from the Dex grid and keeps it after reload
+2026-09-28T06:07:42.2030366Z [62/91] [desktop-chromium] › tests/e2e/app.spec.ts:267:1 › viewing details never changes collection state
+2026-09-28T06:07:43.1464410Z [63/91] [desktop-chromium] › tests/e2e/app.spec.ts:276:1 › the Pokédex shelf opens a region device with a working scanner
+2026-09-28T06:07:43.8810402Z [64/91] [desktop-chromium] › tests/e2e/app.spec.ts:296:1 › the National Dex grid is paged instead of one endless list
+2026-09-28T06:07:44.1685575Z [65/91] [desktop-chromium] › tests/e2e/app.spec.ts:304:1 › the footer links to sources and credits
+2026-09-28T06:07:45.2698913Z [66/91] [desktop-chromium] › tests/e2e/app.spec.ts:311:1 › Search Lab keeps Cody’s eight recommendations in order
+2026-09-28T06:07:45.6089079Z [67/91] [desktop-chromium] › tests/e2e/app.spec.ts:326:1 › Discord output stays within the message limit
+2026-09-28T06:07:45.6150854Z [68/91] [desktop-chromium] › tests/e2e/app.spec.ts:334:1 › builder composes an exact query without touching the collection
+2026-09-28T06:07:46.0524003Z [69/91] [desktop-chromium] › tests/e2e/app.spec.ts:343:1 › dragging down a grid column fills a range in one save and can be undone
+2026-09-28T06:07:46.3350259Z [70/91] [desktop-chromium] › tests/e2e/app.spec.ts:362:1 › the grid marks cells by click and keyboard and updates the search string
+2026-09-28T06:07:46.3878932Z [71/91] [desktop-chromium] › tests/e2e/app.spec.ts:394:1 › Progress fits the window with equal-width category columns
+2026-09-28T06:07:47.6257619Z [72/91] [desktop-chromium] › tests/e2e/app.spec.ts:407:1 › a name in the grid opens details without changing the collection
+2026-09-28T06:07:49.2655294Z [73/91] [desktop-chromium] › tests/e2e/app.spec.ts:417:1 › the Home dashboard shows rings, the region heatmap and activity
+2026-09-28T06:07:49.5588100Z [74/91] [desktop-chromium] › tests/e2e/app.spec.ts:435:1 › rows pasted from the community spreadsheet are reviewed, then added
+2026-09-28T06:07:50.3760984Z [75/91] [desktop-chromium] › tests/e2e/app.spec.ts:469:1 › the collection downloads as the community spreadsheet
+2026-09-28T06:07:51.0298980Z [76/91] [desktop-chromium] › tests/e2e/app.spec.ts:479:1 › medals, poster and compare link are available on Home
+2026-09-28T06:07:51.2242252Z [77/91] [desktop-chromium] › tests/e2e/app.spec.ts:493:1 › a compare link shows who can help whom
+2026-09-28T06:07:51.4908793Z [78/91] [desktop-chromium] › tests/e2e/app.spec.ts:502:1 › a compare link is shown for manual copy when the clipboard is unavailable
+2026-09-28T06:07:52.0780450Z [79/91] [desktop-chromium] › tests/e2e/app.spec.ts:517:1 › quick jump opens a Pokémon from anywhere
+2026-09-28T06:07:52.6357845Z [80/91] [desktop-chromium] › tests/e2e/app.spec.ts:527:1 › bulk region setup asks before changing anything
+2026-09-28T06:07:52.8245577Z [81/91] [desktop-chromium] › tests/e2e/app.spec.ts:535:1 › retired and unknown routes fall back to Home
+2026-09-28T06:07:53.6559633Z [82/91] [desktop-chromium] › tests/e2e/app.spec.ts:542:1 › no horizontal overflow on any destination
+2026-09-28T06:07:53.8270046Z [83/91] [desktop-chromium] › tests/e2e/navigation.app.spec.ts:4:1 › Dex cue is confined to empty Home and runs once per tab session
+2026-09-28T06:07:54.1283920Z [84/91] [desktop-chromium] › tests/e2e/navigation.app.spec.ts:40:1 › blocked session storage cannot break navigation or replay the Dex cue
+2026-09-28T06:07:55.1579409Z [85/91] [desktop-chromium] › tests/e2e/navigation.app.spec.ts:58:1 › returning Home never advertises the first-run Dex cue
+2026-09-28T06:07:55.9092620Z [86/91] [desktop-chromium] › tests/e2e/navigation.app.spec.ts:72:1 › phone destinations, keyboard access and Menu remain usable across the 700px boundary
+2026-09-28T06:07:55.9552552Z [87/91] [desktop-chromium] › tests/e2e/navigation.app.spec.ts:123:1 › a hidden Dex link does not consume its first-visit cue
+2026-09-28T06:07:56.6369032Z [88/91] [desktop-chromium] › tests/e2e/navigation.app.spec.ts:133:1 › phone dialogs and actionable toasts stay above the navigation
+2026-09-28T06:07:57.6258906Z [89/91] [pwa-chromium] › tests/e2e/pwa.spec.ts:3:1 › standalone phone navigation respects safe areas and rotation
+2026-09-28T06:07:57.8475136Z [90/91] [pwa-chromium] › tests/e2e/pwa.spec.ts:59:1 › installs offline support without caching private routes
+2026-09-28T06:07:59.7535613Z [91/91] [pwa-chromium] › tests/e2e/pwa.spec.ts:93:1 › a waiting update is only applied when the person accepts it
+2026-09-28T06:08:02.3299227Z   2 skipped
+2026-09-28T06:08:02.3299510Z   89 passed (1.1m)
