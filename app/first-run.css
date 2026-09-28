@@ -58,20 +58,34 @@
   --silhouette: brightness(0) invert(1);
   --silhouette-opacity: 0.16;
 }
-.first-run-parade img {
+.first-run-portrait {
+  display: grid;
   width: 100%;
   max-width: 112px;
+  aspect-ratio: 1;
+}
+.first-run-portrait img {
+  grid-area: 1 / 1;
+  width: 100%;
   height: auto;
   aspect-ratio: 1;
   object-fit: contain;
 }
-.first-run-parade img:nth-child(n + 5) {
+.first-run-portrait:nth-child(n + 5) {
   translate: 50% 0;
 }
 @media (prefers-reduced-motion: no-preference) {
-  .first-run-parade img {
+  /* Crossfade two static layers: interpolating image filters stalls Linux WebKit. */
+  .first-run-portrait::before {
+    content: '';
+    grid-area: 1 / 1;
+    background: var(--portrait) center / contain no-repeat;
     filter: var(--silhouette);
     opacity: var(--silhouette-opacity);
+    animation: first-run-silhouette 8.4s var(--delay) infinite;
+  }
+  .first-run-portrait img {
+    opacity: 0;
     animation: first-run-reveal 8.4s var(--delay) infinite;
   }
 }
@@ -79,13 +93,22 @@
   0%,
   14.2857%,
   100% {
-    filter: var(--silhouette);
+    opacity: 0;
+  }
+  3%,
+  11% {
+    opacity: 1;
+  }
+}
+@keyframes first-run-silhouette {
+  0%,
+  14.2857%,
+  100% {
     opacity: var(--silhouette-opacity);
   }
   3%,
   11% {
-    filter: none;
-    opacity: 1;
+    opacity: 0;
   }
 }
 .first-run-steps h2,

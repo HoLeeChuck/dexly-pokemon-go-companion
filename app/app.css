@@ -2131,7 +2131,7 @@ dialog {
 
 /* Atlas finishing pass: consistent control geometry and quiet surface hierarchy. */
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 :root {
   --control-radius: 12px;

@@ -739,7 +739,7 @@ function firstRunHome() {
     .map((n) => species.find((p) => p.n === n))
     .map(
       (p, i) =>
-        `<img src="${escape(p.art)}" alt="" width="112" height="112" data-style="--delay:${(i * 1.2).toFixed(1)}s">`,
+        `<span class="first-run-portrait" data-style="--delay:${(i * 1.2).toFixed(1)}s;--portrait:url('${escape(p.art)}')"><img src="${escape(p.art)}" alt="" width="112" height="112"></span>`,
     )
     .join('');
   // Same compass, filter and clipboard paths as the existing Icon set; no React runtime.
