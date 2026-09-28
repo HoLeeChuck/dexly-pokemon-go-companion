@@ -1,0 +1,126 @@
+2026-09-28T05:16:25.7304425Z [1/70] [mobile-webkit] › tests/e2e/app.spec.ts:123:1 › medal partners fill with the earned tier and weekly artwork disappears for old entries
+2026-09-28T05:16:25.8219304Z [2/70] [mobile-webkit] › tests/e2e/app.spec.ts:154:1 › first-run Home introduces the app without empty progress and has a logical tab order
+2026-09-28T05:16:25.8962976Z [3/70] [mobile-webkit] › tests/e2e/app.spec.ts:31:1 › returning Home has recent artwork, medal partners and an accessible responsive heatmap
+2026-09-28T05:16:25.9242029Z [4/70] [mobile-webkit] › tests/e2e/app.spec.ts:88:1 › almost-complete cards show missing categories and open details without modifying ownership
+2026-09-28T05:16:37.3031930Z [5/70] [mobile-webkit] › tests/e2e/app.spec.ts:189:1 › first-run backup action focuses the existing reviewed import and restores the dashboard
+2026-09-28T05:16:38.0107581Z [6/70] [mobile-webkit] › tests/e2e/app.spec.ts:221:1 › first-run parade is static and full colour with reduced motion in both themes
+2026-09-28T05:16:38.9381691Z [7/70] (retries) [mobile-webkit] › tests/e2e/app.spec.ts:31:1 › returning Home has recent artwork, medal partners and an accessible responsive heatmap (retry #1)
+2026-09-28T05:16:39.1055667Z [8/70] [mobile-webkit] › tests/e2e/app.spec.ts:237:1 › the first marked catch switches Home to the dashboard and removing it restores onboarding
+2026-09-28T05:16:40.6145153Z [9/70] [mobile-webkit] › tests/e2e/app.spec.ts:250:1 › marks a Pokémon from the Dex grid and keeps it after reload
+2026-09-28T05:16:45.5787791Z [10/70] (retries) [mobile-webkit] › tests/e2e/app.spec.ts:31:1 › returning Home has recent artwork, medal partners and an accessible responsive heatmap (retry #2)
+2026-09-28T05:16:45.7702074Z [11/70] [mobile-webkit] › tests/e2e/app.spec.ts:264:1 › viewing details never changes collection state
+2026-09-28T05:16:48.6176815Z [12/70] [mobile-webkit] › tests/e2e/app.spec.ts:273:1 › the Pokédex shelf opens a region device with a working scanner
+2026-09-28T05:16:49.4103747Z   1) [mobile-webkit] › tests/e2e/app.spec.ts:31:1 › returning Home has recent artwork, medal partners and an accessible responsive heatmap
+2026-09-28T05:16:49.4104421Z
+2026-09-28T05:16:49.4104688Z     Error: expect(received).toBeLessThanOrEqual(expected)
+2026-09-28T05:16:49.4105183Z
+2026-09-28T05:16:49.4105305Z     Expected: <= 2400
+2026-09-28T05:16:49.4105582Z     Received:    2486
+2026-09-28T05:16:49.4105747Z
+2026-09-28T05:16:49.4106175Z       59 |       return document.documentElement.scrollHeight - footerClearance - mainClearance;
+2026-09-28T05:16:49.4106743Z       60 |     });
+2026-09-28T05:16:49.4107021Z     > 61 |     expect(contentHeight).toBeLessThanOrEqual(2400);
+2026-09-28T05:16:49.4107364Z          |                           ^
+2026-09-28T05:16:49.4108846Z       62 |     await expect(page.locator('.region-bar')).toHaveCount(11);
+2026-09-28T05:16:49.4109981Z       63 |     const picker = page.getByRole('combobox', { name: 'Category', exact: true });
+2026-09-28T05:16:49.4110606Z       64 |     await expect(picker).toHaveValue('normal');
+2026-09-28T05:16:49.4111374Z         at /home/runner/work/dexly-pokemon-go-companion/dexly-pokemon-go-companion/tests/e2e/app.spec.ts:61:27
+2026-09-28T05:16:49.4111901Z
+2026-09-28T05:16:49.4112445Z     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+2026-09-28T05:16:49.4113421Z     test-results/app-returning-Home-has-rec-36d16-cessible-responsive-heatmap-mobile-webkit/test-failed-1.png
+2026-09-28T05:16:49.4114507Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:16:49.4114882Z
+2026-09-28T05:16:49.4115746Z     Error Context: test-results/app-returning-Home-has-rec-36d16-cessible-responsive-heatmap-mobile-webkit/error-context.md
+2026-09-28T05:16:49.4116398Z
+2026-09-28T05:16:49.4116912Z     attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-09-28T05:16:49.4117808Z     test-results/app-returning-Home-has-rec-36d16-cessible-responsive-heatmap-mobile-webkit/trace.zip
+2026-09-28T05:16:49.4118427Z     Usage:
+2026-09-28T05:16:49.4118558Z
+2026-09-28T05:16:49.4119183Z         pnpm exec playwright show-trace test-results/app-returning-Home-has-rec-36d16-cessible-responsive-heatmap-mobile-webkit/trace.zip
+2026-09-28T05:16:49.4120038Z
+2026-09-28T05:16:49.4120479Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:16:49.4120879Z
+2026-09-28T05:16:49.4121343Z     Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:16:49.4121695Z
+2026-09-28T05:16:49.4121948Z     Error: expect(received).toBeLessThanOrEqual(expected)
+2026-09-28T05:16:49.4122270Z
+2026-09-28T05:16:49.4122376Z     Expected: <= 2400
+2026-09-28T05:16:49.4122678Z     Received:    2486
+2026-09-28T05:16:49.4122857Z
+2026-09-28T05:16:49.4123302Z       59 |       return document.documentElement.scrollHeight - footerClearance - mainClearance;
+2026-09-28T05:16:49.4123905Z       60 |     });
+2026-09-28T05:16:49.4124347Z     > 61 |     expect(contentHeight).toBeLessThanOrEqual(2400);
+2026-09-28T05:16:49.4124822Z          |                           ^
+2026-09-28T05:16:49.4125322Z       62 |     await expect(page.locator('.region-bar')).toHaveCount(11);
+2026-09-28T05:16:49.4126071Z       63 |     const picker = page.getByRole('combobox', { name: 'Category', exact: true });
+2026-09-28T05:16:49.4126706Z       64 |     await expect(picker).toHaveValue('normal');
+2026-09-28T05:16:49.4127502Z         at /home/runner/work/dexly-pokemon-go-companion/dexly-pokemon-go-companion/tests/e2e/app.spec.ts:61:27
+2026-09-28T05:16:49.4128088Z
+2026-09-28T05:16:49.4128646Z     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+2026-09-28T05:16:49.4130784Z     test-results/app-returning-Home-has-rec-36d16-cessible-responsive-heatmap-mobile-webkit-retry1/test-failed-1.png
+2026-09-28T05:16:49.4132088Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:16:49.4132525Z
+2026-09-28T05:16:49.4133301Z     Error Context: test-results/app-returning-Home-has-rec-36d16-cessible-responsive-heatmap-mobile-webkit-retry1/error-context.md
+2026-09-28T05:16:49.4134082Z
+2026-09-28T05:16:49.4134646Z     attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-09-28T05:16:49.4135759Z     test-results/app-returning-Home-has-rec-36d16-cessible-responsive-heatmap-mobile-webkit-retry1/trace.zip
+2026-09-28T05:16:49.4136507Z     Usage:
+2026-09-28T05:16:49.4136674Z
+2026-09-28T05:16:49.4137730Z         pnpm exec playwright show-trace test-results/app-returning-Home-has-rec-36d16-cessible-responsive-heatmap-mobile-webkit-retry1/trace.zip
+2026-09-28T05:16:49.4138540Z
+2026-09-28T05:16:49.4139274Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:16:49.4139941Z
+2026-09-28T05:16:49.4140525Z     Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:16:49.4140926Z
+2026-09-28T05:16:49.4141188Z     Error: expect(received).toBeLessThanOrEqual(expected)
+2026-09-28T05:16:49.4141527Z
+2026-09-28T05:16:49.4141640Z     Expected: <= 2400
+2026-09-28T05:16:49.4141932Z     Received:    2486
+2026-09-28T05:16:49.4142123Z
+2026-09-28T05:16:49.4142589Z       59 |       return document.documentElement.scrollHeight - footerClearance - mainClearance;
+2026-09-28T05:16:49.4143252Z       60 |     });
+2026-09-28T05:16:49.4143635Z     > 61 |     expect(contentHeight).toBeLessThanOrEqual(2400);
+2026-09-28T05:16:49.4144102Z          |                           ^
+2026-09-28T05:16:49.4144596Z       62 |     await expect(page.locator('.region-bar')).toHaveCount(11);
+2026-09-28T05:16:49.4145283Z       63 |     const picker = page.getByRole('combobox', { name: 'Category', exact: true });
+2026-09-28T05:16:49.4146257Z       64 |     await expect(picker).toHaveValue('normal');
+2026-09-28T05:16:49.4147022Z         at /home/runner/work/dexly-pokemon-go-companion/dexly-pokemon-go-companion/tests/e2e/app.spec.ts:61:27
+2026-09-28T05:16:49.4147550Z
+2026-09-28T05:16:49.4148097Z     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+2026-09-28T05:16:49.4149130Z     test-results/app-returning-Home-has-rec-36d16-cessible-responsive-heatmap-mobile-webkit-retry2/test-failed-1.png
+2026-09-28T05:16:49.4150356Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:16:49.4150726Z
+2026-09-28T05:16:49.4151402Z     Error Context: test-results/app-returning-Home-has-rec-36d16-cessible-responsive-heatmap-mobile-webkit-retry2/error-context.md
+2026-09-28T05:16:49.4152105Z
+2026-09-28T05:16:49.4153588Z     attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-09-28T05:16:49.4154636Z     test-results/app-returning-Home-has-rec-36d16-cessible-responsive-heatmap-mobile-webkit-retry2/trace.zip
+2026-09-28T05:16:49.4155339Z     Usage:
+2026-09-28T05:16:49.4155484Z
+2026-09-28T05:16:49.4156218Z         pnpm exec playwright show-trace test-results/app-returning-Home-has-rec-36d16-cessible-responsive-heatmap-mobile-webkit-retry2/trace.zip
+2026-09-28T05:16:49.4156957Z
+2026-09-28T05:16:49.4157464Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:16:49.4157840Z
+2026-09-28T05:16:49.4157847Z
+2026-09-28T05:16:49.9344941Z [13/70] [mobile-webkit] › tests/e2e/app.spec.ts:301:1 › the footer links to sources and credits
+2026-09-28T05:16:50.1370471Z [14/70] [mobile-webkit] › tests/e2e/app.spec.ts:293:1 › the National Dex grid is paged instead of one endless list
+2026-09-28T05:16:52.8237841Z [15/70] [mobile-webkit] › tests/e2e/app.spec.ts:308:1 › Search Lab keeps Cody’s eight recommendations in order
+2026-09-28T05:16:53.9653935Z [16/70] [mobile-webkit] › tests/e2e/app.spec.ts:323:1 › Discord output stays within the message limit
+2026-09-28T05:16:55.0001285Z [17/70] [mobile-webkit] › tests/e2e/app.spec.ts:331:1 › builder composes an exact query without touching the collection
+2026-09-28T05:16:56.1044549Z [18/70] [mobile-webkit] › tests/e2e/app.spec.ts:340:1 › dragging down a grid column fills a range in one save and can be undone
+2026-09-28T05:16:56.7138455Z [19/70] [mobile-webkit] › tests/e2e/app.spec.ts:359:1 › the grid marks cells by click and keyboard and updates the search string
+2026-09-28T05:16:56.7188591Z [20/70] [mobile-webkit] › tests/e2e/app.spec.ts:391:1 › Progress fits the window with equal-width category columns
+2026-09-28T05:16:57.2413078Z [21/70] [mobile-webkit] › tests/e2e/app.spec.ts:404:1 › a name in the grid opens details without changing the collection
+2026-09-28T05:16:59.3398840Z [22/70] [mobile-webkit] › tests/e2e/app.spec.ts:414:1 › the Home dashboard shows rings, the region heatmap and activity
+2026-09-28T05:17:00.6224283Z [23/70] [mobile-webkit] › tests/e2e/app.spec.ts:432:1 › rows pasted from the community spreadsheet are reviewed, then added
+2026-09-28T05:17:02.3036657Z [24/70] [mobile-webkit] › tests/e2e/app.spec.ts:466:1 › the collection downloads as the community spreadsheet
+2026-09-28T05:17:03.4909342Z [25/70] [mobile-webkit] › tests/e2e/app.spec.ts:476:1 › medals, poster and compare link are available on Home
+2026-09-28T05:17:03.5014542Z [26/70] [mobile-webkit] › tests/e2e/app.spec.ts:490:1 › a compare link shows who can help whom
+2026-09-28T05:17:04.4598966Z [27/70] [mobile-webkit] › tests/e2e/app.spec.ts:499:1 › a compare link is shown for manual copy when the clipboard is unavailable
+2026-09-28T05:17:06.5561486Z [28/70] [mobile-webkit] › tests/e2e/app.spec.ts:514:1 › quick jump opens a Pokémon from anywhere
+2026-09-28T05:17:06.9639009Z [29/70] [mobile-webkit] › tests/e2e/app.spec.ts:524:1 › bulk region setup asks before changing anything
+2026-09-28T05:17:08.0838038Z [30/70] [mobile-webkit] › tests/e2e/app.spec.ts:532:1 › retired and unknown routes fall back to Home
+2026-09-28T05:17:13.7424084Z [31/70] [mobile-webkit] › tests/e2e/app.spec.ts:539:1 › no horizontal overflow on any destination
+2026-09-28T05:17:15.3511520Z [32/70] [mobile-webkit] › tests/e2e/navigation.app.spec.ts:4:1 › Dex cue is confined to empty Home and runs once per tab session
+2026-09-28T05:17:48.4504163Z [33/70] (retries) [mobile-webkit] › tests/e2e/app.spec.ts:189:1 › first-run backup action focuses the existing reviewed import and restores the dashboard (retry #1)
+2026-09-28T05:18:00.9480912Z [34/70] (retries) [mobile-webkit] › tests/e2e/app.spec.ts:301:1 › the footer links to sources and credits (retry #1)
+2026-09-28T05:18:07.4207076Z ##[error]The operation was canceled.

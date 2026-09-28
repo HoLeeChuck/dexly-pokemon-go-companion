@@ -1,0 +1,900 @@
+2026-09-28T05:06:40.9445355Z [1/70] [mobile-webkit] › tests/e2e/app.spec.ts:84:1 › almost-complete cards show missing categories and open details without modifying ownership
+2026-09-28T05:06:40.9947562Z [2/70] [mobile-webkit] › tests/e2e/app.spec.ts:119:1 › medal partners fill with the earned tier and weekly artwork disappears for old entries
+2026-09-28T05:06:41.0268411Z [3/70] [mobile-webkit] › tests/e2e/app.spec.ts:150:1 › first-run Home introduces the app without empty progress and has a logical tab order
+2026-09-28T05:06:41.0647206Z [4/70] [mobile-webkit] › tests/e2e/app.spec.ts:31:1 › returning Home has recent artwork, medal partners and an accessible responsive heatmap
+2026-09-28T05:06:52.9886112Z [5/70] [mobile-webkit] › tests/e2e/app.spec.ts:185:1 › first-run backup action focuses the existing reviewed import and restores the dashboard
+2026-09-28T05:06:54.0437817Z [6/70] [mobile-webkit] › tests/e2e/app.spec.ts:217:1 › first-run parade is static and full colour with reduced motion in both themes
+2026-09-28T05:06:55.5027882Z [7/70] (retries) [mobile-webkit] › tests/e2e/app.spec.ts:31:1 › returning Home has recent artwork, medal partners and an accessible responsive heatmap (retry #1)
+2026-09-28T05:06:57.6651723Z [8/70] [mobile-webkit] › tests/e2e/app.spec.ts:233:1 › the first marked catch switches Home to the dashboard and removing it restores onboarding
+2026-09-28T05:07:02.4021639Z [9/70] (retries) [mobile-webkit] › tests/e2e/app.spec.ts:31:1 › returning Home has recent artwork, medal partners and an accessible responsive heatmap (retry #2)
+2026-09-28T05:07:05.9728157Z [10/70] [mobile-webkit] › tests/e2e/app.spec.ts:246:1 › marks a Pokémon from the Dex grid and keeps it after reload
+2026-09-28T05:07:07.9841761Z   1) [mobile-webkit] › tests/e2e/app.spec.ts:31:1 › returning Home has recent artwork, medal partners and an accessible responsive heatmap
+2026-09-28T05:07:07.9873730Z
+2026-09-28T05:07:07.9874485Z     Error: expect(received).toBeLessThanOrEqual(expected)
+2026-09-28T05:07:07.9875390Z
+2026-09-28T05:07:07.9875859Z     Expected: <= 2400
+2026-09-28T05:07:07.9876565Z     Received:    2507
+2026-09-28T05:07:07.9877036Z
+2026-09-28T05:07:07.9877716Z       55 |         parseFloat(getComputedStyle(document.body).paddingBottom),
+2026-09-28T05:07:07.9878697Z       56 |     );
+2026-09-28T05:07:07.9879587Z     > 57 |     expect(contentHeight).toBeLessThanOrEqual(2400);
+2026-09-28T05:07:07.9880544Z          |                           ^
+2026-09-28T05:07:07.9881510Z       58 |     await expect(page.locator('.region-bar')).toHaveCount(11);
+2026-09-28T05:07:07.9882835Z       59 |     const picker = page.getByRole('combobox', { name: 'Category', exact: true });
+2026-09-28T05:07:07.9884101Z       60 |     await expect(picker).toHaveValue('normal');
+2026-09-28T05:07:07.9886357Z         at /home/runner/work/dexly-pokemon-go-companion/dexly-pokemon-go-companion/tests/e2e/app.spec.ts:57:27
+2026-09-28T05:07:07.9887498Z
+2026-09-28T05:07:07.9888612Z     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+2026-09-28T05:07:07.9890430Z     test-results/app-returning-Home-has-rec-36d16-cessible-responsive-heatmap-mobile-webkit/test-failed-1.png
+2026-09-28T05:07:07.9892396Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:07:07.9893219Z
+2026-09-28T05:07:07.9894654Z     Error Context: test-results/app-returning-Home-has-rec-36d16-cessible-responsive-heatmap-mobile-webkit/error-context.md
+2026-09-28T05:07:07.9896192Z
+2026-09-28T05:07:07.9897272Z     attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-09-28T05:07:07.9899077Z     test-results/app-returning-Home-has-rec-36d16-cessible-responsive-heatmap-mobile-webkit/trace.zip
+2026-09-28T05:07:07.9900789Z     Usage:
+2026-09-28T05:07:07.9901162Z
+2026-09-28T05:07:07.9902377Z         pnpm exec playwright show-trace test-results/app-returning-Home-has-rec-36d16-cessible-responsive-heatmap-mobile-webkit/trace.zip
+2026-09-28T05:07:07.9904252Z
+2026-09-28T05:07:07.9905296Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:07:07.9907343Z
+2026-09-28T05:07:07.9908118Z     Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:07:07.9908679Z
+2026-09-28T05:07:07.9909040Z     Error: expect(received).toBeLessThanOrEqual(expected)
+2026-09-28T05:07:07.9909479Z
+2026-09-28T05:07:07.9909647Z     Expected: <= 2400
+2026-09-28T05:07:07.9910053Z     Received:    2507
+2026-09-28T05:07:07.9910303Z
+2026-09-28T05:07:07.9910755Z       55 |         parseFloat(getComputedStyle(document.body).paddingBottom),
+2026-09-28T05:07:07.9911456Z       56 |     );
+2026-09-28T05:07:07.9911996Z     > 57 |     expect(contentHeight).toBeLessThanOrEqual(2400);
+2026-09-28T05:07:07.9912658Z          |                           ^
+2026-09-28T05:07:07.9913353Z       58 |     await expect(page.locator('.region-bar')).toHaveCount(11);
+2026-09-28T05:07:07.9914431Z       59 |     const picker = page.getByRole('combobox', { name: 'Category', exact: true });
+2026-09-28T05:07:07.9916317Z       60 |     await expect(picker).toHaveValue('normal');
+2026-09-28T05:07:07.9917507Z         at /home/runner/work/dexly-pokemon-go-companion/dexly-pokemon-go-companion/tests/e2e/app.spec.ts:57:27
+2026-09-28T05:07:07.9918316Z
+2026-09-28T05:07:07.9919130Z     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+2026-09-28T05:07:07.9920690Z     test-results/app-returning-Home-has-rec-36d16-cessible-responsive-heatmap-mobile-webkit-retry1/test-failed-1.png
+2026-09-28T05:07:07.9922411Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:07:07.9922975Z
+2026-09-28T05:07:07.9936068Z     Error Context: test-results/app-returning-Home-has-rec-36d16-cessible-responsive-heatmap-mobile-webkit-retry1/error-context.md
+2026-09-28T05:07:07.9937211Z
+2026-09-28T05:07:07.9938062Z     attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-09-28T05:07:07.9939634Z     test-results/app-returning-Home-has-rec-36d16-cessible-responsive-heatmap-mobile-webkit-retry1/trace.zip
+2026-09-28T05:07:07.9940758Z     Usage:
+2026-09-28T05:07:07.9940974Z
+2026-09-28T05:07:07.9942112Z         pnpm exec playwright show-trace test-results/app-returning-Home-has-rec-36d16-cessible-responsive-heatmap-mobile-webkit-retry1/trace.zip
+2026-09-28T05:07:07.9943274Z
+2026-09-28T05:07:07.9944025Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:07:07.9944570Z
+2026-09-28T05:07:07.9945667Z     Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:07:07.9946486Z
+2026-09-28T05:07:07.9946880Z     Error: expect(received).toBeLessThanOrEqual(expected)
+2026-09-28T05:07:07.9947326Z
+2026-09-28T05:07:07.9947507Z     Expected: <= 2400
+2026-09-28T05:07:07.9947889Z     Received:    2507
+2026-09-28T05:07:07.9948126Z
+2026-09-28T05:07:07.9948570Z       55 |         parseFloat(getComputedStyle(document.body).paddingBottom),
+2026-09-28T05:07:07.9949260Z       56 |     );
+2026-09-28T05:07:07.9949812Z     > 57 |     expect(contentHeight).toBeLessThanOrEqual(2400);
+2026-09-28T05:07:07.9950467Z          |                           ^
+2026-09-28T05:07:07.9951184Z       58 |     await expect(page.locator('.region-bar')).toHaveCount(11);
+2026-09-28T05:07:07.9952205Z       59 |     const picker = page.getByRole('combobox', { name: 'Category', exact: true });
+2026-09-28T05:07:07.9953137Z       60 |     await expect(picker).toHaveValue('normal');
+2026-09-28T05:07:07.9954279Z         at /home/runner/work/dexly-pokemon-go-companion/dexly-pokemon-go-companion/tests/e2e/app.spec.ts:57:27
+2026-09-28T05:07:07.9955442Z
+2026-09-28T05:07:07.9956293Z     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+2026-09-28T05:07:07.9957923Z     test-results/app-returning-Home-has-rec-36d16-cessible-responsive-heatmap-mobile-webkit-retry2/test-failed-1.png
+2026-09-28T05:07:07.9959688Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:07:07.9960248Z
+2026-09-28T05:07:07.9961310Z     Error Context: test-results/app-returning-Home-has-rec-36d16-cessible-responsive-heatmap-mobile-webkit-retry2/error-context.md
+2026-09-28T05:07:07.9962440Z
+2026-09-28T05:07:07.9963250Z     attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-09-28T05:07:07.9964727Z     test-results/app-returning-Home-has-rec-36d16-cessible-responsive-heatmap-mobile-webkit-retry2/trace.zip
+2026-09-28T05:07:07.9966187Z     Usage:
+2026-09-28T05:07:07.9966397Z
+2026-09-28T05:07:07.9967520Z         pnpm exec playwright show-trace test-results/app-returning-Home-has-rec-36d16-cessible-responsive-heatmap-mobile-webkit-retry2/trace.zip
+2026-09-28T05:07:07.9968654Z
+2026-09-28T05:07:07.9969374Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:07:07.9969906Z
+2026-09-28T05:07:07.9969916Z
+2026-09-28T05:07:09.2883957Z [11/70] [mobile-webkit] › tests/e2e/app.spec.ts:260:1 › viewing details never changes collection state
+2026-09-28T05:07:11.1464738Z [12/70] [mobile-webkit] › tests/e2e/app.spec.ts:269:1 › the Pokédex shelf opens a region device with a working scanner
+2026-09-28T05:07:13.0916244Z [13/70] [mobile-webkit] › tests/e2e/app.spec.ts:289:1 › the National Dex grid is paged instead of one endless list
+2026-09-28T05:07:16.7474733Z [14/70] [mobile-webkit] › tests/e2e/app.spec.ts:297:1 › the footer links to sources and credits
+2026-09-28T05:07:23.4680888Z [15/70] [mobile-webkit] › tests/e2e/app.spec.ts:304:1 › Search Lab keeps Cody’s eight recommendations in order
+2026-09-28T05:07:28.4450235Z [16/70] [mobile-webkit] › tests/e2e/app.spec.ts:319:1 › Discord output stays within the message limit
+2026-09-28T05:07:31.5390880Z [17/70] [mobile-webkit] › tests/e2e/app.spec.ts:327:1 › builder composes an exact query without touching the collection
+2026-09-28T05:07:32.8613129Z [18/70] [mobile-webkit] › tests/e2e/app.spec.ts:336:1 › dragging down a grid column fills a range in one save and can be undone
+2026-09-28T05:07:33.4161326Z [19/70] [mobile-webkit] › tests/e2e/app.spec.ts:355:1 › the grid marks cells by click and keyboard and updates the search string
+2026-09-28T05:07:34.3498010Z [20/70] (retries) [mobile-webkit] › tests/e2e/app.spec.ts:185:1 › first-run backup action focuses the existing reviewed import and restores the dashboard (retry #1)
+2026-09-28T05:07:38.0981074Z [21/70] [mobile-webkit] › tests/e2e/app.spec.ts:387:1 › Progress fits the window with equal-width category columns
+2026-09-28T05:07:38.6905706Z [22/70] [mobile-webkit] › tests/e2e/app.spec.ts:400:1 › a name in the grid opens details without changing the collection
+2026-09-28T05:07:40.3796016Z [23/70] [mobile-webkit] › tests/e2e/app.spec.ts:410:1 › the Home dashboard shows rings, the region heatmap and activity
+2026-09-28T05:07:43.5677965Z [24/70] [mobile-webkit] › tests/e2e/app.spec.ts:428:1 › rows pasted from the community spreadsheet are reviewed, then added
+2026-09-28T05:07:47.0773131Z [25/70] [mobile-webkit] › tests/e2e/app.spec.ts:462:1 › the collection downloads as the community spreadsheet
+2026-09-28T05:07:48.2401127Z [26/70] [mobile-webkit] › tests/e2e/app.spec.ts:472:1 › medals, poster and compare link are available on Home
+2026-09-28T05:07:53.4605982Z [27/70] [mobile-webkit] › tests/e2e/app.spec.ts:486:1 › a compare link shows who can help whom
+2026-09-28T05:07:54.4628373Z [28/70] [mobile-webkit] › tests/e2e/app.spec.ts:495:1 › a compare link is shown for manual copy when the clipboard is unavailable
+2026-09-28T05:07:55.4137593Z [29/70] (retries) [mobile-webkit] › tests/e2e/app.spec.ts:150:1 › first-run Home introduces the app without empty progress and has a logical tab order (retry #1)
+2026-09-28T05:07:57.9917542Z [30/70] [mobile-webkit] › tests/e2e/app.spec.ts:510:1 › quick jump opens a Pokémon from anywhere
+2026-09-28T05:08:29.0967042Z [31/70] (retries) [mobile-webkit] › tests/e2e/app.spec.ts:297:1 › the footer links to sources and credits (retry #1)
+2026-09-28T05:08:47.5836940Z [32/70] (retries) [mobile-webkit] › tests/e2e/app.spec.ts:185:1 › first-run backup action focuses the existing reviewed import and restores the dashboard (retry #2)
+2026-09-28T05:09:06.7437878Z [33/70] (retries) [mobile-webkit] › tests/e2e/app.spec.ts:150:1 › first-run Home introduces the app without empty progress and has a logical tab order (retry #2)
+2026-09-28T05:09:11.6071580Z [34/70] (retries) [mobile-webkit] › tests/e2e/app.spec.ts:510:1 › quick jump opens a Pokémon from anywhere (retry #1)
+2026-09-28T05:09:40.9822418Z [35/70] (retries) [mobile-webkit] › tests/e2e/app.spec.ts:297:1 › the footer links to sources and credits (retry #2)
+2026-09-28T05:09:58.5632188Z   2) [mobile-webkit] › tests/e2e/app.spec.ts:185:1 › first-run backup action focuses the existing reviewed import and restores the dashboard
+2026-09-28T05:09:58.5636067Z
+2026-09-28T05:09:58.5636416Z     Test timeout of 30000ms exceeded.
+2026-09-28T05:09:58.5636739Z
+2026-09-28T05:09:58.5637153Z     Error: locator.click: Target page, context or browser has been closed
+2026-09-28T05:09:58.5637772Z     Call log:
+2026-09-28T05:09:58.5638425Z       - waiting for getByRole('link', { name: 'Import a backup', exact: true })
+2026-09-28T05:09:58.5639630Z         - locator resolved to <a class="secondary" href="#settings?section=import">Import a backup</a>
+2026-09-28T05:09:58.5640553Z       - attempting click action
+2026-09-28T05:09:58.5641197Z         - waiting for element to be visible, enabled and stable
+2026-09-28T05:09:58.5641671Z
+2026-09-28T05:09:58.5641707Z
+2026-09-28T05:09:58.5641858Z       187 | }) => {
+2026-09-28T05:09:58.5642276Z       188 |   await open(page, 'home');
+2026-09-28T05:09:58.5643095Z     > 189 |   await page.getByRole('link', { name: 'Import a backup', exact: true }).click();
+2026-09-28T05:09:58.5643977Z           |                                                                          ^
+2026-09-28T05:09:58.5644664Z       190 |   const input = page.locator('#import-file');
+2026-09-28T05:09:58.5645439Z       191 |   await expect(input).toBeFocused();
+2026-09-28T05:09:58.5645788Z       192 |   await input.setInputFiles({
+2026-09-28T05:09:58.5646402Z         at /home/runner/work/dexly-pokemon-go-companion/dexly-pokemon-go-companion/tests/e2e/app.spec.ts:189:74
+2026-09-28T05:09:58.5646844Z
+2026-09-28T05:09:58.5647359Z     Error Context: test-results/app-first-run-backup-actio-fabbe--and-restores-the-dashboard-mobile-webkit/error-context.md
+2026-09-28T05:09:58.5647943Z
+2026-09-28T05:09:58.5648505Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-09-28T05:09:58.5649358Z     test-results/app-first-run-backup-actio-fabbe--and-restores-the-dashboard-mobile-webkit/trace.zip
+2026-09-28T05:09:58.5649941Z     Usage:
+2026-09-28T05:09:58.5650049Z
+2026-09-28T05:09:58.5650654Z         pnpm exec playwright show-trace test-results/app-first-run-backup-actio-fabbe--and-restores-the-dashboard-mobile-webkit/trace.zip
+2026-09-28T05:09:58.5651259Z
+2026-09-28T05:09:58.5651650Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:09:58.5651950Z
+2026-09-28T05:09:58.5652352Z     Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:09:58.5652667Z
+2026-09-28T05:09:58.5652817Z     Test timeout of 30000ms exceeded.
+2026-09-28T05:09:58.5653004Z
+2026-09-28T05:09:58.5653220Z     Error: locator.click: Test timeout of 30000ms exceeded.
+2026-09-28T05:09:58.5653568Z     Call log:
+2026-09-28T05:09:58.5653994Z       - waiting for getByRole('link', { name: 'Import a backup', exact: true })
+2026-09-28T05:09:58.5654718Z         - locator resolved to <a class="secondary" href="#settings?section=import">Import a backup</a>
+2026-09-28T05:09:58.5655524Z       - attempting click action
+2026-09-28T05:09:58.5655916Z         - waiting for element to be visible, enabled and stable
+2026-09-28T05:09:58.5656181Z
+2026-09-28T05:09:58.5656187Z
+2026-09-28T05:09:58.5656279Z       187 | }) => {
+2026-09-28T05:09:58.5656550Z       188 |   await open(page, 'home');
+2026-09-28T05:09:58.5657080Z     > 189 |   await page.getByRole('link', { name: 'Import a backup', exact: true }).click();
+2026-09-28T05:09:58.5657650Z           |                                                                          ^
+2026-09-28T05:09:58.5658078Z       190 |   const input = page.locator('#import-file');
+2026-09-28T05:09:58.5658513Z       191 |   await expect(input).toBeFocused();
+2026-09-28T05:09:58.5658873Z       192 |   await input.setInputFiles({
+2026-09-28T05:09:58.5659817Z         at /home/runner/work/dexly-pokemon-go-companion/dexly-pokemon-go-companion/tests/e2e/app.spec.ts:189:74
+2026-09-28T05:09:58.5660448Z
+2026-09-28T05:09:58.5661035Z     Error Context: test-results/app-first-run-backup-actio-fabbe--and-restores-the-dashboard-mobile-webkit-retry1/error-context.md
+2026-09-28T05:09:58.5661654Z
+2026-09-28T05:09:58.5662114Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-09-28T05:09:58.5662939Z     test-results/app-first-run-backup-actio-fabbe--and-restores-the-dashboard-mobile-webkit-retry1/trace.zip
+2026-09-28T05:09:58.5663544Z     Usage:
+2026-09-28T05:09:58.5663655Z
+2026-09-28T05:09:58.5664269Z         pnpm exec playwright show-trace test-results/app-first-run-backup-actio-fabbe--and-restores-the-dashboard-mobile-webkit-retry1/trace.zip
+2026-09-28T05:09:58.5666085Z
+2026-09-28T05:09:58.5666879Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:09:58.5667441Z
+2026-09-28T05:09:58.5668211Z     Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:09:58.5668768Z
+2026-09-28T05:09:58.5668974Z     Test timeout of 30000ms exceeded.
+2026-09-28T05:09:58.5669170Z
+2026-09-28T05:09:58.5669372Z     Error: locator.click: Test timeout of 30000ms exceeded.
+2026-09-28T05:09:58.5669703Z     Call log:
+2026-09-28T05:09:58.5670080Z       - waiting for getByRole('link', { name: 'Import a backup', exact: true })
+2026-09-28T05:09:58.5670713Z         - locator resolved to <a class="secondary" href="#settings?section=import">Import a backup</a>
+2026-09-28T05:09:58.5671204Z       - attempting click action
+2026-09-28T05:09:58.5671559Z         - waiting for element to be visible, enabled and stable
+2026-09-28T05:09:58.5671798Z
+2026-09-28T05:09:58.5671804Z
+2026-09-28T05:09:58.5671890Z       187 | }) => {
+2026-09-28T05:09:58.5672137Z       188 |   await open(page, 'home');
+2026-09-28T05:09:58.5672626Z     > 189 |   await page.getByRole('link', { name: 'Import a backup', exact: true }).click();
+2026-09-28T05:09:58.5673142Z           |                                                                          ^
+2026-09-28T05:09:58.5673542Z       190 |   const input = page.locator('#import-file');
+2026-09-28T05:09:58.5673911Z       191 |   await expect(input).toBeFocused();
+2026-09-28T05:09:58.5674237Z       192 |   await input.setInputFiles({
+2026-09-28T05:09:58.5674833Z         at /home/runner/work/dexly-pokemon-go-companion/dexly-pokemon-go-companion/tests/e2e/app.spec.ts:189:74
+2026-09-28T05:09:58.5675571Z
+2026-09-28T05:09:58.5676126Z     Error Context: test-results/app-first-run-backup-actio-fabbe--and-restores-the-dashboard-mobile-webkit-retry2/error-context.md
+2026-09-28T05:09:58.5676696Z
+2026-09-28T05:09:58.5677133Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-09-28T05:09:58.5677925Z     test-results/app-first-run-backup-actio-fabbe--and-restores-the-dashboard-mobile-webkit-retry2/trace.zip
+2026-09-28T05:09:58.5678685Z     Usage:
+2026-09-28T05:09:58.5678799Z
+2026-09-28T05:09:58.5679509Z         pnpm exec playwright show-trace test-results/app-first-run-backup-actio-fabbe--and-restores-the-dashboard-mobile-webkit-retry2/trace.zip
+2026-09-28T05:09:58.5680113Z
+2026-09-28T05:09:58.5680474Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:09:58.5680756Z
+2026-09-28T05:09:58.5680762Z
+2026-09-28T05:09:59.6914745Z [36/70] [mobile-webkit] › tests/e2e/app.spec.ts:520:1 › bulk region setup asks before changing anything
+2026-09-28T05:10:00.9304833Z [37/70] [mobile-webkit] › tests/e2e/app.spec.ts:528:1 › retired and unknown routes fall back to Home
+2026-09-28T05:10:17.9113009Z   3) [mobile-webkit] › tests/e2e/app.spec.ts:150:1 › first-run Home introduces the app without empty progress and has a logical tab order
+2026-09-28T05:10:17.9113921Z
+2026-09-28T05:10:17.9114682Z     Test timeout of 30000ms exceeded.
+2026-09-28T05:10:17.9115280Z
+2026-09-28T05:10:17.9115584Z     Error: expect(locator).toBeVisible() failed
+2026-09-28T05:10:17.9115993Z
+2026-09-28T05:10:17.9116499Z     Locator:  getByRole('heading', { name: 'Johto Pokédex' })
+2026-09-28T05:10:17.9117093Z     Expected: visible
+2026-09-28T05:10:17.9117478Z     Received: undefined
+2026-09-28T05:10:17.9117720Z
+2026-09-28T05:10:17.9117857Z     Call log:
+2026-09-28T05:10:17.9118317Z       - Expect "toBeVisible" with timeout 7500ms
+2026-09-28T05:10:17.9119139Z       - waiting for getByRole('heading', { name: 'Johto Pokédex' })
+2026-09-28T05:10:17.9119599Z       -
+2026-09-28T05:10:17.9119722Z
+2026-09-28T05:10:17.9119728Z
+2026-09-28T05:10:17.9119813Z       177 |   }
+2026-09-28T05:10:17.9120349Z       178 |   await page.getByRole('link', { name: 'Open the Johto Pokédex', exact: true }).click();
+2026-09-28T05:10:17.9123177Z     > 179 |   await expect(page.getByRole('heading', { name: 'Johto Pokédex' })).toBeVisible();
+2026-09-28T05:10:17.9124075Z           |                                                                      ^
+2026-09-28T05:10:17.9124615Z       180 |   await expect(
+2026-09-28T05:10:17.9125623Z       181 |     page.getByRole('button', { name: 'Toggle Normal: missing', exact: true }),
+2026-09-28T05:10:17.9126417Z       182 |   ).toBeVisible();
+2026-09-28T05:10:17.9127430Z         at /home/runner/work/dexly-pokemon-go-companion/dexly-pokemon-go-companion/tests/e2e/app.spec.ts:179:70
+2026-09-28T05:10:17.9128221Z
+2026-09-28T05:10:17.9129190Z     Error Context: test-results/app-first-run-Home-introdu-2582f-and-has-a-logical-tab-order-mobile-webkit/error-context.md
+2026-09-28T05:10:17.9130108Z
+2026-09-28T05:10:17.9130893Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-09-28T05:10:17.9132267Z     test-results/app-first-run-Home-introdu-2582f-and-has-a-logical-tab-order-mobile-webkit/trace.zip
+2026-09-28T05:10:17.9133324Z     Usage:
+2026-09-28T05:10:17.9133550Z
+2026-09-28T05:10:17.9134600Z         pnpm exec playwright show-trace test-results/app-first-run-Home-introdu-2582f-and-has-a-logical-tab-order-mobile-webkit/trace.zip
+2026-09-28T05:10:17.9135835Z
+2026-09-28T05:10:17.9136310Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:10:17.9136640Z
+2026-09-28T05:10:17.9137053Z     Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:10:17.9137368Z
+2026-09-28T05:10:17.9137497Z     Test timeout of 30000ms exceeded.
+2026-09-28T05:10:17.9137698Z
+2026-09-28T05:10:17.9137891Z     Error: expect(locator).toHaveText(expected) failed
+2026-09-28T05:10:17.9138131Z
+2026-09-28T05:10:17.9138284Z     Locator:  getByRole('heading', { level: 1 })
+2026-09-28T05:10:17.9138724Z     Expected: "Track every catch. Build the perfect search."
+2026-09-28T05:10:17.9139073Z     Received: ""
+2026-09-28T05:10:17.9139211Z
+2026-09-28T05:10:17.9139298Z     Call log:
+2026-09-28T05:10:17.9139946Z       - Expect "toHaveText" with timeout 7500ms
+2026-09-28T05:10:17.9140364Z       - waiting for getByRole('heading', { level: 1 })
+2026-09-28T05:10:17.9140764Z
+2026-09-28T05:10:17.9140772Z
+2026-09-28T05:10:17.9140886Z       152 | }) => {
+2026-09-28T05:10:17.9141156Z       153 |   await open(page, 'home');
+2026-09-28T05:10:17.9141618Z     > 154 |   await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+2026-09-28T05:10:17.9142128Z           |                                                         ^
+2026-09-28T05:10:17.9142541Z       155 |     'Track every catch. Build the perfect search.',
+2026-09-28T05:10:17.9142894Z       156 |   );
+2026-09-28T05:10:17.9143265Z       157 |   await expect(page.locator('main')).not.toContainText('0%');
+2026-09-28T05:10:17.9143986Z         at /home/runner/work/dexly-pokemon-go-companion/dexly-pokemon-go-companion/tests/e2e/app.spec.ts:154:57
+2026-09-28T05:10:17.9144456Z
+2026-09-28T05:10:17.9145022Z     Error Context: test-results/app-first-run-Home-introdu-2582f-and-has-a-logical-tab-order-mobile-webkit-retry1/error-context.md
+2026-09-28T05:10:17.9146217Z
+2026-09-28T05:10:17.9147135Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-09-28T05:10:17.9148700Z     test-results/app-first-run-Home-introdu-2582f-and-has-a-logical-tab-order-mobile-webkit-retry1/trace.zip
+2026-09-28T05:10:17.9149796Z     Usage:
+2026-09-28T05:10:17.9149993Z
+2026-09-28T05:10:17.9151037Z         pnpm exec playwright show-trace test-results/app-first-run-Home-introdu-2582f-and-has-a-logical-tab-order-mobile-webkit-retry1/trace.zip
+2026-09-28T05:10:17.9152114Z
+2026-09-28T05:10:17.9152787Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:10:17.9153286Z
+2026-09-28T05:10:17.9153933Z     Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:10:17.9154450Z
+2026-09-28T05:10:17.9154676Z     Test timeout of 30000ms exceeded.
+2026-09-28T05:10:17.9155011Z
+2026-09-28T05:10:17.9155664Z     Error: locator.focus: Target page, context or browser has been closed
+2026-09-28T05:10:17.9156057Z
+2026-09-28T05:10:17.9156319Z       159 |   await expect(page.locator('.first-run-parade img')).toHaveCount(7);
+2026-09-28T05:10:17.9156900Z       160 |   await expect(page.locator('.first-run-regions .device-card')).toHaveCount(5);
+2026-09-28T05:10:17.9157374Z     > 161 |   await page.locator('main').focus();
+2026-09-28T05:10:17.9157692Z           |                              ^
+2026-09-28T05:10:17.9157978Z       162 |   for (const name of [
+2026-09-28T05:10:17.9158342Z       163 |     'Start with your Pokédex',
+2026-09-28T05:10:17.9158647Z       164 |     'Import a backup',
+2026-09-28T05:10:17.9159210Z         at /home/runner/work/dexly-pokemon-go-companion/dexly-pokemon-go-companion/tests/e2e/app.spec.ts:161:30
+2026-09-28T05:10:17.9159645Z
+2026-09-28T05:10:17.9160178Z     Error Context: test-results/app-first-run-Home-introdu-2582f-and-has-a-logical-tab-order-mobile-webkit-retry2/error-context.md
+2026-09-28T05:10:17.9160918Z
+2026-09-28T05:10:17.9161465Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-09-28T05:10:17.9162260Z     test-results/app-first-run-Home-introdu-2582f-and-has-a-logical-tab-order-mobile-webkit-retry2/trace.zip
+2026-09-28T05:10:17.9162818Z     Usage:
+2026-09-28T05:10:17.9162931Z
+2026-09-28T05:10:17.9163511Z         pnpm exec playwright show-trace test-results/app-first-run-Home-introdu-2582f-and-has-a-logical-tab-order-mobile-webkit-retry2/trace.zip
+2026-09-28T05:10:17.9164108Z
+2026-09-28T05:10:17.9164462Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:10:17.9164750Z
+2026-09-28T05:10:17.9164756Z
+2026-09-28T05:10:19.2044469Z [38/70] [mobile-webkit] › tests/e2e/app.spec.ts:535:1 › no horizontal overflow on any destination
+2026-09-28T05:10:23.2737383Z [39/70] (retries) [mobile-webkit] › tests/e2e/app.spec.ts:510:1 › quick jump opens a Pokémon from anywhere (retry #2)
+2026-09-28T05:10:51.3153644Z   4) [mobile-webkit] › tests/e2e/app.spec.ts:297:1 › the footer links to sources and credits ───────
+2026-09-28T05:10:51.3154083Z
+2026-09-28T05:10:51.3154229Z     Test timeout of 30000ms exceeded.
+2026-09-28T05:10:51.3154423Z
+2026-09-28T05:10:51.3154628Z     Error: locator.click: Test timeout of 30000ms exceeded.
+2026-09-28T05:10:51.3154961Z     Call log:
+2026-09-28T05:10:51.3155778Z       - waiting for locator('footer').getByRole('link', { name: 'Sources & credits' })
+2026-09-28T05:10:51.3156669Z         - locator resolved to <a href="#about">Sources & credits</a>
+2026-09-28T05:10:51.3157326Z       - attempting click action
+2026-09-28T05:10:51.3157933Z         - waiting for element to be visible, enabled and stable
+2026-09-28T05:10:51.3158364Z
+2026-09-28T05:10:51.3158373Z
+2026-09-28T05:10:51.3158814Z       297 | test('the footer links to sources and credits', async ({ page }) => {
+2026-09-28T05:10:51.3159438Z       298 |   await open(page, 'home');
+2026-09-28T05:10:51.3159951Z     > 299 |   await page.locator('footer').getByRole('link', { name: 'Sources & credits' }).click();
+2026-09-28T05:10:51.3160496Z           |                                                                                 ^
+2026-09-28T05:10:51.3161019Z       300 |   await expect(page.locator('main')).toHaveAttribute('data-route', 'about');
+2026-09-28T05:10:51.3161678Z       301 |   await expect(page.getByRole('heading', { name: 'Copyright and trademarks' })).toBeVisible();
+2026-09-28T05:10:51.3162127Z       302 | });
+2026-09-28T05:10:51.3162639Z         at /home/runner/work/dexly-pokemon-go-companion/dexly-pokemon-go-companion/tests/e2e/app.spec.ts:299:81
+2026-09-28T05:10:51.3163068Z
+2026-09-28T05:10:51.3163475Z     Error Context: test-results/app-the-footer-links-to-sources-and-credits-mobile-webkit/error-context.md
+2026-09-28T05:10:51.3163918Z
+2026-09-28T05:10:51.3164392Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-09-28T05:10:51.3165340Z     test-results/app-the-footer-links-to-sources-and-credits-mobile-webkit/trace.zip
+2026-09-28T05:10:51.3165809Z     Usage:
+2026-09-28T05:10:51.3165921Z
+2026-09-28T05:10:51.3166509Z         pnpm exec playwright show-trace test-results/app-the-footer-links-to-sources-and-credits-mobile-webkit/trace.zip
+2026-09-28T05:10:51.3167308Z
+2026-09-28T05:10:51.3167924Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:10:51.3168366Z
+2026-09-28T05:10:51.3168958Z     Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:10:51.3169503Z
+2026-09-28T05:10:51.3169729Z     Test timeout of 30000ms exceeded.
+2026-09-28T05:10:51.3170067Z
+2026-09-28T05:10:51.3170403Z     Error: locator.click: Test timeout of 30000ms exceeded.
+2026-09-28T05:10:51.3170980Z     Call log:
+2026-09-28T05:10:51.3171683Z       - waiting for locator('footer').getByRole('link', { name: 'Sources & credits' })
+2026-09-28T05:10:51.3172999Z         - locator resolved to <a href="#about">Sources & credits</a>
+2026-09-28T05:10:51.3173943Z       - attempting click action
+2026-09-28T05:10:51.3174618Z         - waiting for element to be visible, enabled and stable
+2026-09-28T05:10:51.3175292Z
+2026-09-28T05:10:51.3175301Z
+2026-09-28T05:10:51.3175798Z       297 | test('the footer links to sources and credits', async ({ page }) => {
+2026-09-28T05:10:51.3176589Z       298 |   await open(page, 'home');
+2026-09-28T05:10:51.3177524Z     > 299 |   await page.locator('footer').getByRole('link', { name: 'Sources & credits' }).click();
+2026-09-28T05:10:51.3178541Z           |                                                                                 ^
+2026-09-28T05:10:51.3179487Z       300 |   await expect(page.locator('main')).toHaveAttribute('data-route', 'about');
+2026-09-28T05:10:51.3180731Z       301 |   await expect(page.getByRole('heading', { name: 'Copyright and trademarks' })).toBeVisible();
+2026-09-28T05:10:51.3181567Z       302 | });
+2026-09-28T05:10:51.3182589Z         at /home/runner/work/dexly-pokemon-go-companion/dexly-pokemon-go-companion/tests/e2e/app.spec.ts:299:81
+2026-09-28T05:10:51.3183424Z
+2026-09-28T05:10:51.3184262Z     Error Context: test-results/app-the-footer-links-to-sources-and-credits-mobile-webkit-retry1/error-context.md
+2026-09-28T05:10:51.3185423Z
+2026-09-28T05:10:51.3186281Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-09-28T05:10:51.3187515Z     test-results/app-the-footer-links-to-sources-and-credits-mobile-webkit-retry1/trace.zip
+2026-09-28T05:10:51.3188453Z     Usage:
+2026-09-28T05:10:51.3188639Z
+2026-09-28T05:10:51.3189543Z         pnpm exec playwright show-trace test-results/app-the-footer-links-to-sources-and-credits-mobile-webkit-retry1/trace.zip
+2026-09-28T05:10:51.3190536Z
+2026-09-28T05:10:51.3191244Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:10:51.3191820Z
+2026-09-28T05:10:51.3192597Z     Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:10:51.3193276Z
+2026-09-28T05:10:51.3193531Z     Test timeout of 30000ms exceeded.
+2026-09-28T05:10:51.3193867Z
+2026-09-28T05:10:51.3194293Z     Error: locator.click: Test timeout of 30000ms exceeded.
+2026-09-28T05:10:51.3194996Z     Call log:
+2026-09-28T05:10:51.3195968Z       - waiting for locator('footer').getByRole('link', { name: 'Sources & credits' })
+2026-09-28T05:10:51.3196816Z         - locator resolved to <a href="#about">Sources & credits</a>
+2026-09-28T05:10:51.3197393Z       - attempting click action
+2026-09-28T05:10:51.3197966Z         - waiting for element to be visible, enabled and stable
+2026-09-28T05:10:51.3198337Z
+2026-09-28T05:10:51.3198345Z
+2026-09-28T05:10:51.3198766Z       297 | test('the footer links to sources and credits', async ({ page }) => {
+2026-09-28T05:10:51.3199645Z       298 |   await open(page, 'home');
+2026-09-28T05:10:51.3200611Z     > 299 |   await page.locator('footer').getByRole('link', { name: 'Sources & credits' }).click();
+2026-09-28T05:10:51.3201534Z           |                                                                                 ^
+2026-09-28T05:10:51.3202336Z       300 |   await expect(page.locator('main')).toHaveAttribute('data-route', 'about');
+2026-09-28T05:10:51.3203391Z       301 |   await expect(page.getByRole('heading', { name: 'Copyright and trademarks' })).toBeVisible();
+2026-09-28T05:10:51.3204186Z       302 | });
+2026-09-28T05:10:51.3205315Z         at /home/runner/work/dexly-pokemon-go-companion/dexly-pokemon-go-companion/tests/e2e/app.spec.ts:299:81
+2026-09-28T05:10:51.3206095Z
+2026-09-28T05:10:51.3206845Z     Error Context: test-results/app-the-footer-links-to-sources-and-credits-mobile-webkit-retry2/error-context.md
+2026-09-28T05:10:51.3207640Z
+2026-09-28T05:10:51.3208362Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-09-28T05:10:51.3209567Z     test-results/app-the-footer-links-to-sources-and-credits-mobile-webkit-retry2/trace.zip
+2026-09-28T05:10:51.3210419Z     Usage:
+2026-09-28T05:10:51.3210598Z
+2026-09-28T05:10:51.3211436Z         pnpm exec playwright show-trace test-results/app-the-footer-links-to-sources-and-credits-mobile-webkit-retry2/trace.zip
+2026-09-28T05:10:51.3212313Z
+2026-09-28T05:10:51.3212913Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:10:51.3213384Z
+2026-09-28T05:10:51.3213391Z
+2026-09-28T05:10:52.3879586Z [40/70] [mobile-webkit] › tests/e2e/navigation.app.spec.ts:4:1 › Dex cue is confined to empty Home and runs once per tab session
+2026-09-28T05:11:03.8322563Z [41/70] [mobile-webkit] › tests/e2e/navigation.app.spec.ts:40:1 › blocked session storage cannot break navigation or replay the Dex cue
+2026-09-28T05:11:12.1149588Z [42/70] (retries) [mobile-webkit] › tests/e2e/app.spec.ts:528:1 › retired and unknown routes fall back to Home (retry #1)
+2026-09-28T05:11:28.4290578Z [43/70] (retries) [mobile-webkit] › tests/e2e/app.spec.ts:528:1 › retired and unknown routes fall back to Home (retry #2)
+2026-09-28T05:11:28.6190580Z [44/70] (retries) [mobile-webkit] › tests/e2e/navigation.app.spec.ts:40:1 › blocked session storage cannot break navigation or replay the Dex cue (retry #1)
+2026-09-28T05:11:31.1929635Z [45/70] (retries) [mobile-webkit] › tests/e2e/app.spec.ts:535:1 › no horizontal overflow on any destination (retry #1)
+2026-09-28T05:11:33.6466192Z   5) [mobile-webkit] › tests/e2e/app.spec.ts:510:1 › quick jump opens a Pokémon from anywhere ──────
+2026-09-28T05:11:33.6466693Z
+2026-09-28T05:11:33.6466846Z     Test timeout of 30000ms exceeded.
+2026-09-28T05:11:33.6467049Z
+2026-09-28T05:11:33.6467253Z     Error: locator.click: Test timeout of 30000ms exceeded.
+2026-09-28T05:11:33.6467582Z     Call log:
+2026-09-28T05:11:33.6468048Z       - waiting for getByRole('button', { name: 'Jump to a Pokémon' })
+2026-09-28T05:11:33.6469151Z         - locator resolved to <button aria-keyshortcuts="/" class="jump-toggle quiet" aria-label="Jump to a Pokémon">…</button>
+2026-09-28T05:11:33.6469771Z       - attempting click action
+2026-09-28T05:11:33.6470120Z         - waiting for element to be visible, enabled and stable
+2026-09-28T05:11:33.6470367Z
+2026-09-28T05:11:33.6470372Z
+2026-09-28T05:11:33.6470721Z       510 | test('quick jump opens a Pokémon from anywhere', async ({ page }) => {
+2026-09-28T05:11:33.6471161Z       511 |   await open(page, 'home');
+2026-09-28T05:11:33.6471672Z     > 512 |   await page.getByRole('button', { name: 'Jump to a Pokémon' }).click();
+2026-09-28T05:11:33.6472150Z           |                                                                 ^
+2026-09-28T05:11:33.6472577Z       513 |   await page.locator('#jump-input').fill('garchomp');
+2026-09-28T05:11:33.6472974Z       514 |   await page.keyboard.press('Enter');
+2026-09-28T05:11:33.6473271Z       515 |   await expect(
+2026-09-28T05:11:33.6473979Z         at /home/runner/work/dexly-pokemon-go-companion/dexly-pokemon-go-companion/tests/e2e/app.spec.ts:512:65
+2026-09-28T05:11:33.6474414Z
+2026-09-28T05:11:33.6474911Z     Error Context: test-results/app-quick-jump-opens-a-Pokémon-from-anywhere-mobile-webkit/error-context.md
+2026-09-28T05:11:33.6475666Z
+2026-09-28T05:11:33.6476151Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-09-28T05:11:33.6479284Z     test-results/app-quick-jump-opens-a-Pokémon-from-anywhere-mobile-webkit/trace.zip
+2026-09-28T05:11:33.6480133Z     Usage:
+2026-09-28T05:11:33.6480366Z
+2026-09-28T05:11:33.6481451Z         pnpm exec playwright show-trace test-results/app-quick-jump-opens-a-Pokémon-from-anywhere-mobile-webkit/trace.zip
+2026-09-28T05:11:33.6482286Z
+2026-09-28T05:11:33.6482969Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:11:33.6483537Z
+2026-09-28T05:11:33.6484240Z     Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:11:33.6484793Z
+2026-09-28T05:11:33.6485309Z     Test timeout of 30000ms exceeded.
+2026-09-28T05:11:33.6485673Z
+2026-09-28T05:11:33.6486055Z     Error: locator.click: Test timeout of 30000ms exceeded.
+2026-09-28T05:11:33.6486636Z     Call log:
+2026-09-28T05:11:33.6487425Z       - waiting for getByRole('button', { name: 'Jump to a Pokémon' })
+2026-09-28T05:11:33.6488925Z         - locator resolved to <button aria-keyshortcuts="/" class="jump-toggle quiet" aria-label="Jump to a Pokémon">…</button>
+2026-09-28T05:11:33.6489951Z       - attempting click action
+2026-09-28T05:11:33.6490601Z         - waiting for element to be visible, enabled and stable
+2026-09-28T05:11:33.6491038Z
+2026-09-28T05:11:33.6491047Z
+2026-09-28T05:11:33.6491673Z       510 | test('quick jump opens a Pokémon from anywhere', async ({ page }) => {
+2026-09-28T05:11:33.6492465Z       511 |   await open(page, 'home');
+2026-09-28T05:11:33.6493421Z     > 512 |   await page.getByRole('button', { name: 'Jump to a Pokémon' }).click();
+2026-09-28T05:11:33.6494387Z           |                                                                 ^
+2026-09-28T05:11:33.6495414Z       513 |   await page.locator('#jump-input').fill('garchomp');
+2026-09-28T05:11:33.6496177Z       514 |   await page.keyboard.press('Enter');
+2026-09-28T05:11:33.6496771Z       515 |   await expect(
+2026-09-28T05:11:33.6497814Z         at /home/runner/work/dexly-pokemon-go-companion/dexly-pokemon-go-companion/tests/e2e/app.spec.ts:512:65
+2026-09-28T05:11:33.6498568Z
+2026-09-28T05:11:33.6499592Z     Error Context: test-results/app-quick-jump-opens-a-Pokémon-from-anywhere-mobile-webkit-retry1/error-context.md
+2026-09-28T05:11:33.6500494Z
+2026-09-28T05:11:33.6501275Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-09-28T05:11:33.6502718Z     test-results/app-quick-jump-opens-a-Pokémon-from-anywhere-mobile-webkit-retry1/trace.zip
+2026-09-28T05:11:33.6504009Z     Usage:
+2026-09-28T05:11:33.6504208Z
+2026-09-28T05:11:33.6509360Z         pnpm exec playwright show-trace test-results/app-quick-jump-opens-a-Pokémon-from-anywhere-mobile-webkit-retry1/trace.zip
+2026-09-28T05:11:33.6514049Z
+2026-09-28T05:11:33.6514689Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:11:33.6515367Z
+2026-09-28T05:11:33.6515974Z     Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:11:33.6516434Z
+2026-09-28T05:11:33.6516651Z     Test timeout of 30000ms exceeded.
+2026-09-28T05:11:33.6516932Z
+2026-09-28T05:11:33.6517244Z     Error: locator.click: Test timeout of 30000ms exceeded.
+2026-09-28T05:11:33.6517800Z     Call log:
+2026-09-28T05:11:33.6518498Z       - waiting for getByRole('button', { name: 'Jump to a Pokémon' })
+2026-09-28T05:11:33.6519924Z         - locator resolved to <button aria-keyshortcuts="/" class="jump-toggle quiet" aria-label="Jump to a Pokémon">…</button>
+2026-09-28T05:11:33.6520960Z       - attempting click action
+2026-09-28T05:11:33.6521579Z         - waiting for element to be visible, enabled and stable
+2026-09-28T05:11:33.6521993Z
+2026-09-28T05:11:33.6522002Z
+2026-09-28T05:11:33.6522569Z       510 | test('quick jump opens a Pokémon from anywhere', async ({ page }) => {
+2026-09-28T05:11:33.6523376Z       511 |   await open(page, 'home');
+2026-09-28T05:11:33.6524234Z     > 512 |   await page.getByRole('button', { name: 'Jump to a Pokémon' }).click();
+2026-09-28T05:11:33.6525004Z           |                                                                 ^
+2026-09-28T05:11:33.6525873Z       513 |   await page.locator('#jump-input').fill('garchomp');
+2026-09-28T05:11:33.6526524Z       514 |   await page.keyboard.press('Enter');
+2026-09-28T05:11:33.6527030Z       515 |   await expect(
+2026-09-28T05:11:33.6527926Z         at /home/runner/work/dexly-pokemon-go-companion/dexly-pokemon-go-companion/tests/e2e/app.spec.ts:512:65
+2026-09-28T05:11:33.6528661Z
+2026-09-28T05:11:33.6529593Z     Error Context: test-results/app-quick-jump-opens-a-Pokémon-from-anywhere-mobile-webkit-retry2/error-context.md
+2026-09-28T05:11:33.6530389Z
+2026-09-28T05:11:33.6531094Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-09-28T05:11:33.6532398Z     test-results/app-quick-jump-opens-a-Pokémon-from-anywhere-mobile-webkit-retry2/trace.zip
+2026-09-28T05:11:33.6533225Z     Usage:
+2026-09-28T05:11:33.6533485Z
+2026-09-28T05:11:33.6534705Z         pnpm exec playwright show-trace test-results/app-quick-jump-opens-a-Pokémon-from-anywhere-mobile-webkit-retry2/trace.zip
+2026-09-28T05:11:33.6576316Z
+2026-09-28T05:11:33.6577073Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:11:33.6577599Z
+2026-09-28T05:11:33.6577609Z
+2026-09-28T05:11:34.2648094Z [46/70] [mobile-webkit] › tests/e2e/navigation.app.spec.ts:58:1 › returning Home never advertises the first-run Dex cue
+2026-09-28T05:11:37.3484967Z [47/70] [mobile-webkit] › tests/e2e/navigation.app.spec.ts:72:1 › phone destinations, keyboard access and Menu remain usable across the 700px boundary
+2026-09-28T05:12:39.1682913Z   6) [mobile-webkit] › tests/e2e/app.spec.ts:528:1 › retired and unknown routes fall back to Home ──
+2026-09-28T05:12:39.1683829Z
+2026-09-28T05:12:39.1684525Z     Test timeout of 30000ms exceeded.
+2026-09-28T05:12:39.1684891Z
+2026-09-28T05:12:39.1685948Z     Error Context: test-results/app-retired-and-unknown-routes-fall-back-to-Home-mobile-webkit/error-context.md
+2026-09-28T05:12:39.1686831Z
+2026-09-28T05:12:39.1687650Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-09-28T05:12:39.1688928Z     test-results/app-retired-and-unknown-routes-fall-back-to-Home-mobile-webkit/trace.zip
+2026-09-28T05:12:39.1689814Z     Usage:
+2026-09-28T05:12:39.1690013Z
+2026-09-28T05:12:39.1690914Z         pnpm exec playwright show-trace test-results/app-retired-and-unknown-routes-fall-back-to-Home-mobile-webkit/trace.zip
+2026-09-28T05:12:39.1691840Z
+2026-09-28T05:12:39.1692554Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:12:39.1693074Z
+2026-09-28T05:12:39.1693761Z     Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:12:39.1694293Z
+2026-09-28T05:12:39.1694600Z     Error: expect(locator).not.toBeEmpty() failed
+2026-09-28T05:12:39.1694997Z
+2026-09-28T05:12:39.1695537Z     Locator:  locator('main')
+2026-09-28T05:12:39.1696021Z     Expected: not empty
+2026-09-28T05:12:39.1696452Z     Received: empty
+2026-09-28T05:12:39.1696685Z
+2026-09-28T05:12:39.1696838Z     Call log:
+2026-09-28T05:12:39.1697299Z       - Expect "not toBeEmpty" with timeout 7500ms
+2026-09-28T05:12:39.1697657Z       - waiting for locator('main')
+2026-09-28T05:12:39.1697919Z       -
+2026-09-28T05:12:39.1698034Z
+2026-09-28T05:12:39.1698067Z
+2026-09-28T05:12:39.1698260Z        9 | async function open(page: Page, hash: string) {
+2026-09-28T05:12:39.1698638Z       10 |   await page.goto(`/#${hash}`);
+2026-09-28T05:12:39.1699130Z     > 11 |   await expect(page.locator('main')).not.toBeEmpty();
+2026-09-28T05:12:39.1699787Z          |                                          ^
+2026-09-28T05:12:39.1700255Z       12 | }
+2026-09-28T05:12:39.1700613Z       13 |
+2026-09-28T05:12:39.1701114Z       14 | async function markFirstCatch(page: Page) {
+2026-09-28T05:12:39.1702387Z         at open (/home/runner/work/dexly-pokemon-go-companion/dexly-pokemon-go-companion/tests/e2e/app.spec.ts:11:42)
+2026-09-28T05:12:39.1704087Z         at /home/runner/work/dexly-pokemon-go-companion/dexly-pokemon-go-companion/tests/e2e/app.spec.ts:530:5
+2026-09-28T05:12:39.1704947Z
+2026-09-28T05:12:39.1706166Z     Error Context: test-results/app-retired-and-unknown-routes-fall-back-to-Home-mobile-webkit-retry1/error-context.md
+2026-09-28T05:12:39.1707190Z
+2026-09-28T05:12:39.1708164Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-09-28T05:12:39.1709658Z     test-results/app-retired-and-unknown-routes-fall-back-to-Home-mobile-webkit-retry1/trace.zip
+2026-09-28T05:12:39.1710706Z     Usage:
+2026-09-28T05:12:39.1710947Z
+2026-09-28T05:12:39.1712039Z         pnpm exec playwright show-trace test-results/app-retired-and-unknown-routes-fall-back-to-Home-mobile-webkit-retry1/trace.zip
+2026-09-28T05:12:39.1713203Z
+2026-09-28T05:12:39.1714075Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:12:39.1714676Z
+2026-09-28T05:12:39.1715443Z     Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:12:39.1715770Z
+2026-09-28T05:12:39.1715910Z     Test timeout of 30000ms exceeded.
+2026-09-28T05:12:39.1716123Z
+2026-09-28T05:12:39.1716291Z     Error: expect(locator).not.toBeEmpty() failed
+2026-09-28T05:12:39.1716812Z
+2026-09-28T05:12:39.1716941Z     Locator:  locator('main')
+2026-09-28T05:12:39.1717238Z     Expected: not empty
+2026-09-28T05:12:39.1717473Z     Received: empty
+2026-09-28T05:12:39.1717779Z
+2026-09-28T05:12:39.1717871Z     Call log:
+2026-09-28T05:12:39.1718172Z       - Expect "not toBeEmpty" with timeout 7500ms
+2026-09-28T05:12:39.1718535Z       - waiting for locator('main')
+2026-09-28T05:12:39.1718743Z
+2026-09-28T05:12:39.1718749Z
+2026-09-28T05:12:39.1718955Z        9 | async function open(page: Page, hash: string) {
+2026-09-28T05:12:39.1719331Z       10 |   await page.goto(`/#${hash}`);
+2026-09-28T05:12:39.1719736Z     > 11 |   await expect(page.locator('main')).not.toBeEmpty();
+2026-09-28T05:12:39.1720247Z          |                                          ^
+2026-09-28T05:12:39.1720747Z       12 | }
+2026-09-28T05:12:39.1721033Z       13 |
+2026-09-28T05:12:39.1721467Z       14 | async function markFirstCatch(page: Page) {
+2026-09-28T05:12:39.1722800Z         at open (/home/runner/work/dexly-pokemon-go-companion/dexly-pokemon-go-companion/tests/e2e/app.spec.ts:11:42)
+2026-09-28T05:12:39.1724706Z         at /home/runner/work/dexly-pokemon-go-companion/dexly-pokemon-go-companion/tests/e2e/app.spec.ts:530:5
+2026-09-28T05:12:39.1725794Z
+2026-09-28T05:12:39.1726667Z     Error Context: test-results/app-retired-and-unknown-routes-fall-back-to-Home-mobile-webkit-retry2/error-context.md
+2026-09-28T05:12:39.1727599Z
+2026-09-28T05:12:39.1728393Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-09-28T05:12:39.1729693Z     test-results/app-retired-and-unknown-routes-fall-back-to-Home-mobile-webkit-retry2/trace.zip
+2026-09-28T05:12:39.1730663Z     Usage:
+2026-09-28T05:12:39.1730868Z
+2026-09-28T05:12:39.1731855Z         pnpm exec playwright show-trace test-results/app-retired-and-unknown-routes-fall-back-to-Home-mobile-webkit-retry2/trace.zip
+2026-09-28T05:12:39.1732818Z
+2026-09-28T05:12:39.1733576Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:12:39.1733922Z
+2026-09-28T05:12:39.1733928Z
+2026-09-28T05:12:39.8763980Z [48/70] [mobile-webkit] › tests/e2e/navigation.app.spec.ts:123:1 › a hidden Dex link does not consume its first-visit cue
+2026-09-28T05:12:39.8939092Z [49/70] (retries) [mobile-webkit] › tests/e2e/navigation.app.spec.ts:40:1 › blocked session storage cannot break navigation or replay the Dex cue (retry #2)
+2026-09-28T05:12:42.6629716Z [50/70] (retries) [mobile-webkit] › tests/e2e/app.spec.ts:535:1 › no horizontal overflow on any destination (retry #2)
+2026-09-28T05:12:48.3240657Z [51/70] (retries) [mobile-webkit] › tests/e2e/navigation.app.spec.ts:72:1 › phone destinations, keyboard access and Menu remain usable across the 700px boundary (retry #1)
+2026-09-28T05:12:50.6933583Z [52/70] (retries) [mobile-webkit] › tests/e2e/navigation.app.spec.ts:72:1 › phone destinations, keyboard access and Menu remain usable across the 700px boundary (retry #2)
+2026-09-28T05:12:52.1090926Z   7) [mobile-webkit] › tests/e2e/navigation.app.spec.ts:72:1 › phone destinations, keyboard access and Menu remain usable across the 700px boundary
+2026-09-28T05:12:52.1511160Z
+2026-09-28T05:12:52.1512735Z     Test timeout of 30000ms exceeded.
+2026-09-28T05:12:52.1513149Z
+2026-09-28T05:12:52.1513475Z     Error: expect(locator).toHaveCSS(expected) failed
+2026-09-28T05:12:52.1513883Z
+2026-09-28T05:12:52.1514504Z     Locator:  getByRole('navigation', { name: 'Mobile navigation' })
+2026-09-28T05:12:52.1515370Z     Expected: "56px"
+2026-09-28T05:12:52.1517590Z     Received: ""
+2026-09-28T05:12:52.1518409Z
+2026-09-28T05:12:52.1518419Z
+2026-09-28T05:12:52.1518647Z       79 |     if (width < 700) {
+2026-09-28T05:12:52.1519205Z       80 |       await expect(tabs).toBeVisible();
+2026-09-28T05:12:52.1519895Z     > 81 |       await expect(tabs).toHaveCSS('height', '56px');
+2026-09-28T05:12:52.1523247Z          |                          ^
+2026-09-28T05:12:52.1524294Z       82 |       await expect(page.locator('main')).toHaveCSS('padding-bottom', '56px');
+2026-09-28T05:12:52.1525728Z       83 |     } else await expect(tabs).toBeHidden();
+2026-09-28T05:12:52.1526944Z       84 |     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
+2026-09-28T05:12:52.1528785Z         at /home/runner/work/dexly-pokemon-go-companion/dexly-pokemon-go-companion/tests/e2e/navigation.app.spec.ts:81:26
+2026-09-28T05:12:52.1529872Z
+2026-09-28T05:12:52.1531045Z     Error Context: test-results/navigation.app-phone-desti-2b13f-e-across-the-700px-boundary-mobile-webkit/error-context.md
+2026-09-28T05:12:52.1532238Z
+2026-09-28T05:12:52.1533437Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-09-28T05:12:52.1534971Z     test-results/navigation.app-phone-desti-2b13f-e-across-the-700px-boundary-mobile-webkit/trace.zip
+2026-09-28T05:12:52.1536265Z     Usage:
+2026-09-28T05:12:52.1536451Z
+2026-09-28T05:12:52.1537427Z         pnpm exec playwright show-trace test-results/navigation.app-phone-desti-2b13f-e-across-the-700px-boundary-mobile-webkit/trace.zip
+2026-09-28T05:12:52.1538621Z
+2026-09-28T05:12:52.1539360Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:12:52.1539879Z
+2026-09-28T05:12:52.1540542Z     Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:12:52.1541204Z
+2026-09-28T05:12:52.1541639Z     Error: expect(locator).toHaveCSS(expected) failed
+2026-09-28T05:12:52.1542047Z
+2026-09-28T05:12:52.1542219Z     Locator:  locator('main')
+2026-09-28T05:12:52.1542666Z     Expected: "56px"
+2026-09-28T05:12:52.1543028Z     Received: ""
+2026-09-28T05:12:52.1543236Z
+2026-09-28T05:12:52.1543387Z     Call log:
+2026-09-28T05:12:52.1544081Z       - Expect "toHaveCSS" with timeout 7500ms
+2026-09-28T05:12:52.1544996Z       - waiting for locator('main')
+2026-09-28T05:12:52.1545830Z       -
+2026-09-28T05:12:52.1546169Z
+2026-09-28T05:12:52.1546178Z
+2026-09-28T05:12:52.1546606Z       80 |       await expect(tabs).toBeVisible();
+2026-09-28T05:12:52.1547316Z       81 |       await expect(tabs).toHaveCSS('height', '56px');
+2026-09-28T05:12:52.1549794Z     > 82 |       await expect(page.locator('main')).toHaveCSS('padding-bottom', '56px');
+2026-09-28T05:12:52.1550787Z          |                                          ^
+2026-09-28T05:12:52.1551542Z       83 |     } else await expect(tabs).toBeHidden();
+2026-09-28T05:12:52.1552919Z       84 |     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
+2026-09-28T05:12:52.1553904Z       85 |   }
+2026-09-28T05:12:52.1555384Z         at /home/runner/work/dexly-pokemon-go-companion/dexly-pokemon-go-companion/tests/e2e/navigation.app.spec.ts:82:42
+2026-09-28T05:12:52.1556559Z
+2026-09-28T05:12:52.1557875Z     Error Context: test-results/navigation.app-phone-desti-2b13f-e-across-the-700px-boundary-mobile-webkit-retry1/error-context.md
+2026-09-28T05:12:52.1559158Z
+2026-09-28T05:12:52.1562517Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-09-28T05:12:52.1565869Z     test-results/navigation.app-phone-desti-2b13f-e-across-the-700px-boundary-mobile-webkit-retry1/trace.zip
+2026-09-28T05:12:52.1566804Z     Usage:
+2026-09-28T05:12:52.1566930Z
+2026-09-28T05:12:52.1567534Z         pnpm exec playwright show-trace test-results/navigation.app-phone-desti-2b13f-e-across-the-700px-boundary-mobile-webkit-retry1/trace.zip
+2026-09-28T05:12:52.1568141Z
+2026-09-28T05:12:52.1568536Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:12:52.1568827Z
+2026-09-28T05:12:52.1569185Z     Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:12:52.1569474Z
+2026-09-28T05:12:52.1569638Z     Error: expect(locator).toBeVisible() failed
+2026-09-28T05:12:52.1569856Z
+2026-09-28T05:12:52.1570074Z     Locator:  getByRole('navigation', { name: 'Mobile navigation' })
+2026-09-28T05:12:52.1570456Z     Expected: visible
+2026-09-28T05:12:52.1570693Z     Received: undefined
+2026-09-28T05:12:52.1570837Z
+2026-09-28T05:12:52.1570931Z     Call log:
+2026-09-28T05:12:52.1571202Z       - Expect "toBeVisible" with timeout 7500ms
+2026-09-28T05:12:52.1571667Z       - waiting for getByRole('navigation', { name: 'Mobile navigation' })
+2026-09-28T05:12:52.1572037Z       -
+2026-09-28T05:12:52.1572149Z
+2026-09-28T05:12:52.1572155Z
+2026-09-28T05:12:52.1572436Z       78 |     await page.setViewportSize({ width, height: width === 844 ? 390 : 844 });
+2026-09-28T05:12:52.1572866Z       79 |     if (width < 700) {
+2026-09-28T05:12:52.1573180Z     > 80 |       await expect(tabs).toBeVisible();
+2026-09-28T05:12:52.1573503Z          |                          ^
+2026-09-28T05:12:52.1573861Z       81 |       await expect(tabs).toHaveCSS('height', '56px');
+2026-09-28T05:12:52.1574373Z       82 |       await expect(page.locator('main')).toHaveCSS('padding-bottom', '56px');
+2026-09-28T05:12:52.1574858Z       83 |     } else await expect(tabs).toBeHidden();
+2026-09-28T05:12:52.1576258Z         at /home/runner/work/dexly-pokemon-go-companion/dexly-pokemon-go-companion/tests/e2e/navigation.app.spec.ts:80:26
+2026-09-28T05:12:52.1577266Z
+2026-09-28T05:12:52.1578614Z     Error Context: test-results/navigation.app-phone-desti-2b13f-e-across-the-700px-boundary-mobile-webkit-retry2/error-context.md
+2026-09-28T05:12:52.1579944Z
+2026-09-28T05:12:52.1580867Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-09-28T05:12:52.1582798Z     test-results/navigation.app-phone-desti-2b13f-e-across-the-700px-boundary-mobile-webkit-retry2/trace.zip
+2026-09-28T05:12:52.1584144Z     Usage:
+2026-09-28T05:12:52.1584340Z
+2026-09-28T05:12:52.1585730Z         pnpm exec playwright show-trace test-results/navigation.app-phone-desti-2b13f-e-across-the-700px-boundary-mobile-webkit-retry2/trace.zip
+2026-09-28T05:12:52.1587404Z
+2026-09-28T05:12:52.1588096Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:12:52.1589972Z
+2026-09-28T05:12:52.1589983Z
+2026-09-28T05:12:52.8630978Z [53/70] [mobile-webkit] › tests/e2e/navigation.app.spec.ts:133:1 › phone dialogs and actionable toasts stay above the navigation
+2026-09-28T05:12:57.6989433Z [54/70] [desktop-webkit] › tests/e2e/app.spec.ts:31:1 › returning Home has recent artwork, medal partners and an accessible responsive heatmap
+2026-09-28T05:13:06.3987670Z [55/70] [desktop-webkit] › tests/e2e/app.spec.ts:84:1 › almost-complete cards show missing categories and open details without modifying ownership
+2026-09-28T05:13:09.1092846Z [56/70] [desktop-webkit] › tests/e2e/app.spec.ts:119:1 › medal partners fill with the earned tier and weekly artwork disappears for old entries
+2026-09-28T05:13:12.9756090Z [57/70] [desktop-webkit] › tests/e2e/app.spec.ts:150:1 › first-run Home introduces the app without empty progress and has a logical tab order
+2026-09-28T05:13:50.8100023Z   8) [mobile-webkit] › tests/e2e/navigation.app.spec.ts:40:1 › blocked session storage cannot break navigation or replay the Dex cue
+2026-09-28T05:13:50.8101060Z
+2026-09-28T05:13:50.8101477Z     Error: locator.click: Target crashed
+2026-09-28T05:13:50.8101981Z     Call log:
+2026-09-28T05:13:50.8102506Z       - waiting for locator('#main-nav a[href="#progress"]')
+2026-09-28T05:13:50.8102927Z
+2026-09-28T05:13:50.8102936Z
+2026-09-28T05:13:50.8103157Z       49 |   await page.goto('/#home');
+2026-09-28T05:13:50.8103893Z       50 |   await expect(page.locator('#main-nav .dex-nudge')).toBeVisible();
+2026-09-28T05:13:50.8104819Z     > 51 |   await page.locator('#main-nav a[href="#progress"]').click();
+2026-09-28T05:13:50.8105781Z          |                                                       ^
+2026-09-28T05:13:50.8106287Z       52 |   await expect(page.locator('main')).toHaveAttribute('data-route', 'progress');
+2026-09-28T05:13:50.8106816Z       53 |   await page.locator('#main-nav a[href="#home"]').click();
+2026-09-28T05:13:50.8107278Z       54 |   await expect(page.locator('.first-run')).toBeVisible();
+2026-09-28T05:13:50.8107985Z         at /home/runner/work/dexly-pokemon-go-companion/dexly-pokemon-go-companion/tests/e2e/navigation.app.spec.ts:51:55
+2026-09-28T05:13:50.8108456Z
+2026-09-28T05:13:50.8109367Z     Error Context: test-results/navigation.app-blocked-ses-e50bf-ation-or-replay-the-Dex-cue-mobile-webkit/error-context.md
+2026-09-28T05:13:50.8109912Z
+2026-09-28T05:13:50.8110394Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-09-28T05:13:50.8111143Z     test-results/navigation.app-blocked-ses-e50bf-ation-or-replay-the-Dex-cue-mobile-webkit/trace.zip
+2026-09-28T05:13:50.8111662Z     Usage:
+2026-09-28T05:13:50.8111772Z
+2026-09-28T05:13:50.8112309Z         pnpm exec playwright show-trace test-results/navigation.app-blocked-ses-e50bf-ation-or-replay-the-Dex-cue-mobile-webkit/trace.zip
+2026-09-28T05:13:50.8112861Z
+2026-09-28T05:13:50.8113218Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:13:50.8113515Z
+2026-09-28T05:13:50.8114134Z     Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:13:50.8114435Z
+2026-09-28T05:13:50.8114570Z     Test timeout of 30000ms exceeded.
+2026-09-28T05:13:50.8114752Z
+2026-09-28T05:13:50.8114937Z     Error: locator.click: Test timeout of 30000ms exceeded.
+2026-09-28T05:13:50.8115664Z     Call log:
+2026-09-28T05:13:50.8115978Z       - waiting for locator('#main-nav a[href="#progress"]')
+2026-09-28T05:13:50.8116402Z         - locator resolved to <a href="#progress">Progress</a>
+2026-09-28T05:13:50.8116765Z       - attempting click action
+2026-09-28T05:13:50.8117106Z         - waiting for element to be visible, enabled and stable
+2026-09-28T05:13:50.8117496Z
+2026-09-28T05:13:50.8117505Z
+2026-09-28T05:13:50.8117716Z       49 |   await page.goto('/#home');
+2026-09-28T05:13:50.8118391Z       50 |   await expect(page.locator('#main-nav .dex-nudge')).toBeVisible();
+2026-09-28T05:13:50.8119483Z     > 51 |   await page.locator('#main-nav a[href="#progress"]').click();
+2026-09-28T05:13:50.8120146Z          |                                                       ^
+2026-09-28T05:13:50.8121020Z       52 |   await expect(page.locator('main')).toHaveAttribute('data-route', 'progress');
+2026-09-28T05:13:50.8121959Z       53 |   await page.locator('#main-nav a[href="#home"]').click();
+2026-09-28T05:13:50.8122763Z       54 |   await expect(page.locator('.first-run')).toBeVisible();
+2026-09-28T05:13:50.8124033Z         at /home/runner/work/dexly-pokemon-go-companion/dexly-pokemon-go-companion/tests/e2e/navigation.app.spec.ts:51:55
+2026-09-28T05:13:50.8124885Z
+2026-09-28T05:13:50.8126153Z     Error Context: test-results/navigation.app-blocked-ses-e50bf-ation-or-replay-the-Dex-cue-mobile-webkit-retry1/error-context.md
+2026-09-28T05:13:50.8127226Z
+2026-09-28T05:13:50.8128057Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-09-28T05:13:50.8129532Z     test-results/navigation.app-blocked-ses-e50bf-ation-or-replay-the-Dex-cue-mobile-webkit-retry1/trace.zip
+2026-09-28T05:13:50.8130594Z     Usage:
+2026-09-28T05:13:50.8130813Z
+2026-09-28T05:13:50.8131915Z         pnpm exec playwright show-trace test-results/navigation.app-blocked-ses-e50bf-ation-or-replay-the-Dex-cue-mobile-webkit-retry1/trace.zip
+2026-09-28T05:13:50.8133030Z
+2026-09-28T05:13:50.8133731Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:13:50.8134256Z
+2026-09-28T05:13:50.8134999Z     Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:13:50.8135782Z
+2026-09-28T05:13:50.8136004Z     Test timeout of 30000ms exceeded.
+2026-09-28T05:13:50.8136349Z
+2026-09-28T05:13:50.8136691Z     Error: locator.click: Test timeout of 30000ms exceeded.
+2026-09-28T05:13:50.8137295Z     Call log:
+2026-09-28T05:13:50.8137857Z       - waiting for locator('#main-nav a[href="#progress"]')
+2026-09-28T05:13:50.8138704Z         - locator resolved to <a href="#progress">Progress</a>
+2026-09-28T05:13:50.8139360Z       - attempting click action
+2026-09-28T05:13:50.8139995Z         - waiting for element to be visible, enabled and stable
+2026-09-28T05:13:50.8140469Z
+2026-09-28T05:13:50.8140480Z
+2026-09-28T05:13:50.8140695Z       49 |   await page.goto('/#home');
+2026-09-28T05:13:50.8141437Z       50 |   await expect(page.locator('#main-nav .dex-nudge')).toBeVisible();
+2026-09-28T05:13:50.8142314Z     > 51 |   await page.locator('#main-nav a[href="#progress"]').click();
+2026-09-28T05:13:50.8143112Z          |                                                       ^
+2026-09-28T05:13:50.8143960Z       52 |   await expect(page.locator('main')).toHaveAttribute('data-route', 'progress');
+2026-09-28T05:13:50.8144810Z       53 |   await page.locator('#main-nav a[href="#home"]').click();
+2026-09-28T05:13:50.8146126Z       54 |   await expect(page.locator('.first-run')).toBeVisible();
+2026-09-28T05:13:50.8147846Z         at /home/runner/work/dexly-pokemon-go-companion/dexly-pokemon-go-companion/tests/e2e/navigation.app.spec.ts:51:55
+2026-09-28T05:13:50.8148624Z
+2026-09-28T05:13:50.8149530Z     Error Context: test-results/navigation.app-blocked-ses-e50bf-ation-or-replay-the-Dex-cue-mobile-webkit-retry2/error-context.md
+2026-09-28T05:13:50.8150467Z
+2026-09-28T05:13:50.8151211Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-09-28T05:13:50.8152496Z     test-results/navigation.app-blocked-ses-e50bf-ation-or-replay-the-Dex-cue-mobile-webkit-retry2/trace.zip
+2026-09-28T05:13:50.8153420Z     Usage:
+2026-09-28T05:13:50.8153585Z
+2026-09-28T05:13:50.8154466Z         pnpm exec playwright show-trace test-results/navigation.app-blocked-ses-e50bf-ation-or-replay-the-Dex-cue-mobile-webkit-retry2/trace.zip
+2026-09-28T05:13:50.8155358Z
+2026-09-28T05:13:50.8155772Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:13:50.8156087Z
+2026-09-28T05:13:50.8156092Z
+2026-09-28T05:13:51.6228220Z [58/70] (retries) [mobile-webkit] › tests/e2e/navigation.app.spec.ts:123:1 › a hidden Dex link does not consume its first-visit cue (retry #1)
+2026-09-28T05:13:51.6816725Z [59/70] [desktop-webkit] › tests/e2e/app.spec.ts:185:1 › first-run backup action focuses the existing reviewed import and restores the dashboard
+2026-09-28T05:13:53.2854193Z   9) [mobile-webkit] › tests/e2e/app.spec.ts:535:1 › no horizontal overflow on any destination ─────
+2026-09-28T05:13:53.2865578Z
+2026-09-28T05:13:53.2877650Z     Test timeout of 30000ms exceeded.
+2026-09-28T05:13:53.2879377Z
+2026-09-28T05:13:53.2880448Z     Error: expect(locator).not.toBeEmpty() failed
+2026-09-28T05:13:53.2882288Z
+2026-09-28T05:13:53.2883413Z     Locator:  locator('main')
+2026-09-28T05:13:53.2884618Z     Expected: not empty
+2026-09-28T05:13:53.2886062Z     Received: empty
+2026-09-28T05:13:53.2886975Z
+2026-09-28T05:13:53.2887128Z
+2026-09-28T05:13:53.2887589Z        9 | async function open(page: Page, hash: string) {
+2026-09-28T05:13:53.2888771Z       10 |   await page.goto(`/#${hash}`);
+2026-09-28T05:13:53.2900669Z     > 11 |   await expect(page.locator('main')).not.toBeEmpty();
+2026-09-28T05:13:53.2902620Z          |                                          ^
+2026-09-28T05:13:53.2903398Z       12 | }
+2026-09-28T05:13:53.2903982Z       13 |
+2026-09-28T05:13:53.2904699Z       14 | async function markFirstCatch(page: Page) {
+2026-09-28T05:13:53.2906422Z         at open (/home/runner/work/dexly-pokemon-go-companion/dexly-pokemon-go-companion/tests/e2e/app.spec.ts:11:42)
+2026-09-28T05:13:53.2908254Z         at /home/runner/work/dexly-pokemon-go-companion/dexly-pokemon-go-companion/tests/e2e/app.spec.ts:537:5
+2026-09-28T05:13:53.2909300Z
+2026-09-28T05:13:53.2910322Z     Error Context: test-results/app-no-horizontal-overflow-on-any-destination-mobile-webkit/error-context.md
+2026-09-28T05:13:53.2911438Z
+2026-09-28T05:13:53.2912545Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-09-28T05:13:53.2914394Z     test-results/app-no-horizontal-overflow-on-any-destination-mobile-webkit/trace.zip
+2026-09-28T05:13:53.2945688Z     Usage:
+2026-09-28T05:13:53.2946070Z
+2026-09-28T05:13:53.2947224Z         pnpm exec playwright show-trace test-results/app-no-horizontal-overflow-on-any-destination-mobile-webkit/trace.zip
+2026-09-28T05:13:53.2948391Z
+2026-09-28T05:13:53.2949337Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:13:53.2950068Z
+2026-09-28T05:13:53.2950938Z     Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:13:53.2951745Z
+2026-09-28T05:13:53.2952167Z     Test timeout of 30000ms exceeded.
+2026-09-28T05:13:53.2952665Z
+2026-09-28T05:13:53.2953114Z     Error: expect(locator).not.toBeEmpty() failed
+2026-09-28T05:13:53.2953900Z
+2026-09-28T05:13:53.2954250Z     Locator:  locator('main')
+2026-09-28T05:13:53.2954872Z     Expected: not empty
+2026-09-28T05:13:53.2955726Z     Received: empty
+2026-09-28T05:13:53.2956139Z
+2026-09-28T05:13:53.2956319Z
+2026-09-28T05:13:53.2956797Z        9 | async function open(page: Page, hash: string) {
+2026-09-28T05:13:53.2957615Z       10 |   await page.goto(`/#${hash}`);
+2026-09-28T05:13:53.2958453Z     > 11 |   await expect(page.locator('main')).not.toBeEmpty();
+2026-09-28T05:13:53.2959291Z          |                                          ^
+2026-09-28T05:13:53.2959949Z       12 | }
+2026-09-28T05:13:53.2960448Z       13 |
+2026-09-28T05:13:53.2961086Z       14 | async function markFirstCatch(page: Page) {
+2026-09-28T05:13:53.2962396Z         at open (/home/runner/work/dexly-pokemon-go-companion/dexly-pokemon-go-companion/tests/e2e/app.spec.ts:11:42)
+2026-09-28T05:13:53.2964063Z         at /home/runner/work/dexly-pokemon-go-companion/dexly-pokemon-go-companion/tests/e2e/app.spec.ts:537:5
+2026-09-28T05:13:53.2965005Z
+2026-09-28T05:13:53.2966277Z     Error Context: test-results/app-no-horizontal-overflow-on-any-destination-mobile-webkit-retry1/error-context.md
+2026-09-28T05:13:53.2967461Z
+2026-09-28T05:13:53.2968509Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-09-28T05:13:53.2970324Z     test-results/app-no-horizontal-overflow-on-any-destination-mobile-webkit-retry1/trace.zip
+2026-09-28T05:13:53.2971633Z     Usage:
+2026-09-28T05:13:53.2971996Z
+2026-09-28T05:13:53.2973095Z         pnpm exec playwright show-trace test-results/app-no-horizontal-overflow-on-any-destination-mobile-webkit-retry1/trace.zip
+2026-09-28T05:13:53.2974201Z
+2026-09-28T05:13:53.2975050Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:13:53.2975966Z
+2026-09-28T05:13:53.2976814Z     Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:13:53.2977528Z
+2026-09-28T05:13:53.2977929Z     Test timeout of 30000ms exceeded.
+2026-09-28T05:13:53.2978430Z
+2026-09-28T05:13:53.2979112Z     Error: expect(locator).not.toBeEmpty() failed
+2026-09-28T05:13:53.2979692Z
+2026-09-28T05:13:53.2980041Z     Locator:  locator('main')
+2026-09-28T05:13:53.2980673Z     Expected: not empty
+2026-09-28T05:13:53.2981259Z     Received: empty
+2026-09-28T05:13:53.2981648Z
+2026-09-28T05:13:53.2981815Z
+2026-09-28T05:13:53.2982291Z        9 | async function open(page: Page, hash: string) {
+2026-09-28T05:13:53.2983111Z       10 |   await page.goto(`/#${hash}`);
+2026-09-28T05:13:53.2984026Z     > 11 |   await expect(page.locator('main')).not.toBeEmpty();
+2026-09-28T05:13:53.2984870Z          |                                          ^
+2026-09-28T05:13:53.2985796Z       12 | }
+2026-09-28T05:13:53.2986326Z       13 |
+2026-09-28T05:13:53.2986980Z       14 | async function markFirstCatch(page: Page) {
+2026-09-28T05:13:53.2988317Z         at open (/home/runner/work/dexly-pokemon-go-companion/dexly-pokemon-go-companion/tests/e2e/app.spec.ts:11:42)
+2026-09-28T05:13:53.2990220Z         at /home/runner/work/dexly-pokemon-go-companion/dexly-pokemon-go-companion/tests/e2e/app.spec.ts:537:5
+2026-09-28T05:13:53.2991168Z
+2026-09-28T05:13:53.2992181Z     Error Context: test-results/app-no-horizontal-overflow-on-any-destination-mobile-webkit-retry2/error-context.md
+2026-09-28T05:13:53.2993244Z
+2026-09-28T05:13:53.2994181Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-09-28T05:13:53.2996102Z     test-results/app-no-horizontal-overflow-on-any-destination-mobile-webkit-retry2/trace.zip
+2026-09-28T05:13:53.2997269Z     Usage:
+2026-09-28T05:13:53.2997636Z
+2026-09-28T05:13:53.2998724Z         pnpm exec playwright show-trace test-results/app-no-horizontal-overflow-on-any-destination-mobile-webkit-retry2/trace.zip
+2026-09-28T05:13:53.2999865Z
+2026-09-28T05:13:53.3000725Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-09-28T05:13:53.3001513Z
+2026-09-28T05:13:53.3001680Z
+2026-09-28T05:13:54.3177708Z [60/70] [desktop-webkit] › tests/e2e/app.spec.ts:217:1 › first-run parade is static and full colour with reduced motion in both themes
+2026-09-28T05:13:56.4777486Z [61/70] [desktop-webkit] › tests/e2e/app.spec.ts:233:1 › the first marked catch switches Home to the dashboard and removing it restores onboarding
+2026-09-28T05:14:05.1007727Z [62/70] [desktop-webkit] › tests/e2e/app.spec.ts:246:1 › marks a Pokémon from the Dex grid and keeps it after reload
+2026-09-28T05:14:08.9593627Z [63/70] [desktop-webkit] › tests/e2e/app.spec.ts:260:1 › viewing details never changes collection state
+2026-09-28T05:14:12.7827289Z [64/70] [desktop-webkit] › tests/e2e/app.spec.ts:269:1 › the Pokédex shelf opens a region device with a working scanner
+2026-09-28T05:14:21.5087655Z [65/70] [desktop-webkit] › tests/e2e/app.spec.ts:289:1 › the National Dex grid is paged instead of one endless list
+2026-09-28T05:14:24.7150132Z [66/70] (retries) [desktop-webkit] › tests/e2e/app.spec.ts:150:1 › first-run Home introduces the app without empty progress and has a logical tab order (retry #1)
+2026-09-28T05:14:25.1107202Z [67/70] [desktop-webkit] › tests/e2e/app.spec.ts:297:1 › the footer links to sources and credits
+2026-09-28T05:14:27.9569110Z ##[error]The operation was canceled.

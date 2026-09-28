@@ -1,0 +1,410 @@
+{
+  "recordedAt": "2026-09-28T05:19:26.097Z",
+  "outcome": "blocked_before_deployment",
+  "candidateSha": "32b6e14c608c5333ac2931b12f5a5e062405c8d3",
+  "applicationSourceCheckpoint": "8a27054",
+  "applicationSourceUnchangedDuringReleasePreparation": true,
+  "phase4EvidenceCommit": "bc9ca97",
+  "deploymentExecuted": false,
+  "rollbackExecuted": false,
+  "productionSha": "a8d0f722ea4dd6ede7a63ca43d85378e5be7168d",
+  "productionVersion": "257fbfc0-bcc2-4b45-8125-3f079ebf475b",
+  "d1Bookmark": "000000c7-00000000-000050f4-90a5de11ccfb2ce5afff8d4dfa03d03b",
+  "pendingMigrations": 0,
+  "appliedMigrations": 0,
+  "checks": {
+    "unit": 241,
+    "worker": 40,
+    "lint": "passed",
+    "trackedFormatting": "passed",
+    "catalog": "passed",
+    "typescriptBuild": "passed",
+    "strictDryRun": "passed",
+    "linuxChromium": {
+      "passed": 89,
+      "skipped": 2
+    },
+    "linuxWebkit": {
+      "passed": false,
+      "finalRunCancelledAfterConfirmedFailure": true,
+      "phoneContentHeight": 2486,
+      "maximumContentHeight": 2400,
+      "failedAttempts": 3
+    },
+    "quality": "failed at pre-existing dependency audit; preceding steps passed"
+  },
+  "plan": {
+    "tracked": false,
+    "sha256": "08fd21e054d2c88ab017fc6f6fc29853eacb45363c32d9240ccf151646855df3"
+  },
+  "ci": {
+    "conclusion": "cancelled",
+    "databaseId": 36381020076,
+    "headSha": "32b6e14c608c5333ac2931b12f5a5e062405c8d3",
+    "jobs": [
+      {
+        "completedAt": "2026-09-28T05:18:18Z",
+        "conclusion": "cancelled",
+        "databaseId": 108796794437,
+        "name": "browser-webkit",
+        "startedAt": "2026-09-28T05:15:01Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-09-28T05:15:04Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-09-28T05:15:02Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:15:09Z",
+            "conclusion": "success",
+            "name": "Check out reviewed source",
+            "number": 2,
+            "startedAt": "2026-09-28T05:15:04Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:15:10Z",
+            "conclusion": "success",
+            "name": "Install pnpm",
+            "number": 3,
+            "startedAt": "2026-09-28T05:15:09Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:15:25Z",
+            "conclusion": "success",
+            "name": "Install Node.js",
+            "number": 4,
+            "startedAt": "2026-09-28T05:15:10Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:15:31Z",
+            "conclusion": "success",
+            "name": "Install locked dependencies",
+            "number": 5,
+            "startedAt": "2026-09-28T05:15:25Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:16:20Z",
+            "conclusion": "success",
+            "name": "Install Playwright engine",
+            "number": 6,
+            "startedAt": "2026-09-28T05:15:31Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:18:07Z",
+            "conclusion": "cancelled",
+            "name": "Run mobile and desktop WebKit flows",
+            "number": 7,
+            "startedAt": "2026-09-28T05:16:20Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:18:07Z",
+            "conclusion": "skipped",
+            "name": "Upload failure evidence",
+            "number": 8,
+            "startedAt": "2026-09-28T05:18:07Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:18:07Z",
+            "conclusion": "skipped",
+            "name": "Post Install Node.js",
+            "number": 14,
+            "startedAt": "2026-09-28T05:18:07Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:18:14Z",
+            "conclusion": "success",
+            "name": "Post Install pnpm",
+            "number": 15,
+            "startedAt": "2026-09-28T05:18:07Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:18:15Z",
+            "conclusion": "success",
+            "name": "Post Check out reviewed source",
+            "number": 16,
+            "startedAt": "2026-09-28T05:18:14Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:18:15Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 17,
+            "startedAt": "2026-09-28T05:18:15Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/HoLeeChuck/dexly-pokemon-go-companion/actions/runs/36381020076/job/108796794437"
+      },
+      {
+        "completedAt": "2026-09-28T05:17:08Z",
+        "conclusion": "failure",
+        "databaseId": 108796794653,
+        "name": "quality",
+        "startedAt": "2026-09-28T05:15:01Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-09-28T05:15:03Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-09-28T05:15:02Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:15:08Z",
+            "conclusion": "success",
+            "name": "Check out reviewed source",
+            "number": 2,
+            "startedAt": "2026-09-28T05:15:03Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:15:09Z",
+            "conclusion": "success",
+            "name": "Install pnpm",
+            "number": 3,
+            "startedAt": "2026-09-28T05:15:08Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:15:18Z",
+            "conclusion": "success",
+            "name": "Install Node.js",
+            "number": 4,
+            "startedAt": "2026-09-28T05:15:09Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:15:26Z",
+            "conclusion": "success",
+            "name": "Install locked dependencies",
+            "number": 5,
+            "startedAt": "2026-09-28T05:15:18Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:15:31Z",
+            "conclusion": "success",
+            "name": "Generate and verify Worker binding types",
+            "number": 6,
+            "startedAt": "2026-09-28T05:15:26Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:15:38Z",
+            "conclusion": "success",
+            "name": "Lint",
+            "number": 7,
+            "startedAt": "2026-09-28T05:15:31Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:15:50Z",
+            "conclusion": "success",
+            "name": "Check formatting",
+            "number": 8,
+            "startedAt": "2026-09-28T05:15:38Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:16:48Z",
+            "conclusion": "success",
+            "name": "Run unit and Worker D1 tests",
+            "number": 9,
+            "startedAt": "2026-09-28T05:15:50Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:16:50Z",
+            "conclusion": "success",
+            "name": "Verify catalog deterministically",
+            "number": 10,
+            "startedAt": "2026-09-28T05:16:48Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:17:02Z",
+            "conclusion": "success",
+            "name": "Build production bundle with release metadata",
+            "number": 11,
+            "startedAt": "2026-09-28T05:16:50Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:17:05Z",
+            "conclusion": "success",
+            "name": "Validate Cloudflare deployment package",
+            "number": 12,
+            "startedAt": "2026-09-28T05:17:02Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:17:06Z",
+            "conclusion": "failure",
+            "name": "Audit dependency advisories",
+            "number": 13,
+            "startedAt": "2026-09-28T05:17:05Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:17:06Z",
+            "conclusion": "skipped",
+            "name": "Post Install Node.js",
+            "number": 24,
+            "startedAt": "2026-09-28T05:17:06Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:17:06Z",
+            "conclusion": "success",
+            "name": "Post Install pnpm",
+            "number": 25,
+            "startedAt": "2026-09-28T05:17:06Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:17:06Z",
+            "conclusion": "success",
+            "name": "Post Check out reviewed source",
+            "number": 26,
+            "startedAt": "2026-09-28T05:17:06Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:17:06Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 27,
+            "startedAt": "2026-09-28T05:17:06Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/HoLeeChuck/dexly-pokemon-go-companion/actions/runs/36381020076/job/108796794653"
+      },
+      {
+        "completedAt": "2026-09-28T05:17:23Z",
+        "conclusion": "success",
+        "databaseId": 108796794730,
+        "name": "browser-chromium",
+        "startedAt": "2026-09-28T05:15:01Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-09-28T05:15:04Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-09-28T05:15:02Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:15:08Z",
+            "conclusion": "success",
+            "name": "Check out reviewed source",
+            "number": 2,
+            "startedAt": "2026-09-28T05:15:04Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:15:10Z",
+            "conclusion": "success",
+            "name": "Install pnpm",
+            "number": 3,
+            "startedAt": "2026-09-28T05:15:08Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:15:19Z",
+            "conclusion": "success",
+            "name": "Install Node.js",
+            "number": 4,
+            "startedAt": "2026-09-28T05:15:10Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:15:27Z",
+            "conclusion": "success",
+            "name": "Install locked dependencies",
+            "number": 5,
+            "startedAt": "2026-09-28T05:15:19Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:15:55Z",
+            "conclusion": "success",
+            "name": "Install Playwright engine",
+            "number": 6,
+            "startedAt": "2026-09-28T05:15:27Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:17:20Z",
+            "conclusion": "success",
+            "name": "Run mobile, desktop, and PWA Chromium flows",
+            "number": 7,
+            "startedAt": "2026-09-28T05:15:55Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:17:20Z",
+            "conclusion": "skipped",
+            "name": "Upload failure evidence",
+            "number": 8,
+            "startedAt": "2026-09-28T05:17:20Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:17:20Z",
+            "conclusion": "success",
+            "name": "Post Install Node.js",
+            "number": 14,
+            "startedAt": "2026-09-28T05:17:20Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:17:20Z",
+            "conclusion": "success",
+            "name": "Post Install pnpm",
+            "number": 15,
+            "startedAt": "2026-09-28T05:17:20Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:17:20Z",
+            "conclusion": "success",
+            "name": "Post Check out reviewed source",
+            "number": 16,
+            "startedAt": "2026-09-28T05:17:20Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-28T05:17:20Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 17,
+            "startedAt": "2026-09-28T05:17:20Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/HoLeeChuck/dexly-pokemon-go-companion/actions/runs/36381020076/job/108796794730"
+      }
+    ],
+    "status": "completed",
+    "url": "https://github.com/HoLeeChuck/dexly-pokemon-go-companion/actions/runs/36381020076"
+  }
+}

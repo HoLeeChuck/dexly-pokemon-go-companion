@@ -1,6 +1,19 @@
 # CatchGrid handoff
 
+## September 28, 2026 — first-run release blocked before deployment
+
+The owner authorized releasing `prism-forward`, fast-forwarding `main`, and pushing both branches. Release preparation reached **`32b6e14`**, and both branches were pushed, but **production was not changed** because Linux WebKit did not pass. The authoritative attempt record and retained CI evidence are in [docs/releases/2026-09-27-first-run/RELEASE.md](docs/releases/2026-09-27-first-run/RELEASE.md); the requested folder keeps the plan's September 27 date, while execution crossed midnight.
+
+- Committed Phase 4 evidence as `bc9ca97`. Subsequent commits formatted one evidence JSON and corrected browser-test configuration and accounting for the documented 77px phone navigation clearance. Application source is unchanged from Phase 3 `8a27054`. The owner's `CODEX-PLAN.md` is still untracked and byte-for-byte preserved.
+- Unit 241/241, Worker 40/40, binding types, lint, tracked formatting, catalog validators, production build and strict dry run passed. Exact-candidate Linux Chromium/PWA: **89 passed, 2 existing skips**.
+- **Release blocker:** Linux WebKit measured seeded phone content at **2,486px**, exceeding the **2,400px** budget after all navigation clearance was excluded, on all three attempts. The earlier run of identical application source also exhausted retries on first-run import/navigation and other route interactions. These are not the permitted Windows-only crash exception. Root causes remain unconfirmed; do not waive them or describe WebKit as passing.
+- Linux CI `quality` passed its source/build checks, then failed the previously recorded transitive `sharp`/libheif dependency audit. No dependency upgrade was attempted. Final CI run [36381020076](https://github.com/HoLeeChuck/dexly-pokemon-go-companion/actions/runs/36381020076) was canceled after the WebKit failure was established and Chromium completed; full WebKit coverage did not finish.
+- Production D1 bookmark: `000000c7-00000000-000050f4-90a5de11ccfb2ce5afff8d4dfa03d03b`. Both migration list and apply commands reported **no migrations to apply**; none were applied.
+- **Stop point:** no deploy command was executed, so no rollback was necessary. Production health still reports `a8d0f72` / `257fbfc0-bcc2-4b45-8125-3f079ebf475b`. Post-deployment smoke and live first-run browser checks were not run. Resolve the Linux WebKit blockers and repeat release gates before a future release attempt; this run stops with its record.
+
 ## September 27, 2026 — CODEX-PLAN Phase 4 (verified, local handoff)
+
+This section records the original local verification; its evidence was subsequently committed as `bc9ca97` during the blocked release attempt above.
 
 **Phases 1–4 are complete locally.** Phase 3 was committed with the owner's authorization as **`8a27054`** (`feat: add Phase 3 navigation emphasis and phone tabs`) on **`prism-forward`**, following Phase 2 `b513e19` and Phase 1 `789b6bb`. Only Phase 3 source, tests, screenshots and handoff were staged. The owner's untracked `CODEX-PLAN.md` was preserved. Phase 4 required no application changes; this handoff and its verification evidence remain unstaged and uncommitted. No push, merge, migration or deployment occurred.
 
@@ -72,7 +85,7 @@ Implemented **Phase 1 only**: empty Home now introduces CatchGrid with the reque
 
 ## Live
 
-Production at https://dex.cjdev.app/ is Worker version `257fbfc0-bcc2-4b45-8125-3f079ebf475b`, Git `a8d0f72` on `main` (data dashboard release, deployed September 26, 2026 20:58 UTC). Rollback target: the previous Prism Atlas version `9b19b937-8ff5-4a67-8c7f-ca13d5e4dfaa` (no migrations were applied, so it stays compatible). D1 Time Travel bookmark taken before the release: `000000c4-00000000-000050f2-fd5292c180b890daa8b51deabf366e32`. Earlier record: [docs/releases/2026-09-24-atlas/RELEASE.md](docs/releases/2026-09-24-atlas/RELEASE.md). Everything described below is now deployed.
+Production at https://dex.cjdev.app/ remains Worker version `257fbfc0-bcc2-4b45-8125-3f079ebf475b`, Git `a8d0f72` (data dashboard release, deployed September 26, 2026 20:58 UTC; re-confirmed September 28). **Git `main` and `prism-forward` contain the newer, unreleased `32b6e14` candidate and this release record; they are ahead of production.** The first-run release was blocked before deployment, as documented above. The unchanged live release's older rollback target is Prism Atlas version `9b19b937-8ff5-4a67-8c7f-ca13d5e4dfaa`; the attempted first-run release recorded the currently live `257fbfc0-…` as its rollback target. No migrations were applied. The September 26 bookmark was `000000c4-00000000-000050f2-fd5292c180b890daa8b51deabf366e32`; the newer unused bookmark is recorded above. Earlier record: [docs/releases/2026-09-24-atlas/RELEASE.md](docs/releases/2026-09-24-atlas/RELEASE.md). The September 26 features below remain deployed; the first-run phases above do not.
 
 ### September 26, 2026 release (evidence)
 
