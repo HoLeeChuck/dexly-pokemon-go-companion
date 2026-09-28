@@ -195,6 +195,7 @@ const state = {
   // Progress grid: current page and the cell that keeps keyboard focus.
   gridPage: 0,
   gridCursor: null,
+  gridCompare: false,
   nitro: false,
   discordCategories: new Set(DISCORD_CATEGORIES.map(([id]) => id)),
   evolveSizes: false,
@@ -347,8 +348,9 @@ function gridPager(pages) {
   if (pages.length < 2) return '';
   return `<label class="grid-pager">Showing <select data-grid-page-select>${pages.map((pg, k) => `<option value="${k}" ${k === state.gridPage ? 'selected' : ''}>${dex(pg[0].n)}–${dex(pg[pg.length - 1].n)}</option>`).join('')}</select><span>of ${pages.length} pages</span></label>`;
 }
-function gridTable(list) {
-  const cats = gridCategories();
+const phoneProgress = window.matchMedia('(width < 700px)');
+function gridTable(list, single = false) {
+  const cats = gridCategories().filter(([id]) => !single || id === state.category);
   const totals = categoryTotals(scoped(), owned, cats);
   const pages = pagesOf(list);
   state.gridPage = Math.min(state.gridPage, pages.length - 1);
@@ -356,7 +358,9 @@ function gridTable(list) {
   // Roving focus: the remembered cell if it is on this page, otherwise the first markable one.
   const cursor = state.gridCursor;
   const onPage =
-    cursor && page.some((p) => p.id === cursor.id && p.rules[cursor.cat] === 'released');
+    cursor &&
+    cats.some(([id]) => id === cursor.cat) &&
+    page.some((p) => p.id === cursor.id && p.rules[cursor.cat] === 'released');
   const first = page.flatMap((p) =>
     cats.filter(([id]) => p.rules[id] === 'released').map(([id]) => ({ id: p.id, cat: id })),
   )[0];
@@ -366,10 +370,10 @@ function gridTable(list) {
       const pct = t.eligible ? (t.count / t.eligible) * 100 : 0;
       return `<th scope="col" class="cat-${t.id}"><button data-focus-cat="${t.id}" aria-pressed="${state.category === t.id}" title="${t.count} of ${t.eligible}" aria-label="${t.name}: ${t.count} of ${t.eligible}, ${percent(t.count, t.eligible)}. Use for the search string and filter"><span>${t.name}</span><small>${percent(t.count, t.eligible)}</small><i class="meter" aria-hidden="true"><b data-style="width:${pct.toFixed(2)}%"></b></i></button></th>`;
     })
-    .join('')}<th scope="col" class="grid-done">Done</th></tr></thead>`;
+    .join('')}${single ? '' : '<th scope="col" class="grid-done">Done</th>'}</tr></thead>`;
   const rows = page
     .map((p) => {
-      const eligibleCats = cats.filter(([id]) => p.rules[id] === 'released');
+      const eligibleCats = gridCategories().filter(([id]) => p.rules[id] === 'released');
       const have = eligibleCats.filter(([id]) => isOwned(p, id)).length;
       const cells = cats
         .map(([id, name]) => {
@@ -380,10 +384,10 @@ function gridTable(list) {
           return `<td><button class="gcell cat-${id} ${on ? 'on' : ''}" data-cell="${p.id}" data-cat="${id}" aria-pressed="${on}" aria-label="${escape(p.name)} ${name}" tabindex="${tab}"></button></td>`;
         })
         .join('');
-      return `<tr data-key="row-${p.id}" class="${eligibleCats.length && have === eligibleCats.length ? 'row-complete' : ''}"><th scope="row"><button class="grid-name" data-pokemon="${p.id}" aria-label="View details for ${escape(p.name)}"><img src="${escape(p.art)}" alt="" width="36" height="36" loading="lazy"><span class="grid-num">${dex(p.n)}</span><span class="grid-label">${escape(p.name)}</span></button></th>${cells}<td class="grid-done" title="${have} of ${eligibleCats.length} categories"><span>${percent(have, eligibleCats.length)}</span><i class="meter" aria-hidden="true"><b data-style="width:${eligibleCats.length ? ((have / eligibleCats.length) * 100).toFixed(2) : 0}%"></b></i></td></tr>`;
+      return `<tr data-key="row-${p.id}" class="${eligibleCats.length && have === eligibleCats.length ? 'row-complete' : ''}"><th scope="row"><button class="grid-name" data-pokemon="${p.id}" aria-label="View details for ${escape(p.name)}"><img src="${escape(p.art)}" alt="" width="36" height="36" loading="lazy"><span class="grid-num">${dex(p.n)}</span><span class="grid-label">${escape(p.name)}</span></button></th>${cells}${single ? '' : `<td class="grid-done" title="${have} of ${eligibleCats.length} categories"><span>${percent(have, eligibleCats.length)}</span><i class="meter" aria-hidden="true"><b data-style="width:${eligibleCats.length ? ((have / eligibleCats.length) * 100).toFixed(2) : 0}%"></b></i></td>`}</tr>`;
     })
     .join('');
-  return `<div class="grid-meta"><p class="grid-help" id="grid-help">Click to mark. Drag down a column or Shift-click to fill a range. Arrow keys move, Space marks. Click a name for details.</p>${gridPager(pages)}</div><div class="grid-scroll"><table class="collection-grid" aria-label="${escape(state.region)} collection grid" aria-describedby="grid-help"><caption class="sr-only">Rows are Pokémon, columns are categories.</caption><colgroup><col class="col-name"><col span="${cats.length}" class="col-cat"><col class="col-done"></colgroup>${head}<tbody>${rows || `<tr><td colspan="${cats.length + 2}">${empty()}</td></tr>`}</tbody></table></div>`;
+  return `<div class="grid-meta"><p class="grid-help" id="grid-help">${single ? 'Tap a box to mark. Drag down the boxes to fill. Swipe names to scroll; tap a name for details.' : 'Click to mark. Drag down a column or Shift-click to fill a range. Arrow keys move, Space marks. Click a name for details.'}</p>${gridPager(pages)}</div><div class="grid-scroll" id="progress-categories"><table class="collection-grid${single ? ' single-category' : ''}" aria-label="${escape(state.region)} collection grid" aria-describedby="grid-help"><caption class="sr-only">Rows are Pokémon, ${single ? `showing ${label()}.` : 'columns are categories.'}</caption><colgroup><col class="col-name"><col span="${cats.length}" class="col-cat">${single ? '' : '<col class="col-done">'}</colgroup>${head}<tbody>${rows || `<tr><td colspan="${cats.length + (single ? 1 : 2)}">${empty()}</td></tr>`}</tbody></table></div>`;
 }
 function stringPanel() {
   const value = missingSearch({
@@ -406,7 +410,18 @@ function stringPanel() {
     )}</div><code class="string-output" id="grid-string" tabindex="0">${escape(value) || `Every eligible ${label()} entry here is registered.`}</code><div class="string-meta"><span>${gaps().length} missing</span><span>${value.length.toLocaleString()} characters</span></div><button class="primary string-copy" ${value ? `data-copy-value="${escape(value)}"` : 'disabled'}>Copy search string</button><button class="quiet" data-compose>More options in Search Lab ↗</button></aside>`;
 }
 function progress() {
-  return `<div class="progress-layout"><section class="grid-panel" aria-label="Collection grid"><div class="grid-toolbar">${scopeControls()}<label class="sr-only" for="grid-search">Search Pokémon</label><input class="search-input" id="grid-search" type="search" placeholder="Name, number, or type" value="${escape(state.query)}"><div class="segmented" role="group" aria-label="Show">${[
+  const phone = phoneProgress.matches;
+  const picker = phone
+    ? `<div class="segmented progress-categories" role="group" aria-label="Progress category">${gridCategories()
+        .map(
+          ([id, name]) =>
+            `<button class="cat-${id}" data-focus-cat="${id}" aria-pressed="${state.category === id}">${name}</button>`,
+        )
+        .join(
+          '',
+        )}</div><button class="grid-compare quiet" data-grid-compare aria-expanded="${state.gridCompare}" aria-controls="progress-categories"><span aria-hidden="true">${state.gridCompare ? '▾' : '▸'}</span> Compare categories</button>`
+    : '';
+  return `<div class="progress-layout${phone ? ' phone-progress' : ''}"><section class="grid-panel" aria-label="Collection grid"><div class="grid-toolbar">${scopeControls()}<label class="sr-only" for="grid-search">Search Pokémon</label><input class="search-input" id="grid-search" type="search" placeholder="Name, number, or type" value="${escape(state.query)}"><div class="segmented" role="group" aria-label="Show">${[
     ['all', 'All'],
     ['missing', `Missing ${label()}`],
     ['collected', `Have ${label()}`],
@@ -414,7 +429,9 @@ function progress() {
     .map(
       ([v, n]) => `<button data-filter="${v}" aria-pressed="${state.filter === v}">${n}</button>`,
     )
-    .join('')}</div></div>${gridTable(matching())}</section>${stringPanel()}</div>`;
+    .join(
+      '',
+    )}</div></div>${picker}${gridTable(matching(), phone && !state.gridCompare)}</section>${stringPanel()}</div>`;
 }
 function matching() {
   return scoped().filter(
@@ -873,7 +890,7 @@ function settings() {
           )
           .join('')}</ul>`
       : '<p class="annotation">No snapshots yet.</p>'
-  }${review ? `<div class="confirm-box" role="group" aria-label="Confirm restore"><p>Restore ${review.summary.collectionRecords} collection ${review.summary.collectionRecords === 1 ? 'record' : 'records'} from ${new Date(review.summary.createdAt).toLocaleString()}? Catalog ${review.summary.catalogCompatibility === 'current' ? 'matches' : 'differs; unknown forms are kept as-is'}.</p><button class="primary" data-restore-snapshot="${escape(review.id)}">Restore this snapshot</button><button class="quiet" data-cancel-snapshot>Cancel</button></div>` : ''}</section><section><h2>Bulk region setup</h2><p>Mark or clear a whole region’s obtainable Normal entries. Shiny, Lucky, sizes, Shadow and Purified are never changed. Paint mode on the Progress map handles smaller ranges.</p><ul class="region-setup">${regionTotals
+  }${review ? `<div class="confirm-box" role="group" aria-label="Confirm restore"><p>Restore ${review.summary.collectionRecords} collection ${review.summary.collectionRecords === 1 ? 'record' : 'records'} from ${new Date(review.summary.createdAt).toLocaleString()}? Catalog ${review.summary.catalogCompatibility === 'current' ? 'matches' : 'differs; unknown forms are kept as-is'}.</p><button class="primary" data-restore-snapshot="${escape(review.id)}">Restore this snapshot</button><button class="quiet" data-cancel-snapshot>Cancel</button></div>` : ''}</section><section><h2>Bulk region setup</h2><p>Mark or clear a whole region’s obtainable Normal entries. Shiny, Lucky, sizes, Shadow and Purified are never changed. Drag-fill on the Progress grid handles smaller ranges.</p><ul class="region-setup">${regionTotals
     .map(([region, count]) => {
       const pending = state.pendingBulk?.region === region;
       return `<li data-key="bulk-${region}"><span><strong>${region}</strong><small>${count} obtainable Normal entries</small></span>${
@@ -886,7 +903,10 @@ function settings() {
       '',
     )}</ul></section><section><h2>Catalog and storage</h2><p>All regions and supported forms. Costumes are pending. Catalog base reviewed ${catalogDate}${ledgerDate ? `, release updates through ${ledgerDate}` : ''}; availability changes require dated sources. Unreleased and ineligible categories cannot be selected.</p><p>Data is stored on this browser, using the existing CatchGrid profile and recovery snapshots. No Pokémon GO account connection.</p></section></div>`;
 }
+let fill = null;
+let gridAnchor = null;
 function render() {
+  cancelGridFill();
   entriesCache = null;
   backupReminder = !storageError && dataSafety.observe(owned);
   const firstRun =
@@ -928,6 +948,9 @@ function updateDexNudge() {
   }
 }
 window.addEventListener('resize', updateDexNudge);
+phoneProgress.addEventListener('change', () => {
+  if (state.route === 'progress') render();
+});
 function compose() {
   state.mode = 'none';
   state.preset = 'missing';
@@ -1074,6 +1097,12 @@ document.addEventListener('click', async (event) => {
       render();
       main.querySelector(`[data-focus-cat="${state.category}"]`)?.focus();
     }
+  }
+  if (probe.matches('[data-grid-compare]')) {
+    state.gridCompare = probe.getAttribute('aria-expanded') !== 'true';
+    render();
+    main.querySelector('[data-grid-compare]')?.focus({ preventScroll: true });
+    return;
   }
   if (probe.matches('[data-pokemon]')) {
     if (probe.matches('[data-open-dex]') && innerWidth > 800) {
@@ -1356,8 +1385,6 @@ document.addEventListener('click', async (event) => {
 });
 
 // Progress grid: a click marks one cell; a drag or Shift-click fills a range in one save.
-let fill = null;
-let gridAnchor = null;
 function focusCell(id, cat) {
   main
     .querySelector(`.gcell[data-cell="${id}"][data-cat="${cat}"]`)
@@ -1391,8 +1418,13 @@ function fillCells(cells, value, focus) {
   focusCell(focus.id, focus.cat);
 }
 document.addEventListener('pointerdown', (event) => {
+  // A second pointer cancels the fill so a pinch/scroll cannot save accidental marks.
+  if (fill) {
+    if (event.pointerId !== fill.pointerId) cancelGridFill();
+    return;
+  }
   const cell = event.target.closest('button.gcell');
-  if (!cell || event.button > 0) return;
+  if (!cell || event.button > 0 || !event.isPrimary) return;
   const { cell: id, cat } = cell.dataset;
   if (event.pointerType === 'mouse') event.preventDefault();
   if (event.shiftKey && gridAnchor?.cat === cat) {
@@ -1410,37 +1442,65 @@ document.addEventListener('pointerdown', (event) => {
     }
   }
   const value = cell.getAttribute('aria-pressed') !== 'true';
-  fill = { value, cells: new Map([[`${id}:${cat}`, { id, cat }]]), last: { id, cat } };
+  fill = {
+    pointerId: event.pointerId,
+    viewportWidth: window.innerWidth,
+    value,
+    cells: new Map([[`${id}:${cat}`, { id, cat }]]),
+    last: { id, cat },
+  };
+  cell.setPointerCapture(event.pointerId);
   cell.classList.add('filling', value ? 'to-on' : 'to-off');
 });
 document.addEventListener('pointermove', (event) => {
-  if (!fill) return;
+  if (!fill || event.pointerId !== fill.pointerId) return;
+  if (window.innerWidth !== fill.viewportWidth) {
+    cancelGridFill();
+    return;
+  }
   const cell = document.elementFromPoint(event.clientX, event.clientY)?.closest('button.gcell');
   if (!cell) return;
   const { cell: id, cat } = cell.dataset;
   if (fill.cells.has(`${id}:${cat}`)) return;
-  fill.cells.set(`${id}:${cat}`, { id, cat });
+  // Fill intervening rows too, even when a quick swipe skips pointermove samples.
+  const column = [...main.querySelectorAll(`button.gcell[data-cat="${cat}"]`)];
+  const start =
+    fill.last.cat === cat
+      ? column.findIndex((c) => c.dataset.cell === fill.last.id)
+      : column.indexOf(cell);
+  const end = column.indexOf(cell);
+  for (const next of column.slice(Math.min(start, end), Math.max(start, end) + 1)) {
+    fill.cells.set(`${next.dataset.cell}:${cat}`, { id: next.dataset.cell, cat });
+    next.classList.add('filling', fill.value ? 'to-on' : 'to-off');
+  }
   fill.last = { id, cat };
-  cell.classList.add('filling', fill.value ? 'to-on' : 'to-off');
 });
-document.addEventListener('pointerup', () => {
-  if (!fill) return;
+document.addEventListener('pointerup', (event) => {
+  if (!fill || event.pointerId !== fill.pointerId) return;
+  // WebKit may deliver the breakpoint change after pointerup during rotation/resize.
+  if (window.innerWidth !== fill.viewportWidth) {
+    cancelGridFill();
+    return;
+  }
   const { cells, value, last } = fill;
-  fill = null;
+  cancelGridFill();
   if (cells.size === 1) toggleCell(last.id, last.cat);
   else {
     gridAnchor = { ...last, value };
     fillCells([...cells.values()], value, last);
   }
 });
-// Scrolling on a touch screen cancels the gesture: nothing is marked.
-document.addEventListener('pointercancel', () => {
+// Interrupted gestures never write. Names remain a normal touch-scroll surface.
+function cancelGridFill() {
   if (!fill) return;
   fill = null;
   main
     .querySelectorAll('.gcell.filling')
     .forEach((c) => c.classList.remove('filling', 'to-on', 'to-off'));
-});
+}
+document.addEventListener('pointercancel', cancelGridFill);
+document.addEventListener('lostpointercapture', cancelGridFill);
+window.addEventListener('blur', cancelGridFill);
 
 // Keep one grid cell in the tab order: whichever was focused last.
 document.addEventListener('focusin', (event) => {

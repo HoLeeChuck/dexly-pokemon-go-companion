@@ -1,5 +1,17 @@
 # CatchGrid handoff
 
+## September 28, 2026 — Round 2 Phase F2 (local, awaiting Claude)
+
+**Phase F2 is implemented and self-reviewed by Codex, awaiting Claude.** The owner reports Claude approved F1 (`a716449`) and authorized committing F2 on `prism-forward`, with no push or deploy. F3 is untouched. `CODEX-PLAN.md` contains the requested F2 status note and remains local/untracked, excluded from the phase commit.
+
+- Below 700px, Progress shows a segmented category picker, artwork/name and one 44px toggle per eligible row. Compare categories exposes the full grid. Desktop Progress and all six captured Home states are byte-identical to F1.
+- Touch drag-fill uses the existing single-save, recovery and Undo path; cancellation, a second pointer, resize and storage failure do not change the collection. Native Chromium touch and Linux WebKit pointer checks pass. Physical phone gestures remain unverified.
+- Replaced the social card with the app's slate C/G identity and exact hero line, added OG dimensions/type/alt and Twitter large-card metadata, and corrected Settings' Paint-mode copy. The PNG is 1200×630; actual Discord rendering awaits a future release/device check.
+- Validation: **253 unit, 40 Worker, 239 Linux browser/PWA tests passed**, two existing desktop-only assertions excluded on phones, zero failures/retries. The previous phone drag-fill exclusions were removed. Lint, artifact build, focused formatting and diff checks pass. The unchanged 2,400px Home budget holds through the 2,394px combined-notice state.
+- Evidence, verified source hashes, before/after captures, initial failure fixes and owner checklist: [F2 review record](docs/releases/2026-09-28-friends/RELEASE.md). Final local production preview: zero CSP/page/console errors. Collection/backup schemas, catalog, recommendation strings, dependencies and migrations are unchanged.
+
+Stop after the local F2 commit for Claude review. No main update, push, deployment or live verification was performed; the prior release record below remains the last production evidence.
+
 ## September 28, 2026 — Round 2 Phase F1 (local, awaiting Claude)
 
 **Phase F1 is implemented and self-reviewed by Codex, awaiting Claude.** The owner authorized committing this phase on `prism-forward`; no push or deployment is authorized. F2/F3 remain untouched. The requested status note is in the owner's local `CODEX-PLAN.md`, which remains untracked and excluded from the commit.

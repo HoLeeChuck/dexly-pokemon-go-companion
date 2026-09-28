@@ -1,0 +1,307 @@
+[
+  {
+    "file": "desktop-progress-grid.png",
+    "hasCsp": true,
+    "errors": [],
+    "csp": [],
+    "theme": "dark",
+    "width": 1440,
+    "height": 900,
+    "cells": [
+      {
+        "width": 62.390625,
+        "height": 34,
+        "category": "normal"
+      },
+      {
+        "width": 62.390625,
+        "height": 34,
+        "category": "male"
+      },
+      {
+        "width": 62.390625,
+        "height": 34,
+        "category": "female"
+      },
+      {
+        "width": 62.390625,
+        "height": 34,
+        "category": "shiny"
+      },
+      {
+        "width": 62.390625,
+        "height": 34,
+        "category": "lucky"
+      },
+      {
+        "width": 62.390625,
+        "height": 34,
+        "category": "hundo"
+      },
+      {
+        "width": 62.390625,
+        "height": 34,
+        "category": "xxl"
+      },
+      {
+        "width": 62.390625,
+        "height": 34,
+        "category": "xxs"
+      },
+      {
+        "width": 62.390625,
+        "height": 34,
+        "category": "shadow"
+      },
+      {
+        "width": 62.484375,
+        "height": 34,
+        "category": "purified"
+      }
+    ]
+  },
+  {
+    "file": "phone-progress-single.png",
+    "hasCsp": true,
+    "errors": [],
+    "csp": [],
+    "theme": "dark",
+    "width": 390,
+    "height": 1783,
+    "cells": [
+      {
+        "width": 44,
+        "height": 44,
+        "category": "shiny"
+      },
+      {
+        "width": 44,
+        "height": 44,
+        "category": "shiny"
+      },
+      {
+        "width": 44,
+        "height": 44,
+        "category": "shiny"
+      },
+      {
+        "width": 44,
+        "height": 44,
+        "category": "shiny"
+      },
+      {
+        "width": 44,
+        "height": 44,
+        "category": "shiny"
+      },
+      {
+        "width": 44,
+        "height": 44,
+        "category": "shiny"
+      },
+      {
+        "width": 44,
+        "height": 44,
+        "category": "shiny"
+      },
+      {
+        "width": 44,
+        "height": 44,
+        "category": "shiny"
+      },
+      {
+        "width": 44,
+        "height": 44,
+        "category": "shiny"
+      },
+      {
+        "width": 44,
+        "height": 44,
+        "category": "shiny"
+      }
+    ]
+  },
+  {
+    "file": "phone-progress-compare.png",
+    "hasCsp": true,
+    "errors": [],
+    "csp": [],
+    "theme": "dark",
+    "width": 390,
+    "height": 1783,
+    "cells": [
+      {
+        "width": 44,
+        "height": 44,
+        "category": "normal"
+      },
+      {
+        "width": 44,
+        "height": 44,
+        "category": "male"
+      },
+      {
+        "width": 44,
+        "height": 44,
+        "category": "female"
+      },
+      {
+        "width": 44,
+        "height": 44,
+        "category": "shiny"
+      },
+      {
+        "width": 44,
+        "height": 44,
+        "category": "lucky"
+      },
+      {
+        "width": 44,
+        "height": 44,
+        "category": "hundo"
+      },
+      {
+        "width": 44,
+        "height": 44,
+        "category": "xxl"
+      },
+      {
+        "width": 44,
+        "height": 44,
+        "category": "xxs"
+      },
+      {
+        "width": 44,
+        "height": 44,
+        "category": "shadow"
+      },
+      {
+        "width": 44,
+        "height": 44,
+        "category": "purified"
+      }
+    ]
+  },
+  {
+    "file": "phone-light-progress-single.png",
+    "hasCsp": true,
+    "errors": [],
+    "csp": [],
+    "theme": "light",
+    "width": 390,
+    "height": 1783,
+    "cells": [
+      {
+        "width": 44,
+        "height": 44,
+        "category": "shiny"
+      },
+      {
+        "width": 44,
+        "height": 44,
+        "category": "shiny"
+      },
+      {
+        "width": 44,
+        "height": 44,
+        "category": "shiny"
+      },
+      {
+        "width": 44,
+        "height": 44,
+        "category": "shiny"
+      },
+      {
+        "width": 44,
+        "height": 44,
+        "category": "shiny"
+      },
+      {
+        "width": 44,
+        "height": 44,
+        "category": "shiny"
+      },
+      {
+        "width": 44,
+        "height": 44,
+        "category": "shiny"
+      },
+      {
+        "width": 44,
+        "height": 44,
+        "category": "shiny"
+      },
+      {
+        "width": 44,
+        "height": 44,
+        "category": "shiny"
+      },
+      {
+        "width": 44,
+        "height": 44,
+        "category": "shiny"
+      }
+    ]
+  },
+  {
+    "file": "phone-light-progress-compare.png",
+    "hasCsp": true,
+    "errors": [],
+    "csp": [],
+    "theme": "light",
+    "width": 390,
+    "height": 1783,
+    "cells": [
+      {
+        "width": 44,
+        "height": 44,
+        "category": "normal"
+      },
+      {
+        "width": 44,
+        "height": 44,
+        "category": "male"
+      },
+      {
+        "width": 44,
+        "height": 44,
+        "category": "female"
+      },
+      {
+        "width": 44,
+        "height": 44,
+        "category": "shiny"
+      },
+      {
+        "width": 44,
+        "height": 44,
+        "category": "lucky"
+      },
+      {
+        "width": 44,
+        "height": 44,
+        "category": "hundo"
+      },
+      {
+        "width": 44,
+        "height": 44,
+        "category": "xxl"
+      },
+      {
+        "width": 44,
+        "height": 44,
+        "category": "xxs"
+      },
+      {
+        "width": 44,
+        "height": 44,
+        "category": "shadow"
+      },
+      {
+        "width": 44,
+        "height": 44,
+        "category": "purified"
+      }
+    ]
+  }
+]

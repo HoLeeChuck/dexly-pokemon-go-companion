@@ -1,0 +1,72 @@
+/* One active table: switching to comparison keeps names, focus and saves unambiguous. */
+@media (width < 700px) {
+  .phone-progress .progress-categories {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 4px;
+    margin-top: 12px;
+  }
+  .phone-progress .progress-categories button {
+    min-height: 44px;
+    padding: 0 2px;
+    font-size: 12px;
+  }
+  .phone-progress .progress-categories button[aria-pressed='true'] {
+    box-shadow: inset 0 -3px var(--cat);
+  }
+  .phone-progress .grid-compare {
+    min-height: 44px;
+    margin-top: 6px;
+  }
+  .phone-progress .grid-help {
+    display: block;
+    line-height: 1.5;
+  }
+  .phone-progress .grid-pager select {
+    min-height: 44px;
+  }
+  .phone-progress .grid-scroll {
+    max-height: 60dvh;
+  }
+  .phone-progress .collection-grid {
+    min-width: 960px;
+  }
+  .phone-progress .col-name {
+    width: 200px;
+  }
+  .phone-progress .single-category {
+    min-width: 0;
+  }
+  .phone-progress .single-category .col-name {
+    width: auto;
+  }
+  .phone-progress .single-category .col-cat {
+    width: 88px;
+  }
+  .phone-progress .collection-grid td {
+    padding: 5px 4px;
+  }
+  .phone-progress .gcell {
+    width: 44px;
+    min-width: 44px;
+    height: 44px;
+    /* Drag boxes to fill; swipe the artwork/name lane to scroll the list. */
+    touch-action: none;
+  }
+  .phone-progress .grid-name {
+    white-space: normal;
+    min-height: 54px;
+    padding: 4px 8px;
+    text-align: left;
+  }
+  .phone-progress .grid-name img {
+    display: block;
+    flex: 0 0 36px;
+  }
+  .phone-progress .grid-name .grid-num {
+    display: none;
+  }
+  .phone-progress .grid-label {
+    overflow-wrap: anywhere;
+  }
+}

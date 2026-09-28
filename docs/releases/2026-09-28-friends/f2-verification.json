@@ -1,0 +1,548 @@
+{
+  "baseCommit": "a716449",
+  "scope": "Round 2 Phase F2 only, local, awaiting Claude",
+  "stats": {
+    "startTime": "2026-09-28T13:20:47.420Z",
+    "duration": 98299.935,
+    "expected": 239,
+    "skipped": 2,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "projects": {
+    "mobile-chromium": {
+      "expected": 63,
+      "skipped": 1
+    },
+    "desktop-chromium": {
+      "expected": 64
+    },
+    "mobile-webkit": {
+      "expected": 54,
+      "skipped": 1
+    },
+    "desktop-webkit": {
+      "expected": 55
+    },
+    "pwa-chromium": {
+      "expected": 3
+    }
+  },
+  "skipped": [
+    {
+      "project": "mobile-chromium",
+      "title": "Progress fits the window with equal-width category columns"
+    },
+    {
+      "project": "mobile-webkit",
+      "title": "Progress fits the window with equal-width category columns"
+    }
+  ],
+  "f2": [
+    {
+      "project": "mobile-chromium",
+      "title": "F2 phone categories, artwork, 44px targets, filters and search stay in sync",
+      "status": "expected"
+    },
+    {
+      "project": "mobile-chromium",
+      "title": "F2 comparison and the 700px boundary preserve data, single tab stop and details",
+      "status": "expected"
+    },
+    {
+      "project": "mobile-chromium",
+      "title": "F2 a fast phone drag saves one range with recovery and Undo",
+      "status": "expected"
+    },
+    {
+      "project": "mobile-chromium",
+      "title": "F2 interrupted and second-pointer gestures never save; touch names still scroll",
+      "status": "expected"
+    },
+    {
+      "project": "mobile-chromium",
+      "title": "F2 a failed drag save leaves the collection and toggle appearance unchanged",
+      "status": "expected"
+    },
+    {
+      "project": "mobile-chromium",
+      "title": "F2 forms, long names, paging and both themes remain usable at 390px",
+      "status": "expected"
+    },
+    {
+      "project": "mobile-chromium",
+      "title": "F2 social metadata matches the served 1200x630 PNG and Settings describes drag-fill",
+      "status": "expected"
+    },
+    {
+      "project": "desktop-chromium",
+      "title": "F2 phone categories, artwork, 44px targets, filters and search stay in sync",
+      "status": "expected"
+    },
+    {
+      "project": "desktop-chromium",
+      "title": "F2 comparison and the 700px boundary preserve data, single tab stop and details",
+      "status": "expected"
+    },
+    {
+      "project": "desktop-chromium",
+      "title": "F2 a fast phone drag saves one range with recovery and Undo",
+      "status": "expected"
+    },
+    {
+      "project": "desktop-chromium",
+      "title": "F2 interrupted and second-pointer gestures never save; touch names still scroll",
+      "status": "expected"
+    },
+    {
+      "project": "desktop-chromium",
+      "title": "F2 a failed drag save leaves the collection and toggle appearance unchanged",
+      "status": "expected"
+    },
+    {
+      "project": "desktop-chromium",
+      "title": "F2 forms, long names, paging and both themes remain usable at 390px",
+      "status": "expected"
+    },
+    {
+      "project": "desktop-chromium",
+      "title": "F2 social metadata matches the served 1200x630 PNG and Settings describes drag-fill",
+      "status": "expected"
+    },
+    {
+      "project": "mobile-webkit",
+      "title": "F2 phone categories, artwork, 44px targets, filters and search stay in sync",
+      "status": "expected"
+    },
+    {
+      "project": "mobile-webkit",
+      "title": "F2 comparison and the 700px boundary preserve data, single tab stop and details",
+      "status": "expected"
+    },
+    {
+      "project": "mobile-webkit",
+      "title": "F2 a fast phone drag saves one range with recovery and Undo",
+      "status": "expected"
+    },
+    {
+      "project": "mobile-webkit",
+      "title": "F2 interrupted and second-pointer gestures never save; touch names still scroll",
+      "status": "expected"
+    },
+    {
+      "project": "mobile-webkit",
+      "title": "F2 a failed drag save leaves the collection and toggle appearance unchanged",
+      "status": "expected"
+    },
+    {
+      "project": "mobile-webkit",
+      "title": "F2 forms, long names, paging and both themes remain usable at 390px",
+      "status": "expected"
+    },
+    {
+      "project": "mobile-webkit",
+      "title": "F2 social metadata matches the served 1200x630 PNG and Settings describes drag-fill",
+      "status": "expected"
+    },
+    {
+      "project": "desktop-webkit",
+      "title": "F2 phone categories, artwork, 44px targets, filters and search stay in sync",
+      "status": "expected"
+    },
+    {
+      "project": "desktop-webkit",
+      "title": "F2 comparison and the 700px boundary preserve data, single tab stop and details",
+      "status": "expected"
+    },
+    {
+      "project": "desktop-webkit",
+      "title": "F2 a fast phone drag saves one range with recovery and Undo",
+      "status": "expected"
+    },
+    {
+      "project": "desktop-webkit",
+      "title": "F2 interrupted and second-pointer gestures never save; touch names still scroll",
+      "status": "expected"
+    },
+    {
+      "project": "desktop-webkit",
+      "title": "F2 a failed drag save leaves the collection and toggle appearance unchanged",
+      "status": "expected"
+    },
+    {
+      "project": "desktop-webkit",
+      "title": "F2 forms, long names, paging and both themes remain usable at 390px",
+      "status": "expected"
+    },
+    {
+      "project": "desktop-webkit",
+      "title": "F2 social metadata matches the served 1200x630 PNG and Settings describes drag-fill",
+      "status": "expected"
+    }
+  ],
+  "heights": [
+    {
+      "project": "mobile-chromium",
+      "state": "new-dark-height",
+      "documentHeight": 2409,
+      "contentHeight": 2332,
+      "navigationClearance": 77
+    },
+    {
+      "project": "mobile-chromium",
+      "state": "new-light-height",
+      "documentHeight": 2409,
+      "contentHeight": 2332,
+      "navigationClearance": 77
+    },
+    {
+      "project": "mobile-chromium",
+      "state": "returning-dark-height",
+      "documentHeight": 2457,
+      "contentHeight": 2380,
+      "navigationClearance": 77
+    },
+    {
+      "project": "mobile-chromium",
+      "state": "returning-light-height",
+      "documentHeight": 2457,
+      "contentHeight": 2380,
+      "navigationClearance": 77
+    },
+    {
+      "project": "mobile-chromium",
+      "state": "banner-dark-height",
+      "documentHeight": 2452,
+      "contentHeight": 2375,
+      "navigationClearance": 77
+    },
+    {
+      "project": "mobile-chromium",
+      "state": "banner-light-height",
+      "documentHeight": 2452,
+      "contentHeight": 2375,
+      "navigationClearance": 77
+    },
+    {
+      "project": "mobile-chromium",
+      "state": "both-dark-height",
+      "documentHeight": 2471,
+      "contentHeight": 2394,
+      "navigationClearance": 77
+    },
+    {
+      "project": "mobile-chromium",
+      "state": "both-light-height",
+      "documentHeight": 2471,
+      "contentHeight": 2394,
+      "navigationClearance": 77
+    },
+    {
+      "project": "desktop-chromium",
+      "state": "new-dark-height",
+      "documentHeight": 2409,
+      "contentHeight": 2332,
+      "navigationClearance": 77
+    },
+    {
+      "project": "desktop-chromium",
+      "state": "new-light-height",
+      "documentHeight": 2409,
+      "contentHeight": 2332,
+      "navigationClearance": 77
+    },
+    {
+      "project": "desktop-chromium",
+      "state": "returning-dark-height",
+      "documentHeight": 2457,
+      "contentHeight": 2380,
+      "navigationClearance": 77
+    },
+    {
+      "project": "desktop-chromium",
+      "state": "returning-light-height",
+      "documentHeight": 2457,
+      "contentHeight": 2380,
+      "navigationClearance": 77
+    },
+    {
+      "project": "desktop-chromium",
+      "state": "banner-dark-height",
+      "documentHeight": 2452,
+      "contentHeight": 2375,
+      "navigationClearance": 77
+    },
+    {
+      "project": "desktop-chromium",
+      "state": "banner-light-height",
+      "documentHeight": 2452,
+      "contentHeight": 2375,
+      "navigationClearance": 77
+    },
+    {
+      "project": "desktop-chromium",
+      "state": "both-dark-height",
+      "documentHeight": 2471,
+      "contentHeight": 2394,
+      "navigationClearance": 77
+    },
+    {
+      "project": "desktop-chromium",
+      "state": "both-light-height",
+      "documentHeight": 2471,
+      "contentHeight": 2394,
+      "navigationClearance": 77
+    },
+    {
+      "project": "mobile-webkit",
+      "state": "new-dark-height",
+      "documentHeight": 2409,
+      "contentHeight": 2332,
+      "navigationClearance": 77
+    },
+    {
+      "project": "mobile-webkit",
+      "state": "new-light-height",
+      "documentHeight": 2409,
+      "contentHeight": 2332,
+      "navigationClearance": 77
+    },
+    {
+      "project": "mobile-webkit",
+      "state": "returning-dark-height",
+      "documentHeight": 2457,
+      "contentHeight": 2380,
+      "navigationClearance": 77
+    },
+    {
+      "project": "mobile-webkit",
+      "state": "returning-light-height",
+      "documentHeight": 2457,
+      "contentHeight": 2380,
+      "navigationClearance": 77
+    },
+    {
+      "project": "mobile-webkit",
+      "state": "banner-dark-height",
+      "documentHeight": 2452,
+      "contentHeight": 2375,
+      "navigationClearance": 77
+    },
+    {
+      "project": "mobile-webkit",
+      "state": "banner-light-height",
+      "documentHeight": 2452,
+      "contentHeight": 2375,
+      "navigationClearance": 77
+    },
+    {
+      "project": "mobile-webkit",
+      "state": "both-dark-height",
+      "documentHeight": 2471,
+      "contentHeight": 2394,
+      "navigationClearance": 77
+    },
+    {
+      "project": "mobile-webkit",
+      "state": "both-light-height",
+      "documentHeight": 2471,
+      "contentHeight": 2394,
+      "navigationClearance": 77
+    },
+    {
+      "project": "desktop-webkit",
+      "state": "new-dark-height",
+      "documentHeight": 2409,
+      "contentHeight": 2332,
+      "navigationClearance": 77
+    },
+    {
+      "project": "desktop-webkit",
+      "state": "new-light-height",
+      "documentHeight": 2409,
+      "contentHeight": 2332,
+      "navigationClearance": 77
+    },
+    {
+      "project": "desktop-webkit",
+      "state": "returning-dark-height",
+      "documentHeight": 2457,
+      "contentHeight": 2380,
+      "navigationClearance": 77
+    },
+    {
+      "project": "desktop-webkit",
+      "state": "returning-light-height",
+      "documentHeight": 2457,
+      "contentHeight": 2380,
+      "navigationClearance": 77
+    },
+    {
+      "project": "desktop-webkit",
+      "state": "banner-dark-height",
+      "documentHeight": 2452,
+      "contentHeight": 2375,
+      "navigationClearance": 77
+    },
+    {
+      "project": "desktop-webkit",
+      "state": "banner-light-height",
+      "documentHeight": 2452,
+      "contentHeight": 2375,
+      "navigationClearance": 77
+    },
+    {
+      "project": "desktop-webkit",
+      "state": "both-dark-height",
+      "documentHeight": 2471,
+      "contentHeight": 2394,
+      "navigationClearance": 77
+    },
+    {
+      "project": "desktop-webkit",
+      "state": "both-light-height",
+      "documentHeight": 2471,
+      "contentHeight": 2394,
+      "navigationClearance": 77
+    }
+  ],
+  "failures": [],
+  "sourceHashes": [
+    {
+      "path": "app/main.js",
+      "sha256": "382a599aa6deb6e6efd2fd59e39db185ce9b8bce9f77c49e1f3f6a8a7148513b",
+      "linuxMatches": true
+    },
+    {
+      "path": "app/progress-phone.css",
+      "sha256": "fea276bf138c96f6cb6fe9f538b0a24fe6a0414a1e217c633ee9fd4ac4d1e5d2",
+      "linuxMatches": true
+    },
+    {
+      "path": "index.html",
+      "sha256": "7e5dec972c6b7d15ff1eef3357815382d1a515d25fadec601615fc4f2b912808",
+      "linuxMatches": true
+    },
+    {
+      "path": "public/catchgrid-social.svg",
+      "sha256": "eba5ad9dc39d891aea79cbcd81b0bad83e35bca0ae2bdf5409ef8879e0383067",
+      "linuxMatches": true
+    },
+    {
+      "path": "public/catchgrid-social.png",
+      "sha256": "1da205b423242354776486a811615797ccdc1b801445752780397a4549933894",
+      "linuxMatches": true
+    },
+    {
+      "path": "tests/e2e/f2-app.spec.ts",
+      "sha256": "7b07db50ba28c92845684ae91e617a7cc731b684d551b91117820882d44eb244",
+      "linuxMatches": true
+    },
+    {
+      "path": "tests/e2e/app.spec.ts",
+      "sha256": "abf43affdff07dea7e056e5dabe7a6dc968b02655a4551cb6a2602d01b8c4701",
+      "linuxMatches": true
+    },
+    {
+      "path": "tests/e2e/accessibility.spec.ts",
+      "sha256": "f8fa2374bfe6752fb47b1b7893afc758c50313862aeba3c63016161f47563c01",
+      "linuxMatches": true
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "sha256": "1650f0d09e50891f0edf94403961ced94d687df881f626411cf82239528db6c2",
+      "linuxMatches": true
+    }
+  ],
+  "captures": [
+    {
+      "file": "desktop-banner-home.png",
+      "before": "67f7da417969caf258a43711099c46d3e847b82f5aa02752b95678538e67a760",
+      "after": "67f7da417969caf258a43711099c46d3e847b82f5aa02752b95678538e67a760",
+      "identical": true
+    },
+    {
+      "file": "desktop-banner-settings.png",
+      "before": "d72f12bbd0f7da91739a2b326d0130f7e30ef6d8a39af62b60a053e78028dd4e",
+      "after": "f39aeab97d2647f5ff3243ecd228befa5e312fa4b4290f2889e8d8e5a8e34f8a",
+      "identical": false
+    },
+    {
+      "file": "desktop-new-home.png",
+      "before": "52823c519dc87e7ff87fcccb8b9a2a440460849486ba20fb854b3089d3199a17",
+      "after": "52823c519dc87e7ff87fcccb8b9a2a440460849486ba20fb854b3089d3199a17",
+      "identical": true
+    },
+    {
+      "file": "desktop-progress-grid.png",
+      "before": "f87fa3821b2d255ccccdd74e659b4b6a68129dcb6957fa25bdd5007a4dffed02",
+      "after": "f87fa3821b2d255ccccdd74e659b4b6a68129dcb6957fa25bdd5007a4dffed02",
+      "identical": true
+    },
+    {
+      "file": "desktop-returning-home.png",
+      "before": "f5f2d41dbd490bf66c0500fdb3c812ab22f32220ebb17bb3d5bff744df64c0f0",
+      "after": "f5f2d41dbd490bf66c0500fdb3c812ab22f32220ebb17bb3d5bff744df64c0f0",
+      "identical": true
+    },
+    {
+      "file": "phone-banner-home.png",
+      "before": "250dd1e32b81d21c447e3497ce97fcf3f724e7ba898c1efbd3f7c70cd4172e3b",
+      "after": "250dd1e32b81d21c447e3497ce97fcf3f724e7ba898c1efbd3f7c70cd4172e3b",
+      "identical": true
+    },
+    {
+      "file": "phone-banner-settings.png",
+      "before": "34c1fb7fbb21c106273b39002c9ad8465692aa4ce9c741f636e8ec689d334e84",
+      "after": "419f7f268b1a3f68985dd81d5e08a4994c1528a33145d6a545f6772912f77f6c",
+      "identical": false
+    },
+    {
+      "file": "phone-light-progress-grid.png",
+      "before": "ac6ae2e10d13adbff50ff0fcdd2114545d841e3a90ee81a4aa9693af468519e3"
+    },
+    {
+      "file": "phone-new-home.png",
+      "before": "e056d9f31c1dcc48d71b6b9dfc08c203ce51615ad13c2bad6e23f980df864529",
+      "after": "e056d9f31c1dcc48d71b6b9dfc08c203ce51615ad13c2bad6e23f980df864529",
+      "identical": true
+    },
+    {
+      "file": "phone-progress-grid.png",
+      "before": "30c60dc3f9d43791217de3cd4d78609bbdc1038b14d70bd36d54e7942960a821"
+    },
+    {
+      "file": "phone-returning-home.png",
+      "before": "5bca4493fcef6a3da90f76d2d94a45a1ae2e818630252be6922fe469cc00e4aa",
+      "after": "5bca4493fcef6a3da90f76d2d94a45a1ae2e818630252be6922fe469cc00e4aa",
+      "identical": true
+    },
+    {
+      "file": "social-card.png",
+      "before": "c3d1ae734785784e2a763cc90a5b7c776933570d2275c13de64255366d46100d",
+      "after": "1da205b423242354776486a811615797ccdc1b801445752780397a4549933894",
+      "identical": false
+    }
+  ],
+  "preview": {
+    "url": "http://127.0.0.1:5193/",
+    "servesCurrentHtml": true,
+    "asset": "/assets/app-CYS52f-F.js",
+    "assetHash": "264b106aad7b02a32ef4ab9de5b0d6782c6bdc67a7f674d555fec00155a992ee",
+    "matchesBuiltAsset": true
+  },
+  "checks": {
+    "unit": 253,
+    "worker": 40,
+    "lint": "passed",
+    "productionBuild": "passed",
+    "formatting": "passed",
+    "diffCheck": "passed",
+    "phoneHomeBudget": 2400
+  },
+  "limitations": [
+    "No live deployment or Discord message sent; OG metadata and served PNG verified locally.",
+    "Native Chromium touch drag exercised through CDP. WebKit pointer drag tested with mouse because Playwright has no WebKit touch-drag API.",
+    "Physical iPhone/Android, installation, community spreadsheet and cross-device transfer remain on the owner checklist."
+  ]
+}

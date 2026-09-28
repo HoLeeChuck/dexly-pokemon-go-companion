@@ -1,4 +1,49 @@
-# Friends release — Phase F1 review record
+# Friends release — Phase F2 review record
+
+**F2 implemented and self-reviewed by Codex, awaiting Claude, September 28, 2026. Local only on `prism-forward`.** The owner reports Claude approved F1 (`a716449`) and authorizes the F2 commit. No push, merge, production access or deployment was performed. F3 remains untouched. This is a preparation/review record, not a release to friends.
+
+## F2 acceptance review
+
+| Item | Result and evidence |
+| --- | --- |
+| Phone Progress below 700px | Pass. One active table shows the selected category, artwork and name; each eligible row has one **44×44px** toggle. Ineligible entries remain noninteractive. Ten category buttons form a segmented picker using the existing category colors and category/search state. Forms limit the picker to Normal/Shiny. |
+| Compare categories disclosure | Pass. The keyboard-accessible button exposes the full grid and its completion meters, with `aria-expanded` and `aria-controls`. Only one table is rendered, so there are no duplicate names, toggles or tab stops. The full table scrolls within the panel; it does not widen the page. |
+| Drag-fill and data safety | Pass. Fast down-column movement fills intervening eligible rows in one durable save. Recovery snapshots and Undo use the existing storage functions. Native Chromium touch input tests both filling and scrolling on names. Pointer cancellation, a second pointer, resize and failed storage leave collection contents unchanged. Failed writes also clear provisional highlights. WebKit mouse/pointer tests pass; physical Safari touch remains an owner check. |
+| Desktop unchanged | Pass. The 1440×900 Progress screenshot is byte-identical to F1. Existing equal-column, keyboard, marking, search and import tests pass. The presentation switches at 700px; tests cover 390, 699, 700 and 844px without data changes. |
+| Category/filter/search/details behavior | Pass. All ten categories, missing/collected filters, search-string updates, two-way category selector synchronization, pagination, forms and long names are covered. Opening comparison or details does not mutate the profile. A single roving grid tab stop is retained. Both phone themes pass serious/critical axe checks. |
+| Social card identity | Pass. Editable SVG and regenerated **1200×630 PNG** use the app's slate background, interlocking C/G letter mark, current ice-blue accent and exact hero line: “Track every catch. Build the perfect search.” No Poké Ball shape. The reproducible renderer uses the installed Playwright browser; no dependencies were added. |
+| Embed metadata | Pass for the phase's local minimum: absolute `og:image`, width 1200, height 630, PNG type and descriptive alt text; `twitter:card=summary_large_image`. Browser tests request the actual PNG and verify its MIME type and binary dimensions. A real Discord embed is pending a future authorized deployment and owner check; no Discord message was sent. |
+| Settings copy | Pass. Bulk region setup now says “Drag-fill on the Progress grid handles smaller ranges.” The stale Paint-mode sentence is absent. |
+| Unit, Worker, lint, build, formatting | Pass: **253 unit and 40 Worker tests**; ESLint; TypeScript/public/private/Worker artifact build; focused Prettier and `git diff --check`. Existing large-chunk build warning remains informational. Lockfile, dependencies, catalog, recommendations, storage/backup formats and migrations are unchanged. |
+| Linux Chromium/WebKit/PWA | Pass: **239 passed, two existing exclusions, zero failures/retries**, including all **28 F2 cases**. Chromium desktop/phone/PWA: 130 passed; WebKit desktop/phone: 109 passed. The two remaining exclusions are the desktop-only window-fit assertion on phone projects. The old phone drag-fill exclusions were removed; no skips or relaxed limits were added. [Log](f2-linux-browser.txt), [summary and verified source hashes](f2-verification.json). |
+| Home budget, including notices | Pass. The 2,400px assertion and F1 layouts are unchanged. Linux new/returning/banner/both-notice states measure **2,332 / 2,380 / 2,375 / 2,394px**, in both themes and engines, using the existing 77px navigation-clearance adjustment. All six captured Home states are byte-identical before/after F2. |
+| Before/after evidence | Pass. [Before](../../shots/f2-before/) contains 12 PNGs: desktop/phone new, returning and banner Home; Settings; desktop and both-theme phone Progress; old social card. [After](../../shots/f2-after/) contains 14 PNGs, adding the phone comparison state in each theme. All 13 app captures from the final local production preview have CSP headers and zero CSP/page/console errors. The served HTML and JavaScript bytes match the current build. |
+| Owner checklist | Recorded below; physical devices and real Discord rendering remain unverified. This phase does not claim the whole Friends release is ready. |
+
+## F2 verification details
+
+Full browser validation ran in Ubuntu 26.04 WSL with Node 24.19.0, the existing frozen dependency install and Playwright Chromium/WebKit, four workers and zero retries. Nine source/test/asset/lockfile hashes match the Windows candidate exactly. The complete run includes all F1 safety, Home-height and PWA regressions. No live services were queried.
+
+The initial full Linux run had 232 passes, two existing exclusions and three failures: the two phone spreadsheet assertions still expected all categories to be visible at once, and desktop WebKit delivered the breakpoint callback after an immediate drag release. The import test now opens comparison before its unchanged ownership assertions. The app now compares the gesture's starting viewport width on move/release, cancelling a resize before a save even if the media-query callback is delayed. The final full run passes all cases.
+
+Interim Windows harness checks also exposed stale reuse of another project's port 4173, smooth-scroll coordinate timing, a contrast scan during theme transitions, and a snapshot assertion starting from an empty profile (which intentionally has no recovery snapshot). Checks now use a dedicated port, settled coordinates/colors and a nonempty recovery fixture. The production preview was restarted after rebuilding its asset manifest. The screenshot harness explicitly switches the app's theme instead of assuming the OS color scheme controls it. These corrections are incorporated in the retained evidence; interim runs are not counted as passing acceptance.
+
+Reproduce Progress captures with `scripts/shots-f2.mjs`, Home/Settings with `scripts/shots-f1.mjs`, and the PNG with `scripts/render-social-card.mjs`. Use `PLAYWRIGHT_USE_SYSTEM_CHROME=1` on this Windows host. Capture tools accept loopback preview URLs only. See [capture notes](../../shots/README.md).
+
+## Owner checklist after review and an authorized release
+
+- [ ] Open the Discord link on a real iPhone/Safari and a real Android phone; confirm the new card renders.
+- [ ] On both phones, tap a category, mark a row, drag-fill and Undo; swipe names to scroll, then open and scroll Compare categories.
+- [ ] Add CatchGrid to the Home Screen and open it from the icon; verify the install hint is absent. Export before moving an existing Safari collection and import in the installed app.
+- [ ] Import the community spreadsheet through review on the real devices and verify counts.
+- [ ] Export JSON on one device, import it on the other, and compare forms/category counts.
+- [ ] Obtain Claude's F2 review, complete separately authorized F3 work, and perform the release checks before sharing broadly.
+
+Stop after the owner-authorized local F2 commit. The exact requested status heading is recorded in the owner's untracked `CODEX-PLAN.md`, which is excluded from the commit.
+
+---
+
+# Friends release — Phase F1 review record (historical)
 
 Status: **F1 implemented and self-reviewed by Codex; awaiting Claude. Local only.** The owner authorized committing F1 on `prism-forward`, with no push or deployment. F2 and F3 are not implemented. This is a preparation record, not a production release.
 

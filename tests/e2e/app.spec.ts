@@ -347,9 +347,12 @@ test('builder composes an exact query without touching the collection', async ({
 test('dragging down a grid column fills a range in one save and can be undone', async ({
   page,
 }) => {
-  test.skip(isMobile(page), 'Drag-fill is a mouse gesture; touch scrolls the grid instead.');
   await open(page, 'progress');
   await page.locator('[data-region]').selectOption('Kanto');
+  await page.locator('[data-category-select]').selectOption('shiny');
+  await page
+    .locator('.collection-grid')
+    .evaluate((grid) => grid.scrollIntoView({ behavior: 'instant' }));
   const shiny = page.locator('.gcell[data-cat="shiny"]');
   const first = (await shiny.nth(0).boundingBox())!;
   const last = (await shiny.nth(5).boundingBox())!;
@@ -370,6 +373,8 @@ test('the grid marks cells by click and keyboard and updates the search string',
   await page.locator('[data-region]').selectOption('Kanto');
   const string = page.locator('#grid-string');
   await expect(string).toContainText(/^1,2,3,/);
+  // Completion meters remain available in the phone's full comparison disclosure.
+  if (isMobile(page)) await page.getByRole('button', { name: 'Compare categories' }).click();
   const doneBar = page.locator('tr[data-key="row-form-0001-standard"] td.grid-done .meter b');
   const before = (await doneBar.boundingBox())!.width;
   await page.getByRole('button', { name: 'Bulbasaur Normal', exact: true }).click();
@@ -462,6 +467,7 @@ test('rows pasted from the community spreadsheet are reviewed, then added', asyn
   await expect(page.locator('.toast')).toContainText('Import saved');
   await open(page, 'progress');
   await page.locator('[data-region]').selectOption('Kanto');
+  if (isMobile(page)) await page.getByRole('button', { name: 'Compare categories' }).click();
   for (const name of ['Bulbasaur Male', 'Bulbasaur Female', 'Bulbasaur Lucky', 'Nidoran♀ Female'])
     await expect(page.getByRole('button', { name, exact: true })).toHaveAttribute(
       'aria-pressed',

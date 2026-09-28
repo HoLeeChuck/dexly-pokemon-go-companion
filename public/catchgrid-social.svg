@@ -1,34 +1,59 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#082b25"/>
-      <stop offset="0.58" stop-color="#123b32"/>
-      <stop offset="1" stop-color="#31542d"/>
-    </linearGradient>
-    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
-      <stop offset="0" stop-color="#b7ef63" stop-opacity=".32"/>
-      <stop offset="1" stop-color="#b7ef63" stop-opacity="0"/>
-    </radialGradient>
-  </defs>
-  <rect width="1200" height="630" fill="url(#bg)"/>
-  <circle cx="1050" cy="105" r="380" fill="url(#glow)"/>
-  <g fill="none" stroke="#b7ef63" opacity=".18">
-    <circle cx="1000" cy="315" r="260" stroke-width="2"/>
-    <circle cx="1000" cy="315" r="190" stroke-width="2"/>
+  <title>CatchGrid. Track every catch. Build the perfect search.</title>
+  <desc>
+    A slate card with CatchGrid's interlocking letter mark, ice-blue accent and a collection grid.
+  </desc>
+  <rect width="1200" height="630" fill="#101115" />
+  <rect
+    x="28"
+    y="28"
+    width="1144"
+    height="574"
+    rx="28"
+    fill="#15171d"
+    stroke="#303640"
+    stroke-width="2"
+  />
+  <g font-family="Arial, Helvetica, sans-serif">
+    <g font-size="42" font-weight="400">
+      <text x="70" y="112" fill="#eceef1">C</text>
+      <text x="87" y="112" fill="#c4deec">G</text>
+    </g>
+    <text x="138" y="112" font-size="38" font-weight="700" letter-spacing="-1.5" fill="#eceef1">
+      CatchGrid
+    </text>
+    <text x="72" y="201" font-size="20" letter-spacing="1" fill="#a4afbf">
+      YOUR POKÉMON GO COLLECTION COMPANION
+    </text>
+    <text x="68" y="290" font-size="64" font-weight="700" letter-spacing="-2" fill="#eceef1">
+      Track every catch.
+    </text>
+    <text x="68" y="369" font-size="64" font-weight="700" letter-spacing="-2" fill="#c4deec">
+      Build the perfect
+    </text>
+    <text x="68" y="444" font-size="64" font-weight="700" letter-spacing="-2" fill="#c4deec">
+      search.
+    </text>
+    <text x="72" y="540" font-size="22" fill="#a4afbf">
+      Your Dex. Your device. No account needed.
+    </text>
+    <text x="1118" y="540" text-anchor="end" font-size="20" fill="#c4deec">dex.cjdev.app</text>
   </g>
-  <g transform="translate(86 94)">
-    <circle cx="46" cy="46" r="40" fill="none" stroke="#b7ef63" stroke-width="8"/>
-    <path d="M8 46h27m22 0h27" stroke="#b7ef63" stroke-width="8"/>
-    <circle cx="46" cy="46" r="12" fill="#f7f3e8" stroke="#b7ef63" stroke-width="7"/>
-    <text x="108" y="62" fill="#fff" font-family="Inter,Segoe UI,sans-serif" font-size="55" font-weight="900">CatchGrid</text>
+  <g stroke="#303640" stroke-width="2" fill="#101115">
+    <rect x="834" y="190" width="78" height="78" rx="18" />
+    <rect x="936" y="190" width="78" height="78" rx="18" fill="#25313d" />
+    <rect x="1038" y="190" width="78" height="78" rx="18" />
+    <rect x="834" y="292" width="78" height="78" rx="18" fill="#25313d" />
+    <rect x="936" y="292" width="78" height="78" rx="18" />
+    <rect x="1038" y="292" width="78" height="78" rx="18" fill="#25313d" />
+    <rect x="834" y="394" width="78" height="78" rx="18" />
+    <rect x="936" y="394" width="78" height="78" rx="18" fill="#25313d" />
+    <rect x="1038" y="394" width="78" height="78" rx="18" />
   </g>
-  <text x="88" y="292" fill="#b7ef63" font-family="Inter,Segoe UI,sans-serif" font-size="22" font-weight="800" letter-spacing="4">COLLECTION COMPANION</text>
-  <text x="84" y="375" fill="#fff" font-family="Inter,Segoe UI,sans-serif" font-size="68" font-weight="900">Your collection.</text>
-  <text x="84" y="453" fill="#fff" font-family="Inter,Segoe UI,sans-serif" font-size="68" font-weight="900">Your device. Your Dex.</text>
-  <text x="88" y="523" fill="#d9e8df" font-family="Inter,Segoe UI,sans-serif" font-size="27">Track forms, Shinies, sizes, and every gap worth catching.</text>
-  <g transform="translate(1000 315)">
-    <circle r="94" fill="#0b3029" stroke="#b7ef63" stroke-width="10"/>
-    <path d="M-88 0h61m54 0h61" stroke="#b7ef63" stroke-width="11"/>
-    <circle r="28" fill="#f7f3e8" stroke="#b7ef63" stroke-width="10"/>
+  <g fill="none" stroke="#c4deec" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m958 228 11 11 21-23" />
+    <path d="m856 330 11 11 21-23" />
+    <path d="m1060 330 11 11 21-23" />
+    <path d="m958 432 11 11 21-23" />
   </g>
 </svg>

@@ -1,4 +1,14 @@
-# Round 2 Phase F1 — data safety evidence
+# Round 2 Phase F2 — phone Progress and brand evidence
+
+`f2-before/` contains 12 PNGs from F1 (`a716449`): desktop/phone Home (new, returning after export, and banner), Settings, desktop and phone Progress in both phone themes, and the old social card. Home/Settings were captured on the unchanged frontend at 5184 before edits. Progress/social were captured from an isolated archive of `a716449` at 5195, using the corrected explicit theme switch.
+
+`f2-after/` contains 14 PNGs from the final F2 production build at `127.0.0.1:5193`, including phone single-category and comparison views in both themes. All 13 app captures have production CSP and zero CSP/page/console errors. Desktop Progress and all six Home images are byte-identical before/after. These are disposable fixture contexts in system Chrome at 1440×900 and 390×844; they are not a live release or physical-device proof.
+
+Reproduce Home/Settings with `scripts/shots-f1.mjs` and Progress/social with `scripts/shots-f2.mjs`. Set `SHOT_BASE` to a local preview, `PLAYWRIGHT_USE_SYSTEM_CHROME=1` on Windows, and `SHOT_REQUIRE_CSP=1` for the after production preview. Pass the output directory as the argument. The F2 harness selects the app's light appearance explicitly and fetches the social PNG from the preview being captured. Run `scripts/render-social-card.mjs` to regenerate `public/catchgrid-social.png` from its SVG source with the existing browser dependency.
+
+`measurements.json` and `progress-measurements.json` record dimensions and error checks. The unchanged Home budget excludes the documented 77px phone navigation clearance. Full Linux results and the pending real-device/Discord checklist are in [the F2 record](../releases/2026-09-28-friends/RELEASE.md).
+
+# Round 2 Phase F1 — data safety evidence (historical)
 
 `f1-before/` and `f1-after/` contain desktop/phone Home (new, returning after export, and banner-triggering collection) plus Settings: eight captures each. Before is the unchanged `5f291b6` app on the frontend dev server. After is the local production build on `127.0.0.1:5192`, with real CSP headers and zero CSP/page/console errors. Phone uses an iOS Safari user agent in system Chrome to expose the hint; it is not real-device Safari proof. Collection fixtures are imported through the reviewed UI, and all contexts are disposable.
 
