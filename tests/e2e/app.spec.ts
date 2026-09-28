@@ -48,12 +48,16 @@ test('returning Home has recent artwork, medal partners and an accessible respon
   await expect(page.locator('[data-key="medal-Unova"]')).toContainText('5 to bronze');
   await expect(page.locator('[data-key="medal-Unova"] img')).not.toHaveCSS('filter', 'none');
   if (isMobile(page)) {
-    // The dashboard budget excludes Phase 3's reserved space for the fixed phone tabs.
-    const contentHeight = await page.evaluate(
-      () =>
-        document.documentElement.scrollHeight -
-        parseFloat(getComputedStyle(document.body).paddingBottom),
-    );
+    // Phase 3 reserves 56px after the footer and increases main's former 35px
+    // bottom padding to the tab height. Exclude both additions from Phase 2's budget.
+    const contentHeight = await page.evaluate(() => {
+      const footerClearance = parseFloat(getComputedStyle(document.body).paddingBottom);
+      const mainClearance = Math.max(
+        0,
+        parseFloat(getComputedStyle(document.querySelector('main')!).paddingBottom) - 35,
+      );
+      return document.documentElement.scrollHeight - footerClearance - mainClearance;
+    });
     expect(contentHeight).toBeLessThanOrEqual(2400);
     await expect(page.locator('.region-bar')).toHaveCount(11);
     const picker = page.getByRole('combobox', { name: 'Category', exact: true });
