@@ -46,3 +46,16 @@ Run the same harness with `node scripts/shots.mjs phase2-after`. It retains the 
 - Browser coverage checks bronze/silver/gold/platinum rings, silhouettes, recent sprites and a zero-activity week, picker default/change, the accessible table, axe, keyboard shelf navigation, and unchanged stored ownership while details open/close. A dialog-close focus race found by the new keyboard test was fixed and the affected Home/Progress/Dex/detail checks rerun successfully.
 
 Phase 3 navigation has not been implemented. These are local fixture/browser checks; Safari, standalone PWA and physical devices were not tested in this phase.
+
+# Phase 3 — navigation evidence
+
+Phase 2 is committed as `b513e19` on `prism-forward`. Phase 3 remains local and uncommitted, with no push, merge or deployment.
+
+- Baseline: `phase2-after/`. Run `node scripts/shots.mjs phase3-after` against the local frontend server for the 16 standard empty/seeded desktop/phone captures. All eight desktop captures remain byte-identical; the first-visit cue has already played by the harness's later Home capture.
+- `phase3-after/desktop-dex-cue.png` separately captures the top-nav underline halfway through its one-time 2.4-second pulse. Browser tests also verify reduced motion, no cue for returning collections, session persistence, storage denial and deferring the cue while its link is hidden.
+- Below 700px, phone captures show the four labelled tabs. Main padding is 56px plus the bottom safe area; a separate footer clearance keeps its final link reachable. The seeded document height is 2,438px (empty: 2,564px), 77px above Phase 2 from 21px additional main padding and 56px footer clearance. Dashboard content was not expanded. The earlier height assertion excludes the space reserved for the fixed navigation.
+- Eleven additional `standalone-*.png` captures cover empty/seeded Home in both themes, seeded Dex/Progress/Search, both landscape themes, details and a visible copy toast. The local production preview at `127.0.0.1:5185` supplied its real CSP. `review.json` records zero violations, page errors, broken artwork or page overflow.
+- Standalone layout checks use system Chrome's headless app mode in a temporary profile and assert that `(display-mode: standalone)` actually matches. Safe-area values are emulated through [Chrome's safe-area override](https://chromedevtools.github.io/devtools-protocol/tot/Emulation/#method-setSafeAreaInsetsOverride): portrait top 47px/bottom 34px, landscape left/right 47px/bottom 21px. Portrait tabs measure 90px including the home-indicator area. This does not install an app in the user's profile.
+- Re-run navigation coverage with `pnpm.cmd exec playwright test tests/e2e/navigation.app.spec.ts --project=desktop-chromium --project=mobile-chromium`. Re-run standalone/offline/update checks with `pnpm.cmd exec playwright test --project=pwa-chromium`. Set `PLAYWRIGHT_USE_SYSTEM_CHROME=1` to use installed Chrome; use an unused `PLAYWRIGHT_PORT` for a fresh test build.
+
+Phase 3 validation passed: 241 unit, 40 Worker, 89 applicable browser/PWA checks (two existing mobile skips), lint, build and focused formatting. Final affected safe-area and visible-overlay checks were rerun after visual refinements. Safari and physical devices were not tested.

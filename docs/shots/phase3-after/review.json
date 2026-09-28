@@ -1,0 +1,127 @@
+{
+  "base": "http://127.0.0.1:5185",
+  "standalone": true,
+  "portraitInsets": {
+    "top": 47,
+    "bottom": 34
+  },
+  "landscapeInsets": {
+    "top": 0,
+    "left": 47,
+    "right": 47,
+    "bottom": 21
+  },
+  "views": [
+    {
+      "file": "standalone-empty-home-dark.png",
+      "width": 390,
+      "pageWidth": 390,
+      "tabHeight": 90,
+      "mainBottomPadding": "90px",
+      "bodyTopPadding": "47px",
+      "cspFailures": [],
+      "brokenArt": 0,
+      "errors": []
+    },
+    {
+      "file": "standalone-empty-home-light.png",
+      "width": 390,
+      "pageWidth": 390,
+      "tabHeight": 90,
+      "mainBottomPadding": "90px",
+      "bodyTopPadding": "47px",
+      "cspFailures": [],
+      "brokenArt": 0,
+      "errors": []
+    },
+    {
+      "file": "standalone-seeded-home-dark.png",
+      "width": 390,
+      "pageWidth": 390,
+      "tabHeight": 90,
+      "mainBottomPadding": "90px",
+      "bodyTopPadding": "47px",
+      "cspFailures": [],
+      "brokenArt": 0,
+      "errors": []
+    },
+    {
+      "file": "standalone-seeded-dex-dark.png",
+      "width": 390,
+      "pageWidth": 390,
+      "tabHeight": 90,
+      "mainBottomPadding": "90px",
+      "bodyTopPadding": "47px",
+      "cspFailures": [],
+      "brokenArt": 0,
+      "errors": []
+    },
+    {
+      "file": "standalone-seeded-progress-dark.png",
+      "width": 390,
+      "pageWidth": 390,
+      "tabHeight": 90,
+      "mainBottomPadding": "90px",
+      "bodyTopPadding": "47px",
+      "cspFailures": [],
+      "brokenArt": 0,
+      "errors": []
+    },
+    {
+      "file": "standalone-seeded-search-dark.png",
+      "width": 390,
+      "pageWidth": 390,
+      "tabHeight": 90,
+      "mainBottomPadding": "90px",
+      "bodyTopPadding": "47px",
+      "cspFailures": [],
+      "brokenArt": 0,
+      "errors": []
+    },
+    {
+      "file": "standalone-seeded-home-light.png",
+      "width": 390,
+      "pageWidth": 390,
+      "tabHeight": 90,
+      "mainBottomPadding": "90px",
+      "bodyTopPadding": "47px",
+      "cspFailures": [],
+      "brokenArt": 0,
+      "errors": []
+    }
+  ],
+  "desktopComparison": [
+    {
+      "file": "desktop-empty-home.png",
+      "identical": true
+    },
+    {
+      "file": "desktop-empty-dex.png",
+      "identical": true
+    },
+    {
+      "file": "desktop-empty-progress.png",
+      "identical": true
+    },
+    {
+      "file": "desktop-empty-search.png",
+      "identical": true
+    },
+    {
+      "file": "desktop-seeded-home.png",
+      "identical": true
+    },
+    {
+      "file": "desktop-seeded-dex.png",
+      "identical": true
+    },
+    {
+      "file": "desktop-seeded-progress.png",
+      "identical": true
+    },
+    {
+      "file": "desktop-seeded-search.png",
+      "identical": true
+    }
+  ]
+}

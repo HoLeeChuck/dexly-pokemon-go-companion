@@ -1,0 +1,150 @@
+{
+  "base": "http://127.0.0.1:5184",
+  "fixtureDate": "2026-09-27T18:00:00.000Z",
+  "results": [
+    {
+      "file": "desktop-empty-home.png",
+      "width": 1440,
+      "pageWidth": 1440,
+      "height": 1421,
+      "zeroPercentOnHome": false,
+      "brokenArtwork": 0,
+      "errors": []
+    },
+    {
+      "file": "desktop-empty-dex.png",
+      "width": 1440,
+      "pageWidth": 1440,
+      "height": 1502,
+      "zeroPercentOnHome": false,
+      "brokenArtwork": 0,
+      "errors": []
+    },
+    {
+      "file": "desktop-empty-progress.png",
+      "width": 1440,
+      "pageWidth": 1440,
+      "height": 900,
+      "zeroPercentOnHome": false,
+      "brokenArtwork": 0,
+      "errors": []
+    },
+    {
+      "file": "desktop-empty-search.png",
+      "width": 1440,
+      "pageWidth": 1440,
+      "height": 900,
+      "zeroPercentOnHome": false,
+      "brokenArtwork": 0,
+      "errors": []
+    },
+    {
+      "file": "desktop-seeded-home.png",
+      "width": 1440,
+      "pageWidth": 1440,
+      "height": 1876,
+      "zeroPercentOnHome": true,
+      "brokenArtwork": 0,
+      "errors": []
+    },
+    {
+      "file": "desktop-seeded-dex.png",
+      "width": 1440,
+      "pageWidth": 1440,
+      "height": 1502,
+      "zeroPercentOnHome": false,
+      "brokenArtwork": 0,
+      "errors": []
+    },
+    {
+      "file": "desktop-seeded-progress.png",
+      "width": 1440,
+      "pageWidth": 1440,
+      "height": 900,
+      "zeroPercentOnHome": false,
+      "brokenArtwork": 0,
+      "errors": []
+    },
+    {
+      "file": "desktop-seeded-search.png",
+      "width": 1440,
+      "pageWidth": 1440,
+      "height": 900,
+      "zeroPercentOnHome": false,
+      "brokenArtwork": 0,
+      "errors": []
+    },
+    {
+      "file": "phone-empty-home.png",
+      "width": 390,
+      "pageWidth": 390,
+      "height": 2564,
+      "zeroPercentOnHome": false,
+      "brokenArtwork": 0,
+      "errors": []
+    },
+    {
+      "file": "phone-empty-dex.png",
+      "width": 390,
+      "pageWidth": 390,
+      "height": 2496,
+      "zeroPercentOnHome": false,
+      "brokenArtwork": 0,
+      "errors": []
+    },
+    {
+      "file": "phone-empty-progress.png",
+      "width": 390,
+      "pageWidth": 390,
+      "height": 1837,
+      "zeroPercentOnHome": false,
+      "brokenArtwork": 0,
+      "errors": []
+    },
+    {
+      "file": "phone-empty-search.png",
+      "width": 390,
+      "pageWidth": 390,
+      "height": 1068,
+      "zeroPercentOnHome": false,
+      "brokenArtwork": 0,
+      "errors": []
+    },
+    {
+      "file": "phone-seeded-home.png",
+      "width": 390,
+      "pageWidth": 390,
+      "height": 2438,
+      "zeroPercentOnHome": true,
+      "brokenArtwork": 0,
+      "errors": []
+    },
+    {
+      "file": "phone-seeded-dex.png",
+      "width": 390,
+      "pageWidth": 390,
+      "height": 2496,
+      "zeroPercentOnHome": false,
+      "brokenArtwork": 0,
+      "errors": []
+    },
+    {
+      "file": "phone-seeded-progress.png",
+      "width": 390,
+      "pageWidth": 390,
+      "height": 1837,
+      "zeroPercentOnHome": false,
+      "brokenArtwork": 0,
+      "errors": []
+    },
+    {
+      "file": "phone-seeded-search.png",
+      "width": 390,
+      "pageWidth": 390,
+      "height": 1068,
+      "zeroPercentOnHome": false,
+      "brokenArtwork": 0,
+      "errors": []
+    }
+  ]
+}

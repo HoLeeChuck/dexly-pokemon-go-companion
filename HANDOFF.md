@@ -1,6 +1,20 @@
 # CatchGrid handoff
 
-## September 27, 2026 — CODEX-PLAN Phase 2 (local, uncommitted)
+## September 27, 2026 — CODEX-PLAN Phase 3 (local, uncommitted)
+
+Phase 2 was committed with the owner's explicit authorization as **`b513e19`** (`feat: add Phase 2 dashboard artwork and mobile heatmap`) on **`prism-forward`**, staging only its source, tests, fixture, screenshot evidence and handoff. Phase 3 is complete below and remains unstaged and uncommitted. The owner's `CODEX-PLAN.md` status notes remain untracked and unchanged. No push, merge, migration or deployment occurred.
+
+- **First-visit Dex cue:** the top navigation's Dex link gets a subtle 2px accent underline pulse on empty Home, once per tab session. A guarded session-storage flag survives reloads; blocked storage falls back to memory for the current page. Hidden links do not consume the cue. Reduced motion uses a static underline, and leaving empty Home removes it.
+- **Phone navigation:** below 700px, a fixed 56px bar provides Home, Dex, Progress and Search with labels and SVG paths from the existing Icon set. It uses normal route links, current-page semantics and keyboard focus. Settings stays in Menu, with duplicate destinations hidden there at phone widths. At 700px and wider, the existing top navigation remains available.
+- **Safe areas and overlays:** `viewport-fit=cover`, safe-area padding around the document and tabs, and `main` bottom clearance keep controls and footer links reachable. Toasts are positioned above the tabs; native modal detail/jump sheets stay above them and retain focus behavior. Narrow landscape headers use less space between controls to fit within side cutouts. No ownership or search behavior changed.
+- **Validation:** `pnpm.cmd test` passed (241 unit, 40 Worker); `pnpm.cmd lint` and `pnpm.cmd run build:artifact` passed. Full fresh frontend production-build Chromium run: **89 passed, 2 existing mobile skips**, including the 12 new navigation checks and three PWA checks (standalone layout, offline support, explicit update acceptance). After the final safe-area/styling refinements, the affected standalone and visible-toast/detail checks passed again, and the production build was regenerated. Focused formatting, ESLint and `git diff --check` passed. The existing catalog chunk-size advisory remains.
+- **Standalone verification:** isolated headless Chrome app mode reported the real `(display-mode: standalone)` media query. Portrait used a 47px top inset and 34px bottom inset (90px total tab area); landscape used 47px side insets and a 21px bottom inset. Both themes, rotation back to portrait, current-page state, 320/390/699/700/844/1440px boundaries, keyboard navigation, storage denial, footer reachability, detail sheets and visible copy toasts were checked. This is browser emulation, not physical-device or Safari proof.
+- **Evidence:** `docs/shots/phase2-after/` is the baseline. `docs/shots/phase3-after/` has the 16 standard captures, 12 supplemental cue/standalone/overlay captures, `results.json` and `review.json`. All eight standard desktop captures remain byte-identical to Phase 2 (the initial cue is captured separately). No page overflow, broken artwork, page errors or production-preview CSP violations were found. At 390×844, the seeded document is now **2,438px** and empty Home is **2,564px**, each 77px taller solely from navigation clearance: 21px more main padding plus 56px after the footer. The Phase 2 dashboard-height assertion now excludes the reserved 56px navigation area; dashboard content is unchanged.
+- **Stop point:** Phase 3 navigation only; no further phase work. Private `/cody`, catalog, storage/backup contracts, dependencies, recommendation strings and production state were preserved. Local frontend preview: `http://127.0.0.1:5184/`; final production preview: `http://127.0.0.1:5185/`. Safari and physical devices remain unverified.
+
+## September 27, 2026 — CODEX-PLAN Phase 2 (committed as `b513e19`)
+
+The following records Phase 2's original implementation and validation before its subsequent authorized commit above.
 
 Phase 1 was committed with the owner's explicit authorization as **`789b6bb`** (`feat: add Phase 1 first-run Home`) on **`prism-forward`**, staging only its implementation, tests, harness, fixtures, screenshots and handoff. `CODEX-PLAN.md` remains the pre-existing untracked assignment. Phase 2 is implemented and validated below, with its changes left unstaged and uncommitted. No push, merge, migration or deployment occurred.
 
@@ -143,7 +157,7 @@ pnpm exec playwright test --project=pwa-chromium
 
 ## Git state
 
-- `prism-forward` is at local commit `789b6bb` (Phase 1); Phase 2 changes are unstaged and uncommitted. `main` remains at `a8d0f72`, the recorded production release. Nothing was pushed, merged or deployed in the Phase 1 commit / Phase 2 session.
+- `prism-forward` is at local commit `b513e19` (Phase 2), following `789b6bb` (Phase 1). Phase 3 changes are unstaged and uncommitted. `main` remains at `a8d0f72`, the recorded production release. No phase-session changes have been pushed, merged or deployed.
 - Commits from the September 25 session came from a Linux shell that could not delete git temp files. If git reports a stale `index.lock` or `HEAD.lock`, confirm no git process is running, then delete the lock file.
 
 ## Next steps, in order

@@ -140,6 +140,15 @@ const main = document.querySelector('main');
 const dialog = document.querySelector('#inspect-dialog');
 let detailOpener = null;
 const jumpDialog = document.querySelector('#jump-dialog');
+const mainNav = document.querySelector('#main-nav');
+const dexNav = mainNav.querySelector('[href="#dex"]');
+const dexNudgeKey = 'catchgrid:dex-nav-cue:v1';
+let dexNudgeSeen = false;
+try {
+  dexNudgeSeen = sessionStorage.getItem(dexNudgeKey) === 'seen';
+} catch {
+  // Navigation still works when session storage is blocked; remember within this page.
+}
 const state = {
   route: routeFromHash(),
   category: 'normal',
@@ -871,7 +880,24 @@ function render() {
       ](),
   );
   if (dialog.open) updateMarkup(document.querySelector('#dialog-content'), specimen());
+  updateDexNudge();
 }
+function updateDexNudge() {
+  if (state.route !== 'home' || !main.querySelector('.first-run')) {
+    dexNav.classList.remove('dex-nudge');
+    return;
+  }
+  // A closed phone menu must not consume a cue the person has never seen.
+  if (dexNudgeSeen || !dexNav.getClientRects().length) return;
+  dexNudgeSeen = true;
+  dexNav.classList.add('dex-nudge');
+  try {
+    sessionStorage.setItem(dexNudgeKey, 'seen');
+  } catch {
+    // The in-memory flag also prevents replay on route changes and re-renders.
+  }
+}
+window.addEventListener('resize', updateDexNudge);
 function compose() {
   state.mode = 'none';
   state.preset = 'missing';
@@ -977,11 +1003,12 @@ document.addEventListener('click', async (event) => {
   // Rendering can morph this element into a different control; decide from the clicked state.
   const probe = b.cloneNode(false);
   if (probe.matches('.menu-toggle')) {
-    const open = document.querySelector('nav').classList.toggle('open');
+    const open = mainNav.classList.toggle('open');
     b.setAttribute('aria-expanded', String(open));
+    updateDexNudge();
   }
   if (b.matches('nav a')) {
-    document.querySelector('nav').classList.remove('open');
+    mainNav.classList.remove('open');
     document.querySelector('.menu-toggle').setAttribute('aria-expanded', 'false');
   }
   if (probe.matches('.theme-toggle,[data-theme]'))
@@ -1592,7 +1619,7 @@ document.addEventListener('keydown', (e) => {
     next?.focus();
   }
   if (e.key === 'Escape') {
-    document.querySelector('nav').classList.remove('open');
+    mainNav.classList.remove('open');
     document.querySelector('.menu-toggle').setAttribute('aria-expanded', 'false');
   }
 });

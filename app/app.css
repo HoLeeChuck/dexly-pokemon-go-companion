@@ -7,6 +7,8 @@ html {
 }
 body {
   margin: 0;
+  padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px)
+    env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
   background: var(--bg);
   color: var(--ink);
   font:
@@ -2417,5 +2419,122 @@ select:focus-visible {
   }
   .settings-layout {
     gap: 16px;
+  }
+}
+
+/* Phase 3 navigation: a single first-visit cue and persistent phone destinations. */
+#main-nav .dex-nudge {
+  position: relative;
+}
+#main-nav .dex-nudge::after {
+  content: '';
+  position: absolute;
+  inset: auto 16px 3px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--violet);
+  opacity: 0;
+  animation: dex-nav-pulse 2400ms ease-in-out 1;
+}
+@keyframes dex-nav-pulse {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scaleX(0.65);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scaleX(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #main-nav .dex-nudge::after {
+    animation: none;
+    opacity: 0.75;
+  }
+}
+.mobile-tabs {
+  display: none;
+}
+@media (800px < width < 1000px) {
+  .masthead {
+    /* Leave room for landscape cutouts when the full navigation is visible. */
+    column-gap: 12px;
+  }
+}
+@media (width < 700px) {
+  :root {
+    --mobile-nav-space: calc(56px + env(safe-area-inset-bottom, 0px));
+    scroll-padding-bottom: calc(var(--mobile-nav-space) + 12px);
+  }
+  body {
+    /* Keep the footer's final links reachable above the fixed tabs too. */
+    padding-bottom: var(--mobile-nav-space);
+  }
+  main {
+    padding-bottom: var(--mobile-nav-space);
+  }
+  #main-nav a:not([href='#settings']) {
+    display: none;
+  }
+  .mobile-tabs {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 10;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0;
+    width: auto;
+    height: var(--mobile-nav-space);
+    margin: 0;
+    padding: 0 max(8px, env(safe-area-inset-right, 0px)) env(safe-area-inset-bottom, 0px)
+      max(8px, env(safe-area-inset-left, 0px));
+    border-top: 1px solid var(--line);
+    background: var(--surface);
+  }
+  .mobile-tabs a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    min-width: 0;
+    min-height: 0;
+    margin: 4px 2px;
+    padding: 4px;
+    border: 0;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--muted);
+  }
+  :root .mobile-tabs a[aria-current='page'] {
+    color: var(--violet);
+    background: var(--tint);
+    box-shadow: none;
+  }
+  .mobile-tabs a:focus-visible {
+    outline-offset: 0;
+  }
+  .mobile-tabs svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .toast {
+    bottom: calc(var(--mobile-nav-space) + 12px);
+  }
+  dialog {
+    bottom: var(--mobile-nav-space);
+    max-height: calc(100dvh - var(--mobile-nav-space) - 24px);
+    z-index: 30;
+  }
+  #jump-dialog {
+    margin-top: 12px;
   }
 }

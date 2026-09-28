@@ -48,9 +48,13 @@ test('returning Home has recent artwork, medal partners and an accessible respon
   await expect(page.locator('[data-key="medal-Unova"]')).toContainText('5 to bronze');
   await expect(page.locator('[data-key="medal-Unova"] img')).not.toHaveCSS('filter', 'none');
   if (isMobile(page)) {
-    expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(
-      2400,
+    // The dashboard budget excludes Phase 3's reserved space for the fixed phone tabs.
+    const contentHeight = await page.evaluate(
+      () =>
+        document.documentElement.scrollHeight -
+        parseFloat(getComputedStyle(document.body).paddingBottom),
     );
+    expect(contentHeight).toBeLessThanOrEqual(2400);
     await expect(page.locator('.region-bar')).toHaveCount(11);
     const picker = page.getByRole('combobox', { name: 'Category', exact: true });
     await expect(picker).toHaveValue('normal');
