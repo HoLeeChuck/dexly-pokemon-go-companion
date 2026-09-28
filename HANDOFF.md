@@ -1,6 +1,36 @@
 # CatchGrid handoff
 
-## September 27, 2026 — CODEX-PLAN Phase 3 (local, uncommitted)
+## September 27, 2026 — CODEX-PLAN Phase 4 (verified, local handoff)
+
+**Phases 1–4 are complete locally.** Phase 3 was committed with the owner's authorization as **`8a27054`** (`feat: add Phase 3 navigation emphasis and phone tabs`) on **`prism-forward`**, following Phase 2 `b513e19` and Phase 1 `789b6bb`. Only Phase 3 source, tests, screenshots and handoff were staged. The owner's untracked `CODEX-PLAN.md` was preserved. Phase 4 required no application changes; this handoff and its verification evidence remain unstaged and uncommitted. No push, merge, migration or deployment occurred.
+
+### Fresh verification of `8a27054`
+
+| Check                                     | Result                                                                                                                                            |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm.cmd test`                           | 241 unit tests and 40 Worker tests passed                                                                                                         |
+| `pnpm.cmd lint`                           | Passed                                                                                                                                            |
+| `pnpm.cmd run build:artifact`             | TypeScript, public/private client and Worker builds, bundle report passed                                                                         |
+| Chromium desktop/mobile and PWA suite     | 89 passed, 2 existing mobile skips, no failures                                                                                                   |
+| Production-preview screenshot harness     | 16 captures; empty/seeded × 1440×900/390×844 × Home/Dex/Progress/Search                                                                           |
+| Keyboard traversal, both sizes and themes | Home actions, Dex shelf/device/grid, all enabled detail controls, modal isolation and Escape focus restoration passed                             |
+| Production CSP and data preservation      | No CSP violations or page errors in the supplemental review; production seed hook absent; viewing/tabbing details left stored ownership unchanged |
+| Focused formatting and whitespace         | Passed; no staged Phase 4 changes                                                                                                                 |
+
+The browser suite used a fresh frontend production build on port `4175` with system Chrome. It includes automated accessibility, reviewed imports, exact search behavior, desktop/mobile layouts, one-time navigation cue, safe-area/standalone rotation, visible overlays, offline support and explicit update acceptance. The two skips are the existing mobile exclusions for mouse drag-fill and the desktop-only full-window Progress layout. Native dialog traversal briefly visited Chrome's own controls before returning to the modal; no background page controls received focus, and Escape returned to the opener in all four keyboard cases.
+
+### Evidence and final state
+
+- **Before the overall change:** `docs/shots/phase1-before/`. Intermediate checkpoints: `docs/shots/phase1-after/`, `docs/shots/phase2-after/`, and `docs/shots/phase3-after/`.
+- **Final verified captures:** [docs/shots/phase4-verified/](docs/shots/phase4-verified/), with 16 standard PNGs, four light-theme Home PNGs, two keyboard detail-sheet PNGs, `results.json` and `review.json`. All 16 standard PNGs are byte-identical to the approved Phase 3 captures, despite being captured from the fresh production preview via the real reviewed import flow. The reports record no page overflow, broken artwork or page errors.
+- Final phone document heights remain **2,564px empty** and **2,438px seeded**, including Phase 3 navigation clearance. Phase 2's seeded content was 2,361px; the additional 77px is reserved spacing, as documented below. Empty Home has no `0%` text.
+- Local frontend preview: `http://127.0.0.1:5184/`. Fresh production preview with real CSP: `http://127.0.0.1:5185/`. All fixture checks used isolated browser contexts; the user's existing collection was not seeded or changed.
+- **Remaining limits:** real Safari and physical devices have not been verified. The pre-existing catalog chunk-size build advisory remains. Catalog/source freshness, the previously recorded dependency-audit issue and live deployment status were outside this phase and were not re-audited. No new Phase 4 blocker was found.
+- **Stop point:** verification and handoff complete. `main` remains at `a8d0f72`; `prism-forward` is at `8a27054`. No publication or additional implementation was performed.
+
+## September 27, 2026 — CODEX-PLAN Phase 3 (committed as `8a27054`)
+
+The following records Phase 3's original implementation and validation before its subsequent authorized commit above.
 
 Phase 2 was committed with the owner's explicit authorization as **`b513e19`** (`feat: add Phase 2 dashboard artwork and mobile heatmap`) on **`prism-forward`**, staging only its source, tests, fixture, screenshot evidence and handoff. Phase 3 is complete below and remains unstaged and uncommitted. The owner's `CODEX-PLAN.md` status notes remain untracked and unchanged. No push, merge, migration or deployment occurred.
 
@@ -157,7 +187,7 @@ pnpm exec playwright test --project=pwa-chromium
 
 ## Git state
 
-- `prism-forward` is at local commit `b513e19` (Phase 2), following `789b6bb` (Phase 1). Phase 3 changes are unstaged and uncommitted. `main` remains at `a8d0f72`, the recorded production release. No phase-session changes have been pushed, merged or deployed.
+- `prism-forward` is at local commit `8a27054` (Phase 3), following `b513e19` (Phase 2) and `789b6bb` (Phase 1). Phase 4 documentation and evidence are unstaged and uncommitted. `main` remains at `a8d0f72`, the recorded production release. No phase-session changes have been pushed, merged or deployed.
 - Commits from the September 25 session came from a Linux shell that could not delete git temp files. If git reports a stale `index.lock` or `HEAD.lock`, confirm no git process is running, then delete the lock file.
 
 ## Next steps, in order

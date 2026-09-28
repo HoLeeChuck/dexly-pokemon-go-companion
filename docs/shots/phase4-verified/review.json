@@ -1,0 +1,1434 @@
+{
+  "commit": "8a27054",
+  "base": "http://127.0.0.1:5185",
+  "keyboard": [
+    {
+      "name": "desktop",
+      "theme": "dark",
+      "detailsDidNotChangeOwnership": true,
+      "focusReturnedToDialog": true,
+      "browserChromeStops": 1,
+      "backgroundControlsNeverFocused": true,
+      "focusReturnedToOpener": true,
+      "errors": [],
+      "cspFailures": [],
+      "steps": [
+        {
+          "section": "empty Home",
+          "tag": "A",
+          "name": "Start with your Pokédex"
+        },
+        {
+          "section": "empty Home",
+          "tag": "A",
+          "name": "Import a backup"
+        },
+        {
+          "section": "empty Home",
+          "tag": "A",
+          "name": "Try the Search Lab"
+        },
+        {
+          "section": "empty Home",
+          "tag": "A",
+          "name": "Open the Kanto Pokédex"
+        },
+        {
+          "section": "empty Home",
+          "tag": "A",
+          "name": "Open the Johto Pokédex"
+        },
+        {
+          "section": "empty Home",
+          "tag": "A",
+          "name": "Open the Hoenn Pokédex"
+        },
+        {
+          "section": "empty Home",
+          "tag": "A",
+          "name": "Open the Sinnoh Pokédex"
+        },
+        {
+          "section": "empty Home",
+          "tag": "A",
+          "name": "Open the Unova Pokédex"
+        },
+        {
+          "section": "empty Home",
+          "tag": "A",
+          "name": "See every region →Explore the full Pokédex shelf."
+        },
+        {
+          "section": "Dex shelf",
+          "tag": "SELECT",
+          "name": "NormalMaleFemaleShinyLucky100%XXLXXSShadowPurified"
+        },
+        {
+          "section": "Dex shelf",
+          "tag": "A",
+          "name": "Open the National Pokédex: 0 of 954 Normal registered"
+        },
+        {
+          "section": "Dex shelf",
+          "tag": "A",
+          "name": "Open the Kanto Pokédex: 0 of 151 Normal registered"
+        },
+        {
+          "section": "Dex device",
+          "tag": "A",
+          "name": "All Pokédexes"
+        },
+        {
+          "section": "Dex device",
+          "tag": "BUTTON",
+          "name": "Scanner"
+        },
+        {
+          "section": "Dex device",
+          "tag": "BUTTON",
+          "name": "Grid"
+        },
+        {
+          "section": "Dex grid",
+          "tag": "INPUT",
+          "name": ""
+        },
+        {
+          "section": "Dex grid",
+          "tag": "BUTTON",
+          "name": "All"
+        },
+        {
+          "section": "Dex grid",
+          "tag": "BUTTON",
+          "name": "Missing"
+        },
+        {
+          "section": "Dex grid",
+          "tag": "BUTTON",
+          "name": "Collected"
+        },
+        {
+          "section": "Dex grid",
+          "tag": "SELECT",
+          "name": "National DexAll supported formsMega / PrimalGigantamaxRegionalOther formsCostumes · coming later"
+        },
+        {
+          "section": "Dex grid",
+          "tag": "SELECT",
+          "name": "NormalMaleFemaleShinyLucky100%XXLXXSShadowPurified"
+        },
+        {
+          "section": "Dex grid",
+          "tag": "BUTTON",
+          "name": "Search missing Normal ↗"
+        },
+        {
+          "section": "Dex grid",
+          "tag": "BUTTON",
+          "name": "Toggle Bulbasaur Normal, missing"
+        },
+        {
+          "section": "Dex grid",
+          "tag": "BUTTON",
+          "name": "View details for Bulbasaur"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "SELECT",
+          "name": "All regionsKantoJohtoHoennSinnohUnovaKalosAlolaGalarHisuiPaldeaUnknown"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "SELECT",
+          "name": "National DexAll supported formsMega / PrimalGigantamaxRegionalOther formsCostumes · coming later"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "INPUT",
+          "name": ""
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "All"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "Missing Normal"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "Have Normal"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "Normal: 0 of 151, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "Male: 0 of 132, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "Female: 0 of 132, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "Shiny: 0 of 151, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "Lucky: 0 of 150, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "100%: 0 of 151, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "XXL: 0 of 151, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "XXS: 0 of 151, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "Shadow: 0 of 127, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "Purified: 0 of 127, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "View details for Bulbasaur"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle Normal: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle Male: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle Female: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle Shiny: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle Lucky: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle 100%: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle XXL: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle XXS: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle Shadow: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle Purified: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Inspect previous Pokémon"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Inspect next Pokémon"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Close Pokémon details"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "BUTTON",
+          "name": "Build a search"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "Update collection"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "Normal: 180 of 954 registered, 18%. Open in Progress"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "Male: 0 of 807 registered, 0%. Open in Progress"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "Female: 0 of 819 registered, 0%. Open in Progress"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "Shiny: 40 of 888 registered, 4%. Open in Progress"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "Lucky: 12 of 938 registered, 1%. Open in Progress"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "100%: 0 of 954 registered, 0%. Open in Progress"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "XXL: 0 of 954 registered, 0%. Open in Progress"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "XXS: 0 of 954 registered, 0%. Open in Progress"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "Shadow: 0 of 467 registered, 0%. Open in Progress"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "Purified: 0 of 467 registered, 0%. Open in Progress"
+        }
+      ]
+    },
+    {
+      "name": "desktop",
+      "theme": "light",
+      "detailsDidNotChangeOwnership": true,
+      "focusReturnedToDialog": true,
+      "browserChromeStops": 1,
+      "backgroundControlsNeverFocused": true,
+      "focusReturnedToOpener": true,
+      "errors": [],
+      "cspFailures": [],
+      "steps": [
+        {
+          "section": "empty Home",
+          "tag": "A",
+          "name": "Start with your Pokédex"
+        },
+        {
+          "section": "empty Home",
+          "tag": "A",
+          "name": "Import a backup"
+        },
+        {
+          "section": "empty Home",
+          "tag": "A",
+          "name": "Try the Search Lab"
+        },
+        {
+          "section": "empty Home",
+          "tag": "A",
+          "name": "Open the Kanto Pokédex"
+        },
+        {
+          "section": "empty Home",
+          "tag": "A",
+          "name": "Open the Johto Pokédex"
+        },
+        {
+          "section": "empty Home",
+          "tag": "A",
+          "name": "Open the Hoenn Pokédex"
+        },
+        {
+          "section": "empty Home",
+          "tag": "A",
+          "name": "Open the Sinnoh Pokédex"
+        },
+        {
+          "section": "empty Home",
+          "tag": "A",
+          "name": "Open the Unova Pokédex"
+        },
+        {
+          "section": "empty Home",
+          "tag": "A",
+          "name": "See every region →Explore the full Pokédex shelf."
+        },
+        {
+          "section": "Dex shelf",
+          "tag": "SELECT",
+          "name": "NormalMaleFemaleShinyLucky100%XXLXXSShadowPurified"
+        },
+        {
+          "section": "Dex shelf",
+          "tag": "A",
+          "name": "Open the National Pokédex: 0 of 954 Normal registered"
+        },
+        {
+          "section": "Dex shelf",
+          "tag": "A",
+          "name": "Open the Kanto Pokédex: 0 of 151 Normal registered"
+        },
+        {
+          "section": "Dex device",
+          "tag": "A",
+          "name": "All Pokédexes"
+        },
+        {
+          "section": "Dex device",
+          "tag": "BUTTON",
+          "name": "Scanner"
+        },
+        {
+          "section": "Dex device",
+          "tag": "BUTTON",
+          "name": "Grid"
+        },
+        {
+          "section": "Dex grid",
+          "tag": "INPUT",
+          "name": ""
+        },
+        {
+          "section": "Dex grid",
+          "tag": "BUTTON",
+          "name": "All"
+        },
+        {
+          "section": "Dex grid",
+          "tag": "BUTTON",
+          "name": "Missing"
+        },
+        {
+          "section": "Dex grid",
+          "tag": "BUTTON",
+          "name": "Collected"
+        },
+        {
+          "section": "Dex grid",
+          "tag": "SELECT",
+          "name": "National DexAll supported formsMega / PrimalGigantamaxRegionalOther formsCostumes · coming later"
+        },
+        {
+          "section": "Dex grid",
+          "tag": "SELECT",
+          "name": "NormalMaleFemaleShinyLucky100%XXLXXSShadowPurified"
+        },
+        {
+          "section": "Dex grid",
+          "tag": "BUTTON",
+          "name": "Search missing Normal ↗"
+        },
+        {
+          "section": "Dex grid",
+          "tag": "BUTTON",
+          "name": "Toggle Bulbasaur Normal, missing"
+        },
+        {
+          "section": "Dex grid",
+          "tag": "BUTTON",
+          "name": "View details for Bulbasaur"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "SELECT",
+          "name": "All regionsKantoJohtoHoennSinnohUnovaKalosAlolaGalarHisuiPaldeaUnknown"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "SELECT",
+          "name": "National DexAll supported formsMega / PrimalGigantamaxRegionalOther formsCostumes · coming later"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "INPUT",
+          "name": ""
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "All"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "Missing Normal"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "Have Normal"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "Normal: 0 of 151, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "Male: 0 of 132, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "Female: 0 of 132, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "Shiny: 0 of 151, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "Lucky: 0 of 150, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "100%: 0 of 151, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "XXL: 0 of 151, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "XXS: 0 of 151, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "Shadow: 0 of 127, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "Purified: 0 of 127, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "View details for Bulbasaur"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle Normal: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle Male: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle Female: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle Shiny: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle Lucky: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle 100%: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle XXL: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle XXS: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle Shadow: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle Purified: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Inspect previous Pokémon"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Inspect next Pokémon"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Close Pokémon details"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "BUTTON",
+          "name": "Build a search"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "Update collection"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "Normal: 180 of 954 registered, 18%. Open in Progress"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "Male: 0 of 807 registered, 0%. Open in Progress"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "Female: 0 of 819 registered, 0%. Open in Progress"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "Shiny: 40 of 888 registered, 4%. Open in Progress"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "Lucky: 12 of 938 registered, 1%. Open in Progress"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "100%: 0 of 954 registered, 0%. Open in Progress"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "XXL: 0 of 954 registered, 0%. Open in Progress"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "XXS: 0 of 954 registered, 0%. Open in Progress"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "Shadow: 0 of 467 registered, 0%. Open in Progress"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "Purified: 0 of 467 registered, 0%. Open in Progress"
+        }
+      ]
+    },
+    {
+      "name": "phone",
+      "theme": "dark",
+      "detailsDidNotChangeOwnership": true,
+      "focusReturnedToDialog": true,
+      "browserChromeStops": 1,
+      "backgroundControlsNeverFocused": true,
+      "focusReturnedToOpener": true,
+      "errors": [],
+      "cspFailures": [],
+      "steps": [
+        {
+          "section": "empty Home",
+          "tag": "A",
+          "name": "Start with your Pokédex"
+        },
+        {
+          "section": "empty Home",
+          "tag": "A",
+          "name": "Import a backup"
+        },
+        {
+          "section": "empty Home",
+          "tag": "A",
+          "name": "Try the Search Lab"
+        },
+        {
+          "section": "empty Home",
+          "tag": "A",
+          "name": "Open the Kanto Pokédex"
+        },
+        {
+          "section": "empty Home",
+          "tag": "A",
+          "name": "Open the Johto Pokédex"
+        },
+        {
+          "section": "empty Home",
+          "tag": "A",
+          "name": "Open the Hoenn Pokédex"
+        },
+        {
+          "section": "empty Home",
+          "tag": "A",
+          "name": "Open the Sinnoh Pokédex"
+        },
+        {
+          "section": "empty Home",
+          "tag": "A",
+          "name": "Open the Unova Pokédex"
+        },
+        {
+          "section": "empty Home",
+          "tag": "A",
+          "name": "See every region →Explore the full Pokédex shelf."
+        },
+        {
+          "section": "Dex shelf",
+          "tag": "SELECT",
+          "name": "NormalMaleFemaleShinyLucky100%XXLXXSShadowPurified"
+        },
+        {
+          "section": "Dex shelf",
+          "tag": "A",
+          "name": "Open the National Pokédex: 0 of 954 Normal registered"
+        },
+        {
+          "section": "Dex shelf",
+          "tag": "A",
+          "name": "Open the Kanto Pokédex: 0 of 151 Normal registered"
+        },
+        {
+          "section": "Dex device",
+          "tag": "A",
+          "name": "All Pokédexes"
+        },
+        {
+          "section": "Dex device",
+          "tag": "BUTTON",
+          "name": "Scanner"
+        },
+        {
+          "section": "Dex device",
+          "tag": "BUTTON",
+          "name": "Grid"
+        },
+        {
+          "section": "Dex grid",
+          "tag": "INPUT",
+          "name": ""
+        },
+        {
+          "section": "Dex grid",
+          "tag": "BUTTON",
+          "name": "All"
+        },
+        {
+          "section": "Dex grid",
+          "tag": "BUTTON",
+          "name": "Missing"
+        },
+        {
+          "section": "Dex grid",
+          "tag": "BUTTON",
+          "name": "Collected"
+        },
+        {
+          "section": "Dex grid",
+          "tag": "SELECT",
+          "name": "National DexAll supported formsMega / PrimalGigantamaxRegionalOther formsCostumes · coming later"
+        },
+        {
+          "section": "Dex grid",
+          "tag": "SELECT",
+          "name": "NormalMaleFemaleShinyLucky100%XXLXXSShadowPurified"
+        },
+        {
+          "section": "Dex grid",
+          "tag": "BUTTON",
+          "name": "Toggle Bulbasaur Normal, missing"
+        },
+        {
+          "section": "Dex grid",
+          "tag": "BUTTON",
+          "name": "View details for Bulbasaur"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "SELECT",
+          "name": "All regionsKantoJohtoHoennSinnohUnovaKalosAlolaGalarHisuiPaldeaUnknown"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "SELECT",
+          "name": "National DexAll supported formsMega / PrimalGigantamaxRegionalOther formsCostumes · coming later"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "INPUT",
+          "name": ""
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "All"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "Missing Normal"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "Have Normal"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "Normal: 0 of 151, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "Male: 0 of 132, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "Female: 0 of 132, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "Shiny: 0 of 151, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "Lucky: 0 of 150, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "100%: 0 of 151, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "XXL: 0 of 151, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "XXS: 0 of 151, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "Shadow: 0 of 127, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "Purified: 0 of 127, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "View details for Bulbasaur"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle Normal: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle Male: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle Female: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle Shiny: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle Lucky: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle 100%: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle XXL: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle XXS: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle Shadow: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle Purified: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Inspect previous Pokémon"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Inspect next Pokémon"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Close Pokémon details"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "BUTTON",
+          "name": "Build a search"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "Update collection"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "Normal: 180 of 954 registered, 18%. Open in Progress"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "Male: 0 of 807 registered, 0%. Open in Progress"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "Female: 0 of 819 registered, 0%. Open in Progress"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "Shiny: 40 of 888 registered, 4%. Open in Progress"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "Lucky: 12 of 938 registered, 1%. Open in Progress"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "100%: 0 of 954 registered, 0%. Open in Progress"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "XXL: 0 of 954 registered, 0%. Open in Progress"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "XXS: 0 of 954 registered, 0%. Open in Progress"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "Shadow: 0 of 467 registered, 0%. Open in Progress"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "Purified: 0 of 467 registered, 0%. Open in Progress"
+        }
+      ]
+    },
+    {
+      "name": "phone",
+      "theme": "light",
+      "detailsDidNotChangeOwnership": true,
+      "focusReturnedToDialog": true,
+      "browserChromeStops": 1,
+      "backgroundControlsNeverFocused": true,
+      "focusReturnedToOpener": true,
+      "errors": [],
+      "cspFailures": [],
+      "steps": [
+        {
+          "section": "empty Home",
+          "tag": "A",
+          "name": "Start with your Pokédex"
+        },
+        {
+          "section": "empty Home",
+          "tag": "A",
+          "name": "Import a backup"
+        },
+        {
+          "section": "empty Home",
+          "tag": "A",
+          "name": "Try the Search Lab"
+        },
+        {
+          "section": "empty Home",
+          "tag": "A",
+          "name": "Open the Kanto Pokédex"
+        },
+        {
+          "section": "empty Home",
+          "tag": "A",
+          "name": "Open the Johto Pokédex"
+        },
+        {
+          "section": "empty Home",
+          "tag": "A",
+          "name": "Open the Hoenn Pokédex"
+        },
+        {
+          "section": "empty Home",
+          "tag": "A",
+          "name": "Open the Sinnoh Pokédex"
+        },
+        {
+          "section": "empty Home",
+          "tag": "A",
+          "name": "Open the Unova Pokédex"
+        },
+        {
+          "section": "empty Home",
+          "tag": "A",
+          "name": "See every region →Explore the full Pokédex shelf."
+        },
+        {
+          "section": "Dex shelf",
+          "tag": "SELECT",
+          "name": "NormalMaleFemaleShinyLucky100%XXLXXSShadowPurified"
+        },
+        {
+          "section": "Dex shelf",
+          "tag": "A",
+          "name": "Open the National Pokédex: 0 of 954 Normal registered"
+        },
+        {
+          "section": "Dex shelf",
+          "tag": "A",
+          "name": "Open the Kanto Pokédex: 0 of 151 Normal registered"
+        },
+        {
+          "section": "Dex device",
+          "tag": "A",
+          "name": "All Pokédexes"
+        },
+        {
+          "section": "Dex device",
+          "tag": "BUTTON",
+          "name": "Scanner"
+        },
+        {
+          "section": "Dex device",
+          "tag": "BUTTON",
+          "name": "Grid"
+        },
+        {
+          "section": "Dex grid",
+          "tag": "INPUT",
+          "name": ""
+        },
+        {
+          "section": "Dex grid",
+          "tag": "BUTTON",
+          "name": "All"
+        },
+        {
+          "section": "Dex grid",
+          "tag": "BUTTON",
+          "name": "Missing"
+        },
+        {
+          "section": "Dex grid",
+          "tag": "BUTTON",
+          "name": "Collected"
+        },
+        {
+          "section": "Dex grid",
+          "tag": "SELECT",
+          "name": "National DexAll supported formsMega / PrimalGigantamaxRegionalOther formsCostumes · coming later"
+        },
+        {
+          "section": "Dex grid",
+          "tag": "SELECT",
+          "name": "NormalMaleFemaleShinyLucky100%XXLXXSShadowPurified"
+        },
+        {
+          "section": "Dex grid",
+          "tag": "BUTTON",
+          "name": "Toggle Bulbasaur Normal, missing"
+        },
+        {
+          "section": "Dex grid",
+          "tag": "BUTTON",
+          "name": "View details for Bulbasaur"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "SELECT",
+          "name": "All regionsKantoJohtoHoennSinnohUnovaKalosAlolaGalarHisuiPaldeaUnknown"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "SELECT",
+          "name": "National DexAll supported formsMega / PrimalGigantamaxRegionalOther formsCostumes · coming later"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "INPUT",
+          "name": ""
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "All"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "Missing Normal"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "Have Normal"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "Normal: 0 of 151, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "Male: 0 of 132, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "Female: 0 of 132, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "Shiny: 0 of 151, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "Lucky: 0 of 150, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "100%: 0 of 151, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "XXL: 0 of 151, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "XXS: 0 of 151, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "Shadow: 0 of 127, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "Purified: 0 of 127, 0%. Use for the search string and filter"
+        },
+        {
+          "section": "Progress to details",
+          "tag": "BUTTON",
+          "name": "View details for Bulbasaur"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle Normal: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle Male: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle Female: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle Shiny: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle Lucky: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle 100%: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle XXL: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle XXS: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle Shadow: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Toggle Purified: missing"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Inspect previous Pokémon"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Inspect next Pokémon"
+        },
+        {
+          "section": "detail focus trap",
+          "tag": "BUTTON",
+          "name": "Close Pokémon details"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "BUTTON",
+          "name": "Build a search"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "Update collection"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "Normal: 180 of 954 registered, 18%. Open in Progress"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "Male: 0 of 807 registered, 0%. Open in Progress"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "Female: 0 of 819 registered, 0%. Open in Progress"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "Shiny: 40 of 888 registered, 4%. Open in Progress"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "Lucky: 12 of 938 registered, 1%. Open in Progress"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "100%: 0 of 954 registered, 0%. Open in Progress"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "XXL: 0 of 954 registered, 0%. Open in Progress"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "XXS: 0 of 954 registered, 0%. Open in Progress"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "Shadow: 0 of 467 registered, 0%. Open in Progress"
+        },
+        {
+          "section": "seeded Home",
+          "tag": "A",
+          "name": "Purified: 0 of 467 registered, 0%. Open in Progress"
+        }
+      ]
+    }
+  ],
+  "comparisons": [
+    {
+      "file": "desktop-empty-home.png",
+      "identical": true
+    },
+    {
+      "file": "desktop-empty-dex.png",
+      "identical": true
+    },
+    {
+      "file": "desktop-empty-progress.png",
+      "identical": true
+    },
+    {
+      "file": "desktop-empty-search.png",
+      "identical": true
+    },
+    {
+      "file": "desktop-seeded-home.png",
+      "identical": true
+    },
+    {
+      "file": "desktop-seeded-dex.png",
+      "identical": true
+    },
+    {
+      "file": "desktop-seeded-progress.png",
+      "identical": true
+    },
+    {
+      "file": "desktop-seeded-search.png",
+      "identical": true
+    },
+    {
+      "file": "phone-empty-home.png",
+      "identical": true
+    },
+    {
+      "file": "phone-empty-dex.png",
+      "identical": true
+    },
+    {
+      "file": "phone-empty-progress.png",
+      "identical": true
+    },
+    {
+      "file": "phone-empty-search.png",
+      "identical": true
+    },
+    {
+      "file": "phone-seeded-home.png",
+      "identical": true
+    },
+    {
+      "file": "phone-seeded-dex.png",
+      "identical": true
+    },
+    {
+      "file": "phone-seeded-progress.png",
+      "identical": true
+    },
+    {
+      "file": "phone-seeded-search.png",
+      "identical": true
+    }
+  ]
+}

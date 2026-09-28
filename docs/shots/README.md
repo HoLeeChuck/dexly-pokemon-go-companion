@@ -59,3 +59,15 @@ Phase 2 is committed as `b513e19` on `prism-forward`. Phase 3 remains local and 
 - Re-run navigation coverage with `pnpm.cmd exec playwright test tests/e2e/navigation.app.spec.ts --project=desktop-chromium --project=mobile-chromium`. Re-run standalone/offline/update checks with `pnpm.cmd exec playwright test --project=pwa-chromium`. Set `PLAYWRIGHT_USE_SYSTEM_CHROME=1` to use installed Chrome; use an unused `PLAYWRIGHT_PORT` for a fresh test build.
 
 Phase 3 validation passed: 241 unit, 40 Worker, 89 applicable browser/PWA checks (two existing mobile skips), lint, build and focused formatting. Final affected safe-area and visible-overlay checks were rerun after visual refinements. Safari and physical devices were not tested.
+
+# Phase 4 — final verification and handoff
+
+Verified Phase 3 commit `8a27054` on `prism-forward` with no application changes. Phase 4's documentation and evidence remain unstaged and uncommitted; nothing was pushed, merged or deployed.
+
+- **Overall before:** `phase1-before/`. **Approved implementation baseline:** `phase3-after/`. **Final:** `phase4-verified/`.
+- Fresh `pnpm.cmd test`, `pnpm.cmd lint` and `pnpm.cmd run build:artifact` passed: 241 unit and 40 Worker tests. The fresh frontend production-build Chromium desktop/mobile/PWA run passed 89 checks with two existing mobile skips and no failures. Use `PLAYWRIGHT_USE_SYSTEM_CHROME=1` and an unused `PLAYWRIGHT_PORT` (this run: `4175`) to reproduce with the normal Playwright configuration.
+- Run the standard harness against the production preview with `SHOT_BASE=http://127.0.0.1:5185` and `node scripts/shots.mjs phase4-verified`. This run restored the synthetic fixture through Settings, because the development seed hook is absent in production. All 16 captures are byte-identical to Phase 3. No page overflow, broken artwork or page errors occurred. `results.json` contains the measurements.
+- Six supplemental light-theme captures show desktop/phone empty Home, seeded Home and the detail sheet with keyboard focus. Tab traversal covered Home actions, Dex shelf/device/grid, and every enabled modal control in both themes at both sizes. Escape returned focus to the opener; viewing details never changed ownership. `review.json` records the traversed controls, screenshot comparisons and zero CSP violations from the real production headers. Chrome's native dialog traversal visited browser chrome once before returning to the modal; background content never received focus.
+- Final phone document heights: empty 2,564px; seeded 2,438px, including the navigation clearance added in Phase 3. Empty Home has no `0%` text. Full-page phone screenshots show the fixed tab bar at its viewport position; scroll/reachability and safe-area checks verify that final content remains accessible.
+
+No application fixes were needed. The existing catalog chunk-size advisory remains; Safari and physical-device verification are still open. See the current [HANDOFF.md](../../HANDOFF.md) for the complete local completion record and scope limits.
