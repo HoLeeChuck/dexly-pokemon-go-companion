@@ -4,7 +4,8 @@ test('standalone phone navigation respects safe areas and rotation', async ({ ba
   // Chrome app mode exposes the actual standalone media query, not a matchMedia stub.
   // The empty directory argument creates a temporary, isolated browser profile.
   const context = await chromium.launchPersistentContext('', {
-    channel: process.env.PLAYWRIGHT_USE_SYSTEM_CHROME === '1' ? 'chrome' : undefined,
+    // App mode needs the full browser; Playwright's default headless shell has no app window.
+    channel: process.env.PLAYWRIGHT_USE_SYSTEM_CHROME === '1' ? 'chrome' : 'chromium',
     headless: true,
     viewport: { width: 390, height: 844 },
     serviceWorkers: 'block',

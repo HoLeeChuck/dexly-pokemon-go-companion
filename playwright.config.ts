@@ -23,7 +23,6 @@ export default defineConfig({
     colorScheme: 'dark',
     acceptDownloads: true,
     locale: 'en-US',
-    channel: browserChannel,
     serviceWorkers: 'block',
     screenshot: 'only-on-failure',
     trace: 'retain-on-failure',
@@ -35,6 +34,7 @@ export default defineConfig({
       testMatch: /(app|accessibility)\.spec\.ts/,
       use: {
         ...devices['Desktop Chrome'],
+        channel: browserChannel,
         viewport: { width: 390, height: 844 },
         hasTouch: true,
         isMobile: true,
@@ -43,7 +43,11 @@ export default defineConfig({
     {
       name: 'desktop-chromium',
       testMatch: /(app|accessibility)\.spec\.ts/,
-      use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 } },
+      use: {
+        ...devices['Desktop Chrome'],
+        channel: browserChannel,
+        viewport: { width: 1440, height: 900 },
+      },
     },
     {
       name: 'mobile-webkit',
@@ -60,6 +64,7 @@ export default defineConfig({
       testMatch: /pwa\.spec\.ts/,
       use: {
         ...devices['Desktop Chrome'],
+        channel: browserChannel,
         viewport: { width: 390, height: 844 },
         serviceWorkers: 'allow',
       },
