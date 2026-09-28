@@ -1,0 +1,193 @@
+/* First-run Home uses the dashboard surface and the existing Pokédex devices. */
+.first-run {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 24px;
+}
+.first-run > * {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+.first-run-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 32px;
+  padding: clamp(24px, 4vw, 48px);
+}
+.first-run h1 {
+  margin: 14px 0 18px;
+  font-size: clamp(30px, 4vw, 44px);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+}
+.first-run h1 strong {
+  display: block;
+  color: var(--violet);
+}
+.first-run-intro {
+  max-width: 58ch;
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.65;
+}
+.first-run-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+}
+.first-run-search {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--violet);
+  text-underline-offset: 4px;
+}
+.first-run-parade {
+  --silhouette: brightness(0);
+  --silhouette-opacity: 0.28;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: center;
+  justify-items: center;
+  gap: 12px 4px;
+}
+:root[data-theme='dark'] .first-run-parade {
+  --silhouette: brightness(0) invert(1);
+  --silhouette-opacity: 0.16;
+}
+.first-run-parade img {
+  width: 100%;
+  max-width: 112px;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: contain;
+}
+.first-run-parade img:nth-child(n + 5) {
+  translate: 50% 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .first-run-parade img {
+    filter: var(--silhouette);
+    opacity: var(--silhouette-opacity);
+    animation: first-run-reveal 8.4s var(--delay) infinite;
+  }
+}
+@keyframes first-run-reveal {
+  0%,
+  14.2857%,
+  100% {
+    filter: var(--silhouette);
+    opacity: var(--silhouette-opacity);
+  }
+  3%,
+  11% {
+    filter: none;
+    opacity: 1;
+  }
+}
+.first-run-steps h2,
+.first-run-regions h2 {
+  margin: 0 0 16px;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+}
+.first-run-steps ol {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.first-run-step-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--violet);
+}
+.first-run-step-top span {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--tint);
+  font-weight: 700;
+}
+.first-run-steps h3 {
+  margin: 16px 0 8px;
+  font-size: 18px;
+}
+.first-run-steps p {
+  margin: 0;
+  color: var(--muted);
+}
+.first-run-regions .shelf-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.first-run-regions .device-card {
+  grid-template-areas: 'lens leds' 'meta meta' 'faces faces';
+}
+.first-run-all {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 12px;
+  color: var(--violet);
+  text-decoration: none;
+}
+.first-run-all strong {
+  font-size: 22px;
+}
+.first-run-all span {
+  color: var(--muted);
+}
+.first-run > .annotation {
+  margin: 0;
+  max-width: none;
+}
+@media (max-width: 900px) {
+  .first-run-hero {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .first-run-parade {
+    width: 100%;
+    max-width: 480px;
+    justify-self: center;
+  }
+  .first-run-regions .shelf-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .first-run {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .first-run-steps ol,
+  .first-run-regions .shelf-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .first-run-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .first-run-actions a {
+    justify-content: center;
+    text-align: center;
+  }
+  .first-run-regions .device-card {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas: 'lens meta' 'faces faces';
+  }
+  .first-run-regions .device-leds {
+    display: none;
+  }
+  .first-run-regions .device-faces {
+    justify-content: center;
+  }
+}

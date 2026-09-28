@@ -1,0 +1,265 @@
+{
+  "production": [
+    {
+      "viewport": "desktop",
+      "cspFailures": [],
+      "errors": []
+    },
+    {
+      "viewport": "phone",
+      "cspFailures": [],
+      "errors": []
+    }
+  ],
+  "animation": [
+    {
+      "theme": "dark",
+      "index": 0,
+      "visible": [
+        1,
+        0.16,
+        0.16,
+        0.16,
+        0.16,
+        0.16,
+        0.16
+      ]
+    },
+    {
+      "theme": "dark",
+      "index": 1,
+      "visible": [
+        0.16,
+        1,
+        0.16,
+        0.16,
+        0.16,
+        0.16,
+        0.16
+      ]
+    },
+    {
+      "theme": "dark",
+      "index": 2,
+      "visible": [
+        0.16,
+        0.16,
+        1,
+        0.16,
+        0.16,
+        0.16,
+        0.16
+      ]
+    },
+    {
+      "theme": "dark",
+      "index": 3,
+      "visible": [
+        0.16,
+        0.16,
+        0.16,
+        1,
+        0.16,
+        0.16,
+        0.16
+      ]
+    },
+    {
+      "theme": "dark",
+      "index": 4,
+      "visible": [
+        0.16,
+        0.16,
+        0.16,
+        0.16,
+        1,
+        0.16,
+        0.16
+      ]
+    },
+    {
+      "theme": "dark",
+      "index": 5,
+      "visible": [
+        0.16,
+        0.16,
+        0.16,
+        0.16,
+        0.16,
+        1,
+        0.16
+      ]
+    },
+    {
+      "theme": "dark",
+      "index": 6,
+      "visible": [
+        0.16,
+        0.16,
+        0.16,
+        0.16,
+        0.16,
+        0.16,
+        1
+      ]
+    },
+    {
+      "theme": "light",
+      "index": 0,
+      "visible": [
+        1,
+        0.28,
+        0.28,
+        0.28,
+        0.28,
+        0.28,
+        0.28
+      ]
+    },
+    {
+      "theme": "light",
+      "index": 1,
+      "visible": [
+        0.28,
+        1,
+        0.28,
+        0.28,
+        0.28,
+        0.28,
+        0.28
+      ]
+    },
+    {
+      "theme": "light",
+      "index": 2,
+      "visible": [
+        0.28,
+        0.28,
+        1,
+        0.28,
+        0.28,
+        0.28,
+        0.28
+      ]
+    },
+    {
+      "theme": "light",
+      "index": 3,
+      "visible": [
+        0.28,
+        0.28,
+        0.28,
+        1,
+        0.28,
+        0.28,
+        0.28
+      ]
+    },
+    {
+      "theme": "light",
+      "index": 4,
+      "visible": [
+        0.28,
+        0.28,
+        0.28,
+        0.28,
+        1,
+        0.28,
+        0.28
+      ]
+    },
+    {
+      "theme": "light",
+      "index": 5,
+      "visible": [
+        0.28,
+        0.28,
+        0.28,
+        0.28,
+        0.28,
+        1,
+        0.28
+      ]
+    },
+    {
+      "theme": "light",
+      "index": 6,
+      "visible": [
+        0.28,
+        0.28,
+        0.28,
+        0.28,
+        0.28,
+        0.28,
+        1
+      ]
+    }
+  ],
+  "screenshotComparison": [
+    {
+      "file": "desktop-empty-home.png",
+      "identical": false
+    },
+    {
+      "file": "desktop-empty-dex.png",
+      "identical": true
+    },
+    {
+      "file": "desktop-empty-progress.png",
+      "identical": true
+    },
+    {
+      "file": "desktop-empty-search.png",
+      "identical": true
+    },
+    {
+      "file": "desktop-seeded-home.png",
+      "identical": true
+    },
+    {
+      "file": "desktop-seeded-dex.png",
+      "identical": true
+    },
+    {
+      "file": "desktop-seeded-progress.png",
+      "identical": true
+    },
+    {
+      "file": "desktop-seeded-search.png",
+      "identical": true
+    },
+    {
+      "file": "phone-empty-home.png",
+      "identical": false
+    },
+    {
+      "file": "phone-empty-dex.png",
+      "identical": true
+    },
+    {
+      "file": "phone-empty-progress.png",
+      "identical": true
+    },
+    {
+      "file": "phone-empty-search.png",
+      "identical": true
+    },
+    {
+      "file": "phone-seeded-home.png",
+      "identical": true
+    },
+    {
+      "file": "phone-seeded-dex.png",
+      "identical": true
+    },
+    {
+      "file": "phone-seeded-progress.png",
+      "identical": true
+    },
+    {
+      "file": "phone-seeded-search.png",
+      "identical": true
+    }
+  ],
+  "demoRestoreRejectsExistingCollection": true
+}

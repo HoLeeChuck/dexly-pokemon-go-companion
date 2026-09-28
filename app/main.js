@@ -29,7 +29,13 @@ import { reviewedAt as gendersReviewedAt } from '../catalog/genders.v1.json';
 import { missingSearch } from './search';
 import { recommendations, discordMessages, DISCORD_CATEGORIES } from './recommendations.js';
 import { medalShelf, nearlyComplete, evolutionHint, recap } from './insights.js';
-import { categoryTotals, regionHeat, dailyActivity, activeStreak } from './dashboard.js';
+import {
+  categoryTotals,
+  regionHeat,
+  dailyActivity,
+  activeStreak,
+  showFirstRunHome,
+} from './dashboard.js';
 import { readWorkbook, readText, collectionWorkbook } from './sheet.js';
 import { SHARE_CATEGORIES, shareLink, parseShare, compare, helpSearch } from './share.js';
 import { drawCollectionPoster, drawRecapCard, shareCanvas } from './poster.js';
@@ -388,18 +394,18 @@ function regionTally(region) {
   );
   return { total: list.length, count: list.filter((p) => isOwned(p)).length };
 }
-function deviceCard(d) {
+function deviceCard(d, preview = false) {
   const { total, count } = regionTally(d.region);
   const pct = total ? Math.round((count / total) * 100) : 0;
   const numbers = species
     .filter((p) => d.region === 'All regions' || p.region === d.region)
     .map((p) => p.n);
   const faces = d.showcase.map((n) => species.find((p) => p.n === n)).filter(Boolean);
-  return `<a class="device-card ${d.slug === 'national' ? 'master' : ''}" data-key="dev-${d.slug}" href="#dex?r=${d.slug}" data-style="--hue:${d.hue};--pct:${pct}" aria-label="Open the ${d.name} Pokédex: ${count} of ${total} ${label()} registered"><span class="device-lens" aria-hidden="true" ${d.region === state.region ? 'data-style="view-transition-name:dex-lens"' : ''}><span></span></span><span class="device-leds" aria-hidden="true"><i></i><i></i><i></i></span><span class="device-meta"><small>${d.gen} · ${dex(Math.min(...numbers))}–${dex(Math.max(...numbers))}</small><strong>${d.name}</strong></span><span class="device-faces" aria-hidden="true">${faces.map((p) => `<img src="${escape(p.art)}" alt="" width="72" height="72" loading="lazy" class="${isOwned(p) ? '' : 'unseen'}">`).join('')}</span><span class="device-meter" aria-hidden="true"><span class="device-ring"><b>${pct}%</b></span><span>${count} / ${total}</span></span></a>`;
+  return `<a class="device-card ${d.slug === 'national' ? 'master' : ''}" data-key="dev-${d.slug}" href="#dex?r=${d.slug}" data-style="--hue:${d.hue};--pct:${pct}" aria-label="Open the ${d.name} Pokédex${preview ? '' : `: ${count} of ${total} ${label()} registered`}"><span class="device-lens" aria-hidden="true" ${d.region === state.region ? 'data-style="view-transition-name:dex-lens"' : ''}><span></span></span><span class="device-leds" aria-hidden="true"><i></i><i></i><i></i></span><span class="device-meta"><small>${d.gen} · ${dex(Math.min(...numbers))}–${dex(Math.max(...numbers))}</small><strong>${d.name}</strong></span><span class="device-faces" aria-hidden="true">${faces.map((p) => `<img src="${escape(p.art)}" alt="" width="72" height="72" loading="lazy" class="${isOwned(p) ? '' : 'unseen'}">`).join('')}</span>${preview ? '' : `<span class="device-meter" aria-hidden="true"><span class="device-ring"><b>${pct}%</b></span><span>${count} / ${total}</span></span>`}</a>`;
 }
 function shelf() {
   const [national, ...regions] = DEVICES;
-  return `<section class="shelf" aria-labelledby="shelf-title"><div class="shelf-head"><div><div class="eyebrow">POKÉDEX ATLAS</div><h2 id="shelf-title">Choose a Pokédex</h2><p>Every region on one shelf. Open a device to scan its Pokémon one by one, or switch to the grid to mark them fast.</p></div><div class="collection-controls">${lenses()}</div></div>${deviceCard(national)}<div class="shelf-grid">${regions.map(deviceCard).join('')}</div></section>`;
+  return `<section class="shelf" aria-labelledby="shelf-title"><div class="shelf-head"><div><div class="eyebrow">POKÉDEX ATLAS</div><h2 id="shelf-title">Choose a Pokédex</h2><p>Every region on one shelf. Open a device to scan its Pokémon one by one, or switch to the grid to mark them fast.</p></div><div class="collection-controls">${lenses()}</div></div>${deviceCard(national)}<div class="shelf-grid">${regions.map((d) => deviceCard(d)).join('')}</div></section>`;
 }
 function deviceView() {
   const d = deviceFor(state.region);
@@ -698,14 +704,62 @@ function sheetSearch(categoryId) {
   });
   return { value, missing };
 }
+function firstRunHome() {
+  // Seven local portraits spanning Kanto to Paldea, including Pikachu.
+  const parade = [1, 155, 258, 387, 722, 906, 25]
+    .map((n) => species.find((p) => p.n === n))
+    .map(
+      (p, i) =>
+        `<img src="${escape(p.art)}" alt="" width="112" height="112" data-style="--delay:${(i * 1.2).toFixed(1)}s">`,
+    )
+    .join('');
+  // Same compass, filter and clipboard paths as the existing Icon set; no React runtime.
+  const steps = [
+    [
+      'Pick a region',
+      'Open a Pokédex and tap to mark.',
+      '<circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2.1 4.9-4.9 2.1 2.1-4.9 4.9-2.1Z"/>',
+    ],
+    [
+      'Choose a category',
+      'Normal, Shiny, Lucky, XXL, XXS, Shadow, Purified…',
+      '<path d="M4 5h16M7 12h10M10 19h4"/>',
+    ],
+    [
+      'Copy a search',
+      'Paste it into Pokémon GO to find what you need.',
+      '<rect width="14" height="16" x="5" y="4" rx="2"/><path d="M9 4.5V3h6v1.5M9 9h6M9 13h6"/>',
+    ],
+  ];
+  return `<div class="first-run" data-key="first-run">
+    <section class="dash-card first-run-hero" aria-labelledby="first-run-title">
+      <div><p class="hero-eyebrow">Pokémon GO collection companion</p>
+        <h1 id="first-run-title">Track every catch. <strong>Build the perfect search.</strong></h1>
+        <p class="first-run-intro">Mark what you own across Normal, Shiny, Lucky, XXL and more. CatchGrid turns it into progress, medals and ready-to-paste Pokémon GO search strings. Everything stays in this browser. No account needed.</p>
+        <div class="first-run-actions"><a class="primary" href="#dex">Start with your Pokédex</a><a class="secondary" href="#settings?section=import">Import a backup</a><a class="first-run-search" href="#search">Try the Search Lab</a></div>
+      </div><div class="first-run-parade" aria-hidden="true">${parade}</div>
+    </section>
+    <section class="first-run-steps" aria-labelledby="first-run-steps-title"><h2 id="first-run-steps-title">How it works</h2><ol>${steps.map(([title, sentence, icon], i) => `<li class="dash-card"><div class="first-run-step-top"><span aria-hidden="true">${i + 1}</span><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${icon}</svg></div><h3>${title}</h3><p>${sentence}</p></li>`).join('')}</ol></section>
+    <section class="first-run-regions" aria-labelledby="first-run-regions-title"><h2 id="first-run-regions-title">Find your first region</h2><div class="shelf-grid">${DEVICES.slice(
+      1,
+      6,
+    )
+      .map((d) => deviceCard(d, true))
+      .join(
+        '',
+      )}<a class="dash-card first-run-all" href="#dex"><strong>See every region <span aria-hidden="true">→</span></strong><span>Explore the full Pokédex shelf.</span></a></div></section>
+    <p class="annotation">Your collection is stored only in this browser. Export a backup any time from Settings.</p>
+  </div>`;
+}
 function home() {
+  const days = dailyActivity(entries(), 30);
+  if (showFirstRunHome(owned.size, days, Boolean(storageError))) return firstRunHome();
   const totals = categoryTotals(species, owned, categories);
   const have = totals.reduce((sum, t) => sum + t.count, 0);
   const all = totals.reduce((sum, t) => sum + t.eligible, 0);
   const normal = totals[0];
   const pct = all ? Math.floor((have / all) * 1000) / 10 : 0;
   const mastered = species.filter((p) => p.rules.normal === 'released' && complete(p)).length;
-  const days = dailyActivity(entries(), 30);
   const week = days.slice(-7).reduce((sum, d) => sum + d.count, 0);
   const streak = activeStreak(days);
   return `<div class="dash"><div class="dash-top"><p class="hero-eyebrow">${trainer() ? `Trainer ${escape(trainer())}` : 'Your collection'}</p><div class="hero-actions"><button class="secondary" data-compose>Build a search</button><a class="primary" href="#progress">Update collection</a></div></div><div class="kpi-row" aria-label="Collection summary">${kpi('overall', 'Overall', `${pct}%`, `${have.toLocaleString()} of ${all.toLocaleString()} entries`, `<i class="kpi-bar" data-style="--p:${pct}%" aria-hidden="true"></i>`)}${kpi('species', 'Species', normal.count.toLocaleString(), `of ${normal.eligible.toLocaleString()} registered`)}${kpi('complete', 'Complete', mastered.toLocaleString(), 'every category done')}${kpi('week', 'This week', week.toLocaleString(), `${days.at(-1).count} today`)}${kpi('streak', 'Streak', `${streak} ${streak === 1 ? 'day' : 'days'}`, streak ? 'Keep it going' : 'Mark one today')}</div><section class="dash-card ring-card" aria-labelledby="ring-title"><div class="card-head"><h2 id="ring-title">Categories</h2><small>National Dex species · select one to work on it</small></div>${activityRings(totals, pct)}</section><div class="bento">${heatCard()}${activityCard(days)}${nearlySection() || '<section class="nearly"><div class="section-title"><h2>Almost complete</h2></div><p class="annotation">Pokémon one or two categories from complete show up here.</p></section>'}${medals()}${toolsCard()}</div></div>`;
@@ -765,6 +819,9 @@ function settings() {
 }
 function render() {
   entriesCache = null;
+  const firstRun =
+    state.route === 'home' &&
+    showFirstRunHome(owned.size, dailyActivity(entries(), 30), Boolean(storageError));
   main.dataset.route = state.route;
   document.querySelectorAll('nav a').forEach((a) => {
     if (a.hash === '#' + state.route) a.setAttribute('aria-current', 'page');
@@ -772,7 +829,9 @@ function render() {
   });
   updateMarkup(
     main,
-    `<h1 class="sr-only">${{ home: 'Home', dex: 'Pokédex', progress: 'Progress', search: 'Search Lab', settings: 'Settings', compare: 'Compare collections', about: 'Sources and credits' }[state.route]}</h1>` +
+    (firstRun
+      ? ''
+      : `<h1 class="sr-only">${{ home: 'Home', dex: 'Pokédex', progress: 'Progress', search: 'Search Lab', settings: 'Settings', compare: 'Compare collections', about: 'Sources and credits' }[state.route]}</h1>`) +
       (storageError
         ? `<p role="alert">${escape(storageError)} Collection editing is unavailable.</p>`
         : '') +
@@ -1426,7 +1485,14 @@ window.addEventListener('hashchange', () => {
     const device = state.route === 'dex' && main.querySelector('.device');
     if (device) device.scrollIntoView({ block: 'start', behavior: 'instant' });
     else scrollTo({ top: 0, behavior: 'instant' });
-    main.focus({ preventScroll: true });
+    const importing =
+      state.route === 'settings' &&
+      new URLSearchParams(location.hash.split('?')[1] || '').get('section') === 'import';
+    if (importing) {
+      const input = main.querySelector('#import-file');
+      input.scrollIntoView({ block: 'center', behavior: 'instant' });
+      input.focus({ preventScroll: true });
+    } else main.focus({ preventScroll: true });
   };
   // Opening or closing a Pokédex device morphs between the shelf and the device.
   if (
@@ -1628,4 +1694,15 @@ document.querySelector('[data-dismiss-update]').addEventListener('click', () => 
   document.querySelector('#app-update').hidden = true;
 });
 
+// Explicit test hook, tree-shaken from production; never seeds on page load.
+if (import.meta.env.DEV) {
+  window.__catchgridDevSeed = async () => {
+    if (storageError || owned.size || recoverySnapshots().length)
+      throw new Error('Use a fresh, disposable browser context for the demo fixture.');
+    const { default: fixture } = await import('../docs/fixtures/demo-collection.json');
+    owned = commitImport(reviewImport(JSON.stringify(fixture), 'json'));
+    render();
+    return { count: owned.size };
+  };
+}
 render();

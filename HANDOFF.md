@@ -1,8 +1,29 @@
 # CatchGrid handoff
 
+## September 27, 2026 — CODEX-PLAN Phase 1 (local, uncommitted)
+
+Implemented **Phase 1 only**: empty Home now introduces CatchGrid with the requested hero and three entry points, seven local portraits revealing at 1.2-second intervals (static full colour with reduced motion), three how-to cards, five reusable region devices, and the privacy note. The seven portraits are Bulbasaur, Cyndaquil, Mudkip, Turtwig, Rowlet, Sprigatito and Pikachu, spanning Kanto–Paldea. The existing Icon paths are rendered as plain SVG without importing React.
+
+- The branch checks **all owned keys**, including forms, and activity; unreadable storage cannot masquerade as a new collection. Returning-user dashboard markup is unchanged. Home previews omit the device progress meters; the Dex retains them.
+- Import a backup opens Settings and focuses its existing file input. Review, explicit apply, snapshots, revision checks and durable writes remain in the existing import path.
+- Added `docs/fixtures/demo-collection.json`: 180 Normal, 40 Shiny and 12 Lucky entries across Kanto–Sinnoh, dated on nine days in the 30-day window ending September 27. `window.__catchgridDevSeed` is an explicit development-only hook through `reviewImport` / `commitImport`, refuses an existing collection or recovery history, and is absent from production output. It never runs automatically.
+- `scripts/shots.mjs` uses the repository's installed Playwright and system Chrome, disposable browser contexts, loopback only, real import/restore and a fixed fixture clock. Instructions and evidence: [docs/shots/README.md](docs/shots/README.md). Before: `docs/shots/phase1-before/`; after: `docs/shots/phase1-after/`.
+- **Validation:** `pnpm.cmd test` passed (239 unit, 40 Worker); `pnpm.cmd lint` passed; `pnpm.cmd run build:artifact` passed (TypeScript, client and Worker builds, bundle report). Focused Prettier and `git diff --check` passed. Chromium desktop/mobile: 66 passed and 2 existing mobile skips in the full run; both poster checks initially waited for a download because system Chrome offered its OS share sheet. After explicitly selecting the download fallback in that test, the 2 targeted reruns passed: **68 applicable browser checks passed**. New coverage includes the branch, reviewed fixture restore, keyboard order, both reduced-motion themes, and the first-catch / last-removal transitions. Existing detail-view, import, clipboard, overflow and axe checks passed.
+- **Visual and production-preview evidence:** Home has no `0%` in both empty screenshots; 14 other before/after PNGs (including seeded Home at both sizes) are byte-identical. Empty phone Home is 2,487px tall, down from 3,426px. Dark/light desktop and phone inspected; no page overflow or broken artwork in the 16-view harness. Local production preview at `127.0.0.1:5185` verified real CSP with zero violations, no page errors, working hero links, no dev hook, and one-at-a-time animation in both themes. Dev preview is `http://127.0.0.1:5184/` (frontend-only Vite configuration).
+- **Boundaries:** no commit, staging, push, migration or deployment. Existing `HANDOFF.md` edits and `CODEX-PLAN.md` preserved. Phases 2–4 remain unimplemented. No Safari or physical-device verification in this phase; the pre-existing catalog bundle-size advisory remains.
+
 ## Live
 
-Production at https://dex.cjdev.app/ is version `9b19b937-8ff5-4a67-8c7f-ca13d5e4dfaa` (Prism Atlas design, September 24, 2026; rollback `6febf11c-af7e-41d4-bfc1-aa54a75fb20f`). Record: [docs/releases/2026-09-24-atlas/RELEASE.md](docs/releases/2026-09-24-atlas/RELEASE.md). The work below is local on branch `prism-forward` and **not deployed**.
+Production at https://dex.cjdev.app/ is Worker version `257fbfc0-bcc2-4b45-8125-3f079ebf475b`, Git `a8d0f72` on `main` (data dashboard release, deployed September 26, 2026 20:58 UTC). Rollback target: the previous Prism Atlas version `9b19b937-8ff5-4a67-8c7f-ca13d5e4dfaa` (no migrations were applied, so it stays compatible). D1 Time Travel bookmark taken before the release: `000000c4-00000000-000050f2-fd5292c180b890daa8b51deabf366e32`. Earlier record: [docs/releases/2026-09-24-atlas/RELEASE.md](docs/releases/2026-09-24-atlas/RELEASE.md). Everything described below is now deployed.
+
+### September 26, 2026 release (evidence)
+
+- Committed as `a8d0f72` on `prism-forward` (635 files), fast-forwarded `main`, pushed both.
+- `release:preflight`: unit 235/235, Worker 40/40, catalog verify, build all passed; browser tests 103 passed, **1 failed**: desktop WebKit “no horizontal overflow”. Diagnosed as the Windows build of Playwright WebKit crashing its page process (`crash` event) after a long sequence of pages ending on Settings (~50% of runs); every shorter sequence passed. GitHub CI’s `browser-webkit` job (Linux) passed on the same commit, as did `browser-chromium`. Not an app fault, but real Safari has still not been checked.
+- GitHub CI `quality` job failed only at `pnpm audit --audit-level high`: `sharp` <0.35.4 (libheif advisories), reached through Miniflare/Wrangler dev tooling, not shipped in the Worker or site. Needs a dependency update in a separate change.
+- Release artifact rebuilt from the clean tree; `wrangler deploy --dry-run --strict` passed; bookmark captured; `release:migrate:production`: no migrations to apply; `release:deploy:production` → `257fbfc0-…`.
+- `release:smoke:production`: 11/11 checks ok (gitSha `a8d0f722…`, catalog `2026-08-24.1`, 1,269 entries, private bootstrap 401). Live `/artwork/pokemon-home/HOME0658M.png` 200. In the browser: new Progress grid live, 0 CSP violations and no console errors across Home, Progress, Dex, Settings, About.
+- Not done: a written release record under `docs/releases/`, real Safari/physical devices.
 
 ## September 25, 2026 — new features and cleanup (local)
 
@@ -108,16 +129,15 @@ pnpm exec playwright test --project=pwa-chromium
 
 ## Git state
 
-- Branch `prism-forward`. Commit `2b11471` is the pre-work checkpoint; **all September 25 changes are uncommitted** in the working tree. `main` (`f9905ee`, August 27) does **not** match live: the September 24 Prism Atlas source exists only in local, unpushed commit `2b11471`. Push `prism-forward` and merge to `main` to make Git match production.
+- `main` and `prism-forward` are both at `a8d0f72` and pushed; `main` matches production. (Only this HANDOFF update is uncommitted.)
 - Commits from the September 25 session came from a Linux shell that could not delete git temp files. If git reports a stale `index.lock` or `HEAD.lock`, confirm no git process is running, then delete the lock file.
 
 ## Next steps, in order
 
 1. ~~Toolchain~~ and ~~full checks~~: done on Windows, all passing (see above). Optional: `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` so plain `pnpm` works in PowerShell.
 2. **Visual pass by the user** (functional review done, see above) at `http://127.0.0.1:5191/`: Home recap, Dex silhouettes, Progress (depth view, paint mode, medals, poster, compare link), Search Lab tabs, Settings (accents, snapshots, bulk setup), `/` quick jump, and `/cody` still loading.
-3. **Commit** the September 25 work on `prism-forward` once the user approves, then ask about merging to `main`.
-4. **Deploy** only with explicit approval, following `docs/DEPLOYMENT.md`, and write a new release record under `docs/releases/`.
-5. Delete `_legacy-backup/` when the user confirms nothing is needed from it.
+3. ~~Commit, merge, deploy~~: done September 26 (see Live). Still to do: a release record under `docs/releases/`, and fixing the `sharp` audit failure in CI.
+4. Delete `_legacy-backup/` when the user confirms nothing is needed from it.
 
 ## Open items
 

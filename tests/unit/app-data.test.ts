@@ -9,6 +9,9 @@ import {
   commitImport,
 } from '../../app/data.js';
 import { LOCAL_PROFILE_STORAGE_KEY, loadLocalProfileResult } from '../../src/lib/localProfile';
+import demoCollection from '../../docs/fixtures/demo-collection.json';
+import { catalog } from '../../app/catalog.js';
+import { dailyActivity } from '../../app/dashboard.js';
 class MemoryStorage {
   values = new Map<string, string>();
   get length() {
@@ -34,6 +37,24 @@ beforeEach(() => {
 });
 afterEach(() => vi.unstubAllGlobals());
 describe('Prism collection integration', () => {
+  it('reviews and restores the demo fixture through the production backup contract', () => {
+    const review = reviewImport(JSON.stringify(demoCollection), 'json');
+    expect(review.count).toBe(232);
+    expect(collectionKeys().size).toBe(0);
+    expect(commitImport(review).size).toBe(232);
+    const entries = loadLocalProfileResult(storage).profile.collectionEntries;
+    expect(entries.filter((e) => e.categoryId === 'normal')).toHaveLength(180);
+    expect(entries.filter((e) => e.categoryId === 'shiny')).toHaveLength(40);
+    expect(entries.filter((e) => e.categoryId === 'lucky')).toHaveLength(12);
+    for (const e of entries) {
+      const item = catalog.find((p) => p.id === e.formId)!;
+      expect(item.rules[e.categoryId]).toBe('released');
+      expect(['Kanto', 'Johto', 'Hoenn', 'Sinnoh']).toContain(item.region);
+    }
+    expect(
+      dailyActivity(entries, 30, new Date(demoCollection.createdAt)).filter((d) => d.count > 0),
+    ).toHaveLength(9);
+  });
   it('starts empty and persists separate species and Mega form entries', () => {
     expect(collectionKeys().size).toBe(0);
     toggleCollection('form-0006-standard', 'normal');

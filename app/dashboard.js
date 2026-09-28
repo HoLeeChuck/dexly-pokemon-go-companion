@@ -1,5 +1,10 @@
 // Read-only numbers for the Home dashboard and the Progress grid. Nothing here writes data.
 
+/** Use all owned keys (including forms), not just eligible National Dex totals. */
+export function showFirstRunHome(ownedCount, activity, storageUnavailable = false) {
+  return !storageUnavailable && ownedCount === 0 && !activity.some((day) => day.count > 0);
+}
+
 /** Registered and eligible counts for each category across the given Pokémon. */
 export function categoryTotals(items, owned, categories) {
   return categories.map(([id, name]) => {

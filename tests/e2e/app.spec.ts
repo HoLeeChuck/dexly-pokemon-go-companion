@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import demoCollection from '../../docs/fixtures/demo-collection.json' with { type: 'json' };
 
 // Every test starts from an empty, isolated browser profile.
 const isMobile = (page: Page) => (page.viewportSize()?.width ?? 1440) <= 800;
@@ -7,6 +8,107 @@ async function open(page: Page, hash: string) {
   await page.goto(`/#${hash}`);
   await expect(page.locator('main')).not.toBeEmpty();
 }
+
+async function markFirstCatch(page: Page) {
+  await open(page, 'dex?r=kanto');
+  await page.getByRole('button', { name: 'Toggle Normal: missing', exact: true }).click();
+}
+
+test('first-run Home introduces the app without empty progress and has a logical tab order', async ({
+  page,
+}) => {
+  await open(page, 'home');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+    'Track every catch. Build the perfect search.',
+  );
+  await expect(page.locator('main')).not.toContainText('0%');
+  await expect(page.locator('.kpi-row')).toHaveCount(0);
+  await expect(page.locator('.first-run-parade img')).toHaveCount(7);
+  await expect(page.locator('.first-run-regions .device-card')).toHaveCount(5);
+  await page.locator('main').focus();
+  for (const name of [
+    'Start with your Pokédex',
+    'Import a backup',
+    'Try the Search Lab',
+    'Open the Kanto Pokédex',
+    'Open the Johto Pokédex',
+    'Open the Hoenn Pokédex',
+    'Open the Sinnoh Pokédex',
+    'Open the Unova Pokédex',
+    'See every region',
+  ]) {
+    await page.keyboard.press('Tab');
+    await expect(
+      page.getByRole('link', { name, exact: name !== 'See every region' }),
+    ).toBeFocused();
+  }
+  await page.getByRole('link', { name: 'Open the Johto Pokédex', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Johto Pokédex' })).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: 'Toggle Normal: missing', exact: true }),
+  ).toBeVisible();
+});
+
+test('first-run backup action focuses the existing reviewed import and restores the dashboard', async ({
+  page,
+}) => {
+  await open(page, 'home');
+  await page.getByRole('link', { name: 'Import a backup', exact: true }).click();
+  const input = page.locator('#import-file');
+  await expect(input).toBeFocused();
+  await input.setInputFiles({
+    name: 'demo-collection.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify(demoCollection)),
+  });
+  await expect(page.locator('#import-review')).toContainText('232 collected entries');
+  await open(page, 'home');
+  await expect(page.locator('.first-run')).toBeVisible();
+  await open(page, 'settings');
+  await input.setInputFiles({
+    name: 'demo-collection.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify(demoCollection)),
+  });
+  await page.getByRole('button', { name: 'Apply reviewed import' }).click();
+  await open(page, 'home');
+  await expect(page.locator('.first-run')).toHaveCount(0);
+  await expect(page.locator('[data-key="kpi-species"] .kpi-value')).toHaveText('180');
+  await expect(page.locator('.ring-legend-item.cat-shiny small')).toHaveText(/^40 \/ /);
+  await expect(page.locator('.ring-legend-item.cat-lucky small')).toHaveText(/^12 \/ /);
+  await page.reload();
+  await expect(page.locator('[data-key="kpi-species"] .kpi-value')).toHaveText('180');
+  expect(await page.evaluate(() => '__catchgridDevSeed' in window)).toBe(false);
+});
+
+test('first-run parade is static and full colour with reduced motion in both themes', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await open(page, 'home');
+  for (const theme of ['dark', 'light']) {
+    if (theme === 'light')
+      await page.getByRole('button', { name: 'Switch to light appearance' }).click();
+    for (const img of await page.locator('.first-run-parade img').all()) {
+      await expect(img).toHaveCSS('animation-name', 'none');
+      await expect(img).toHaveCSS('filter', 'none');
+      await expect(img).toHaveCSS('opacity', '1');
+    }
+  }
+});
+
+test('the first marked catch switches Home to the dashboard and removing it restores onboarding', async ({
+  page,
+}) => {
+  await markFirstCatch(page);
+  await open(page, 'home');
+  await expect(page.locator('.kpi-row')).toBeVisible();
+  await expect(page.locator('.first-run')).toHaveCount(0);
+  await open(page, 'dex?r=kanto');
+  await page.getByRole('button', { name: 'Toggle Normal: collected', exact: true }).click();
+  await open(page, 'home');
+  await expect(page.locator('.first-run')).toBeVisible();
+});
 
 test('marks a Pokémon from the Dex grid and keeps it after reload', async ({ page }) => {
   await open(page, 'dex?r=kanto');
@@ -234,6 +336,11 @@ test('the collection downloads as the community spreadsheet', async ({ page }) =
 
 test('medals, poster and compare link are available on Home', async ({ page, context }) => {
   await context.grantPermissions(['clipboard-read', 'clipboard-write']).catch(() => {});
+  // This test verifies PNG download; system Chrome can offer an OS share sheet instead.
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, 'canShare', { value: () => false, configurable: true });
+  });
+  await markFirstCatch(page);
   await open(page, 'home');
   await expect(page.locator('.medal')).toHaveCount(10);
   const download = page.waitForEvent('download');
@@ -256,6 +363,7 @@ test('a compare link is shown for manual copy when the clipboard is unavailable'
   await page.addInitScript(() => {
     navigator.clipboard.writeText = () => Promise.reject(new Error('blocked'));
   });
+  await markFirstCatch(page);
   await open(page, 'home');
   await page.getByRole('button', { name: 'Copy compare link' }).click();
   const field = page.getByRole('textbox', { name: 'Text to copy' });

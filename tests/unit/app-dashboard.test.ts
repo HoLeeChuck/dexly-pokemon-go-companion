@@ -1,12 +1,36 @@
 import { describe, expect, it } from 'vitest';
 import { catalog } from '../../app/catalog.js';
-import { categoryTotals, regionHeat, dailyActivity, activeStreak } from '../../app/dashboard.js';
+import {
+  categoryTotals,
+  regionHeat,
+  dailyActivity,
+  activeStreak,
+  showFirstRunHome,
+} from '../../app/dashboard.js';
 
 const species = catalog.filter((p) => p.isDefault);
 const categories = [
   ['normal', 'Normal'],
   ['shiny', 'Shiny'],
 ];
+
+describe('first-run Home eligibility', () => {
+  it('shows onboarding only for an empty collection with no activity', () => {
+    expect(showFirstRunHome(0, [])).toBe(true);
+    expect(showFirstRunHome(0, [{ count: 0 }, { count: 0 }])).toBe(true);
+    expect(showFirstRunHome(0, [{ count: 1 }, { count: 0 }])).toBe(false);
+  });
+
+  it('keeps returning users on their dashboard, even with only forms or undated entries', () => {
+    expect(showFirstRunHome(new Set(['form-0006-mega-x:shiny']).size, [])).toBe(false);
+    expect(showFirstRunHome(1, [{ count: 0 }])).toBe(false);
+    expect(showFirstRunHome(232, [{ count: 26 }])).toBe(false);
+  });
+
+  it('does not mistake unreadable storage for a new collection', () => {
+    expect(showFirstRunHome(0, [], true)).toBe(false);
+  });
+});
 
 describe('categoryTotals', () => {
   it('counts only eligible entries, per category', () => {
