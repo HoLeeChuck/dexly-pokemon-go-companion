@@ -1,0 +1,110 @@
+.data-notice {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 16px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+  font-size: 13px;
+  line-height: 1.4;
+}
+.data-notice p {
+  margin: 0;
+}
+.data-notice-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 16px;
+}
+.data-notice-actions > * {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--violet);
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.notice-dismiss {
+  flex: 0 0 44px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  font-size: 22px;
+}
+.backup-notice {
+  position: relative;
+  display: block;
+}
+.backup-notice p {
+  padding-right: 48px;
+  min-height: 36px;
+}
+.backup-notice .notice-dismiss {
+  position: absolute;
+  right: 8px;
+  top: 4px;
+}
+.install-hint {
+  align-items: center;
+  color: var(--muted);
+}
+.storage-protection {
+  font-weight: 600;
+}
+.install-instructions summary {
+  cursor: pointer;
+  min-height: 44px;
+  align-content: center;
+}
+@media (max-width: 600px) {
+  /* Leave room for safety guidance within the existing Home height budget. */
+  .first-run {
+    gap: 16px;
+  }
+  .first-run-hero {
+    gap: 16px;
+    padding: 20px;
+  }
+  .first-run-parade {
+    max-width: 260px;
+  }
+  .first-run:has(.backup-notice) .device-card {
+    padding-block: 10px;
+  }
+  .first-run-steps li {
+    display: grid;
+    grid-template-columns: 32px minmax(0, 1fr);
+    gap: 4px 12px;
+    padding: 16px;
+  }
+  .first-run-step-top {
+    grid-row: span 2;
+    align-self: start;
+  }
+  .first-run-step-top svg {
+    display: none;
+  }
+  .first-run-steps h3 {
+    margin: 0;
+    font-size: 17px;
+  }
+  .first-run-steps p {
+    grid-column: 2;
+    line-height: 1.4;
+  }
+  .dash:has(.backup-notice) .dash-card,
+  .dash:has(.backup-notice) .nearly,
+  .dash:has(.backup-notice) .medal-shelf {
+    padding-block: 6px;
+  }
+  .dash:has(.backup-notice) .kpi {
+    padding-block: 8px;
+  }
+}

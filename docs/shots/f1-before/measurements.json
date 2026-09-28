@@ -1,0 +1,50 @@
+[
+  {
+    "file": "desktop-new-home.png",
+    "width": 1440,
+    "height": 1421,
+    "contentHeight": 1421
+  },
+  {
+    "file": "desktop-returning-home.png",
+    "width": 1440,
+    "height": 1876,
+    "contentHeight": 1876
+  },
+  {
+    "file": "desktop-banner-home.png",
+    "width": 1440,
+    "height": 1876,
+    "contentHeight": 1876
+  },
+  {
+    "file": "desktop-banner-settings.png",
+    "width": 1440,
+    "height": 2398,
+    "contentHeight": 2383
+  },
+  {
+    "file": "phone-new-home.png",
+    "width": 390,
+    "height": 2564,
+    "contentHeight": 2487
+  },
+  {
+    "file": "phone-returning-home.png",
+    "width": 390,
+    "height": 2438,
+    "contentHeight": 2361
+  },
+  {
+    "file": "phone-banner-home.png",
+    "width": 390,
+    "height": 2438,
+    "contentHeight": 2361
+  },
+  {
+    "file": "phone-banner-settings.png",
+    "width": 390,
+    "height": 3969,
+    "contentHeight": 3892
+  }
+]

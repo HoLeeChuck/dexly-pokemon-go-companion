@@ -1,5 +1,6 @@
 import { revealArtwork } from './motion.js';
 import { updateMarkup } from './dom.js';
+import { createDataSafety, isIosSafari, isStandalone } from './data-safety.js';
 import { catalog, catalogDate, catalogSources, ledgerDate } from './catalog.js';
 import {
   DEVICES,
@@ -108,6 +109,34 @@ function setPref(key, value) {
   } catch {
     /* Preferences still apply for this visit. */
   }
+}
+
+const standaloneMedia = matchMedia('(display-mode: standalone)');
+const standalone = () => isStandalone(navigator, standaloneMedia.matches);
+const dataSafety = createDataSafety({
+  read: (key) => pref(key, null),
+  write: setPref,
+  storageManager: navigator.storage,
+  onChange: () => {
+    if (state.route === 'settings') render();
+  },
+});
+let backupReminder = false;
+standaloneMedia.addEventListener('change', () => render());
+
+function backupNotice() {
+  if (!backupReminder || storageError) return '';
+  return `<aside class="data-notice backup-notice" aria-label="Collection backup reminder" data-key="backup-notice"><div><p>Your collection lives only in this browser.</p><div class="data-notice-actions"><button data-export="json">Download a backup</button>${standalone() ? '' : '<a href="#settings?section=storage">Add to Home Screen (iPhone)</a>'}</div></div><button class="quiet notice-dismiss" data-dismiss-backup aria-label="Dismiss backup reminder">×</button></aside>`;
+}
+function installHint() {
+  if (!isIosSafari(navigator) || standalone() || dataSafety.installDismissed()) return '';
+  return '<aside class="data-notice install-hint" aria-label="iPhone install hint" data-key="install-hint"><p>On iPhone, Share › Add to Home Screen keeps your collection safe from Safari cleanup.</p><button class="quiet notice-dismiss" data-dismiss-install aria-label="Dismiss iPhone install hint">×</button></aside>';
+}
+
+function storageSafetyMarkup() {
+  const lastExport = dataSafety.lastExportAt();
+  const protection = dataSafety.protection();
+  return `<section id="storage-safety" tabindex="-1" aria-labelledby="storage-safety-title"><h2 id="storage-safety-title">Your collection on this browser</h2><p>Stored on this browser only. Phone and computer are separate. Move it with Download JSON → Import on the other device.</p><p class="storage-protection" role="status">Protected from automatic cleanup: ${protection === 'checking' ? 'checking…' : protection}</p><p class="annotation">Keep a downloaded backup too. Clearing browser data also removes recovery snapshots.</p><p class="annotation">${lastExport ? `Last export: ${new Date(lastExport).toLocaleString()}` : 'No export recorded on this browser yet.'}</p>${standalone() ? '<p class="annotation">Running from your Home Screen.</p>' : '<details class="install-instructions"><summary>Add to Home Screen (iPhone)</summary><p>In Safari, tap Share › Add to Home Screen, then open CatchGrid from its new icon. Keep “Open as Web App” enabled if shown.</p><p>Already have a collection here? Download JSON first, then import it in the Home Screen app. Safari and the installed app can use separate storage.</p></details>'}</section>`;
 }
 
 function routeFromHash() {
@@ -761,14 +790,14 @@ function firstRunHome() {
     ],
   ];
   return `<div class="first-run" data-key="first-run">
-    <section class="dash-card first-run-hero" aria-labelledby="first-run-title">
+    ${backupNotice()}<section class="dash-card first-run-hero" aria-labelledby="first-run-title">
       <div><p class="hero-eyebrow">Pokémon GO collection companion</p>
         <h1 id="first-run-title">Track every catch. <strong>Build the perfect search.</strong></h1>
         <p class="first-run-intro">Mark what you own across Normal, Shiny, Lucky, XXL and more. CatchGrid turns it into progress, medals and ready-to-paste Pokémon GO search strings. Everything stays in this browser. No account needed.</p>
         <div class="first-run-actions"><a class="primary" href="#dex">Start with your Pokédex</a><a class="secondary" href="#settings?section=import">Import a backup</a><a class="first-run-search" href="#search">Try the Search Lab</a></div>
       </div><div class="first-run-parade" aria-hidden="true">${parade}</div>
     </section>
-    <section class="first-run-steps" aria-labelledby="first-run-steps-title"><h2 id="first-run-steps-title">How it works</h2><ol>${steps.map(([title, sentence, icon], i) => `<li class="dash-card"><div class="first-run-step-top"><span aria-hidden="true">${i + 1}</span><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${icon}</svg></div><h3>${title}</h3><p>${sentence}</p></li>`).join('')}</ol></section>
+    ${installHint()}<section class="first-run-steps" aria-labelledby="first-run-steps-title"><h2 id="first-run-steps-title">How it works</h2><ol>${steps.map(([title, sentence, icon], i) => `<li class="dash-card"><div class="first-run-step-top"><span aria-hidden="true">${i + 1}</span><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${icon}</svg></div><h3>${title}</h3><p>${sentence}</p></li>`).join('')}</ol></section>
     <section class="first-run-regions" aria-labelledby="first-run-regions-title"><h2 id="first-run-regions-title">Find your first region</h2><div class="shelf-grid">${DEVICES.slice(
       1,
       6,
@@ -802,7 +831,7 @@ function home() {
         )
         .join('')}</span>`
     : '';
-  return `<div class="dash"><div class="dash-top"><p class="hero-eyebrow">${trainer() ? `Trainer ${escape(trainer())}` : 'Your collection'}</p><div class="hero-actions"><button class="secondary" data-compose>Build a search</button><a class="primary" href="#progress">Update collection</a></div></div><div class="kpi-row" aria-label="Collection summary">${kpi('overall', 'Overall', `${pct}%`, `${have.toLocaleString()} of ${all.toLocaleString()} entries`, `<i class="kpi-bar" data-style="--p:${pct}%" aria-hidden="true"></i>`)}${kpi('species', 'Species', normal.count.toLocaleString(), `of ${normal.eligible.toLocaleString()} registered`)}${kpi('complete', 'Complete', mastered.toLocaleString(), 'every category done')}${kpi('week', 'This week', week.toLocaleString(), `${days.at(-1).count} today`, recentSprites)}${kpi('streak', 'Streak', `${streak} ${streak === 1 ? 'day' : 'days'}`, streak ? 'Keep it going' : 'Mark one today')}</div><section class="dash-card ring-card" aria-labelledby="ring-title"><div class="card-head"><h2 id="ring-title">Categories</h2><small>National Dex species · select one to work on it</small></div>${activityRings(totals, pct)}</section><div class="bento">${heatCard()}${activityCard(days)}${nearlySection() || '<section class="nearly"><div class="section-title"><h2>Almost complete</h2></div><p class="annotation">Pokémon one or two categories from complete show up here.</p></section>'}${medals()}${toolsCard()}</div></div>`;
+  return `<div class="dash">${backupNotice()}<div class="dash-top"><p class="hero-eyebrow">${trainer() ? `Trainer ${escape(trainer())}` : 'Your collection'}</p><div class="hero-actions"><button class="secondary" data-compose>Build a search</button><a class="primary" href="#progress">Update collection</a></div></div><div class="kpi-row" aria-label="Collection summary">${kpi('overall', 'Overall', `${pct}%`, `${have.toLocaleString()} of ${all.toLocaleString()} entries`, `<i class="kpi-bar" data-style="--p:${pct}%" aria-hidden="true"></i>`)}${kpi('species', 'Species', normal.count.toLocaleString(), `of ${normal.eligible.toLocaleString()} registered`)}${kpi('complete', 'Complete', mastered.toLocaleString(), 'every category done')}${kpi('week', 'This week', week.toLocaleString(), `${days.at(-1).count} today`, recentSprites)}${kpi('streak', 'Streak', `${streak} ${streak === 1 ? 'day' : 'days'}`, streak ? 'Keep it going' : 'Mark one today')}</div><section class="dash-card ring-card" aria-labelledby="ring-title"><div class="card-head"><h2 id="ring-title">Categories</h2><small>National Dex species · select one to work on it</small></div>${activityRings(totals, pct)}</section><div class="bento">${heatCard()}${activityCard(days)}${nearlySection() || '<section class="nearly"><div class="section-title"><h2>Almost complete</h2></div><p class="annotation">Pokémon one or two categories from complete show up here.</p></section>'}${medals()}${toolsCard()}</div></div>`;
 }
 function compareView() {
   const share = parseShare(location.hash);
@@ -835,7 +864,7 @@ function settings() {
     species.filter((p) => p.region === region && p.rules.normal === 'released').length,
   ]);
   const review = snapshots.find((s) => s.id === state.reviewSnapshot);
-  return `<div class="settings-layout"><section><h2>Appearance</h2><p>Dark by default. Your choices are remembered on this browser.</p><button class="secondary" data-theme>Switch light / dark ◐</button><fieldset class="accent-picker"><legend>Accent color</legend>${ACCENTS.map(([id, name]) => `<button class="accent-swatch accent-${id}" data-accent="${id}" aria-pressed="${accent === id}"><span aria-hidden="true"></span>${name}</button>`).join('')}</fieldset><label class="evolve-option"><input type="checkbox" data-silhouettes ${pref('silhouettes', 'on') === 'on' ? 'checked' : ''}> Show missing Pokémon as silhouettes in the Dex</label></section><section><h2>Trainer name</h2><p>Optional. Signs your posters, recap cards and compare links. Stays on this browser.</p><label class="sr-only" for="trainer-name">Trainer name</label><input class="search-input" id="trainer-name" maxlength="24" value="${escape(trainer())}" placeholder="Your trainer name"></section><section><h2>Export collection</h2><p>The spreadsheet matches the community Pokédex list: one tab per region with gender, Shiny, 100%, Lucky, XXL, XXS, Shadow and Purified, plus trade search strings. JSON is a complete CatchGrid backup.</p><button class="primary" data-export="xlsx">Download spreadsheet (.xlsx)</button><button class="secondary" data-export="json">Download JSON backup</button><button class="secondary" data-export="csv">Download CSV</button></section><section><h2>Import collection</h2><p>Choose the community spreadsheet (.xlsx, from Google Sheets: File › Download › Microsoft Excel), a CatchGrid backup or a CSV. Spreadsheet imports only add; nothing you’ve registered is removed. You review everything before it’s saved.</p><label class="secondary">Choose spreadsheet, backup or CSV<input id="import-file" type="file" accept=".xlsx,.json,.csv,.tsv,.txt" /></label><details class="paste-rows"><summary>Or paste rows from your spreadsheet</summary><label for="paste-rows" class="sr-only">Rows copied from your spreadsheet</label><textarea id="paste-rows" rows="5" placeholder="Copy rows from the sheet (Number, Pokémon, gender, Shiny, 100%, …) and paste them here"></textarea><button class="secondary" data-paste-review>Review pasted rows</button></details><div id="import-review" role="status">${importReviewMarkup()}</div></section><section><h2>Recovery snapshots</h2><p>CatchGrid keeps up to five automatic copies on this browser before big changes. Restoring saves your current collection as a new snapshot first.</p>${
+  return `<div class="settings-layout">${storageSafetyMarkup()}<section><h2>Appearance</h2><p>Dark by default. Your choices are remembered on this browser.</p><button class="secondary" data-theme>Switch light / dark ◐</button><fieldset class="accent-picker"><legend>Accent color</legend>${ACCENTS.map(([id, name]) => `<button class="accent-swatch accent-${id}" data-accent="${id}" aria-pressed="${accent === id}"><span aria-hidden="true"></span>${name}</button>`).join('')}</fieldset><label class="evolve-option"><input type="checkbox" data-silhouettes ${pref('silhouettes', 'on') === 'on' ? 'checked' : ''}> Show missing Pokémon as silhouettes in the Dex</label></section><section><h2>Trainer name</h2><p>Optional. Signs your posters, recap cards and compare links. Stays on this browser.</p><label class="sr-only" for="trainer-name">Trainer name</label><input class="search-input" id="trainer-name" maxlength="24" value="${escape(trainer())}" placeholder="Your trainer name"></section><section><h2>Export collection</h2><p>The spreadsheet matches the community Pokédex list: one tab per region with gender, Shiny, 100%, Lucky, XXL, XXS, Shadow and Purified, plus trade search strings. JSON is a complete CatchGrid backup.</p><button class="primary" data-export="xlsx">Download spreadsheet (.xlsx)</button><button class="secondary" data-export="json">Download JSON backup</button><button class="secondary" data-export="csv">Download CSV</button></section><section><h2>Import collection</h2><p>Choose the community spreadsheet (.xlsx, from Google Sheets: File › Download › Microsoft Excel), a CatchGrid backup or a CSV. Spreadsheet imports only add; nothing you’ve registered is removed. You review everything before it’s saved.</p><label class="secondary">Choose spreadsheet, backup or CSV<input id="import-file" type="file" accept=".xlsx,.json,.csv,.tsv,.txt" /></label><details class="paste-rows"><summary>Or paste rows from your spreadsheet</summary><label for="paste-rows" class="sr-only">Rows copied from your spreadsheet</label><textarea id="paste-rows" rows="5" placeholder="Copy rows from the sheet (Number, Pokémon, gender, Shiny, 100%, …) and paste them here"></textarea><button class="secondary" data-paste-review>Review pasted rows</button></details><div id="import-review" role="status">${importReviewMarkup()}</div></section><section><h2>Recovery snapshots</h2><p>CatchGrid keeps up to five automatic copies on this browser before big changes. Restoring saves your current collection as a new snapshot first.</p>${
     snapshots.length
       ? `<ul class="snapshot-list">${snapshots
           .map(
@@ -859,6 +888,7 @@ function settings() {
 }
 function render() {
   entriesCache = null;
+  backupReminder = !storageError && dataSafety.observe(owned);
   const firstRun =
     state.route === 'home' &&
     showFirstRunHome(owned.size, dailyActivity(entries(), 30), Boolean(storageError));
@@ -1002,6 +1032,13 @@ document.addEventListener('click', async (event) => {
   if (!b) return;
   // Rendering can morph this element into a different control; decide from the clicked state.
   const probe = b.cloneNode(false);
+  if (probe.matches('[data-dismiss-backup],[data-dismiss-install]')) {
+    if (probe.matches('[data-dismiss-backup]')) dataSafety.dismissBackup(owned);
+    else dataSafety.dismissInstall();
+    render();
+    main.focus({ preventScroll: true });
+    return;
+  }
   if (probe.matches('.menu-toggle')) {
     const open = mainNav.classList.toggle('open');
     b.setAttribute('aria-expanded', String(open));
@@ -1553,6 +1590,12 @@ window.addEventListener('hashchange', () => {
       const input = main.querySelector('#import-file');
       input.scrollIntoView({ block: 'center', behavior: 'instant' });
       input.focus({ preventScroll: true });
+    } else if (state.route === 'settings' && location.hash.includes('section=storage')) {
+      const storage = main.querySelector('#storage-safety');
+      const instructions = storage.querySelector('.install-instructions');
+      if (instructions) instructions.open = true;
+      storage.scrollIntoView({ block: 'start', behavior: 'instant' });
+      storage.focus({ preventScroll: true });
     } else main.focus({ preventScroll: true });
   };
   // Opening or closing a Pokédex device morphs between the shelf and the device.
@@ -1718,6 +1761,12 @@ document.addEventListener('click', (event) => {
         `CatchGrid-${new Date().toISOString().slice(0, 10)}.${b.dataset.export}`,
         b.dataset.export === 'csv' ? 'text/csv;charset=utf-8' : 'application/json',
       );
+    if (b.matches('[data-export]')) {
+      dataSafety.exported(owned);
+      render();
+      if (state.route === 'home') main.focus({ preventScroll: true });
+      return;
+    }
     if (b.matches('[data-paste-review]')) {
       const text = document.querySelector('#paste-rows').value;
       pendingImport = null;

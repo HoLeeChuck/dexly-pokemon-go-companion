@@ -1,0 +1,312 @@
+{
+  "stats": {
+    "startTime": "2026-09-28T12:44:12.614Z",
+    "duration": 98232.15299999999,
+    "expected": 209,
+    "skipped": 4,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "projects": {
+    "mobile-chromium": {
+      "expected": 55,
+      "skipped": 2
+    },
+    "desktop-chromium": {
+      "expected": 57
+    },
+    "mobile-webkit": {
+      "expected": 46,
+      "skipped": 2
+    },
+    "desktop-webkit": {
+      "expected": 48
+    },
+    "pwa-chromium": {
+      "expected": 3
+    }
+  },
+  "skipped": [
+    {
+      "project": "mobile-chromium",
+      "title": "dragging down a grid column fills a range in one save and can be undone"
+    },
+    {
+      "project": "mobile-chromium",
+      "title": "Progress fits the window with equal-width category columns"
+    },
+    {
+      "project": "mobile-webkit",
+      "title": "dragging down a grid column fills a range in one save and can be undone"
+    },
+    {
+      "project": "mobile-webkit",
+      "title": "Progress fits the window with equal-width category columns"
+    }
+  ],
+  "heights": [
+    {
+      "project": "mobile-chromium",
+      "state": "new-dark-height",
+      "documentHeight": 2409,
+      "contentHeight": 2332,
+      "navigationClearance": 77
+    },
+    {
+      "project": "mobile-chromium",
+      "state": "new-light-height",
+      "documentHeight": 2409,
+      "contentHeight": 2332,
+      "navigationClearance": 77
+    },
+    {
+      "project": "mobile-chromium",
+      "state": "returning-dark-height",
+      "documentHeight": 2457,
+      "contentHeight": 2380,
+      "navigationClearance": 77
+    },
+    {
+      "project": "mobile-chromium",
+      "state": "returning-light-height",
+      "documentHeight": 2457,
+      "contentHeight": 2380,
+      "navigationClearance": 77
+    },
+    {
+      "project": "mobile-chromium",
+      "state": "banner-dark-height",
+      "documentHeight": 2452,
+      "contentHeight": 2375,
+      "navigationClearance": 77
+    },
+    {
+      "project": "mobile-chromium",
+      "state": "banner-light-height",
+      "documentHeight": 2452,
+      "contentHeight": 2375,
+      "navigationClearance": 77
+    },
+    {
+      "project": "mobile-chromium",
+      "state": "both-dark-height",
+      "documentHeight": 2471,
+      "contentHeight": 2394,
+      "navigationClearance": 77
+    },
+    {
+      "project": "mobile-chromium",
+      "state": "both-light-height",
+      "documentHeight": 2471,
+      "contentHeight": 2394,
+      "navigationClearance": 77
+    },
+    {
+      "project": "desktop-chromium",
+      "state": "new-dark-height",
+      "documentHeight": 2409,
+      "contentHeight": 2332,
+      "navigationClearance": 77
+    },
+    {
+      "project": "desktop-chromium",
+      "state": "new-light-height",
+      "documentHeight": 2409,
+      "contentHeight": 2332,
+      "navigationClearance": 77
+    },
+    {
+      "project": "desktop-chromium",
+      "state": "returning-dark-height",
+      "documentHeight": 2457,
+      "contentHeight": 2380,
+      "navigationClearance": 77
+    },
+    {
+      "project": "desktop-chromium",
+      "state": "returning-light-height",
+      "documentHeight": 2457,
+      "contentHeight": 2380,
+      "navigationClearance": 77
+    },
+    {
+      "project": "desktop-chromium",
+      "state": "banner-dark-height",
+      "documentHeight": 2452,
+      "contentHeight": 2375,
+      "navigationClearance": 77
+    },
+    {
+      "project": "desktop-chromium",
+      "state": "banner-light-height",
+      "documentHeight": 2452,
+      "contentHeight": 2375,
+      "navigationClearance": 77
+    },
+    {
+      "project": "desktop-chromium",
+      "state": "both-dark-height",
+      "documentHeight": 2471,
+      "contentHeight": 2394,
+      "navigationClearance": 77
+    },
+    {
+      "project": "desktop-chromium",
+      "state": "both-light-height",
+      "documentHeight": 2471,
+      "contentHeight": 2394,
+      "navigationClearance": 77
+    },
+    {
+      "project": "mobile-webkit",
+      "state": "new-dark-height",
+      "documentHeight": 2409,
+      "contentHeight": 2332,
+      "navigationClearance": 77
+    },
+    {
+      "project": "mobile-webkit",
+      "state": "new-light-height",
+      "documentHeight": 2409,
+      "contentHeight": 2332,
+      "navigationClearance": 77
+    },
+    {
+      "project": "mobile-webkit",
+      "state": "returning-dark-height",
+      "documentHeight": 2457,
+      "contentHeight": 2380,
+      "navigationClearance": 77
+    },
+    {
+      "project": "mobile-webkit",
+      "state": "returning-light-height",
+      "documentHeight": 2457,
+      "contentHeight": 2380,
+      "navigationClearance": 77
+    },
+    {
+      "project": "mobile-webkit",
+      "state": "banner-dark-height",
+      "documentHeight": 2452,
+      "contentHeight": 2375,
+      "navigationClearance": 77
+    },
+    {
+      "project": "mobile-webkit",
+      "state": "banner-light-height",
+      "documentHeight": 2452,
+      "contentHeight": 2375,
+      "navigationClearance": 77
+    },
+    {
+      "project": "mobile-webkit",
+      "state": "both-dark-height",
+      "documentHeight": 2471,
+      "contentHeight": 2394,
+      "navigationClearance": 77
+    },
+    {
+      "project": "mobile-webkit",
+      "state": "both-light-height",
+      "documentHeight": 2471,
+      "contentHeight": 2394,
+      "navigationClearance": 77
+    },
+    {
+      "project": "desktop-webkit",
+      "state": "new-dark-height",
+      "documentHeight": 2409,
+      "contentHeight": 2332,
+      "navigationClearance": 77
+    },
+    {
+      "project": "desktop-webkit",
+      "state": "new-light-height",
+      "documentHeight": 2409,
+      "contentHeight": 2332,
+      "navigationClearance": 77
+    },
+    {
+      "project": "desktop-webkit",
+      "state": "returning-dark-height",
+      "documentHeight": 2457,
+      "contentHeight": 2380,
+      "navigationClearance": 77
+    },
+    {
+      "project": "desktop-webkit",
+      "state": "returning-light-height",
+      "documentHeight": 2457,
+      "contentHeight": 2380,
+      "navigationClearance": 77
+    },
+    {
+      "project": "desktop-webkit",
+      "state": "banner-dark-height",
+      "documentHeight": 2452,
+      "contentHeight": 2375,
+      "navigationClearance": 77
+    },
+    {
+      "project": "desktop-webkit",
+      "state": "banner-light-height",
+      "documentHeight": 2452,
+      "contentHeight": 2375,
+      "navigationClearance": 77
+    },
+    {
+      "project": "desktop-webkit",
+      "state": "both-dark-height",
+      "documentHeight": 2471,
+      "contentHeight": 2394,
+      "navigationClearance": 77
+    },
+    {
+      "project": "desktop-webkit",
+      "state": "both-light-height",
+      "documentHeight": 2471,
+      "contentHeight": 2394,
+      "navigationClearance": 77
+    }
+  ],
+  "sourceHashes": {
+    "app/main.js": "37f77b24f0d2b49087a343cefd247f657c14b7caa96e766548b1fb40a78860ed",
+    "app/data-safety.js": "b5c86711d08a9c9815f083c8a44872b91a6eda32f7a3414875a8d274cef07be6",
+    "app/data-safety.css": "2ec720d5792005e898011dcb1f4ceb4a49d7b73ccc776ab0a3dc6c79e8683506",
+    "app/data-safety.d.ts": "5ed793a6dcd6e73789e34db5ce7d519aea1639bf48d38f6603ac119d8716799a",
+    "index.html": "02f23cd223dbee3afefaff54d917aa7f3a9326e226d3e9b987faa2804ccb7b36",
+    "tests/e2e/data-safety-app.spec.ts": "698fc29fc779b0dd257cddae9a3351a7aea7a55e89cdc0855db0e21a9b5c1a37",
+    "tests/e2e/app.spec.ts": "56dc6db4135ceac1771fc598b7aef7b4856c41c52c9472956e9b8264d88b58cf",
+    "tests/unit/data-safety.test.ts": "74b2c8832f89dacab9f5d0982751d906c216dccb1f0da2563a9c60ab9b8a870a"
+  },
+  "visualComparison": [
+    {
+      "file": "desktop-new-home.png",
+      "before": "52823c519dc87e7ff87fcccb8b9a2a440460849486ba20fb854b3089d3199a17",
+      "after": "52823c519dc87e7ff87fcccb8b9a2a440460849486ba20fb854b3089d3199a17",
+      "identical": true
+    },
+    {
+      "file": "desktop-returning-home.png",
+      "before": "8cffcc003ed84166fa3383467164bc2112c1173eb2ffd224669dfdf3ec86abd0",
+      "after": "f5f2d41dbd490bf66c0500fdb3c812ab22f32220ebb17bb3d5bff744df64c0f0",
+      "identical": false,
+      "pixelDifference": {
+        "changedPixels": 13358,
+        "maxChannelDelta": 21,
+        "minX": 766,
+        "minY": 447,
+        "maxX": 965,
+        "maxY": 514
+      }
+    },
+    {
+      "file": "phone-returning-home.png",
+      "before": "5bca4493fcef6a3da90f76d2d94a45a1ae2e818630252be6922fe469cc00e4aa",
+      "after": "5bca4493fcef6a3da90f76d2d94a45a1ae2e818630252be6922fe469cc00e4aa",
+      "identical": true
+    }
+  ],
+  "sourceMatchesLinux": true
+}

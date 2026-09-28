@@ -1,0 +1,74 @@
+[
+  {
+    "file": "desktop-new-home.png",
+    "hasCsp": true,
+    "csp": [],
+    "errors": [],
+    "width": 1440,
+    "height": 1421,
+    "contentHeight": 1421
+  },
+  {
+    "file": "desktop-returning-home.png",
+    "hasCsp": true,
+    "csp": [],
+    "errors": [],
+    "width": 1440,
+    "height": 1876,
+    "contentHeight": 1876
+  },
+  {
+    "file": "desktop-banner-home.png",
+    "hasCsp": true,
+    "csp": [],
+    "errors": [],
+    "width": 1440,
+    "height": 1996,
+    "contentHeight": 1996
+  },
+  {
+    "file": "desktop-banner-settings.png",
+    "hasCsp": true,
+    "csp": [],
+    "errors": [],
+    "width": 1440,
+    "height": 2428,
+    "contentHeight": 2413
+  },
+  {
+    "file": "phone-new-home.png",
+    "hasCsp": true,
+    "csp": [],
+    "errors": [],
+    "width": 390,
+    "height": 2409,
+    "contentHeight": 2332
+  },
+  {
+    "file": "phone-returning-home.png",
+    "hasCsp": true,
+    "csp": [],
+    "errors": [],
+    "width": 390,
+    "height": 2438,
+    "contentHeight": 2361
+  },
+  {
+    "file": "phone-banner-home.png",
+    "hasCsp": true,
+    "csp": [],
+    "errors": [],
+    "width": 390,
+    "height": 2442,
+    "contentHeight": 2365
+  },
+  {
+    "file": "phone-banner-settings.png",
+    "hasCsp": true,
+    "csp": [],
+    "errors": [],
+    "width": 390,
+    "height": 4355,
+    "contentHeight": 4278
+  }
+]

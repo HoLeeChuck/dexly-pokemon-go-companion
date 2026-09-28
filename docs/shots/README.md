@@ -1,3 +1,9 @@
+# Round 2 Phase F1 — data safety evidence
+
+`f1-before/` and `f1-after/` contain desktop/phone Home (new, returning after export, and banner-triggering collection) plus Settings: eight captures each. Before is the unchanged `5f291b6` app on the frontend dev server. After is the local production build on `127.0.0.1:5192`, with real CSP headers and zero CSP/page/console errors. Phone uses an iOS Safari user agent in system Chrome to expose the hint; it is not real-device Safari proof. Collection fixtures are imported through the reviewed UI, and all contexts are disposable.
+
+Reproduce using `scripts/shots-f1.mjs` with `SHOT_BASE` pointing at a local preview, `PLAYWRIGHT_USE_SYSTEM_CHROME=1`, and `SHOT_REQUIRE_CSP=1` for a production preview. Pass the output directory as its argument. `measurements.json` records document and content heights; the existing 77px phone navigation clearance is excluded from the 2,400px content budget. Full Linux Chromium/WebKit verification and the real-device checklist are in [the F1 record](../releases/2026-09-28-friends/RELEASE.md). F2 Progress/social-card captures are deferred with F2.
+
 # Phase 1 — first-run Home evidence
 
 Local work for `CODEX-PLAN.md`, Phase 1 only. Screenshots use system Chrome, 1440×900 and 390×844 viewports, dark appearance, reduced motion, and disposable browser contexts. They are fixture evidence, not production or physical-device evidence.

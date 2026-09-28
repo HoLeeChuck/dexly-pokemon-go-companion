@@ -170,6 +170,7 @@ test('first-run Home introduces the app without empty progress and has a logical
     'Start with your Pokédex',
     'Import a backup',
     'Try the Search Lab',
+    ...((await page.locator('.install-hint').count()) ? ['Dismiss iPhone install hint'] : []),
     'Open the Kanto Pokédex',
     'Open the Johto Pokédex',
     'Open the Hoenn Pokédex',
@@ -179,7 +180,10 @@ test('first-run Home introduces the app without empty progress and has a logical
   ]) {
     await page.keyboard.press('Tab');
     await expect(
-      page.getByRole('link', { name, exact: name !== 'See every region' }),
+      page.getByRole(name === 'Dismiss iPhone install hint' ? 'button' : 'link', {
+        name,
+        exact: name !== 'See every region',
+      }),
     ).toBeFocused();
   }
   await page.getByRole('link', { name: 'Open the Johto Pokédex', exact: true }).click();

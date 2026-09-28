@@ -1,5 +1,17 @@
 # CatchGrid handoff
 
+## September 28, 2026 — Round 2 Phase F1 (local, awaiting Claude)
+
+**Phase F1 is implemented and self-reviewed by Codex, awaiting Claude.** The owner authorized committing this phase on `prism-forward`; no push or deployment is authorized. F2/F3 remain untouched. The requested status note is in the owner's local `CODEX-PLAN.md`, which remains untracked and excluded from the commit.
+
+- Added a dismissible Home backup reminder (25 unexported additions or seven days with changes), export-date tracking and clearing on JSON/CSV/XLSX download. Dismissal snoozes until 25 more additions or seven more days. Failed downloads retain the reminder.
+- Added the dismissible iOS Safari welcome hint and standalone detection. Settings now explains browser-only storage, moving JSON across devices/into a Home Screen app, and the current persistence result. Persistence is requested once at ten entries; denial/unavailability is harmless.
+- All bookkeeping uses separate browser preferences. Collection/schema/backup contracts, recovery snapshots, private owner code, catalog, recommendation strings, migrations and dependencies are unchanged.
+- Validation: **253 unit, 40 Worker, lint, focused formatting, production build; 209 full Linux browser checks passed, four existing exclusions and no retries.** All 52 F1 browser cases passed. Phone new/returning/banner/combined states fit the unchanged 2,400px content budget in both engines/themes (maximum 2,394px in the dedicated F1 cases). Production-preview captures have zero CSP/page/console errors.
+- [F1 acceptance and preparation record](docs/releases/2026-09-28-friends/RELEASE.md), [source hashes and Linux measurements](docs/releases/2026-09-28-friends/f1-verification.json), [before](docs/shots/f1-before/) and [after](docs/shots/f1-after/) captures. The real iPhone/Android and cross-device checklist is pending, not claimed as verified. The complete Friends release is not yet ready; F2/F3 and owner device checks remain.
+
+Stop after the local F1 commit and Claude review handoff. Production remains the prior released version documented below.
+
 ## September 28, 2026 — first-run release attempt 2 live
 
 **Phases 1–4 are deployed** at <https://dex.cjdev.app/> from **`c49945a`**, Worker **`0891c9e5-8a9c-4736-beae-2e796325dfef`**, verified at 06:16 UTC. The owner authorized deployment, fast-forwarding `main`, and pushing `main` and `prism-forward`. Both branches contain the released source and this documentation record. Full evidence: [docs/releases/2026-09-28-first-run-2/RELEASE.md](docs/releases/2026-09-28-first-run-2/RELEASE.md).
