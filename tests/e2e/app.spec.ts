@@ -2,6 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 import demoCollection from '../../docs/fixtures/demo-collection.json' with { type: 'json' };
 import nearlyCollection from '../../docs/fixtures/phase2-nearly-complete.json' with { type: 'json' };
 import AxeBuilder from '@axe-core/playwright';
+import { diagnoseHomeHeightFailure } from './home-diagnostics';
 
 // Every test starts from an empty, isolated browser profile.
 const isMobile = (page: Page) => (page.viewportSize()?.width ?? 1440) <= 800;
@@ -30,7 +31,8 @@ async function restoreDashboard(page: Page, fixture = demoCollection) {
 
 test('returning Home has recent artwork, medal partners and an accessible responsive heatmap', async ({
   page,
-}) => {
+  browserName,
+}, testInfo) => {
   await restoreDashboard(page);
   await expect(page.locator('.kpi-recent img')).toHaveCount(3);
   await expect(page.locator('.kpi-recent img').first()).toHaveCSS('width', '28px');
@@ -58,6 +60,7 @@ test('returning Home has recent artwork, medal partners and an accessible respon
       );
       return document.documentElement.scrollHeight - footerClearance - mainClearance;
     });
+    if (contentHeight > 2400) await diagnoseHomeHeightFailure(page, browserName, testInfo);
     expect(contentHeight).toBeLessThanOrEqual(2400);
     await expect(page.locator('.region-bar')).toHaveCount(11);
     const picker = page.getByRole('combobox', { name: 'Category', exact: true });

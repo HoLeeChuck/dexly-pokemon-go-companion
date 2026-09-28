@@ -1,6 +1,7 @@
 name: CatchGrid release checks
 
 on:
+  workflow_dispatch:
   pull_request:
   push:
     branches: [main]
@@ -69,7 +70,8 @@ jobs:
       - name: Install locked dependencies
         run: pnpm install --frozen-lockfile
       - name: Install Playwright engine
-        run: pnpm exec playwright install --with-deps chromium
+        # Height failures compare both engines on the same runner.
+        run: pnpm exec playwright install --with-deps chromium webkit
       - name: Run mobile, desktop, and PWA Chromium flows
         run: pnpm exec playwright test --project=mobile-chromium --project=desktop-chromium --project=pwa-chromium
       - name: Upload failure evidence
@@ -103,9 +105,9 @@ jobs:
       - name: Install locked dependencies
         run: pnpm install --frozen-lockfile
       - name: Install Playwright engine
-        run: pnpm exec playwright install --with-deps webkit
+        run: pnpm exec playwright install --with-deps chromium webkit
       - name: Run mobile and desktop WebKit flows
-        run: pnpm exec playwright test --project=mobile-webkit --project=desktop-webkit
+        run: pnpm exec playwright test --project=mobile-webkit --project=desktop-webkit --max-failures=0
       - name: Upload failure evidence
         if: failure()
         uses: actions/upload-artifact@v4
