@@ -1,5 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import demoCollection from '../../docs/fixtures/demo-collection.json' with { type: 'json' };
+import nearlyCollection from '../../docs/fixtures/phase2-nearly-complete.json' with { type: 'json' };
+import AxeBuilder from '@axe-core/playwright';
 
 // Every test starts from an empty, isolated browser profile.
 const isMobile = (page: Page) => (page.viewportSize()?.width ?? 1440) <= 800;
@@ -13,6 +15,133 @@ async function markFirstCatch(page: Page) {
   await open(page, 'dex?r=kanto');
   await page.getByRole('button', { name: 'Toggle Normal: missing', exact: true }).click();
 }
+
+async function restoreDashboard(page: Page, fixture = demoCollection) {
+  await page.clock.setFixedTime(new Date(fixture.createdAt));
+  await open(page, 'settings');
+  await page.locator('#import-file').setInputFiles({
+    name: 'dashboard.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify(fixture)),
+  });
+  await page.getByRole('button', { name: 'Apply reviewed import' }).click();
+  await open(page, 'home');
+}
+
+test('returning Home has recent artwork, medal partners and an accessible responsive heatmap', async ({
+  page,
+}) => {
+  await restoreDashboard(page);
+  await expect(page.locator('.kpi-recent img')).toHaveCount(3);
+  await expect(page.locator('.kpi-recent img').first()).toHaveCSS('width', '28px');
+  await expect(page.locator('.medal-mark img')).toHaveCount(10);
+  await expect(page.locator('[data-key="medal-Kanto"]')).toHaveClass(/bronze/);
+  await expect(page.locator('[data-key="medal-Kanto"] .medal-mark')).toHaveCSS(
+    'border-top-color',
+    'rgb(184, 129, 78)',
+  );
+  await expect(page.locator('[data-key="medal-Johto"] .medal-mark')).toHaveCSS(
+    'border-top-color',
+    'rgb(185, 194, 204)',
+  );
+  await expect(page.locator('[data-key="medal-Unova"]')).toContainText('No medal yet');
+  await expect(page.locator('[data-key="medal-Unova"]')).toContainText('5 to bronze');
+  await expect(page.locator('[data-key="medal-Unova"] img')).not.toHaveCSS('filter', 'none');
+  if (isMobile(page)) {
+    expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(
+      2400,
+    );
+    await expect(page.locator('.region-bar')).toHaveCount(11);
+    const picker = page.getByRole('combobox', { name: 'Category', exact: true });
+    await expect(picker).toHaveValue('normal');
+    await picker.focus();
+    await picker.selectOption('shiny');
+    await expect(picker).toBeFocused();
+    await expect(page.locator('.region-bar').first()).toContainText('10 / 151');
+    await page.getByText('Show full table', { exact: true }).click();
+  }
+  const table = page.getByRole('table', { name: 'Regional collection counts by category' });
+  await expect(table).toBeVisible();
+  await expect(table.getByRole('row')).toHaveCount(12);
+  const zero = table.locator('.heat-cell.zero').first();
+  await expect(zero.locator('span')).toHaveText('·');
+  await expect(zero).toHaveAttribute('title', /^0 of \d+$/);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
+    page.viewportSize()!.width,
+  );
+  const a11y = await new AxeBuilder({ page }).analyze();
+  expect(
+    a11y.violations
+      .filter((v) => ['serious', 'critical'].includes(v.impact ?? ''))
+      .map((v) => v.id),
+  ).toEqual([]);
+});
+
+test('almost-complete cards show missing categories and open details without modifying ownership', async ({
+  page,
+}) => {
+  await restoreDashboard(page, nearlyCollection);
+  const shelf = page.locator('.nearly-list');
+  const cards = shelf.locator('.nearly-item');
+  await expect(cards).toHaveCount(6);
+  await expect(cards.first().locator('img')).toHaveCSS('width', '72px');
+  await expect(cards.first()).toContainText(/#\d{4}/);
+  await expect(cards.first().locator('.missing-chip')).not.toHaveCount(0);
+  const ratio = await shelf.evaluate(
+    (el) => el.querySelector('.nearly-item')!.getBoundingClientRect().width / el.clientWidth,
+  );
+  expect(ratio).toBeCloseTo(isMobile(page) ? 1 / 1.3 : 1 / 4, 1);
+  const before = await page.evaluate(() => localStorage.getItem('catchgrid:local-profile:v2'));
+  await cards.first().focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('dialog', { name: 'Pokémon collection details' })).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(cards.first()).toBeFocused();
+  // Tab along the shelf must reveal its off-screen cards without moving the whole page sideways.
+  for (let i = 1; i < 6; i++) await page.keyboard.press('Tab');
+  await expect(cards.last()).toBeFocused();
+  expect(await shelf.evaluate((el) => el.scrollLeft)).toBeGreaterThan(0);
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('dialog', { name: 'Pokémon collection details' })).toBeVisible();
+  await page.keyboard.press('Escape');
+  expect(await page.evaluate(() => localStorage.getItem('catchgrid:local-profile:v2'))).toBe(
+    before,
+  );
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
+    page.viewportSize()!.width,
+  );
+});
+
+test('medal partners fill with the earned tier and weekly artwork disappears for old entries', async ({
+  page,
+}) => {
+  const fixture = structuredClone(demoCollection);
+  for (let n = 46; n <= 100; n++)
+    fixture.profile.collectionEntries.push({
+      formId: `form-${String(n).padStart(4, '0')}-standard`,
+      categoryId: 'normal',
+      collected: true,
+      updatedAt: fixture.createdAt,
+    });
+  await restoreDashboard(page, fixture);
+  await expect(page.locator('[data-key="medal-Kanto"] .medal-mark')).toHaveCSS(
+    'border-top-color',
+    'rgb(227, 179, 65)',
+  );
+  await expect(page.locator('[data-key="medal-Kanto"] img')).toHaveCSS('filter', 'none');
+  await open(page, 'settings');
+  await page.locator('[data-bulk="Kanto"][data-bulk-collected="true"]').click();
+  await page.getByRole('button', { name: /^Mark all/ }).click();
+  await open(page, 'home');
+  await expect(page.locator('[data-key="medal-Kanto"] .medal-mark')).toHaveCSS(
+    'border-top-color',
+    'rgb(159, 227, 224)',
+  );
+  await page.clock.setFixedTime(new Date('2026-10-27T18:00:00.000Z'));
+  await page.reload();
+  await expect(page.locator('[data-key="kpi-week"] .kpi-value')).toHaveText('0');
+  await expect(page.locator('.kpi-recent')).toHaveCount(0);
+});
 
 test('first-run Home introduces the app without empty progress and has a logical tab order', async ({
   page,
@@ -284,6 +413,8 @@ test('the Home dashboard shows rings, the region heatmap and activity', async ({
   await expect(page.locator('.ring-legend-item.cat-normal small')).toHaveText(/^1 \/ /);
   await expect(page.locator('[data-key="kpi-week"] .kpi-value')).toHaveText('1');
   await expect(page.locator('[data-key="kpi-species"] .kpi-value')).toHaveText('1');
+  if (isMobile(page))
+    await page.getByRole('combobox', { name: 'Category', exact: true }).selectOption('shiny');
   await page.getByRole('link', { name: /^Kanto Shiny: 0 of/ }).click();
   await expect(page.locator('main')).toHaveAttribute('data-route', 'progress');
   await expect(page.locator('[data-region]')).toHaveValue('Kanto');

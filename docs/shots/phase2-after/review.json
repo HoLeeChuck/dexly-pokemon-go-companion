@@ -1,0 +1,108 @@
+{
+  "views": [
+    {
+      "name": "desktop",
+      "theme": "dark",
+      "width": 1440,
+      "pageWidth": 1440,
+      "height": 1982,
+      "brokenArt": 0,
+      "cspFailures": [],
+      "errors": []
+    },
+    {
+      "name": "desktop",
+      "theme": "light",
+      "width": 1440,
+      "pageWidth": 1440,
+      "height": 1982,
+      "brokenArt": 0,
+      "cspFailures": [],
+      "errors": []
+    },
+    {
+      "name": "phone",
+      "theme": "dark",
+      "width": 390,
+      "pageWidth": 390,
+      "height": 2468,
+      "brokenArt": 0,
+      "cspFailures": [],
+      "errors": []
+    },
+    {
+      "name": "phone",
+      "theme": "light",
+      "width": 390,
+      "pageWidth": 390,
+      "height": 2468,
+      "brokenArt": 0,
+      "cspFailures": [],
+      "errors": []
+    }
+  ],
+  "unchanged": [
+    {
+      "file": "desktop-empty-home.png",
+      "identical": true
+    },
+    {
+      "file": "desktop-empty-dex.png",
+      "identical": true
+    },
+    {
+      "file": "desktop-empty-progress.png",
+      "identical": true
+    },
+    {
+      "file": "desktop-empty-search.png",
+      "identical": true
+    },
+    {
+      "file": "desktop-seeded-dex.png",
+      "identical": true
+    },
+    {
+      "file": "desktop-seeded-progress.png",
+      "identical": true
+    },
+    {
+      "file": "desktop-seeded-search.png",
+      "identical": true
+    },
+    {
+      "file": "phone-empty-home.png",
+      "identical": true
+    },
+    {
+      "file": "phone-empty-dex.png",
+      "identical": true
+    },
+    {
+      "file": "phone-empty-progress.png",
+      "identical": true
+    },
+    {
+      "file": "phone-empty-search.png",
+      "identical": true
+    },
+    {
+      "file": "phone-seeded-dex.png",
+      "identical": true
+    },
+    {
+      "file": "phone-seeded-progress.png",
+      "identical": false,
+      "pixelComparison": {
+        "file": "phone-seeded-progress.png",
+        "dimensions": [390, 1760],
+        "changedPixels": 40,
+        "maxChannelDifference": 1
+      }
+    },
+    {
+      "file": "phone-seeded-search.png",
+      "identical": true
+    }
+  ]
+}

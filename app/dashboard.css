@@ -160,6 +160,17 @@
   border-radius: 3px;
   background: linear-gradient(90deg, var(--violet) var(--p), var(--line) 0);
 }
+.kpi-recent {
+  grid-row: 3;
+  display: flex;
+  gap: 4px;
+  margin: 3px 0;
+}
+.kpi-recent img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
 /* Apple Watch style rings: one nested ring per category, with a legend beside them. */
 .rings {
   display: grid;
@@ -303,13 +314,13 @@
   grid-column: span 4;
 }
 .bento > .nearly {
-  grid-column: span 4;
+  grid-column: 1 / -1;
 }
 .bento > .medal-shelf {
-  grid-column: span 5;
+  grid-column: span 8;
 }
 .bento > .tools-card {
-  grid-column: span 3;
+  grid-column: span 4;
 }
 
 /* Heatmap: tint deepens with progress; numbers stay readable. */
@@ -380,6 +391,39 @@
   background: transparent;
   color: var(--muted);
 }
+.heat-mobile {
+  display: none;
+}
+.region-bars {
+  margin: 8px 0;
+}
+.region-bar {
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr) 64px;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  border-radius: 6px;
+  color: var(--ink);
+  font-size: 12px;
+  text-decoration: none;
+}
+a.region-bar:hover {
+  background: var(--tint);
+}
+.region-bar small {
+  color: var(--muted);
+  font-size: 11px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.heat-disclosure summary {
+  min-height: 36px;
+  padding-top: 8px;
+  color: var(--violet);
+  cursor: pointer;
+  font-size: 12px;
+}
 
 /* Activity */
 .activity-card {
@@ -437,38 +481,106 @@
 }
 .dash .nearly-list {
   display: grid;
-  gap: 6px;
+  grid-template-columns: none;
+  grid-auto-flow: column;
+  grid-auto-columns: calc((100% - 36px) / 4);
+  gap: 12px;
+  padding: 3px 3px 10px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
 }
 .dash .nearly-item {
-  display: flex;
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
   align-items: center;
-  gap: 10px;
+  align-content: start;
+  gap: 12px;
   width: 100%;
-  min-height: 48px;
-  padding: 4px 10px 4px 4px;
-  border: 0;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
   border-radius: 12px;
   background: var(--bg);
   text-align: left;
+  scroll-snap-align: start;
 }
 .dash .nearly-item img {
-  width: 40px;
-  height: 40px;
+  width: 72px;
+  height: 72px;
 }
-.dash .nearly-item span {
+.dash .nearly-name {
   display: grid;
+  gap: 4px;
+  overflow-wrap: anywhere;
 }
 .dash .nearly-item small {
   color: var(--muted);
 }
+.dash .nearly-categories {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.dash .missing-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--cat) 15%, var(--surface));
+  color: var(--ink);
+  font-size: 12px;
+}
+.missing-chip i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--cat);
+}
 .dash .medal-row {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 6px;
 }
 .dash .medal {
   padding: 10px;
   border-radius: 12px;
+}
+.dash .medal.bronze {
+  --medal-color: #b8814e;
+}
+.dash .medal.silver {
+  --medal-color: #b9c2cc;
+}
+.dash .medal.gold {
+  --medal-color: #e3b341;
+}
+.dash .medal.platinum {
+  --medal-color: #9fe3e0;
+}
+.dash .medal .medal-mark {
+  width: 52px;
+  height: 52px;
+  background: var(--bg);
+  border: 3px solid var(--medal-color, var(--line));
+}
+.dash .medal.none .medal-mark {
+  border-style: dashed;
+}
+.medal-mark img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+.medal.none img {
+  filter: brightness(0);
+  opacity: 0.28;
+}
+:root[data-theme='dark'] .medal.none img {
+  filter: brightness(0) invert(1);
+  opacity: 0.16;
 }
 
 /* Share and tools: a list of actions */
@@ -628,6 +740,33 @@
   }
 }
 @media (max-width: 600px) {
+  .dash,
+  .dash .bento {
+    gap: 10px;
+  }
+  .dash-top {
+    column-gap: 6px;
+  }
+  .dash .card-head,
+  .dash .section-title {
+    margin-bottom: 10px;
+    line-height: 1.25;
+  }
+  .dash .card-head h2,
+  .dash .section-title h2 {
+    line-height: 1.25;
+  }
+  .dash .card-head small,
+  .dash .section-title small,
+  .dash .kpi-label,
+  .dash .kpi-sub {
+    line-height: 1.3;
+  }
+  .dash .annotation {
+    font-size: 12px;
+    line-height: 1.4;
+    margin-bottom: 0;
+  }
   .col-name {
     width: 124px;
   }
@@ -1051,7 +1190,6 @@ td.grid-done .meter {
     grid-column: span 12;
   }
   .bento > .activity-card,
-  .bento > .nearly,
   .bento > .medal-shelf,
   .bento > .tools-card {
     grid-column: span 6;
@@ -1069,16 +1207,126 @@ td.grid-done .meter {
   }
 }
 @media (max-width: 600px) {
+  .dash .dash-card,
+  .dash .nearly,
+  .dash .medal-shelf {
+    padding: 14px;
+  }
+  .dash .kpi-row {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .dash .kpi {
+    grid-column: span 2;
+    padding: 12px;
+  }
+  .dash .kpi:nth-child(n + 4) {
+    grid-column: span 3;
+  }
+  .dash .kpi-value {
+    font-size: 26px;
+  }
+  .dash .nearly-list {
+    grid-auto-columns: calc((100% - 12px) / 1.3);
+  }
+  .dash .medal-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .dash .medal {
+    grid-template-columns: 36px minmax(0, 1fr);
+    justify-items: start;
+    align-items: center;
+    gap: 2px 6px;
+    padding: 8px;
+    text-align: left;
+  }
+  .dash .medal .medal-mark {
+    grid-row: span 3;
+    width: 36px;
+    height: 36px;
+  }
+  .dash .medal-mark img {
+    width: 30px;
+    height: 30px;
+  }
+  .dash .medal strong {
+    font-size: 12px;
+    line-height: 1.25;
+  }
+  .dash .medal small {
+    font-size: 11px;
+    line-height: 1.2;
+  }
+  .heat-desktop {
+    display: none;
+  }
+  .heat-mobile {
+    display: block;
+  }
+  .heat-mobile .category-select,
+  .heat-mobile select {
+    width: 100%;
+  }
+  .heat-mobile .category-select {
+    margin: 0;
+  }
+  .region-bar {
+    min-height: 30px;
+  }
+  /* Expanded full table reflows into region groups; no sideways page/table scroll. */
+  .heat-mobile .heat thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .heat-mobile .heat tbody tr {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin: 12px 0;
+  }
+  .heat-mobile .heat tbody th {
+    grid-column: 1 / -1;
+  }
+  .heat-mobile .heat td::before {
+    content: attr(data-label);
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .heat-mobile .heat-cell {
+    min-width: 0;
+  }
+  .activity-chart {
+    min-height: 64px;
+    max-height: 64px;
+  }
+  .tool-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .tool-list > * {
+    line-height: 1.3;
+  }
   .rings {
     grid-template-columns: minmax(0, 1fr);
     justify-items: center;
   }
   .rings-art {
-    max-width: 220px;
+    max-width: 130px;
   }
   .ring-legend {
     width: 100%;
     gap: 4px 8px;
+  }
+  .ring-legend-item {
+    grid-template-areas: 'dot name pct' 'count count count';
+    padding: 4px;
+    gap: 2px 6px;
+    line-height: 1.2;
+  }
+  .ring-legend-item > .meter {
+    display: none;
   }
   .grid-panel {
     padding: 10px;
@@ -1115,5 +1363,25 @@ td.grid-done .meter {
   .gcell {
     min-width: 32px;
     height: 32px;
+  }
+}
+
+@media (min-width: 375px) and (max-width: 600px) {
+  .rings {
+    grid-template-columns: 100px minmax(0, 1fr);
+    gap: 10px;
+  }
+  .ring-legend {
+    gap: 4px;
+  }
+  .ring-legend-item {
+    padding: 4px 0;
+    column-gap: 3px;
+  }
+  .ring-name {
+    font-size: 12px;
+  }
+  .ring-legend-item strong {
+    font-size: 13px;
   }
 }

@@ -35,6 +35,8 @@ import {
   dailyActivity,
   activeStreak,
   showFirstRunHome,
+  mostProgressCategory,
+  recentlyMarked,
 } from './dashboard.js';
 import { readWorkbook, readText, collectionWorkbook } from './sheet.js';
 import { SHARE_CATEGORIES, shareLink, parseShare, compare, helpSearch } from './share.js';
@@ -136,6 +138,7 @@ let pendingImport = null;
 let lastBatch = null;
 const main = document.querySelector('main');
 const dialog = document.querySelector('#inspect-dialog');
+let detailOpener = null;
 const jumpDialog = document.querySelector('#jump-dialog');
 const state = {
   route: routeFromHash(),
@@ -158,6 +161,7 @@ const state = {
   discordCategories: new Set(DISCORD_CATEGORIES.map(([id]) => id)),
   evolveSizes: false,
   recapDays: 7,
+  heatCategory: null,
   pendingBulk: null,
   reviewSnapshot: null,
   openAfterRoute: false,
@@ -282,10 +286,12 @@ function specimen() {
 function medals() {
   const shelf = medalShelf(catalog, owned, state.category);
   return `<section class="medal-shelf" aria-labelledby="medal-title"><div class="section-title"><h2 id="medal-title">${label()} medals</h2><small>Regional species milestones · default forms only</small></div><div class="medal-row">${shelf
-    .map(
-      (m) =>
-        `<div class="medal ${m.tier}" data-key="medal-${m.region}"><span class="medal-mark" aria-hidden="true">${m.mark}</span><strong>${m.region}</strong><small>${m.tier === 'none' ? 'No medal yet' : m.tier[0].toUpperCase() + m.tier.slice(1)} · ${m.collected}/${m.platinum}</small><small>${m.nextTier ? `${m.nextTarget - m.collected} to ${m.nextTier}` : 'Platinum complete'}</small></div>`,
-    )
+    .map((m) => {
+      // Hisui's first partners include Cyndaquil; its regional showcase is evolved species.
+      const number = m.region === 'Hisui' ? 155 : deviceFor(m.region).showcase[0];
+      const partner = species.find((p) => p.n === number);
+      return `<div class="medal ${m.tier}" data-key="medal-${m.region}"><span class="medal-mark" aria-hidden="true"><img src="${escape(partner.art)}" alt="" width="40" height="40" loading="lazy"></span><strong>${m.region}</strong><small>${m.tier === 'none' ? 'No medal yet' : m.tier[0].toUpperCase() + m.tier.slice(1)} · ${m.collected}/${m.platinum}</small><small>${m.nextTier ? `${m.nextTarget - m.collected} to ${m.nextTier}` : 'Platinum complete'}</small></div>`;
+    })
     .join('')}</div></section>`;
 }
 function nearlySection() {
@@ -294,7 +300,7 @@ function nearlySection() {
   return `<section class="nearly" aria-labelledby="nearly-title"><div class="section-title"><h2 id="nearly-title">Almost complete</h2><small>One or two categories left</small></div><div class="nearly-list">${list
     .map(
       ({ p, missing }) =>
-        `<button class="nearly-item" data-key="nearly-${p.id}" data-pokemon="${p.id}"><img src="${escape(p.art)}" alt="" loading="lazy" width="56" height="56"><span><strong>${escape(p.name)}</strong><small>Only ${missing.map(([, name]) => name).join(' and ')} left</small></span></button>`,
+        `<button class="nearly-item" data-key="nearly-${p.id}" data-pokemon="${p.id}" aria-label="View details for ${escape(p.name)}, ${dex(p.n)}. Missing ${missing.map(([, name]) => name).join(' and ')}"><img src="${escape(p.art)}" alt="" loading="lazy" width="72" height="72"><span class="nearly-name"><small>${dex(p.n)}</small><strong>${escape(p.name)}</strong></span><span class="nearly-categories">${missing.map(([id, name]) => `<span class="missing-chip cat-${id}"><i aria-hidden="true"></i>${name}</span>`).join('')}</span></button>`,
     )
     .join('')}</div></section>`;
 }
@@ -602,18 +608,32 @@ function activityRings(totals, overall) {
 }
 function heatCard() {
   const rows = regionHeat(species, owned, categories, REGIONS.slice(1));
-  return `<section class="dash-card heat-card" aria-labelledby="heat-title"><div class="card-head"><h2 id="heat-title">Regions by category</h2><small>Hover for counts · select a cell to work on it</small></div><div class="heat-scroll"><table class="heat"><thead><tr><th scope="col"><span class="sr-only">Region</span></th>${categories.map(([id, name]) => `<th scope="col" class="cat-${id}">${name}</th>`).join('')}</tr></thead><tbody>${rows
+  const category =
+    state.heatCategory ?? mostProgressCategory(categoryTotals(species, owned, categories));
+  const table = `<div class="heat-scroll"><table class="heat"><caption class="sr-only">Regional collection counts by category</caption><thead><tr><th scope="col"><span class="sr-only">Region</span></th>${categories.map(([id, name]) => `<th scope="col" class="cat-${id}">${name}</th>`).join('')}</tr></thead><tbody>${rows
     .map(
       (r) =>
         `<tr data-key="heat-${r.region}"><th scope="row">${r.region}</th>${r.cells
           .map((c) => {
-            if (!c.eligible) return '<td><span class="heat-cell empty">–</span></td>';
+            if (!c.eligible)
+              return `<td data-label="${c.name}"><span class="heat-cell empty" title="No eligible ${c.name} entries">–</span></td>`;
             const pct = (c.count / c.eligible) * 100;
-            return `<td><a class="heat-cell cat-${c.id} ${c.count === c.eligible ? 'full' : ''} ${c.count ? '' : 'zero'}" href="#progress" data-focus-cat="${c.id}" data-focus-region="${r.region}" title="${c.count} of ${c.eligible}" aria-label="${r.region} ${c.name}: ${c.count} of ${c.eligible}, ${percent(c.count, c.eligible)}"><span>${percent(c.count, c.eligible)}</span><i class="meter" aria-hidden="true"><b data-style="width:${pct.toFixed(2)}%"></b></i></a></td>`;
+            return `<td data-label="${c.name}"><a class="heat-cell cat-${c.id} ${c.count === c.eligible ? 'full' : ''} ${c.count ? '' : 'zero'}" href="#progress" data-focus-cat="${c.id}" data-focus-region="${r.region}" title="${c.count} of ${c.eligible}" aria-label="${r.region} ${c.name}: ${c.count} of ${c.eligible}, ${percent(c.count, c.eligible)}"><span>${c.count ? percent(c.count, c.eligible) : '·'}</span><i class="meter" aria-hidden="true"><b data-style="width:${pct.toFixed(2)}%"></b></i></a></td>`;
           })
           .join('')}</tr>`,
     )
-    .join('')}</tbody></table></div></section>`;
+    .join('')}</tbody></table></div>`;
+  const bars = rows
+    .map((r) => {
+      const c = r.cells.find((cell) => cell.id === category);
+      const pct = c.eligible ? (c.count / c.eligible) * 100 : 0;
+      const content = `<span>${r.region}</span><i class="meter" aria-hidden="true"><b data-style="width:${pct.toFixed(2)}%"></b></i><small>${c.count} / ${c.eligible}</small>`;
+      return c.eligible
+        ? `<a class="region-bar cat-${category}" href="#progress" data-focus-cat="${category}" data-focus-region="${r.region}" title="${c.count} of ${c.eligible}" aria-label="${r.region} ${c.name}: ${c.count} of ${c.eligible}. Open in Progress">${content}</a>`
+        : `<span class="region-bar cat-${category}" title="No eligible ${c.name} entries" aria-label="${r.region}: no eligible ${c.name} entries">${content}</span>`;
+    })
+    .join('');
+  return `<section class="dash-card heat-card" aria-labelledby="heat-title"><div class="card-head"><h2 id="heat-title">Regions by category</h2><small>Select a region to work on it</small></div><div class="heat-desktop">${table}</div><div class="heat-mobile"><label class="category-select">Category<select data-heat-category>${categories.map(([id, name]) => `<option value="${id}" ${id === category ? 'selected' : ''}>${name}</option>`).join('')}</select></label><div class="region-bars">${bars}</div><details class="heat-disclosure"><summary>Show full table</summary>${table}</details></div></section>`;
 }
 function activityCard(days) {
   const max = Math.max(1, ...days.map((d) => d.count));
@@ -762,7 +782,18 @@ function home() {
   const mastered = species.filter((p) => p.rules.normal === 'released' && complete(p)).length;
   const week = days.slice(-7).reduce((sum, d) => sum + d.count, 0);
   const streak = activeStreak(days);
-  return `<div class="dash"><div class="dash-top"><p class="hero-eyebrow">${trainer() ? `Trainer ${escape(trainer())}` : 'Your collection'}</p><div class="hero-actions"><button class="secondary" data-compose>Build a search</button><a class="primary" href="#progress">Update collection</a></div></div><div class="kpi-row" aria-label="Collection summary">${kpi('overall', 'Overall', `${pct}%`, `${have.toLocaleString()} of ${all.toLocaleString()} entries`, `<i class="kpi-bar" data-style="--p:${pct}%" aria-hidden="true"></i>`)}${kpi('species', 'Species', normal.count.toLocaleString(), `of ${normal.eligible.toLocaleString()} registered`)}${kpi('complete', 'Complete', mastered.toLocaleString(), 'every category done')}${kpi('week', 'This week', week.toLocaleString(), `${days.at(-1).count} today`)}${kpi('streak', 'Streak', `${streak} ${streak === 1 ? 'day' : 'days'}`, streak ? 'Keep it going' : 'Mark one today')}</div><section class="dash-card ring-card" aria-labelledby="ring-title"><div class="card-head"><h2 id="ring-title">Categories</h2><small>National Dex species · select one to work on it</small></div>${activityRings(totals, pct)}</section><div class="bento">${heatCard()}${activityCard(days)}${nearlySection() || '<section class="nearly"><div class="section-title"><h2>Almost complete</h2></div><p class="annotation">Pokémon one or two categories from complete show up here.</p></section>'}${medals()}${toolsCard()}</div></div>`;
+  const recentSprites = week
+    ? `<span class="kpi-recent" aria-label="Recently marked Pokémon">${recentlyMarked(
+        entries(),
+        catalog,
+      )
+        .map(
+          ({ p, entry }) =>
+            `<img src="${escape(entry.categoryId === 'shiny' ? p.shiny : p.art)}" alt="${escape(p.name)}" title="${escape(p.name)} · ${categoryLabels[entry.categoryId]}" width="28" height="28">`,
+        )
+        .join('')}</span>`
+    : '';
+  return `<div class="dash"><div class="dash-top"><p class="hero-eyebrow">${trainer() ? `Trainer ${escape(trainer())}` : 'Your collection'}</p><div class="hero-actions"><button class="secondary" data-compose>Build a search</button><a class="primary" href="#progress">Update collection</a></div></div><div class="kpi-row" aria-label="Collection summary">${kpi('overall', 'Overall', `${pct}%`, `${have.toLocaleString()} of ${all.toLocaleString()} entries`, `<i class="kpi-bar" data-style="--p:${pct}%" aria-hidden="true"></i>`)}${kpi('species', 'Species', normal.count.toLocaleString(), `of ${normal.eligible.toLocaleString()} registered`)}${kpi('complete', 'Complete', mastered.toLocaleString(), 'every category done')}${kpi('week', 'This week', week.toLocaleString(), `${days.at(-1).count} today`, recentSprites)}${kpi('streak', 'Streak', `${streak} ${streak === 1 ? 'day' : 'days'}`, streak ? 'Keep it going' : 'Mark one today')}</div><section class="dash-card ring-card" aria-labelledby="ring-title"><div class="card-head"><h2 id="ring-title">Categories</h2><small>National Dex species · select one to work on it</small></div>${activityRings(totals, pct)}</section><div class="bento">${heatCard()}${activityCard(days)}${nearlySection() || '<section class="nearly"><div class="section-title"><h2>Almost complete</h2></div><p class="annotation">Pokémon one or two categories from complete show up here.</p></section>'}${medals()}${toolsCard()}</div></div>`;
 }
 function compareView() {
   const share = parseShare(location.hash);
@@ -878,7 +909,10 @@ function select(n) {
   }
   // Everywhere else, details open over the page so the grid or dashboard stays put.
   updateMarkup(document.querySelector('#dialog-content'), specimen());
-  if (!dialog.open) dialog.showModal();
+  if (!dialog.open) {
+    detailOpener = document.activeElement;
+    dialog.showModal();
+  }
   revealArtwork(origin, dialog.querySelector('.specimen-stage img'));
 }
 function download(content, filename, type) {
@@ -1565,11 +1599,19 @@ document.addEventListener('keydown', (e) => {
 dialog.addEventListener('close', () => {
   const next =
     main.querySelector(`[data-pokemon="${state.selected}"]`) || main.querySelector('#dex-search');
-  next?.focus({ preventScroll: true });
+  // The browser restores focus before dispatching close. Do not steal it back after a Tab.
+  const active = document.activeElement;
+  if (active === detailOpener || active === document.body || dialog.contains(active))
+    next?.focus({ preventScroll: true });
+  detailOpener = null;
 });
 
 document.addEventListener('change', async (event) => {
   const t = event.target;
+  if (t.matches('[data-heat-category]')) {
+    state.heatCategory = t.value;
+    render();
+  }
   if (t.matches('[data-category-select]')) {
     state.category = t.value;
     render();

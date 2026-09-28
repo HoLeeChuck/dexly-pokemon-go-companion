@@ -13,6 +13,13 @@ export interface CategoryTotal {
   eligible: number;
   count: number;
 }
+export function mostProgressCategory(totals: readonly CategoryTotal[]): string | undefined;
+export function recentlyMarked(
+  entries: readonly DatedEntry[],
+  catalog: readonly AppPokemon[],
+  now?: Date,
+  limit?: number,
+): { entry: DatedEntry; p: AppPokemon }[];
 export function categoryTotals(
   items: readonly AppPokemon[],
   owned: ReadonlySet<string>,

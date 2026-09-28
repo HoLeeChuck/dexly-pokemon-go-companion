@@ -5,6 +5,36 @@ export function showFirstRunHome(ownedCount, activity, storageUnavailable = fals
   return !storageUnavailable && ownedCount === 0 && !activity.some((day) => day.count > 0);
 }
 
+/** Most registrations; category order breaks ties and supplies the empty fallback. */
+export function mostProgressCategory(totals) {
+  return totals.reduce((best, item) => (!best || item.count > best.count ? item : best), null)?.id;
+}
+
+/** Latest distinct Pokémon marked in the same local-calendar window as the weekly KPI. */
+export function recentlyMarked(entries, catalog, now = new Date(), limit = 3) {
+  const start = new Date(now);
+  start.setHours(0, 0, 0, 0);
+  start.setDate(start.getDate() - 6);
+  const byId = new Map(catalog.map((p) => [p.id, p]));
+  const seen = new Set();
+  return entries
+    .filter(
+      (e) =>
+        e.collected &&
+        byId.has(e.formId) &&
+        Date.parse(e.updatedAt) >= start.getTime() &&
+        Date.parse(e.updatedAt) <= now.getTime(),
+    )
+    .sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))
+    .filter((e) => {
+      if (seen.has(e.formId)) return false;
+      seen.add(e.formId);
+      return true;
+    })
+    .slice(0, limit)
+    .map((entry) => ({ entry, p: byId.get(entry.formId) }));
+}
+
 /** Registered and eligible counts for each category across the given Pokémon. */
 export function categoryTotals(items, owned, categories) {
   return categories.map(([id, name]) => {

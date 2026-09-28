@@ -1,6 +1,20 @@
 # CatchGrid handoff
 
-## September 27, 2026 — CODEX-PLAN Phase 1 (local, uncommitted)
+## September 27, 2026 — CODEX-PLAN Phase 2 (local, uncommitted)
+
+Phase 1 was committed with the owner's explicit authorization as **`789b6bb`** (`feat: add Phase 1 first-run Home`) on **`prism-forward`**, staging only its implementation, tests, harness, fixtures, screenshots and handoff. `CODEX-PLAN.md` remains the pre-existing untracked assignment. Phase 2 is implemented and validated below, with its changes left unstaged and uncommitted. No push, merge, migration or deployment occurred.
+
+- **Almost complete:** horizontal cards with 72px local artwork, Dex number, name and category-coloured missing chips; four cards fit on desktop and about 1.3 on phones, with scroll snap. The existing detail sheet opens without changing ownership. Keyboard testing exposed a dialog-close focus race; the close handler now respects focus that has already moved after native restoration.
+- **Medals and weekly activity:** regional first-partner silhouettes become full colour at Bronze, with the specified bronze/silver/gold/platinum ring colours. Counts and milestone rules stay unchanged. This week displays up to three distinct, most recently marked Pokémon within the existing seven-calendar-day window, using shiny artwork for a shiny mark.
+- **Heatmap:** zero cells show a muted dot while counts remain in tooltips and accessible names. Phones use a category picker (most registered entries by default; original category order breaks ties) and 11 region bars. The full native table remains in a disclosure, reflowing into labelled region groups without sideways scrolling. The picker only changes presentation state.
+- **Fixture evidence:** the original 232-entry demo is unchanged. Added `docs/fixtures/phase2-nearly-complete.json` with 268 synthetic entries to exercise six nearly complete Pokémon. Both fixtures use the reviewed Settings import path in isolated browser contexts. Screenshots and measurements are in `docs/shots/phase2-after/`, compared with `docs/shots/phase1-after/`; reproduction details are in [docs/shots/README.md](docs/shots/README.md).
+- **Validation:** `pnpm.cmd test` passed (241 unit, 40 Worker); `pnpm.cmd lint` and `pnpm.cmd run build:artifact` passed (TypeScript, client/Worker builds and bundle report). The full Chromium desktop/mobile run had 72 passes, 2 existing mobile skips and 2 failures exposing the focus race. After the fix, all 8 affected detail/keyboard checks passed on both sizes: **74 applicable browser checks passed across the full run and targeted rerun**. New coverage includes all medal tiers, recent artwork/zero-week behavior, category selection, accessible table semantics, axe, shelf sizing, keyboard focus and storage immutability while viewing details. Targeted ESLint and the production build passed again after the fix.
+- **Visual acceptance:** at 390×844 the original seeded Home is **2,361px** tall (previously 3,497px), below the 2,400px limit. The enriched six-card fixture is 2,468px. The 16-view harness has no page overflow, missing artwork or page errors. Outside returning-user Home, 13 PNGs are byte-identical; phone seeded Progress differs only at 40 checkbox-edge pixels by one RGB channel level, with identical dimensions and layout. Both themes, the expanded phone table, 320/600/844px widths, landscape and enlarged body text passed local production-preview checks with real CSP and zero violations. See `review.json` for measurements.
+- **Stop point:** Phase 2 only; Phase 3 navigation was not started. Public storage/catalog/schema, private `/cody`, backup formats, exact search strings and dependencies were not changed. Safari, standalone PWA and physical-device verification were not run for this phase. The existing catalog bundle-size advisory remains. Local frontend preview: `http://127.0.0.1:5184/`; local production preview: `http://127.0.0.1:5185/`.
+
+## September 27, 2026 — CODEX-PLAN Phase 1 (committed as `789b6bb`)
+
+The following records the original Phase 1 implementation and validation. It was subsequently committed on `prism-forward` as authorized above; the boundaries bullet records its state before that authorization.
 
 Implemented **Phase 1 only**: empty Home now introduces CatchGrid with the requested hero and three entry points, seven local portraits revealing at 1.2-second intervals (static full colour with reduced motion), three how-to cards, five reusable region devices, and the privacy note. The seven portraits are Bulbasaur, Cyndaquil, Mudkip, Turtwig, Rowlet, Sprigatito and Pikachu, spanning Kanto–Paldea. The existing Icon paths are rendered as plain SVG without importing React.
 
@@ -129,7 +143,7 @@ pnpm exec playwright test --project=pwa-chromium
 
 ## Git state
 
-- `main` and `prism-forward` are both at `a8d0f72` and pushed; `main` matches production. (Only this HANDOFF update is uncommitted.)
+- `prism-forward` is at local commit `789b6bb` (Phase 1); Phase 2 changes are unstaged and uncommitted. `main` remains at `a8d0f72`, the recorded production release. Nothing was pushed, merged or deployed in the Phase 1 commit / Phase 2 session.
 - Commits from the September 25 session came from a Linux shell that could not delete git temp files. If git reports a stale `index.lock` or `HEAD.lock`, confirm no git process is running, then delete the lock file.
 
 ## Next steps, in order

@@ -6,6 +6,8 @@ import {
   dailyActivity,
   activeStreak,
   showFirstRunHome,
+  mostProgressCategory,
+  recentlyMarked,
 } from '../../app/dashboard.js';
 
 const species = catalog.filter((p) => p.isDefault);
@@ -46,6 +48,46 @@ describe('categoryTotals', () => {
     const ineligible = species.find((p) => p.rules.shiny !== 'released')!;
     const [, shiny] = categoryTotals(species, new Set([`${ineligible.id}:shiny`]), categories);
     expect(shiny!.count).toBe(0);
+  });
+});
+
+describe('dashboard artwork and category selection', () => {
+  it('defaults to the category with most registrations, retaining order on ties', () => {
+    const totals = [
+      { id: 'normal', name: 'Normal', count: 1, eligible: 100 },
+      { id: 'shiny', name: 'Shiny', count: 4, eligible: 80 },
+      { id: 'lucky', name: 'Lucky', count: 4, eligible: 100 },
+    ];
+    expect(mostProgressCategory(totals)).toBe('shiny');
+    expect(mostProgressCategory(totals.map((t) => ({ ...t, count: 0 })))).toBe('normal');
+  });
+
+  it('shows the three latest distinct known Pokémon within seven local calendar days', () => {
+    const now = new Date(2026, 8, 27, 15);
+    const entry = (n: number, day: number, categoryId = 'normal') => ({
+      formId: species.find((p) => p.n === n)!.id,
+      categoryId,
+      collected: true,
+      updatedAt: new Date(2026, 8, day, 12).toISOString(),
+    });
+    const entries = [
+      entry(1, 21),
+      entry(2, 25),
+      entry(3, 27),
+      entry(3, 26, 'shiny'),
+      entry(4, 26),
+      entry(5, 20),
+      entry(6, 28),
+      { ...entry(7, 27), collected: false },
+      { ...entry(8, 27), updatedAt: 'invalid' },
+      { ...entry(9, 27), formId: 'unknown' },
+    ];
+    expect(recentlyMarked(entries, catalog, now).map(({ p }) => p.n)).toEqual([3, 4, 2]);
+    expect(recentlyMarked([entry(1, 21), entry(2, 20)], catalog, now).map(({ p }) => p.n)).toEqual([
+      1,
+    ]);
+    expect(recentlyMarked([{ ...entry(1, 21), updatedAt: undefined }], catalog, now)).toEqual([]);
+    expect(entries[0]!.formId).toBe(species.find((p) => p.n === 1)!.id);
   });
 });
 
