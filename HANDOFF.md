@@ -1,5 +1,18 @@
 # CatchGrid handoff
 
+## September 30, 2026 — Round 3 Phase L1 (local, awaiting Claude)
+
+**Phase L1 is implemented and self-reviewed by Codex, awaiting Claude.** The owner authorized an L1-only commit on `prism-forward`, with no push, merge or deployment. The Round 3 plan confirms Claude approved F1 (`a716449`) and F2 (`d2aa25f`). L2–L4 are untouched. The L1 status note is under its heading in the owner's local/untracked `CODEX-PLAN.md`, excluded from the commit.
+
+- Audited all **73** generated unreleased defaults and **33** official news posts published August 24–September 30, plus relevant official event/season and historical debut pages. Added **13 dated ledger entries** for Toxel, Sinistea/Polteageist, Maschiff/Mabosstiff, Shiny Flamigo and the Shiny Applin family. Existing six ledger forms are preserved; generated catalog and reviewed overlay are unchanged.
+- Effective public unreleased defaults fall **71 → 69**. Maschiff/Mabosstiff were already released by the overlay; Toxel and Sinistea are newly corrected. Bramblin remains future-dated to October 13. All unsourced species and disputed Shadow/Purified/Mr. Rime claims stay unavailable, with queries and findings in [codex-questions.md](docs/codex-questions.md). The Toxel date is the verified global debut; earlier regional chronology remains a documented question.
+- The owner's real workbook was read in place and not copied or rewritten. Actual app interpreter: **214 → 201 skipped cells**, **7,765 → 7,778 accepted entries**, no unmatched names; SHA-256 unchanged. Of the final skips, 150 are not eligible and 51 are untracked alternate-form categories. Do not equate workbook marks with official availability.
+- The existing October 10 Zoroark Sucker Punch window already correctly runs 14:00–21:00; no duplicate or unsourced Classic window was added. Legacy review date advances to September 30. Future October 2 Rocket/shiny and October 3 Gigantamax shiny announcements were not applied prematurely. Season Dynamax/Mega Chandelure announcements lack verified individual debut dates; model/date questions are deferred without changing stable IDs or schemas.
+- Validation: **257 unit, 40 Worker and 16 focused Windows Chromium desktop/phone browser tests passed**, plus lint, catalog validators, artifact build, focused formatting and diff checks. The real-ledger Toxel/Bramblin regression and synthetic all-73 import test pass. Full Linux release suites and physical-device/live verification were not run in L1.
+- [L1 catalog audit and before/after evidence](docs/releases/2026-10-02-launch/CATALOG-AUDIT.md) records every verdict, official source, reviewed news disposition, conservative gap and validation limit. Storage/backup/compare contracts, private owner app, migrations, dependencies and recommendation strings are unchanged.
+
+**Stop for Claude's L1 review.** No L2 implementation, main update, push, merge or deployment was performed. The last production evidence remains the release record below; no fresh live-state claim is made here.
+
 ## September 28, 2026 — Round 2 Phase F2 (local, awaiting Claude)
 
 **Phase F2 is implemented and self-reviewed by Codex, awaiting Claude.** The owner reports Claude approved F1 (`a716449`) and authorized committing F2 on `prism-forward`, with no push or deploy. F3 is untouched. `CODEX-PLAN.md` contains the requested F2 status note and remains local/untracked, excluded from the phase commit.

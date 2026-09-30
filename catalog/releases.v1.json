@@ -69,5 +69,97 @@
       "note": "Debuted in Staraptor Super Mega Raid Day. Moved here from app/catalog-review.js."
     }
   ],
-  "entries": []
+  "entries": [
+    {
+      "date": "2024-11-18",
+      "dex": 848,
+      "categories": ["normal", "shiny", "lucky", "hundo", "xxl", "xxs"],
+      "source": "https://pokemongo.com/news/into-the-wild-2024",
+      "note": "Toxel and Shiny Toxel hatch from 10 km Eggs during Into the Wild, the officially dated global debut. Tradeable and size/IV categories follow Normal; no Shadow or Purified debut is established."
+    },
+    {
+      "date": "2024-12-03",
+      "dex": 854,
+      "categories": ["normal", "lucky", "hundo", "xxl", "xxs"],
+      "source": "https://pokemongo.com/news/just-my-cup-of-tea-2024",
+      "note": "Sinistea debuts in one-star raids and Collection Challenge encounters. Shiny is dated separately."
+    },
+    {
+      "date": "2024-12-03",
+      "dex": 855,
+      "categories": ["normal", "lucky", "hundo", "xxl", "xxs"],
+      "source": "https://pokemongo.com/news/just-my-cup-of-tea-2024",
+      "note": "Polteageist is obtainable by evolving Sinistea with 50 Candy, explicitly described in the debut post."
+    },
+    {
+      "date": "2025-10-21",
+      "dex": 854,
+      "categories": ["shiny"],
+      "source": "https://pokemongo.com/news/halloween-part-1-2025",
+      "note": "Shiny Sinistea debuts during Halloween Part I in wild encounters and one-star raids."
+    },
+    {
+      "date": "2025-10-21",
+      "dex": 855,
+      "categories": ["shiny"],
+      "source": "https://pokemongo.com/news/halloween-part-1-2025",
+      "note": "Shiny Polteageist is obtainable by evolving debuting Shiny Sinistea; the official Just My Cup of Tea post establishes that evolution. See the L1 audit for both sources."
+    },
+    {
+      "date": "2026-09-08",
+      "dex": 942,
+      "categories": ["normal", "lucky", "hundo", "xxl", "xxs"],
+      "source": "https://pokemongo.com/news/mega-squads-2026",
+      "note": "Maschiff debuts in Mega Squads, obtainable through GO Pass from September 8. Reproduces the existing reviewed correction with dated provenance."
+    },
+    {
+      "date": "2026-09-08",
+      "dex": 943,
+      "categories": ["normal", "lucky", "hundo", "xxl", "xxs"],
+      "source": "https://pokemongo.com/news/mega-squads-2026",
+      "note": "Mabosstiff is obtainable by evolving Maschiff with 50 Candy, explicitly described in the debut post. Reproduces the existing reviewed correction."
+    },
+    {
+      "date": "2026-09-08",
+      "dex": 973,
+      "categories": ["shiny"],
+      "source": "https://pokemongo.com/news/mega-squads-2026",
+      "note": "Shiny Flamigo debuts in Mega Squads wild encounters. Reproduces the existing reviewed correction with dated provenance."
+    },
+    {
+      "date": "2026-09-29",
+      "dex": 840,
+      "categories": ["shiny"],
+      "source": "https://pokemongo.com/news/harvest-festival-2026",
+      "note": "Shiny Applin debuts during Harvest Festival 2026 in wild encounters and near Mossy Lure Modules."
+    },
+    {
+      "date": "2026-09-29",
+      "dex": 841,
+      "categories": ["shiny"],
+      "source": "https://pokemongo.com/news/harvest-festival-2026",
+      "note": "Shiny Flapple is obtainable by evolving debuting Shiny Applin. Sweet Discoveries 2025 officially establishes the Tart Apple evolution; see the L1 audit."
+    },
+    {
+      "date": "2026-09-29",
+      "dex": 842,
+      "categories": ["shiny"],
+      "source": "https://pokemongo.com/news/harvest-festival-2026",
+      "note": "Shiny Appletun is obtainable by evolving debuting Shiny Applin. Sweet Discoveries 2025 officially establishes the Sweet Apple evolution; see the L1 audit."
+    },
+    {
+      "date": "2026-09-29",
+      "dex": 1011,
+      "categories": ["shiny"],
+      "source": "https://pokemongo.com/news/harvest-festival-2026",
+      "note": "Shiny Dipplin is obtainable by evolving debuting Shiny Applin. Harvest Festival 2025 officially establishes the Syrupy Apple evolution; see the L1 audit."
+    },
+    {
+      "date": "2026-09-29",
+      "dex": 1019,
+      "categories": ["shiny"],
+      "source": "https://pokemongo.com/news/harvest-festival-2026",
+      "note": "Shiny Hydrapple is obtainable by evolving Shiny Dipplin. Harvest Festival 2025 officially establishes the Candy and buddy-catch requirements; see the L1 audit."
+    }
+  ]
 }
