@@ -1,5 +1,16 @@
 # CatchGrid handoff
 
+## October 1, 2026 — Round 3 L2 and L3 item 2 (local, awaiting Claude)
+
+**L1 is approved by Claude. L2 and L3 item 2 are complete locally on prism-forward and stop here for Claude review.** The owner authorized a local commit only; no push, merge or deploy. This current status supersedes the historical L1/F1/F2 review requests below.
+
+- Added inline report drafts to Pokémon details, the Dex scanner, Sources & credits and unavailable skipped import cells. Pokémon, form and category are prefilled when known; edited text copies exactly, with an in-place fallback when clipboard access fails. The owner-approved Discord profile is an explicit new-tab link. Drafting/copying sends no request and changes no collection data.
+- Home (first-run and returning) and the Dex shelf show the newer catalog/ledger date, currently **2026-09-29**. The stale warning starts after 21 calendar days. Existing Home lines contain the information; the **2,400px limit is unchanged**.
+- L3 item 2 now attributes unavailable skipped cells to CatchGrid's catalog and offers the same report action. Reviewed import eligibility and apply/save behavior remain unchanged. Cody's picks, catalog data, storage/backup/compare formats, migrations, dependencies and private owner behavior are preserved.
+- **259 unit, 40 Worker and 259 Linux browser tests passed**, with two existing browser exclusions, zero failures/retries in the final full run. Lint, TypeScript/artifact build, focused formatting and diff checks passed. **32 production-build captures / 48 measurements**, zero console/page/CSP errors; maximum captured phone Home height **2,394px**. Intermediate failures and evidence limits are recorded in the [L2 review](docs/releases/2026-10-02-launch/L2-REVIEW.md), with browser log, source hashes and screenshots.
+- **L3 item 1 and L4 are unstarted.** Do not write the announcement, publish, or continue a later phase without a separate owner assignment. Physical-device, real Discord and live-site acceptance remain unverified. CODEX-PLAN.md has phase status notes and stays local/untracked.
+- Pre-existing repository organization edits and evidence are preserved and remain unstaged. Only this phase's handoff note is included in the phase commit; the existing HANDOFF reorganization is not swept into it.
+
 ## September 30, 2026 — Round 3 Phase L1 (local, awaiting Claude)
 
 **Phase L1 is implemented and self-reviewed by Codex, awaiting Claude.** The owner authorized an L1-only commit on `prism-forward`, with no push, merge or deployment. The Round 3 plan confirms Claude approved F1 (`a716449`) and F2 (`d2aa25f`). L2–L4 are untouched. The L1 status note is under its heading in the owner's local/untracked `CODEX-PLAN.md`, excluded from the commit.

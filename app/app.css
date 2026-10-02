@@ -1,4 +1,5 @@
 @import url('/app/tokens.css');
+@import url('/app/catalog-feedback.css');
 * {
   box-sizing: border-box;
 }

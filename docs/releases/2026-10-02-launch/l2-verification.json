@@ -1,0 +1,919 @@
+{
+  "scope": "Round 3 L2 and L3 item 2 only; local; no push, merge or deploy",
+  "reviewDate": "2026-10-01",
+  "unit": 259,
+  "worker": 40,
+  "browserStats": {
+    "startTime": "2026-10-02T04:38:38.601Z",
+    "duration": 128906.298,
+    "expected": 259,
+    "skipped": 2,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "browserProjects": {
+    "mobile-chromium": {
+      "passed": 68,
+      "skipped": 1
+    },
+    "desktop-chromium": {
+      "passed": 69,
+      "skipped": 0
+    },
+    "mobile-webkit": {
+      "passed": 59,
+      "skipped": 1
+    },
+    "desktop-webkit": {
+      "passed": 60,
+      "skipped": 0
+    },
+    "pwa-chromium": {
+      "passed": 3,
+      "skipped": 0
+    }
+  },
+  "browserRuntime": "Ubuntu WSL, Node 24.19.0, existing frozen install with matching lockfile; four workers, zero retries",
+  "hashes": [
+    {
+      "path": "app/main.js",
+      "sha256": "097d2a6c89a536479fd2067c6771bb49b3c50678c1d9b24e51bf4e40659b8b34",
+      "linuxMatches": true
+    },
+    {
+      "path": "app/app.css",
+      "sha256": "fc01eacd3ebafa75230fd95e5346bac45c3538808bbe531fbc942befb4559cbf",
+      "linuxMatches": true
+    },
+    {
+      "path": "app/catalog-feedback.js",
+      "sha256": "9fa7c4e9886ee2fdc84813a05f7971d73e109f4cc32e0a569c516f8e0c41b45b",
+      "linuxMatches": true
+    },
+    {
+      "path": "app/catalog-feedback.d.ts",
+      "sha256": "2ee8742b86b71c01230463ca1ffbb041659ad30d53829545a3aaefceb15cbd6c",
+      "linuxMatches": true
+    },
+    {
+      "path": "app/catalog-feedback.css",
+      "sha256": "b7967beee2b86d494c739603d673fe4d2ffe9dfdeeff16ca3f1a12d27b43f3f6",
+      "linuxMatches": true
+    },
+    {
+      "path": "tests/e2e/catalog-feedback-app.spec.ts",
+      "sha256": "12e93dbb09c4b3c846d01a5b09bc7a3dced3f4a202c781c99cc4eab2a59b1d4c",
+      "linuxMatches": true
+    },
+    {
+      "path": "tests/e2e/app.spec.ts",
+      "sha256": "ec52a6e9ffe1142c626a2f309d88364e55899da131e69f4b040d8b04b07796f6",
+      "linuxMatches": true
+    },
+    {
+      "path": "tests/unit/catalog-feedback.test.ts",
+      "sha256": "47747bf19ee3c97bf52f16921fb28a73da37d7c08aecda0ef8e4fa539c3d85aa",
+      "linuxMatches": true
+    },
+    {
+      "path": "scripts/captures/shots-l2.mjs",
+      "sha256": "7ea7dcd257ea252cb8767cb7b287850c19777fbdfab964843fb9d1d8eecd06a8",
+      "linuxMatches": true
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "sha256": "1650f0d09e50891f0edf94403961ced94d687df881f626411cf82239528db6c2",
+      "linuxMatches": true
+    },
+    {
+      "path": "catalog/releases.v1.json",
+      "sha256": "7f5a449387ca752e1a081a92c7aae8993ba495472d21746f862cbe0a3ae6810f",
+      "linuxMatches": true
+    },
+    {
+      "path": "public/_headers",
+      "sha256": "4f04ecc4940f06d17125546235d46c471ebc58637fd7e5744f3d2f585f859de2",
+      "linuxMatches": true
+    }
+  ],
+  "homeHeights": [
+    {
+      "project": "mobile-chromium",
+      "name": "stale-new-dark-height",
+      "contentHeight": 2236
+    },
+    {
+      "project": "mobile-chromium",
+      "name": "stale-new-light-height",
+      "contentHeight": 2236
+    },
+    {
+      "project": "mobile-chromium",
+      "name": "stale-returning-dark-height",
+      "contentHeight": 2368
+    },
+    {
+      "project": "mobile-chromium",
+      "name": "stale-returning-light-height",
+      "contentHeight": 2368
+    },
+    {
+      "project": "desktop-chromium",
+      "name": "stale-new-dark-height",
+      "contentHeight": 2236
+    },
+    {
+      "project": "desktop-chromium",
+      "name": "stale-new-light-height",
+      "contentHeight": 2236
+    },
+    {
+      "project": "desktop-chromium",
+      "name": "stale-returning-dark-height",
+      "contentHeight": 2368
+    },
+    {
+      "project": "desktop-chromium",
+      "name": "stale-returning-light-height",
+      "contentHeight": 2368
+    },
+    {
+      "project": "mobile-webkit",
+      "name": "stale-new-dark-height",
+      "contentHeight": 2332
+    },
+    {
+      "project": "mobile-webkit",
+      "name": "stale-new-light-height",
+      "contentHeight": 2332
+    },
+    {
+      "project": "mobile-webkit",
+      "name": "stale-returning-dark-height",
+      "contentHeight": 2368
+    },
+    {
+      "project": "mobile-webkit",
+      "name": "stale-returning-light-height",
+      "contentHeight": 2368
+    },
+    {
+      "project": "desktop-webkit",
+      "name": "stale-new-dark-height",
+      "contentHeight": 2236
+    },
+    {
+      "project": "desktop-webkit",
+      "name": "stale-new-light-height",
+      "contentHeight": 2236
+    },
+    {
+      "project": "desktop-webkit",
+      "name": "stale-returning-dark-height",
+      "contentHeight": 2368
+    },
+    {
+      "project": "desktop-webkit",
+      "name": "stale-returning-light-height",
+      "contentHeight": 2368
+    },
+    {
+      "project": "mobile-chromium",
+      "name": "new-dark-height",
+      "contentHeight": 2312
+    },
+    {
+      "project": "mobile-chromium",
+      "name": "new-light-height",
+      "contentHeight": 2312
+    },
+    {
+      "project": "mobile-chromium",
+      "name": "returning-dark-height",
+      "contentHeight": 2380
+    },
+    {
+      "project": "mobile-chromium",
+      "name": "returning-light-height",
+      "contentHeight": 2380
+    },
+    {
+      "project": "mobile-chromium",
+      "name": "banner-dark-height",
+      "contentHeight": 2375
+    },
+    {
+      "project": "mobile-chromium",
+      "name": "banner-light-height",
+      "contentHeight": 2375
+    },
+    {
+      "project": "mobile-chromium",
+      "name": "both-dark-height",
+      "contentHeight": 2374
+    },
+    {
+      "project": "mobile-chromium",
+      "name": "both-light-height",
+      "contentHeight": 2374
+    },
+    {
+      "project": "desktop-chromium",
+      "name": "new-dark-height",
+      "contentHeight": 2312
+    },
+    {
+      "project": "desktop-chromium",
+      "name": "new-light-height",
+      "contentHeight": 2312
+    },
+    {
+      "project": "desktop-chromium",
+      "name": "returning-dark-height",
+      "contentHeight": 2380
+    },
+    {
+      "project": "desktop-chromium",
+      "name": "returning-light-height",
+      "contentHeight": 2380
+    },
+    {
+      "project": "desktop-chromium",
+      "name": "banner-dark-height",
+      "contentHeight": 2375
+    },
+    {
+      "project": "desktop-chromium",
+      "name": "banner-light-height",
+      "contentHeight": 2375
+    },
+    {
+      "project": "desktop-chromium",
+      "name": "both-dark-height",
+      "contentHeight": 2374
+    },
+    {
+      "project": "desktop-chromium",
+      "name": "both-light-height",
+      "contentHeight": 2374
+    },
+    {
+      "project": "mobile-webkit",
+      "name": "new-dark-height",
+      "contentHeight": 2312
+    },
+    {
+      "project": "mobile-webkit",
+      "name": "new-light-height",
+      "contentHeight": 2312
+    },
+    {
+      "project": "mobile-webkit",
+      "name": "returning-dark-height",
+      "contentHeight": 2380
+    },
+    {
+      "project": "mobile-webkit",
+      "name": "returning-light-height",
+      "contentHeight": 2380
+    },
+    {
+      "project": "mobile-webkit",
+      "name": "banner-dark-height",
+      "contentHeight": 2375
+    },
+    {
+      "project": "mobile-webkit",
+      "name": "banner-light-height",
+      "contentHeight": 2375
+    },
+    {
+      "project": "mobile-webkit",
+      "name": "both-dark-height",
+      "contentHeight": 2374
+    },
+    {
+      "project": "mobile-webkit",
+      "name": "both-light-height",
+      "contentHeight": 2374
+    },
+    {
+      "project": "desktop-webkit",
+      "name": "new-dark-height",
+      "contentHeight": 2312
+    },
+    {
+      "project": "desktop-webkit",
+      "name": "new-light-height",
+      "contentHeight": 2312
+    },
+    {
+      "project": "desktop-webkit",
+      "name": "returning-dark-height",
+      "contentHeight": 2380
+    },
+    {
+      "project": "desktop-webkit",
+      "name": "returning-light-height",
+      "contentHeight": 2380
+    },
+    {
+      "project": "desktop-webkit",
+      "name": "banner-dark-height",
+      "contentHeight": 2375
+    },
+    {
+      "project": "desktop-webkit",
+      "name": "banner-light-height",
+      "contentHeight": 2375
+    },
+    {
+      "project": "desktop-webkit",
+      "name": "both-dark-height",
+      "contentHeight": 2374
+    },
+    {
+      "project": "desktop-webkit",
+      "name": "both-light-height",
+      "contentHeight": 2374
+    }
+  ],
+  "captures": [
+    {
+      "file": "desktop-dark-home-new.png",
+      "device": "desktop",
+      "theme": "dark",
+      "state": "home-new",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 1440,
+      "contentHeight": 1396,
+      "freshness": "Catalog updated 2026-09-29"
+    },
+    {
+      "file": null,
+      "device": "desktop",
+      "theme": "dark",
+      "state": "home-new-stale",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 1440,
+      "contentHeight": 1396,
+      "freshness": "Catalog updated 2026-09-29 · Some recent releases may be missing"
+    },
+    {
+      "file": "desktop-dark-home-returning.png",
+      "device": "desktop",
+      "theme": "dark",
+      "state": "home-returning",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 1440,
+      "contentHeight": 1853,
+      "freshness": "Catalog updated 2026-09-29"
+    },
+    {
+      "file": null,
+      "device": "desktop",
+      "theme": "dark",
+      "state": "home-returning-stale",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 1440,
+      "contentHeight": 1851,
+      "freshness": "Catalog updated 2026-09-29 · Some recent releases may be missing"
+    },
+    {
+      "file": "desktop-dark-home-banner.png",
+      "device": "desktop",
+      "theme": "dark",
+      "state": "home-banner",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 1440,
+      "contentHeight": 1973,
+      "freshness": "Catalog updated 2026-09-29"
+    },
+    {
+      "file": null,
+      "device": "desktop",
+      "theme": "dark",
+      "state": "home-banner-stale",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 1440,
+      "contentHeight": 1971,
+      "freshness": "Catalog updated 2026-09-29 · Some recent releases may be missing"
+    },
+    {
+      "file": "desktop-dark-home-both-notices.png",
+      "device": "desktop",
+      "theme": "dark",
+      "state": "home-both-notices",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 1440,
+      "contentHeight": 1526,
+      "freshness": "Catalog updated 2026-09-29"
+    },
+    {
+      "file": null,
+      "device": "desktop",
+      "theme": "dark",
+      "state": "home-both-notices-stale",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 1440,
+      "contentHeight": 1526,
+      "freshness": "Catalog updated 2026-09-29 · Some recent releases may be missing"
+    },
+    {
+      "file": "desktop-dark-dex-shelf.png",
+      "device": "desktop",
+      "theme": "dark",
+      "state": "dex-shelf",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 1440,
+      "contentHeight": 1510,
+      "freshness": "Catalog updated 2026-09-29"
+    },
+    {
+      "file": "desktop-dark-details-report.png",
+      "device": "desktop",
+      "theme": "dark",
+      "state": "details-report",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 1440,
+      "contentHeight": 900,
+      "freshness": null
+    },
+    {
+      "file": "desktop-dark-sources.png",
+      "device": "desktop",
+      "theme": "dark",
+      "state": "sources",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 1440,
+      "contentHeight": 1488,
+      "freshness": null
+    },
+    {
+      "file": "desktop-dark-skipped-cells.png",
+      "device": "desktop",
+      "theme": "dark",
+      "state": "skipped-cells",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 1440,
+      "contentHeight": 3304,
+      "freshness": null
+    },
+    {
+      "file": "desktop-light-home-new.png",
+      "device": "desktop",
+      "theme": "light",
+      "state": "home-new",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 1440,
+      "contentHeight": 1396,
+      "freshness": "Catalog updated 2026-09-29"
+    },
+    {
+      "file": null,
+      "device": "desktop",
+      "theme": "light",
+      "state": "home-new-stale",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 1440,
+      "contentHeight": 1396,
+      "freshness": "Catalog updated 2026-09-29 · Some recent releases may be missing"
+    },
+    {
+      "file": "desktop-light-home-returning.png",
+      "device": "desktop",
+      "theme": "light",
+      "state": "home-returning",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 1440,
+      "contentHeight": 1853,
+      "freshness": "Catalog updated 2026-09-29"
+    },
+    {
+      "file": null,
+      "device": "desktop",
+      "theme": "light",
+      "state": "home-returning-stale",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 1440,
+      "contentHeight": 1851,
+      "freshness": "Catalog updated 2026-09-29 · Some recent releases may be missing"
+    },
+    {
+      "file": "desktop-light-home-banner.png",
+      "device": "desktop",
+      "theme": "light",
+      "state": "home-banner",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 1440,
+      "contentHeight": 1973,
+      "freshness": "Catalog updated 2026-09-29"
+    },
+    {
+      "file": null,
+      "device": "desktop",
+      "theme": "light",
+      "state": "home-banner-stale",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 1440,
+      "contentHeight": 1971,
+      "freshness": "Catalog updated 2026-09-29 · Some recent releases may be missing"
+    },
+    {
+      "file": "desktop-light-home-both-notices.png",
+      "device": "desktop",
+      "theme": "light",
+      "state": "home-both-notices",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 1440,
+      "contentHeight": 1526,
+      "freshness": "Catalog updated 2026-09-29"
+    },
+    {
+      "file": null,
+      "device": "desktop",
+      "theme": "light",
+      "state": "home-both-notices-stale",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 1440,
+      "contentHeight": 1526,
+      "freshness": "Catalog updated 2026-09-29 · Some recent releases may be missing"
+    },
+    {
+      "file": "desktop-light-dex-shelf.png",
+      "device": "desktop",
+      "theme": "light",
+      "state": "dex-shelf",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 1440,
+      "contentHeight": 1510,
+      "freshness": "Catalog updated 2026-09-29"
+    },
+    {
+      "file": "desktop-light-details-report.png",
+      "device": "desktop",
+      "theme": "light",
+      "state": "details-report",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 1440,
+      "contentHeight": 900,
+      "freshness": null
+    },
+    {
+      "file": "desktop-light-sources.png",
+      "device": "desktop",
+      "theme": "light",
+      "state": "sources",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 1440,
+      "contentHeight": 1488,
+      "freshness": null
+    },
+    {
+      "file": "desktop-light-skipped-cells.png",
+      "device": "desktop",
+      "theme": "light",
+      "state": "skipped-cells",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 1440,
+      "contentHeight": 3304,
+      "freshness": null
+    },
+    {
+      "file": "phone-dark-home-new.png",
+      "device": "phone",
+      "theme": "dark",
+      "state": "home-new",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 390,
+      "contentHeight": 2312,
+      "freshness": "Catalog updated 2026-09-29"
+    },
+    {
+      "file": null,
+      "device": "phone",
+      "theme": "dark",
+      "state": "home-new-stale",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 390,
+      "contentHeight": 2332,
+      "freshness": "Catalog updated 2026-09-29 · Some recent releases may be missing"
+    },
+    {
+      "file": "phone-dark-home-returning.png",
+      "device": "phone",
+      "theme": "dark",
+      "state": "home-returning",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 390,
+      "contentHeight": 2344,
+      "freshness": "Catalog updated 2026-09-29"
+    },
+    {
+      "file": null,
+      "device": "phone",
+      "theme": "dark",
+      "state": "home-returning-stale",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 390,
+      "contentHeight": 2306,
+      "freshness": "Catalog updated 2026-09-29 · Some recent releases may be missing"
+    },
+    {
+      "file": "phone-dark-home-banner.png",
+      "device": "phone",
+      "theme": "dark",
+      "state": "home-banner",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 390,
+      "contentHeight": 2375,
+      "freshness": "Catalog updated 2026-09-29"
+    },
+    {
+      "file": null,
+      "device": "phone",
+      "theme": "dark",
+      "state": "home-banner-stale",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 390,
+      "contentHeight": 2336,
+      "freshness": "Catalog updated 2026-09-29 · Some recent releases may be missing"
+    },
+    {
+      "file": "phone-dark-home-both-notices.png",
+      "device": "phone",
+      "theme": "dark",
+      "state": "home-both-notices",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 390,
+      "contentHeight": 2374,
+      "freshness": "Catalog updated 2026-09-29"
+    },
+    {
+      "file": null,
+      "device": "phone",
+      "theme": "dark",
+      "state": "home-both-notices-stale",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 390,
+      "contentHeight": 2394,
+      "freshness": "Catalog updated 2026-09-29 · Some recent releases may be missing"
+    },
+    {
+      "file": "phone-dark-dex-shelf.png",
+      "device": "phone",
+      "theme": "dark",
+      "state": "dex-shelf",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 390,
+      "contentHeight": 2464,
+      "freshness": "Catalog updated 2026-09-29"
+    },
+    {
+      "file": "phone-dark-details-report.png",
+      "device": "phone",
+      "theme": "dark",
+      "state": "details-report",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 390,
+      "contentHeight": 1756,
+      "freshness": null
+    },
+    {
+      "file": "phone-dark-sources.png",
+      "device": "phone",
+      "theme": "dark",
+      "state": "sources",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 390,
+      "contentHeight": 2506,
+      "freshness": null
+    },
+    {
+      "file": "phone-dark-skipped-cells.png",
+      "device": "phone",
+      "theme": "dark",
+      "state": "skipped-cells",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 390,
+      "contentHeight": 5375,
+      "freshness": null
+    },
+    {
+      "file": "phone-light-home-new.png",
+      "device": "phone",
+      "theme": "light",
+      "state": "home-new",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 390,
+      "contentHeight": 2312,
+      "freshness": "Catalog updated 2026-09-29"
+    },
+    {
+      "file": null,
+      "device": "phone",
+      "theme": "light",
+      "state": "home-new-stale",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 390,
+      "contentHeight": 2332,
+      "freshness": "Catalog updated 2026-09-29 · Some recent releases may be missing"
+    },
+    {
+      "file": "phone-light-home-returning.png",
+      "device": "phone",
+      "theme": "light",
+      "state": "home-returning",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 390,
+      "contentHeight": 2344,
+      "freshness": "Catalog updated 2026-09-29"
+    },
+    {
+      "file": null,
+      "device": "phone",
+      "theme": "light",
+      "state": "home-returning-stale",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 390,
+      "contentHeight": 2306,
+      "freshness": "Catalog updated 2026-09-29 · Some recent releases may be missing"
+    },
+    {
+      "file": "phone-light-home-banner.png",
+      "device": "phone",
+      "theme": "light",
+      "state": "home-banner",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 390,
+      "contentHeight": 2375,
+      "freshness": "Catalog updated 2026-09-29"
+    },
+    {
+      "file": null,
+      "device": "phone",
+      "theme": "light",
+      "state": "home-banner-stale",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 390,
+      "contentHeight": 2336,
+      "freshness": "Catalog updated 2026-09-29 · Some recent releases may be missing"
+    },
+    {
+      "file": "phone-light-home-both-notices.png",
+      "device": "phone",
+      "theme": "light",
+      "state": "home-both-notices",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 390,
+      "contentHeight": 2374,
+      "freshness": "Catalog updated 2026-09-29"
+    },
+    {
+      "file": null,
+      "device": "phone",
+      "theme": "light",
+      "state": "home-both-notices-stale",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 390,
+      "contentHeight": 2394,
+      "freshness": "Catalog updated 2026-09-29 · Some recent releases may be missing"
+    },
+    {
+      "file": "phone-light-dex-shelf.png",
+      "device": "phone",
+      "theme": "light",
+      "state": "dex-shelf",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 390,
+      "contentHeight": 2464,
+      "freshness": "Catalog updated 2026-09-29"
+    },
+    {
+      "file": "phone-light-details-report.png",
+      "device": "phone",
+      "theme": "light",
+      "state": "details-report",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 390,
+      "contentHeight": 1756,
+      "freshness": null
+    },
+    {
+      "file": "phone-light-sources.png",
+      "device": "phone",
+      "theme": "light",
+      "state": "sources",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 390,
+      "contentHeight": 2506,
+      "freshness": null
+    },
+    {
+      "file": "phone-light-skipped-cells.png",
+      "device": "phone",
+      "theme": "light",
+      "state": "skipped-cells",
+      "hasCsp": true,
+      "errors": [],
+      "csp": [],
+      "width": 390,
+      "contentHeight": 5375,
+      "freshness": null
+    }
+  ]
+}

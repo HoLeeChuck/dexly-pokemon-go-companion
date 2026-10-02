@@ -458,7 +458,7 @@ test('rows pasted from the community spreadsheet are reviewed, then added', asyn
   await page.getByRole('button', { name: 'Review pasted rows' }).click();
   const review = page.locator('#import-review');
   await expect(review).toContainText('11 new entries from 4 rows');
-  await expect(review).toContainText('1 cells aren’t available in Pokémon GO');
+  await expect(review).toContainText('1 cell skipped as “not available”');
   await review.getByText('See skipped cells').click();
   await expect(review.locator('.sheet-skipped dd')).toContainText('#132 Ditto');
   // Nothing is saved until the review is applied.
@@ -503,7 +503,8 @@ test('medals, poster and compare link are available on Home', async ({ page, con
 test('a compare link shows who can help whom', async ({ page }) => {
   // Friend has registered Bulbasaur (#1) in Normal: first bit set.
   await open(page, 'compare?v=1&c=normal&d=AQ&n=Misty');
-  await expect(page.getByRole('heading', { name: 'Misty has 1 of 954' })).toBeVisible();
+  // L1 released Toxel and Sinistea; compare still counts default species only.
+  await expect(page.getByRole('heading', { name: 'Misty has 1 of 956' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Misty could help you with 1' })).toBeVisible();
   await open(page, 'compare?v=1&c=normal&d=%3Cbad%3E');
   await expect(page.getByRole('heading', { name: /can’t be read/ })).toBeVisible();

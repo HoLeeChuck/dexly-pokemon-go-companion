@@ -1,0 +1,55 @@
+/* Local correction drafts share the existing disclosure and control language. */
+.entry-report {
+  margin-block: 12px;
+  min-width: 0;
+}
+.entry-report summary {
+  cursor: pointer;
+  min-height: 44px;
+  align-content: center;
+  color: var(--ink);
+  font-weight: 600;
+}
+.entry-report p {
+  margin: 8px 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+.entry-report label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.entry-report textarea {
+  display: block;
+  width: 100%;
+  min-height: 180px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  resize: vertical;
+}
+.report-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+.report-actions > * {
+  min-height: 44px;
+  white-space: normal;
+}
+.report-status:empty {
+  display: none;
+}
+.skipped-cell + .skipped-cell {
+  margin-top: 12px;
+}
+.catalog-freshness {
+  font-weight: 400;
+}

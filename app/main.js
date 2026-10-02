@@ -2,6 +2,7 @@ import { revealArtwork } from './motion.js';
 import { updateMarkup } from './dom.js';
 import { createDataSafety, isIosSafari, isStandalone } from './data-safety.js';
 import { catalog, catalogDate, catalogSources, ledgerDate } from './catalog.js';
+import { DISCORD_PROFILE_URL, catalogFreshness, entryReport } from './catalog-feedback.js';
 import {
   DEVICES,
   deviceFor,
@@ -318,9 +319,17 @@ function hintSection(p) {
 function categoryButtons(p) {
   return `<div class="specimen-categories" role="group" aria-label="Quick collection selection" data-complete="${complete(p)}">${(p.isDefault ? categories : formCategories).map(([id, name]) => `<button data-category-toggle="${id}" ${p.rules[id] !== 'released' ? 'disabled' : ''} aria-pressed="${isOwned(p, id)}" data-key="${id}" aria-label="Toggle ${name}: ${p.rules[id] !== 'released' ? ruleLabel(p, id) : isOwned(p, id) ? 'collected' : 'missing'}"><span class="register-track" aria-hidden="true"></span>${name}</button>`).join('')}</div>`;
 }
+function freshness() {
+  const { date, stale } = catalogFreshness(catalogDate, ledgerDate);
+  return `<span class="catalog-freshness">Catalog updated <time datetime="${date}">${date}</time>${stale ? ' · Some recent releases may be missing' : ''}</span>`;
+}
+function reportEntry(pokemon, category, context = 'page') {
+  const key = `report-${context}-${pokemon?.id || 'general'}-${category || 'any'}`;
+  return `<details class="entry-report" data-key="${key}"><summary>Report a wrong entry</summary><p>Edit the message, copy it, then send it to Cody on Discord. Nothing is sent from CatchGrid.</p><label for="${key}">Report message</label><textarea id="${key}" rows="8" spellcheck="false">${escape(entryReport(pokemon, categoryLabels[category]))}</textarea><div class="report-actions"><button class="secondary" data-copy-report>Copy report</button><a class="secondary" href="${DISCORD_PROFILE_URL}" target="_blank" rel="noopener">Message Cody on Discord</a></div><p class="report-status" role="status" aria-live="polite"></p></details>`;
+}
 function specimen() {
   const p = catalog.find((q) => q.id === state.selected);
-  return `<aside data-key="inspector" class="specimen ${typeClasses(p)} ${complete(p) ? 'complete' : ''}" aria-label="${escape(p.name)} collection inspector"><div class="specimen-top"><span></span><span>${label().toUpperCase()}</span></div><div class="specimen-stage"><span class="specimen-index">${p.region.toUpperCase()} · ${dex(p.n)}</span><img src="${escape(art(p))}" alt="${escape(p.name)}${state.category === 'shiny' ? ' shiny appearance' : ''}" width="270" height="255"></div><div class="specimen-info"><h2>${escape(p.name)}</h2><div class="species-meta">${p.types.join(' / ')} · ${p.variantKind}${p.artworkIsFallback ? ' · Representative artwork' : ''}</div>${categoryButtons(p)}${hintSection(p)}${transformationSection(p)}</div><div class="specimen-controls"><button data-prev aria-label="Inspect previous Pokémon">←</button><span>Browse this selection</span><button data-next aria-label="Inspect next Pokémon">→</button></div></aside>`;
+  return `<aside data-key="inspector" class="specimen ${typeClasses(p)} ${complete(p) ? 'complete' : ''}" aria-label="${escape(p.name)} collection inspector"><div class="specimen-top"><span></span><span>${label().toUpperCase()}</span></div><div class="specimen-stage"><span class="specimen-index">${p.region.toUpperCase()} · ${dex(p.n)}</span><img src="${escape(art(p))}" alt="${escape(p.name)}${state.category === 'shiny' ? ' shiny appearance' : ''}" width="270" height="255"></div><div class="specimen-info"><h2>${escape(p.name)}</h2><div class="species-meta">${p.types.join(' / ')} · ${p.variantKind}${p.artworkIsFallback ? ' · Representative artwork' : ''}</div>${categoryButtons(p)}${hintSection(p)}${transformationSection(p)}${reportEntry(p, state.category, 'sheet')}</div><div class="specimen-controls"><button data-prev aria-label="Inspect previous Pokémon">←</button><span>Browse this selection</span><button data-next aria-label="Inspect next Pokémon">→</button></div></aside>`;
 }
 function medals() {
   const shelf = medalShelf(catalog, owned, state.category);
@@ -466,7 +475,7 @@ function deviceCard(d, preview = false) {
 }
 function shelf() {
   const [national, ...regions] = DEVICES;
-  return `<section class="shelf" aria-labelledby="shelf-title"><div class="shelf-head"><div><div class="eyebrow">POKÉDEX ATLAS</div><h2 id="shelf-title">Choose a Pokédex</h2><p>Every region on one shelf. Open a device to scan its Pokémon one by one, or switch to the grid to mark them fast.</p></div><div class="collection-controls">${lenses()}</div></div>${deviceCard(national)}<div class="shelf-grid">${regions.map((d) => deviceCard(d)).join('')}</div></section>`;
+  return `<section class="shelf" aria-labelledby="shelf-title"><div class="shelf-head"><div><div class="eyebrow">POKÉDEX ATLAS</div><h2 id="shelf-title">Choose a Pokédex</h2><p>Every region on one shelf. Open a device to scan its Pokémon one by one, or switch to the grid to mark them fast. ${freshness()}</p></div><div class="collection-controls">${lenses()}</div></div>${deviceCard(national)}<div class="shelf-grid">${regions.map((d) => deviceCard(d)).join('')}</div></section>`;
 }
 function deviceView() {
   const d = deviceFor(state.region);
@@ -508,7 +517,7 @@ function hud(list) {
         `<li data-key="d${offset}" data-style="--d:${Math.abs(offset)}"><button data-pokemon="${q.id}" class="dial-item ${offset === 0 ? 'current' : ''} ${isOwned(q) ? 'owned' : ''}" ${offset === 0 ? 'aria-current="true"' : ''} tabindex="${offset === 0 ? 0 : -1}" aria-label="${escape(q.name)}, ${dex(q.n)}"><img src="${escape(art(q))}" alt="" width="48" height="48" loading="lazy"><small>${String(q.n).padStart(4, '0')}</small></button></li>`,
     )
     .join('');
-  return `<div class="hud" data-key="hud"><div class="hud-stage ${typeClasses(p)} ${available && isOwned(p) ? 'registered' : ''}" data-key="stage"><span class="hud-rings" aria-hidden="true"><i></i><i></i><i></i></span><span class="hud-corners" aria-hidden="true"></span><span class="hud-number" aria-hidden="true">${dex(p.n)}</span><img data-key="art-${p.id}" src="${escape(art(p))}" alt="${escape(p.name)}${state.category === 'shiny' ? ' shiny appearance' : ''}" width="320" height="300"><span class="hud-status">${status} · ${label()}</span><span class="hud-scan" aria-hidden="true"></span></div><aside class="hud-readout ${complete(p) ? 'complete' : ''}" data-key="readout" aria-label="${escape(p.name)} collection inspector"><div class="readout-head"><small>${dex(p.n)} · ${p.region} · Gen ${p.generation}</small><h3>${escape(p.name)}</h3><div class="type-chips">${p.types.map((t) => `<span class="type-chip type-a-${t}">${t}</span>`).join('')}${p.artworkIsFallback ? '<span class="annotation">Representative artwork</span>' : ''}</div></div><div class="readout-label">Registration</div>${categoryButtons(p)}${hintSection(p)}${familySection(p)}${transformationSection(p)}<a class="official-link" href="${officialDexUrl(p.speciesName)}" target="_blank" rel="noopener">Read the official Pokédex entry <span aria-hidden="true">↗</span><small>Opens Pokémon.com in a new tab</small></a></aside><div class="dial" data-key="dial"><button class="dial-step" data-prev aria-label="Inspect previous Pokémon">‹</button><ol class="dial-strip" aria-label="Nearby Pokémon">${dial}</ol><button class="dial-step" data-next aria-label="Inspect next Pokémon">›</button><label class="dial-scrub"><span>${i + 1} / ${list.length}</span><input id="dex-dial" type="range" min="1" max="${list.length}" value="${i + 1}" aria-label="Scan through ${list.length} Pokémon" aria-valuetext="${escape(p.name)}, ${i + 1} of ${list.length}"></label></div></div>`;
+  return `<div class="hud" data-key="hud"><div class="hud-stage ${typeClasses(p)} ${available && isOwned(p) ? 'registered' : ''}" data-key="stage"><span class="hud-rings" aria-hidden="true"><i></i><i></i><i></i></span><span class="hud-corners" aria-hidden="true"></span><span class="hud-number" aria-hidden="true">${dex(p.n)}</span><img data-key="art-${p.id}" src="${escape(art(p))}" alt="${escape(p.name)}${state.category === 'shiny' ? ' shiny appearance' : ''}" width="320" height="300"><span class="hud-status">${status} · ${label()}</span><span class="hud-scan" aria-hidden="true"></span></div><aside class="hud-readout ${complete(p) ? 'complete' : ''}" data-key="readout" aria-label="${escape(p.name)} collection inspector"><div class="readout-head"><small>${dex(p.n)} · ${p.region} · Gen ${p.generation}</small><h3>${escape(p.name)}</h3><div class="type-chips">${p.types.map((t) => `<span class="type-chip type-a-${t}">${t}</span>`).join('')}${p.artworkIsFallback ? '<span class="annotation">Representative artwork</span>' : ''}</div></div><div class="readout-label">Registration</div>${categoryButtons(p)}${hintSection(p)}${familySection(p)}${transformationSection(p)}${reportEntry(p, state.category)}<a class="official-link" href="${officialDexUrl(p.speciesName)}" target="_blank" rel="noopener">Read the official Pokédex entry <span aria-hidden="true">↗</span><small>Opens Pokémon.com in a new tab</small></a></aside><div class="dial" data-key="dial"><button class="dial-step" data-prev aria-label="Inspect previous Pokémon">‹</button><ol class="dial-strip" aria-label="Nearby Pokémon">${dial}</ol><button class="dial-step" data-next aria-label="Inspect next Pokémon">›</button><label class="dial-scrub"><span>${i + 1} / ${list.length}</span><input id="dex-dial" type="range" min="1" max="${list.length}" value="${i + 1}" aria-label="Scan through ${list.length} Pokémon" aria-valuetext="${escape(p.name)}, ${i + 1} of ${list.length}"></label></div></div>`;
 }
 function dexGrid(list) {
   const pages = pagesOf(list);
@@ -524,7 +533,7 @@ function about() {
   const groups = sourceGroups(catalogSources);
   const links = (items) =>
     `<ul class="source-list">${items.map((s) => `<li><a href="${escape(s.url)}" target="_blank" rel="noopener"><strong>${escape(s.host)}</strong><span>${escape(s.url.replace(/^https:\/\/[^/]+/, '') || '/')}</span></a></li>`).join('')}</ul>`;
-  return `<div class="about-layout"><section class="about-hero"><div class="eyebrow">SOURCES &amp; CREDITS</div><h2>A fan-made Pokédex, built with care.</h2><p>CatchGrid is an unofficial, non-commercial fan project for tracking a Pokémon GO collection. It is free, has no ads, and has no connection to any game account.</p></section><section><h2>Copyright and trademarks</h2><p>Pokémon, Pokémon GO, Pokémon character names, and all related artwork are trademarks and © of Nintendo, Creatures Inc., GAME FREAK inc., The Pokémon Company, and Niantic, Inc. CatchGrid is not affiliated with, endorsed, sponsored, or approved by any of them. Names and artwork appear only to identify Pokémon in a personal collection tracker.</p><p class="annotation">© 1995–${new Date().getFullYear()} Nintendo / Creatures Inc. / GAME FREAK inc. Pokémon GO © Niantic, Inc.</p></section><section><h2>Pokédex entries</h2><p>CatchGrid does not copy Pokédex text. Each Pokémon links to its entry in the <a href="https://www.pokemon.com/us/pokedex" target="_blank" rel="noopener">official Pokédex at Pokémon.com</a>. Type colors follow that Pokédex.</p></section><section><h2>Artwork</h2><p>Pokémon HOME artwork from the <a href="https://archives.bulbagarden.net/wiki/Category:HOME_artwork" target="_blank" rel="noopener">Bulbagarden Archives</a>, stored with CatchGrid rather than hotlinked. Artwork © The Pokémon Company; see the <a href="https://archives.bulbagarden.net/wiki/Archives:Copyrights" target="_blank" rel="noopener">Archives copyright notice</a>. Artwork is not proof that a Pokémon is available in Pokémon GO.</p></section><section><h2>Availability data</h2><p>Release, Shiny, Shadow and form availability was reviewed on ${catalogDate}${ledgerDate ? `, with release updates through ${ledgerDate}` : ''} against official Pokémon GO news and help pages where they exist, and cross-checked with community references. Dated corrections are kept in the catalog with their sources. Which genders each species can be comes from a community Pokédex spreadsheet, reviewed ${escape(gendersReviewedAt)}; the official Pokédex is the reference for corrections.</p><details><summary>Official sources (${groups.official.length})</summary>${links(groups.official)}</details><details><summary>Community references (${groups.secondary.length})</summary>${links(groups.secondary)}</details></section><section><h2>Your data</h2><p>Your collection is saved in this browser only. Compare links carry their data inside the link itself; nothing is uploaded. The public site uses Cloudflare’s cookie-free web analytics for aggregate visit counts.</p></section></div>`;
+  return `<div class="about-layout"><section class="about-hero"><div class="eyebrow">SOURCES &amp; CREDITS</div><h2>A fan-made Pokédex, built with care.</h2><p>CatchGrid is an unofficial, non-commercial fan project for tracking a Pokémon GO collection. It is free, has no ads, and has no connection to any game account.</p></section><section><h2>Copyright and trademarks</h2><p>Pokémon, Pokémon GO, Pokémon character names, and all related artwork are trademarks and © of Nintendo, Creatures Inc., GAME FREAK inc., The Pokémon Company, and Niantic, Inc. CatchGrid is not affiliated with, endorsed, sponsored, or approved by any of them. Names and artwork appear only to identify Pokémon in a personal collection tracker.</p><p class="annotation">© 1995–${new Date().getFullYear()} Nintendo / Creatures Inc. / GAME FREAK inc. Pokémon GO © Niantic, Inc.</p></section><section><h2>Pokédex entries</h2><p>CatchGrid does not copy Pokédex text. Each Pokémon links to its entry in the <a href="https://www.pokemon.com/us/pokedex" target="_blank" rel="noopener">official Pokédex at Pokémon.com</a>. Type colors follow that Pokédex.</p></section><section><h2>Artwork</h2><p>Pokémon HOME artwork from the <a href="https://archives.bulbagarden.net/wiki/Category:HOME_artwork" target="_blank" rel="noopener">Bulbagarden Archives</a>, stored with CatchGrid rather than hotlinked. Artwork © The Pokémon Company; see the <a href="https://archives.bulbagarden.net/wiki/Archives:Copyrights" target="_blank" rel="noopener">Archives copyright notice</a>. Artwork is not proof that a Pokémon is available in Pokémon GO.</p></section><section><h2>Catalog corrections</h2>${reportEntry()}</section><section><h2>Availability data</h2><p>Release, Shiny, Shadow and form availability was reviewed on ${catalogDate}${ledgerDate ? `, with release updates through ${ledgerDate}` : ''} against official Pokémon GO news and help pages where they exist, and cross-checked with community references. Dated corrections are kept in the catalog with their sources. Which genders each species can be comes from a community Pokédex spreadsheet, reviewed ${escape(gendersReviewedAt)}; the official Pokédex is the reference for corrections.</p><details><summary>Official sources (${groups.official.length})</summary>${links(groups.official)}</details><details><summary>Community references (${groups.secondary.length})</summary>${links(groups.secondary)}</details></section><section><h2>Your data</h2><p>Your collection is saved in this browser only. Compare links carry their data inside the link itself; nothing is uploaded. The public site uses Cloudflare’s cookie-free web analytics for aggregate visit counts.</p></section></div>`;
 }
 function empty() {
   return '<div class="empty"><h2>No matching Pokémon</h2><p>Try another name, region, form, or category.</p><button class="secondary" data-clear>Clear search and status</button></div>';
@@ -729,7 +738,9 @@ function importReviewMarkup() {
     s.notTracked
       ? `${s.notTracked} cells for regional forms beyond Normal and Shiny aren’t tracked`
       : '',
-    s.notEligible ? `${s.notEligible} cells aren’t available in Pokémon GO per the catalog` : '',
+    s.notEligible
+      ? `${s.notEligible} ${s.notEligible === 1 ? 'cell skipped as “not available”' : 'cells skipped as “not available”'}`
+      : '',
     s.unmatched.length
       ? `${s.unmatched.length} rows not recognised: ${escape(s.unmatched.slice(0, 5).join(', '))}${s.unmatched.length > 5 ? '…' : ''}`
       : '',
@@ -743,8 +754,10 @@ function importReviewMarkup() {
               `<li class="cat-${id}"><span>${name}</span><strong>+${byCategory[id]}</strong></li>`,
           )
           .join('')}</ul>`
-      : '<p>Everything in this sheet is already registered here.</p>'
-  }${notes.length ? `<p class="annotation">${notes.join(' · ')}.</p>` : ''}${skippedDetails(s.skipped)}${actions}</div>`;
+      : s.notEligible || s.notTracked || s.unmatched.length
+        ? '<p>No new entries can be added from this sheet. Check the skipped cells and unmatched rows below.</p>'
+        : '<p>Everything in this sheet is already registered here.</p>'
+  }${notes.length ? `<p class="annotation">${notes.join(' · ')}.</p>` : ''}${s.notEligible ? `<p>CatchGrid's catalog says this isn't in GO yet. If that's wrong, report it.</p>${reportEntry()}` : ''}${skippedDetails(s.skipped)}${actions}</div>`;
 }
 /** Which spreadsheet cells were left out, grouped by category, so they can be checked. */
 function skippedDetails(skipped) {
@@ -757,10 +770,18 @@ function skippedDetails(skipped) {
       ([name, list]) =>
         `<dt>${name} <small>${list.length}</small></dt><dd>${list
           .map(
-            (s) =>
-              `${escape(`#${s.n} ${s.name}`)}${s.reason === 'notTracked' ? ' <small>(form)</small>' : ''}`,
+            (s, index) =>
+              `<div class="skipped-cell">${escape(`#${s.n} ${s.name}`)}${
+                s.reason === 'notTracked'
+                  ? ' <small>(form category not tracked)</small>'
+                  : reportEntry(
+                      catalog.find((p) => p.id === s.formId),
+                      s.categoryId,
+                      `skipped-${index}`,
+                    )
+              }</div>`,
           )
-          .join(', ')}</dd>`,
+          .join('')}</dd>`,
     )
     .join('')}</dl></details>`;
 }
@@ -823,7 +844,7 @@ function firstRunHome() {
       .join(
         '',
       )}<a class="dash-card first-run-all" href="#dex"><strong>See every region <span aria-hidden="true">→</span></strong><span>Explore the full Pokédex shelf.</span></a></div></section>
-    <p class="annotation">Your collection is stored only in this browser. Export a backup any time from Settings.</p>
+    <p class="annotation">${freshness()} · Back up in Settings.</p>
   </div>`;
 }
 function home() {
@@ -848,7 +869,7 @@ function home() {
         )
         .join('')}</span>`
     : '';
-  return `<div class="dash">${backupNotice()}<div class="dash-top"><p class="hero-eyebrow">${trainer() ? `Trainer ${escape(trainer())}` : 'Your collection'}</p><div class="hero-actions"><button class="secondary" data-compose>Build a search</button><a class="primary" href="#progress">Update collection</a></div></div><div class="kpi-row" aria-label="Collection summary">${kpi('overall', 'Overall', `${pct}%`, `${have.toLocaleString()} of ${all.toLocaleString()} entries`, `<i class="kpi-bar" data-style="--p:${pct}%" aria-hidden="true"></i>`)}${kpi('species', 'Species', normal.count.toLocaleString(), `of ${normal.eligible.toLocaleString()} registered`)}${kpi('complete', 'Complete', mastered.toLocaleString(), 'every category done')}${kpi('week', 'This week', week.toLocaleString(), `${days.at(-1).count} today`, recentSprites)}${kpi('streak', 'Streak', `${streak} ${streak === 1 ? 'day' : 'days'}`, streak ? 'Keep it going' : 'Mark one today')}</div><section class="dash-card ring-card" aria-labelledby="ring-title"><div class="card-head"><h2 id="ring-title">Categories</h2><small>National Dex species · select one to work on it</small></div>${activityRings(totals, pct)}</section><div class="bento">${heatCard()}${activityCard(days)}${nearlySection() || '<section class="nearly"><div class="section-title"><h2>Almost complete</h2></div><p class="annotation">Pokémon one or two categories from complete show up here.</p></section>'}${medals()}${toolsCard()}</div></div>`;
+  return `<div class="dash">${backupNotice()}<div class="dash-top"><p class="hero-eyebrow">${trainer() ? `Trainer ${escape(trainer())}` : 'Your collection'}</p><div class="hero-actions"><button class="secondary" data-compose>Build a search</button><a class="primary" href="#progress">Update collection</a></div></div><div class="kpi-row" aria-label="Collection summary">${kpi('overall', 'Overall', `${pct}%`, `${have.toLocaleString()} of ${all.toLocaleString()} entries`, `<i class="kpi-bar" data-style="--p:${pct}%" aria-hidden="true"></i>`)}${kpi('species', 'Species', normal.count.toLocaleString(), `of ${normal.eligible.toLocaleString()} registered`)}${kpi('complete', 'Complete', mastered.toLocaleString(), 'every category done')}${kpi('week', 'This week', week.toLocaleString(), `${days.at(-1).count} today`, recentSprites)}${kpi('streak', 'Streak', `${streak} ${streak === 1 ? 'day' : 'days'}`, streak ? 'Keep it going' : 'Mark one today')}</div><section class="dash-card ring-card" aria-labelledby="ring-title"><div class="card-head"><h2 id="ring-title">Categories</h2><small>National Dex species · ${freshness()}</small></div>${activityRings(totals, pct)}</section><div class="bento">${heatCard()}${activityCard(days)}${nearlySection() || '<section class="nearly"><div class="section-title"><h2>Almost complete</h2></div><p class="annotation">Pokémon one or two categories from complete show up here.</p></section>'}${medals()}${toolsCard()}</div></div>`;
 }
 function compareView() {
   const share = parseShare(location.hash);
@@ -1055,6 +1076,21 @@ document.addEventListener('click', async (event) => {
   if (!b) return;
   // Rendering can morph this element into a different control; decide from the clicked state.
   const probe = b.cloneNode(false);
+  if (probe.matches('[data-copy-report]')) {
+    const report = b.closest('.entry-report');
+    const message = report.querySelector('textarea');
+    const status = report.querySelector('.report-status');
+    try {
+      await navigator.clipboard.writeText(message.value);
+      status.textContent = 'Report copied. Paste it into your message to Cody on Discord.';
+    } catch {
+      // Keep the manual-copy fallback inside the details sheet, where it can receive focus.
+      status.textContent = 'Copy unavailable. Message selected; use your device’s Copy command.';
+      message.focus();
+      message.select();
+    }
+    return;
+  }
   if (probe.matches('[data-dismiss-backup],[data-dismiss-install]')) {
     if (probe.matches('[data-dismiss-backup]')) dataSafety.dismissBackup(owned);
     else dataSafety.dismissInstall();
