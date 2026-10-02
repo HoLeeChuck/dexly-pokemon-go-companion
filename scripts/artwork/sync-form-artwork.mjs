@@ -9,7 +9,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const MAPPING_PATH = resolve(ROOT, 'catalog/form-artwork.v1.json');
 const MANIFEST_PATH = resolve(ROOT, 'catalog/form-artwork-manifest.v1.json');
 const HOME_MANIFEST_PATH = resolve(ROOT, 'catalog/home-artwork-manifest.v1.json');
@@ -70,7 +70,7 @@ async function main() {
   ].filter((file) => !known.has(file)); // Already covered by the species artwork manifest.
 
   await mkdir(ASSET_DIR, { recursive: true });
-  // After scripts/resize-artwork.ps1 shrinks originals, record their new size and checksum.
+  // After scripts/artwork/resize-artwork.ps1 shrinks originals, record their new size and checksum.
   if (process.argv.includes('--refresh-hashes')) {
     for (const [file, asset] of byFile) {
       const local = resolve(ASSET_DIR, file);
@@ -82,7 +82,7 @@ async function main() {
         ...asset,
         byteSize: bytes.length,
         sha256: hash,
-        localResize: { width: WIDTH, tool: 'scripts/resize-artwork.ps1' },
+        localResize: { width: WIDTH, tool: 'scripts/artwork/resize-artwork.ps1' },
       });
     }
   }

@@ -2,7 +2,7 @@ import { writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { format } from 'prettier';
 
-const ROOT = fileURLToPath(new URL('../', import.meta.url));
+const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 const SOURCE_URL = 'https://pogoapi.net/api/v1/pokemon_evolutions.json';
 const HASH_URL = 'https://pogoapi.net/api/v1/api_hashes.json';
 

@@ -12,7 +12,7 @@ Read these before doing anything:
 - Worker and D1: `worker/`, `migrations/` (immutable), `wrangler.jsonc`.
 - Data: `catalog/` (catalog, medals, evolution families, legacy move windows).
 - Tests: `tests/unit` (Vitest), `tests/worker` (Vitest + Workers pool), `tests/e2e` (Playwright).
-- `_legacy-backup/` is a git-ignored holding folder of removed files. Never read it as current source.
+- `archive/legacy-code-2026-09-25/` is a git-ignored holding folder of removed files. Never read it as current source.
 
 ## Windows shell notes
 

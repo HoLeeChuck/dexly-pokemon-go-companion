@@ -163,7 +163,7 @@ A failed catalog request displays a retryable preservation message. It does not 
   recovery, CSV parity, search building, Discord output, and PWA cache/update safety.
 - `vitest.worker.config.ts` runs API integration tests in Cloudflare's workerd pool;
   `tests/setup-worker.ts` applies all checked-in D1 migrations to isolated storage.
-- `scripts/verify-catalog-generation.mjs` proves the catalog generator rejects an existing
+- `scripts/validation/verify-catalog-generation.mjs` proves the catalog generator rejects an existing
   migration before network access; `pnpm catalog:verify` runs it with the catalog verifier.
 - CI groups Playwright into a Chromium job (mobile, desktop, PWA) and a WebKit job (mobile,
   desktop). The projects cover responsive

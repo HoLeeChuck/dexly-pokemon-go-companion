@@ -6,3 +6,9 @@ test-results/
 pnpm-lock.yaml
 docs/releases/
 _legacy-backup/
+
+archive/
+docs/history/
+
+# Captured research source bytes and dated reports must remain faithful.
+evidence/

@@ -4,6 +4,8 @@ An unofficial, local-first Pokémon GO collection companion at <https://dex.cjde
 
 Development folder: `D:\Projects\Pokemon\CatchGrid`. Current state and open items: [HANDOFF.md](HANDOFF.md). Lasting rules: [AGENTS.md](AGENTS.md).
 
+Navigate with the [folder guide](FOLDER-GUIDE.md), [documentation index](docs/README.md) and [internal tools index](scripts/README.md). Retired source and previous test output are under ignored `archive/`; the complete prior handoff is under `docs/history/`.
+
 ## Product
 
 | Destination | What it does                                                                                                             |
@@ -39,9 +41,11 @@ worker/       Cloudflare Worker: public catalog API and authenticated owner API
 catalog/      Versioned catalog, medals, evolution families, legacy move windows
 migrations/   Immutable D1 history
 public/       Static assets, artwork, service worker, legal pages
-scripts/      Catalog sync/verification and release smoke checks
+scripts/      catalog/, artwork/, validation/, captures/, release/, legacy/
 tests/        unit/, worker/, e2e/ (Playwright)
-docs/         ARCHITECTURE.md, DEPLOYMENT.md, latest release record
+docs/         Architecture, deployment, releases, captures and historical continuity
+evidence/     Retained official-source research
+archive/      Ignored retired source and old generated test reports
 ```
 
 ## Develop

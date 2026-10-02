@@ -6,7 +6,7 @@ import { basename, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
-const root = fileURLToPath(new URL('../', import.meta.url));
+const root = fileURLToPath(new URL('../../', import.meta.url));
 const overrides = JSON.parse(
   await readFile(resolve(root, 'catalog/catchgrid-update.v1.json'), 'utf8'),
 );
@@ -20,7 +20,7 @@ const generatedArtifacts = [
 function runGenerator(arguments_, timeout = 180_000) {
   const result = spawnSync(
     process.execPath,
-    ['scripts/generate-catchgrid-update.mjs', ...arguments_],
+    ['scripts/catalog/generate-catchgrid-update.mjs', ...arguments_],
     {
       cwd: root,
       encoding: 'utf8',

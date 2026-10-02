@@ -6,7 +6,7 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { format } from 'prettier';
 
-const ROOT = fileURLToPath(new URL('../', import.meta.url));
+const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 const OVERRIDES_PATH = resolve(ROOT, 'catalog/catalog-overrides.v1.json');
 const MANIFEST_PATH = resolve(ROOT, 'catalog/catalog.v1.json');
 const API_BASE = 'https://pogoapi.net/api/v1';

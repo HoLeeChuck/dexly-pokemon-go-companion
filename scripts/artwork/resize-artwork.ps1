@@ -1,6 +1,6 @@
 # Resize full-size Archives originals to the 256px width used by the rest of the artwork.
 # Windows PowerShell with System.Drawing (built in); keeps transparency. Updates nothing else:
-# run `node scripts/sync-form-artwork.mjs --refresh-hashes` afterwards to record new checksums.
+# run `node scripts/artwork/sync-form-artwork.mjs --refresh-hashes` afterwards to record new checksums.
 param(
   [Parameter(Mandatory = $true)][string[]] $Files,
   [int] $Width = 256

@@ -3,7 +3,7 @@
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 
-const manifestPath = fileURLToPath(new URL('../catalog/catalog.v1.json', import.meta.url));
+const manifestPath = fileURLToPath(new URL('../../catalog/catalog.v1.json', import.meta.url));
 const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
 const errors = [];
 const byId = new Map();

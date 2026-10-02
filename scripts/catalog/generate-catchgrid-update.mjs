@@ -6,7 +6,7 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { format } from 'prettier';
 
-const ROOT = fileURLToPath(new URL('../', import.meta.url));
+const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 const UPDATE_PATH = resolve(ROOT, 'catalog/catchgrid-update.v1.json');
 const ARTWORK_PATH = resolve(ROOT, 'catalog/home-artwork-manifest.v1.json');
 const CATEGORIES = ['normal', 'shiny', 'lucky', 'hundo', 'xxl', 'xxs', 'shadow', 'purified'];

@@ -5,7 +5,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const scriptDirectory = dirname(fileURLToPath(import.meta.url));
-const rootDirectory = resolve(scriptDirectory, '..');
+const rootDirectory = resolve(scriptDirectory, '../..');
 const defaultManifestPath = resolve(rootDirectory, 'catalog', 'catalog.v1.json');
 const medalsPath = resolve(rootDirectory, 'catalog', 'region-medals.v1.json');
 const allowedTypes = new Set([
@@ -44,7 +44,7 @@ const categories = ['normal', 'shiny', 'lucky', 'hundo', 'xxl', 'xxs', 'shadow',
 const ruleStates = new Set(['released', 'unreleased', 'ineligible', 'unknown']);
 
 function usage() {
-  console.log(`Usage: node scripts/verify-sprites.mjs [options]
+  console.log(`Usage: node scripts/validation/verify-sprites.mjs [options]
 
 Options:
   --network          Send an HTTP HEAD request for every unique sprite URL
