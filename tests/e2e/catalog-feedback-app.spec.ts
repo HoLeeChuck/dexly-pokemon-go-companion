@@ -145,13 +145,14 @@ test('L3 skipped cells offer the L2 report with the skipped category and preserv
   const review = page.locator('#import-review');
   await expect(review).toContainText(unavailable);
   await review.getByText('See skipped cells').click();
-  const cell = review.locator('.skipped-cell').filter({ hasText: '#132 Ditto' });
-  await cell.locator('summary').click();
-  await expect(cell.getByLabel('Report message')).toHaveValue(
-    /Pokémon: #132 Ditto\nForm: Default\nCategory: Shadow/,
+  await expect(review.locator('.sheet-skipped dd')).toContainText('#132 Ditto');
+  await expect(review.getByLabel('Report message')).toHaveCount(1);
+  await review.getByText('Report a wrong entry', { exact: true }).click();
+  await expect(review.getByLabel('Report message')).toHaveValue(
+    /Shadow \(1\):\n- #132 Ditto \(not available\)/,
   );
-  await cell.getByRole('button', { name: 'Copy report' }).click();
-  expect(copied).toEqual([await cell.getByLabel('Report message').inputValue()]);
+  await review.getByRole('button', { name: 'Copy report' }).click();
+  expect(copied).toEqual([await review.getByLabel('Report message').inputValue()]);
   expect(await page.evaluate((key) => localStorage.getItem(key), profileKey)).toBeNull();
   await testInfo.attach('skipped-cells', {
     body: await page.screenshot({ fullPage: true }),
@@ -171,6 +172,35 @@ test('L3 skipped cells offer the L2 report with the skipped category and preserv
   );
   await expect(review).toContainText('No new entries can be added');
   await expect(review).not.toContainText('Everything in this sheet is already registered');
+});
+
+test('300 skipped cells render one editable report grouped by category without losing cells', async ({
+  page,
+}) => {
+  const copied = await clipboard(page);
+  const header = rows.split('\n')[0];
+  const skippedRows = Array.from(
+    { length: 150 },
+    () => '132\tDitto\tNeutral\t\t\t\t\t\t\tShadow\tPurified',
+  );
+  await reviewRows(page, [header, ...skippedRows].join('\n'));
+  const review = page.locator('#import-review');
+  await expect(review).toContainText('300 cells skipped as “not available”');
+  await expect(review).toContainText(unavailable);
+  await expect(review.locator('textarea')).toHaveCount(1);
+  await expect(review.locator('.entry-report')).toHaveCount(1);
+  await expect(review.locator('.sheet-skipped textarea, .sheet-skipped button')).toHaveCount(0);
+  await review.getByText('Report a wrong entry', { exact: true }).click();
+  const field = review.getByLabel('Report message');
+  const draft = await field.inputValue();
+  expect(draft).toContain('Shadow (150):');
+  expect(draft).toContain('Purified (150):');
+  expect(draft.match(/- #132 Ditto \(not available\)/g)).toHaveLength(300);
+  const edited = draft.replace('[Describe the correction]', 'Please check these skipped cells.');
+  await field.fill(edited);
+  await review.getByRole('button', { name: 'Copy report' }).click();
+  expect(copied).toEqual([edited]);
+  expect(await page.evaluate((key) => localStorage.getItem(key), profileKey)).toBeNull();
 });
 
 test('L2 freshness appears on both Home states and the Dex shelf, with the stale phone budget intact', async ({

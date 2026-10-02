@@ -2,7 +2,12 @@ import { revealArtwork } from './motion.js';
 import { updateMarkup } from './dom.js';
 import { createDataSafety, isIosSafari, isStandalone } from './data-safety.js';
 import { catalog, catalogDate, catalogSources, ledgerDate } from './catalog.js';
-import { DISCORD_PROFILE_URL, catalogFreshness, entryReport } from './catalog-feedback.js';
+import {
+  DISCORD_PROFILE_URL,
+  catalogFreshness,
+  entryReport,
+  skippedEntryReport,
+} from './catalog-feedback.js';
 import {
   DEVICES,
   deviceFor,
@@ -323,9 +328,14 @@ function freshness() {
   const { date, stale } = catalogFreshness(catalogDate, ledgerDate);
   return `<span class="catalog-freshness">Catalog updated <time datetime="${date}">${date}</time>${stale ? ' · Some recent releases may be missing' : ''}</span>`;
 }
-function reportEntry(pokemon, category, context = 'page') {
+function reportEntry(
+  pokemon,
+  category,
+  context = 'page',
+  message = entryReport(pokemon, categoryLabels[category]),
+) {
   const key = `report-${context}-${pokemon?.id || 'general'}-${category || 'any'}`;
-  return `<details class="entry-report" data-key="${key}"><summary>Report a wrong entry</summary><p>Edit the message, copy it, then send it to Cody on Discord. Nothing is sent from CatchGrid.</p><label for="${key}">Report message</label><textarea id="${key}" rows="8" spellcheck="false">${escape(entryReport(pokemon, categoryLabels[category]))}</textarea><div class="report-actions"><button class="secondary" data-copy-report>Copy report</button><a class="secondary" href="${DISCORD_PROFILE_URL}" target="_blank" rel="noopener">Message Cody on Discord</a></div><p class="report-status" role="status" aria-live="polite"></p></details>`;
+  return `<details class="entry-report" data-key="${key}"><summary>Report a wrong entry</summary><p>Edit the message, copy it, then send it to Cody on Discord. Nothing is sent from CatchGrid.</p><label for="${key}">Report message</label><textarea id="${key}" rows="8" spellcheck="false">${escape(message)}</textarea><div class="report-actions"><button class="secondary" data-copy-report>Copy report</button><a class="secondary" href="${DISCORD_PROFILE_URL}" target="_blank" rel="noopener">Message Cody on Discord</a></div><p class="report-status" role="status" aria-live="polite"></p></details>`;
 }
 function specimen() {
   const p = catalog.find((q) => q.id === state.selected);
@@ -757,7 +767,7 @@ function importReviewMarkup() {
       : s.notEligible || s.notTracked || s.unmatched.length
         ? '<p>No new entries can be added from this sheet. Check the skipped cells and unmatched rows below.</p>'
         : '<p>Everything in this sheet is already registered here.</p>'
-  }${notes.length ? `<p class="annotation">${notes.join(' · ')}.</p>` : ''}${s.notEligible ? `<p>CatchGrid's catalog says this isn't in GO yet. If that's wrong, report it.</p>${reportEntry()}` : ''}${skippedDetails(s.skipped)}${actions}</div>`;
+  }${notes.length ? `<p class="annotation">${notes.join(' · ')}.</p>` : ''}${s.notEligible ? `<p>CatchGrid's catalog says this isn't in GO yet. If that's wrong, report it.</p>` : ''}${skippedDetails(s.skipped)}${s.skipped?.length ? reportEntry(undefined, undefined, 'import', skippedEntryReport(s.skipped, categories)) : ''}${actions}</div>`;
 }
 /** Which spreadsheet cells were left out, grouped by category, so they can be checked. */
 function skippedDetails(skipped) {
@@ -770,18 +780,10 @@ function skippedDetails(skipped) {
       ([name, list]) =>
         `<dt>${name} <small>${list.length}</small></dt><dd>${list
           .map(
-            (s, index) =>
-              `<div class="skipped-cell">${escape(`#${s.n} ${s.name}`)}${
-                s.reason === 'notTracked'
-                  ? ' <small>(form category not tracked)</small>'
-                  : reportEntry(
-                      catalog.find((p) => p.id === s.formId),
-                      s.categoryId,
-                      `skipped-${index}`,
-                    )
-              }</div>`,
+            (s) =>
+              `${escape(`#${s.n} ${s.name}`)}${s.reason === 'notTracked' ? ' (form category not tracked)' : ''}`,
           )
-          .join('')}</dd>`,
+          .join(', ')}</dd>`,
     )
     .join('')}</dl></details>`;
 }

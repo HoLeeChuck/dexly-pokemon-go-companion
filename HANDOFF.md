@@ -4,6 +4,12 @@ Updated October 1, 2026. Start with [AGENTS.md](AGENTS.md), [README.md](README.m
 
 ## October 1, 2026 — Round 3 L2 and L3 item 2 (local, awaiting Claude)
 
+### L4 step 0 — approved pre-release correction
+
+The owner confirmed Claude approval of L1, L2 and L3 item 2 and authorized the L2 correction followed by L4. Folder organization is committed separately as `a309606`; CODEX-PLAN.md and pre-existing research evidence remain untracked. The import review now retains a plain category-grouped skipped list and one editable/copyable report containing every skipped cell, including the distinct untracked-form reason. The catalog warning and reviewed import behavior are unchanged. The optional date display polish was omitted to preserve the approved layout.
+
+Fresh checks: 260 unit and 40 Worker tests, plus 12 focused Windows Chromium desktop/phone checks, including 300 skipped cells producing exactly one report textarea. Full release gates and live/device evidence are recorded separately when performed.
+
 **L1 is approved by Claude. L2 and L3 item 2 are complete locally on prism-forward and stop here for Claude review.** The owner authorized a local commit only; no push, merge or deploy. This current status supersedes the historical L1/F1/F2 review requests below.
 
 - Added inline report drafts to Pokémon details, the Dex scanner, Sources & credits and unavailable skipped import cells. Pokémon, form and category are prefilled when known; edited text copies exactly, with an in-place fallback when clipboard access fails. The owner-approved Discord profile is an explicit new-tab link. Drafting/copying sends no request and changes no collection data.

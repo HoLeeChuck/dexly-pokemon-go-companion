@@ -145,7 +145,7 @@ try {
         );
       await page.getByRole('button', { name: 'Review pasted rows' }).click();
       await page.getByText('See skipped cells').click();
-      await page.locator('.skipped-cell summary').click();
+      await page.locator('#import-review .entry-report summary').click();
       await capture('skipped-cells');
       expect(errors).toEqual([]);
       expect(csp).toEqual([]);
