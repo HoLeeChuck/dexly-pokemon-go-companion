@@ -1,0 +1,196 @@
+{
+  "status": "prepared; deployment blocked by unavailable browser permission verification",
+  "preparedAtUtc": "2026-10-02T05:04:23.850Z",
+  "source": "3c6150fa1b7ea61503e49d97e4bb857f198590d6",
+  "deployArtifactFileCount": 2429,
+  "manifestSha256": "caea543bba242fed1c19a27cec5078fb4ad47147f0dcc45c9d391cfa777e693d",
+  "rollbackVersion": "0891c9e5-8a9c-4736-beae-2e796325dfef",
+  "ownerPlanSha256BeforeStatusUpdate": "868fcc71cb03be8113ddd6aafa5616a2be100a01d355e235c38aecee16143f8f",
+  "snapshotArchiveSha256": "b295129b98a418dbd2b31ab7a362c56e16329921dd7b53d6d6599dec75c16c2d",
+  "hashes": [
+    {
+      "path": "app/main.js",
+      "sha256": "df9604fbabd7b35011df9111307d4984e6ba8331336e7a589eecbe5b9b9827b6",
+      "linuxMatches": true
+    },
+    {
+      "path": "app/catalog-feedback.js",
+      "sha256": "34a9cc8455004f0f16ad39861cc8a72fa3ea8810ac41ccc864097a5d377aa1fc",
+      "linuxMatches": true
+    },
+    {
+      "path": "app/catalog-feedback.d.ts",
+      "sha256": "907f0c54ddec4a5a2f0f3a41ac7da131295c873f8cce530ce528a2adb68eac9d",
+      "linuxMatches": true
+    },
+    {
+      "path": "app/app.css",
+      "sha256": "fc01eacd3ebafa75230fd95e5346bac45c3538808bbe531fbc942befb4559cbf",
+      "linuxMatches": true
+    },
+    {
+      "path": "app/features.css",
+      "sha256": "c179893e5dc63fcfef278d850da34c2aa74ce14f9335bb3611a5153cb31e4683",
+      "linuxMatches": true
+    },
+    {
+      "path": "app/catalog.js",
+      "sha256": "e29816decb23e48a94f91ee43f73c784d74c2dea947fb12f0ecc2ab72a942116",
+      "linuxMatches": true
+    },
+    {
+      "path": "app/releases.js",
+      "sha256": "3af818f700a7c8782cc6c6733ad1d73575f6c81ea102bb4f5091c5bcd5808016",
+      "linuxMatches": true
+    },
+    {
+      "path": "app/data-safety.js",
+      "sha256": "b5c86711d08a9c9815f083c8a44872b91a6eda32f7a3414875a8d274cef07be6",
+      "linuxMatches": true
+    },
+    {
+      "path": "catalog/catalog.v1.json",
+      "sha256": "2c83285642a69e03aba9df0b168ea879e73d4c07930c8f9148b45067551524e0",
+      "linuxMatches": true
+    },
+    {
+      "path": "catalog/releases.v1.json",
+      "sha256": "7f5a449387ca752e1a081a92c7aae8993ba495472d21746f862cbe0a3ae6810f",
+      "linuxMatches": true
+    },
+    {
+      "path": "catalog/legacy-moves.v1.json",
+      "sha256": "92c43c5df557349694bde97562a38f435f86a4916e4bd4c7f58f51b807518a75",
+      "linuxMatches": true
+    },
+    {
+      "path": "public/sw.js",
+      "sha256": "bdb9d396bb78f317c0fd796d2c1239057d5593365e5166f956b60c9a73e85750",
+      "linuxMatches": true
+    },
+    {
+      "path": "public/catchgrid-social.png",
+      "sha256": "1da205b423242354776486a811615797ccdc1b801445752780397a4549933894",
+      "linuxMatches": true
+    },
+    {
+      "path": "worker/index.ts",
+      "sha256": "77826d38e139462d2e1d0e7c9843117e65c39869f396f6bb75bb0d7dba3e2248",
+      "linuxMatches": true
+    },
+    {
+      "path": "wrangler.jsonc",
+      "sha256": "722ea7e0b896f0417b804ced549d6b8da3a8dda84c5b430b66e826ffdd4ebe13",
+      "linuxMatches": true
+    },
+    {
+      "path": "package.json",
+      "sha256": "7014f4bb63df32e868403e841de3266034eaad545fc4b751cad1f54187887489",
+      "linuxMatches": true
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "sha256": "1650f0d09e50891f0edf94403961ced94d687df881f626411cf82239528db6c2",
+      "linuxMatches": true
+    },
+    {
+      "path": "playwright.config.ts",
+      "sha256": "082437d1926b3eace75a54fd87eb99d4f684c9902b7d539c385e50721514a1db",
+      "linuxMatches": true
+    },
+    {
+      "path": "vite.config.ts",
+      "sha256": "a098b2b714779dc45729597c1926acd67fd8ae0f464ba1d3c6cb25bedf6e38ff",
+      "linuxMatches": true
+    },
+    {
+      "path": "tests/e2e/catalog-feedback-app.spec.ts",
+      "sha256": "66b2a2e1d6d3f1b43a40dbe2b6eaf60c11f9b274893d10d9fca99d741fe94963",
+      "linuxMatches": true
+    },
+    {
+      "path": "tests/e2e/f2-app.spec.ts",
+      "sha256": "7b07db50ba28c92845684ae91e617a7cc731b684d551b91117820882d44eb244",
+      "linuxMatches": true
+    }
+  ],
+  "unit": 260,
+  "worker": 40,
+  "windowsFocusedBrowser": 12,
+  "browserStats": {
+    "startTime": "2026-10-02T05:00:26.821Z",
+    "duration": 110542.15599999999,
+    "expected": 263,
+    "skipped": 2,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "browserProjects": {
+    "mobile-chromium": {
+      "passed": 69,
+      "skipped": 1,
+      "failed": 0,
+      "retries": 0
+    },
+    "desktop-chromium": {
+      "passed": 70,
+      "skipped": 0,
+      "failed": 0,
+      "retries": 0
+    },
+    "mobile-webkit": {
+      "passed": 60,
+      "skipped": 1,
+      "failed": 0,
+      "retries": 0
+    },
+    "desktop-webkit": {
+      "passed": 61,
+      "skipped": 0,
+      "failed": 0,
+      "retries": 0
+    },
+    "pwa-chromium": {
+      "passed": 3,
+      "skipped": 0,
+      "failed": 0,
+      "retries": 0
+    }
+  },
+  "initialBrowserRun": {
+    "passed": 262,
+    "skipped": 2,
+    "failed": 1,
+    "case": "mobile-webkit F2 interrupted and second-pointer gestures; touch-action after resize",
+    "targetedUnchangedRerunPassed": true
+  },
+  "linuxSourceGatesPassed": true,
+  "windowsStrictDryRunPassed": true,
+  "linuxStrictDryRunPassed": true,
+  "pendingMigrations": 0,
+  "appliedMigrations": 0,
+  "d1Bookmark": "000000d4-00000000-000050f8-ca1717eb7db35fedcb00586dceb93165",
+  "observedProduction": {
+    "ok": true,
+    "service": "catchgrid",
+    "runtime": "cloudflare-workers",
+    "gitSha": "c49945a04d9b822e27c9a2af1cc41bcf68883d99",
+    "buildTime": "2026-09-28T06:07:35.550Z",
+    "environment": "production",
+    "workerVersionId": "0891c9e5-8a9c-4736-beae-2e796325dfef",
+    "workerVersionTag": "",
+    "workerVersionTime": "2026-09-28T06:15:49.602291Z"
+  },
+  "deployed": false,
+  "mainFastForwarded": false,
+  "pushed": false,
+  "rollbackPerformed": false,
+  "pending": [
+    "interactive local production preview",
+    "deployment",
+    "production smoke and browser checks",
+    "live social-card verification",
+    "main fast-forward and both pushes",
+    "physical-device and Discord owner acceptance"
+  ]
+}

@@ -1,4 +1,10 @@
-# Codex questions: Round 3 Phase L1
+# Codex questions: Round 3
+
+## L4 browser access blocker — October 2, 2026
+
+The owner already authorized release, main fast-forward and both pushes. Source gates, full Linux browser suites and strict dry runs pass for candidate `3c6150f`; production has no pending migrations. Codex Browser refuses both local preview and production navigation because saved browser permissions could not be verified, and explicitly prohibits bypassing the check. The owner was asked to restore browser access and confirm when it works. Required interactive preview/live checks, deployment and branch publication remain pending. See [the release record](releases/2026-10-02-launch/RELEASE.md). No renewed deployment authorization is needed.
+
+## Historical L1 audit questions
 
 **2026-09-30; awaiting Claude.** L1 audit gaps only. None of these authorizes L2, model changes, a release, or accepting the community sheet as truth. See [CATALOG-AUDIT.md](releases/2026-10-02-launch/CATALOG-AUDIT.md) for all 73 verdicts, official news coverage and workbook counts.
 

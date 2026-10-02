@@ -1,0 +1,1932 @@
+$ pnpm run validate:source && pnpm run build:artifact && pnpm run test:e2e && wrangler deploy --dry-run --strict
+$ pnpm run cf-typegen && pnpm run cf-typegen:check && pnpm run lint && pnpm run format && pnpm run test && pnpm run validate:pokemon-data && pnpm run catalog:verify
+$ wrangler types node_modules/.worker-configuration.d.ts
+
+ ⛅️ wrangler 4.120.1
+────────────────────
+Generating project types...
+
+interface __BaseEnv_Env {
+	DB: D1Database;
+	OWNER_AUTH_LIMITER: RateLimit;
+	OWNER_MUTATION_LIMITER: RateLimit;
+	CF_VERSION_METADATA: WorkerVersionMetadata;
+	ENVIRONMENT: "staging" | "production";
+	BUILD_SHA: "";
+	BUILD_TIME: "";
+}
+declare namespace Cloudflare {
+	interface GlobalProps {
+		mainModule: typeof import("../worker/index");
+	}
+	interface StagingEnv {
+		DB: D1Database;
+		OWNER_AUTH_LIMITER: RateLimit;
+		OWNER_MUTATION_LIMITER: RateLimit;
+		CF_VERSION_METADATA: WorkerVersionMetadata;
+		ENVIRONMENT: "staging";
+		BUILD_SHA: "";
+		BUILD_TIME: "";
+	}
+	interface Env extends __BaseEnv_Env {}
+}
+interface Env extends __BaseEnv_Env {}
+type StringifyValues<EnvType extends Record<string, unknown>> = {
+	[Binding in keyof EnvType]: EnvType[Binding] extends string ? EnvType[Binding] : string;
+};
+declare namespace NodeJS {
+	interface ProcessEnv extends StringifyValues<Pick<Cloudflare.Env, "ENVIRONMENT" | "BUILD_SHA" | "BUILD_TIME">> {}
+}
+
+Generating runtime types...
+
+Runtime types generated.
+
+
+✨ Types written to node_modules/.worker-configuration.d.ts
+
+📖 Read about runtime types
+https://developers.cloudflare.com/workers/languages/typescript/#generate-types
+📣 Remember to rerun 'wrangler types' after you change your wrangler.jsonc file.
+
+$ wrangler types node_modules/.worker-configuration.d.ts --check
+
+ ⛅️ wrangler 4.120.1 (update available 4.146.0)
+───────────────────────────────────────────────
+✨ Types at node_modules/.worker-configuration.d.ts are up to date.
+
+$ eslint .
+$ prettier --check .
+Checking formatting...
+All matched files use Prettier code style!
+$ pnpm run test:unit && pnpm run test:worker
+$ vitest run --config vitest.config.ts
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/root/catchgrid-l4-20261001/repo[39m
+
+ [32m✓[39m tests/unit/discord-share.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m tests/unit/csv.test.ts [2m([22m[2m35 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32m✓[39m tests/unit/app-search.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32m✓[39m tests/unit/catalog-feedback.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32m✓[39m tests/unit/regional-availability.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 2[2mms[22m[39m
+ [32m✓[39m tests/unit/domain.test.ts [2m([22m[2m55 tests[22m[2m)[22m[32m 30[2mms[22m[39m
+ [32m✓[39m tests/unit/data-safety.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 211[2mms[22m[39m
+ [32m✓[39m tests/unit/routing.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32m✓[39m tests/unit/collector-forms.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32m✓[39m tests/unit/catalog-index.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m tests/unit/pwa.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m tests/unit/local-profile.test.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 30[2mms[22m[39m
+ [32m✓[39m tests/unit/api.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m tests/unit/capabilities.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32m✓[39m tests/unit/restore-review.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m tests/unit/app-launch-catalog.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32m✓[39m tests/unit/app-dashboard.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+ [32m✓[39m tests/unit/app-pokedex.test.ts [2m([22m[2m21 tests[22m[2m)[22m[32m 26[2mms[22m[39m
+ [32m✓[39m tests/unit/app-releases.test.ts [2m([22m[2m28 tests[22m[2m)[22m[32m 67[2mms[22m[39m
+ [32m✓[39m tests/unit/app-sheet.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 64[2mms[22m[39m
+ [32m✓[39m tests/unit/app-data.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 61[2mms[22m[39m
+ [32m✓[39m tests/unit/catalog.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 44[2mms[22m[39m
+ [32m✓[39m tests/unit/app-form-artwork.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 30[2mms[22m[39m
+ [32m✓[39m tests/unit/app-features.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 129[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m24 passed[39m[22m[90m (24)[39m
+[2m      Tests [22m [1m[32m260 passed[39m[22m[90m (260)[39m
+[2m   Start at [22m 23:56:14
+[2m   Duration [22m 1.22s[2m (transform 11.11s, setup 0ms, import 13.93s, tests 765ms, environment 2ms)[22m
+
+$ vitest run --config vitest.worker.config.ts
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/root/catchgrid-l4-20261001/repo[39m
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mWorker bootstrap and authentication boundary[2m > [22m[2mserves separate GET and HEAD liveness/readiness probes with release metadata
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'e4752de6-ed8a-4edb-b2a4-938c25a5932a'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/health'[39m,
+  status: [33m200[39m,
+  durationMs: [33m0[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mWorker bootstrap and authentication boundary[2m > [22m[2mserves separate GET and HEAD liveness/readiness probes with release metadata
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'5ac93e90-4dc5-499e-8f2f-5228812553b2'[39m,
+  method: [32m'HEAD'[39m,
+  path: [32m'/api/health'[39m,
+  status: [33m200[39m,
+  durationMs: [33m0[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mWorker bootstrap and authentication boundary[2m > [22m[2mserves separate GET and HEAD liveness/readiness probes with release metadata
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'0803dfcc-0d49-4fe7-8b65-ce67c74cabfa'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/ready'[39m,
+  status: [33m200[39m,
+  durationMs: [33m1[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mWorker bootstrap and authentication boundary[2m > [22m[2mserves separate GET and HEAD liveness/readiness probes with release metadata
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'd75e8f14-f64c-4163-ab6a-c5a805bc56d0'[39m,
+  method: [32m'HEAD'[39m,
+  path: [32m'/api/ready'[39m,
+  status: [33m200[39m,
+  durationMs: [33m1[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mWorker bootstrap and authentication boundary[2m > [22m[2mserves public catalog HEAD and a profile-free cacheable payload
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'f9a14176-7e2b-4976-a762-5dbe32f16d87'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/catalog/version'[39m,
+  status: [33m200[39m,
+  durationMs: [33m1[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mWorker bootstrap and authentication boundary[2m > [22m[2mserves public catalog HEAD and a profile-free cacheable payload
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'399431c7-4e68-47b7-95ba-6969fed2321b'[39m,
+  method: [32m'HEAD'[39m,
+  path: [32m'/api/v1/catalog/version'[39m,
+  status: [33m200[39m,
+  durationMs: [33m1[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mWorker bootstrap and authentication boundary[2m > [22m[2mserves public catalog HEAD and a profile-free cacheable payload
+[22m[39m{
+  event: [32m'catalog_cache'[39m,
+  requestId: [32m'80eb711f-64cc-4201-9bb5-c9399937e9f1'[39m,
+  method: [32m'HEAD'[39m,
+  outcome: [32m'miss'[39m,
+  workerVersionId: [32m'80cf39c2-0ba6-4250-b3d8-f580c798c4b5'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mWorker bootstrap and authentication boundary[2m > [22m[2mserves public catalog HEAD and a profile-free cacheable payload
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'180a7128-d2c7-4905-9f9f-73de2452ca86'[39m,
+  method: [32m'HEAD'[39m,
+  path: [32m'/api/v1/catalog'[39m,
+  status: [33m200[39m,
+  durationMs: [33m25[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mWorker bootstrap and authentication boundary[2m > [22m[2mserves public catalog HEAD and a profile-free cacheable payload
+[22m[39m{
+  event: [32m'catalog_cache'[39m,
+  requestId: [32m'bf9c4afd-2f6e-446b-90a2-28707951d674'[39m,
+  method: [32m'GET'[39m,
+  outcome: [32m'hit'[39m,
+  workerVersionId: [32m'80cf39c2-0ba6-4250-b3d8-f580c798c4b5'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mWorker bootstrap and authentication boundary[2m > [22m[2mserves public catalog HEAD and a profile-free cacheable payload
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'aa2c10a0-365c-4a11-b8a5-c6bb8c7c2a95'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/catalog'[39m,
+  status: [33m200[39m,
+  durationMs: [33m1[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mWorker bootstrap and authentication boundary[2m > [22m[2mserves the seeded catalog to the localhost development actor
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'de285fe6-4726-46a2-802d-718d90a33843'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m32[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstderr[2m | tests/worker/api.test.ts[2m > [22m[2mWorker bootstrap and authentication boundary[2m > [22m[2mfails closed on a production hostname when no access token is configured
+[22m[39m{
+  event: [32m'owner_auth_failed'[39m,
+  requestId: [32m'09af3eac-0ce7-40d1-8bc3-828e861b561b'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m
+}
+
+[90mstderr[2m | tests/worker/api.test.ts[2m > [22m[2mWorker bootstrap and authentication boundary[2m > [22m[2mfails closed on a production hostname when no access token is configured
+[22m[39m{
+  event: [32m'api_request_failed'[39m,
+  requestId: [32m'9baa36c4-5039-4137-92c1-3d1d2459cc3f'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m503[39m,
+  durationMs: [33m4[39m,
+  code: [32m'PRIVATE_API_NOT_CONFIGURED'[39m
+}
+
+[90mstderr[2m | tests/worker/api.test.ts[2m > [22m[2mowner boundary rate limits[2m > [22m[2mfails a rate-limited unauthenticated owner attempt before authentication
+[22m[39m{
+  event: [32m'owner_auth_failed'[39m,
+  requestId: [32m'bf6669ad-bdb1-4807-a5eb-df9f00468138'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m
+}
+
+[90mstderr[2m | tests/worker/api.test.ts[2m > [22m[2mowner boundary rate limits[2m > [22m[2mfails a rate-limited unauthenticated owner attempt before authentication
+[22m[39m{
+  event: [32m'owner_auth_rate_limited'[39m,
+  requestId: [32m'bf6669ad-bdb1-4807-a5eb-df9f00468138'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m
+}
+
+[90mstderr[2m | tests/worker/api.test.ts[2m > [22m[2mowner boundary rate limits[2m > [22m[2mrate-limits authenticated mutations by a token-derived key
+[22m[39m{
+  event: [32m'owner_mutation_rate_limited'[39m,
+  requestId: [32m'0bfc072b-7104-4854-b805-57a0886d3fa4'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/collection'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2msparse collection mutations[2m > [22m[2mwrites one sparse row, increments once, deduplicates retries, and undoes it
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'39fb988a-4e7f-4ae9-8b17-90d922e12235'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m25[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2msparse collection mutations[2m > [22m[2mwrites one sparse row, increments once, deduplicates retries, and undoes it
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'fc744239-1c4d-4a41-8c52-0a9af5809e3a'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/collection'[39m,
+  status: [33m200[39m,
+  durationMs: [33m2[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2msparse collection mutations[2m > [22m[2mwrites one sparse row, increments once, deduplicates retries, and undoes it
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'4adae2e8-941f-4704-be4a-6edd30343ae4'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/collection'[39m,
+  status: [33m200[39m,
+  durationMs: [33m1[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2msparse collection mutations[2m > [22m[2mwrites one sparse row, increments once, deduplicates retries, and undoes it
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'3a6af4dd-e72d-41b8-ae78-196a914ee187'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m21[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2msparse collection mutations[2m > [22m[2mwrites one sparse row, increments once, deduplicates retries, and undoes it
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'ead706de-e339-4748-b4fc-c8c8afb98d07'[39m,
+  method: [32m'POST'[39m,
+  path: [32m'/api/v1/mutations/mutation:7e60e316-6d8f-4f37-9827-29752165b109/undo'[39m,
+  status: [33m200[39m,
+  durationMs: [33m2[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2msparse collection mutations[2m > [22m[2mwrites one sparse row, increments once, deduplicates retries, and undoes it
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'20626699-68db-42f6-beed-4755d1b7fc41'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m30[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2msparse collection mutations[2m > [22m[2mreplays only an identical operation and reports the current revision
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'0ab46622-29db-42a5-9ef1-e8d5e5fe051f'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/collection'[39m,
+  status: [33m200[39m,
+  durationMs: [33m1[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2msparse collection mutations[2m > [22m[2mreplays only an identical operation and reports the current revision
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'1bfdebcb-40b1-4628-9a73-f7768c75e4b1'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/collection'[39m,
+  status: [33m200[39m,
+  durationMs: [33m1[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2msparse collection mutations[2m > [22m[2mreplays only an identical operation and reports the current revision
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'ac4886e4-3938-49c7-9141-29d9a9224911'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/collection'[39m,
+  status: [33m200[39m,
+  durationMs: [33m1[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstderr[2m | tests/worker/api.test.ts[2m > [22m[2msparse collection mutations[2m > [22m[2mreplays only an identical operation and reports the current revision
+[22m[39m{
+  event: [32m'api_request_failed'[39m,
+  requestId: [32m'aa28f518-6a63-4b4f-9d85-fb01124746a2'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/collection'[39m,
+  status: [33m409[39m,
+  durationMs: [33m1[39m,
+  code: [32m'OPERATION_ID_REUSED'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2msparse collection mutations[2m > [22m[2mreplays only an identical operation and reports the current revision
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'a24cda7f-8438-45d3-8efc-8d29407e4aa1'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m21[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2msparse collection mutations[2m > [22m[2mrecords no-op operation IDs so retries cannot become later mutations
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'edddc2c6-a5ba-4256-864c-0a2f54b9b01e'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/collection'[39m,
+  status: [33m200[39m,
+  durationMs: [33m1[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2msparse collection mutations[2m > [22m[2mrecords no-op operation IDs so retries cannot become later mutations
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'dcaa8478-b0c2-4f9b-b135-18cbf5d25615'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/collection'[39m,
+  status: [33m200[39m,
+  durationMs: [33m1[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2msparse collection mutations[2m > [22m[2mrecords no-op operation IDs so retries cannot become later mutations
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'18b431af-8ab7-429c-b563-9241f817a1e7'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/collection'[39m,
+  status: [33m200[39m,
+  durationMs: [33m2[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstderr[2m | tests/worker/api.test.ts[2m > [22m[2msparse collection mutations[2m > [22m[2mrecords no-op operation IDs so retries cannot become later mutations
+[22m[39m{
+  event: [32m'api_request_failed'[39m,
+  requestId: [32m'c131119c-d9d0-411b-90a2-83ff0792bd80'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/collection'[39m,
+  status: [33m409[39m,
+  durationMs: [33m0[39m,
+  code: [32m'OPERATION_SUPERSEDED'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2msparse collection mutations[2m > [22m[2mrecords no-op operation IDs so retries cannot become later mutations
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'c634ad62-dca9-4a67-b29a-4fb5776be427'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m23[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2msparse collection mutations[2m > [22m[2mdeduplicates two concurrent identical writes
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'4e3c7352-f8ca-474f-bb03-dff0d7e9e2e5'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/collection'[39m,
+  status: [33m200[39m,
+  durationMs: [33m2[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2msparse collection mutations[2m > [22m[2mdeduplicates two concurrent identical writes
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'83a7c364-02d8-4d5d-9286-33621c83f63f'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/collection'[39m,
+  status: [33m200[39m,
+  durationMs: [33m1[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2msparse collection mutations[2m > [22m[2mdeduplicates two concurrent identical writes
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'3663296a-eac9-4f6f-b991-aacd01431581'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m23[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstderr[2m | tests/worker/api.test.ts[2m > [22m[2msparse collection mutations[2m > [22m[2mrejects a unknown category rule without changing collection state
+[22m[39m{
+  event: [32m'api_request_failed'[39m,
+  requestId: [32m'5e399aeb-d544-4c01-95b0-fef5822cb439'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/collection'[39m,
+  status: [33m422[39m,
+  durationMs: [33m1[39m,
+  code: [32m'CATEGORY_NOT_COLLECTIBLE'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2msparse collection mutations[2m > [22m[2mrejects a unknown category rule without changing collection state
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'922eb7ac-c7d4-40c2-a41f-758f62459731'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m25[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstderr[2m | tests/worker/api.test.ts[2m > [22m[2msparse collection mutations[2m > [22m[2mrejects a unreleased category rule without changing collection state
+[22m[39m{
+  event: [32m'api_request_failed'[39m,
+  requestId: [32m'319fcfd7-4ca3-4cd3-bfa4-7f291b587274'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/collection'[39m,
+  status: [33m422[39m,
+  durationMs: [33m1[39m,
+  code: [32m'CATEGORY_NOT_COLLECTIBLE'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2msparse collection mutations[2m > [22m[2mrejects a unreleased category rule without changing collection state
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'e4a32a1d-501b-4f70-b82c-1551d5a4c01e'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m34[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstderr[2m | tests/worker/api.test.ts[2m > [22m[2msparse collection mutations[2m > [22m[2mrejects a ineligible category rule without changing collection state
+[22m[39m{
+  event: [32m'api_request_failed'[39m,
+  requestId: [32m'842b298e-7844-4dfd-a96f-44095ae342d6'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/collection'[39m,
+  status: [33m422[39m,
+  durationMs: [33m1[39m,
+  code: [32m'CATEGORY_NOT_COLLECTIBLE'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2msparse collection mutations[2m > [22m[2mrejects a ineligible category rule without changing collection state
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'3e9635ce-9c98-4d0f-8332-f11e833f4f06'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m30[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstderr[2m | tests/worker/api.test.ts[2m > [22m[2msparse collection mutations[2m > [22m[2mrejects a cross-origin mutation before persisting it
+[22m[39m{
+  event: [32m'api_request_failed'[39m,
+  requestId: [32m'61cdafff-38e5-4e81-bb90-84dc3bb7cd98'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/collection'[39m,
+  status: [33m403[39m,
+  durationMs: [33m0[39m,
+  code: [32m'ORIGIN_NOT_ALLOWED'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2msparse collection mutations[2m > [22m[2mrejects a cross-origin mutation before persisting it
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'c3ec2df0-488d-4334-a0ca-c6281fb26c90'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m23[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mpersists every supported wanted trait and maps trait_id into bootstrap entries
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'fdecc4b6-8f7a-451f-a6e0-8456f8571633'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/wanted'[39m,
+  status: [33m200[39m,
+  durationMs: [33m2[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mpersists every supported wanted trait and maps trait_id into bootstrap entries
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'fc6b7d9a-351c-49c1-b045-d83c53725cdc'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/wanted'[39m,
+  status: [33m200[39m,
+  durationMs: [33m1[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mpersists every supported wanted trait and maps trait_id into bootstrap entries
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'f7f34306-db44-4acd-8426-a32d3b488c32'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/wanted'[39m,
+  status: [33m200[39m,
+  durationMs: [33m1[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mpersists every supported wanted trait and maps trait_id into bootstrap entries
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'43d3a6cf-261f-4e0b-98ff-e8db2e859a6f'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/wanted'[39m,
+  status: [33m200[39m,
+  durationMs: [33m1[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mpersists every supported wanted trait and maps trait_id into bootstrap entries
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'99fea295-f255-43f5-ad4f-ede90fee72f0'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/wanted'[39m,
+  status: [33m200[39m,
+  durationMs: [33m1[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mpersists every supported wanted trait and maps trait_id into bootstrap entries
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'9bf060ad-fedd-4111-a04d-4b7f4d89b3e6'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m23[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstderr[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mrejects unsupported wanted trait hundo without persisting a row
+[22m[39m{
+  event: [32m'api_request_failed'[39m,
+  requestId: [32m'efc0c8de-f6e2-4d83-9f5c-a4c90fd400ca'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/wanted'[39m,
+  status: [33m400[39m,
+  durationMs: [33m0[39m,
+  code: [32m'INVALID_TRADE_TRAIT'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mrejects unsupported wanted trait hundo without persisting a row
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'5a2bdc8e-d5d6-4030-802f-6faae54155d8'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m28[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstderr[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mrejects unsupported wanted trait lucky without persisting a row
+[22m[39m{
+  event: [32m'api_request_failed'[39m,
+  requestId: [32m'38fc67c1-1cc5-491e-a64b-69150bbc2542'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/wanted'[39m,
+  status: [33m400[39m,
+  durationMs: [33m0[39m,
+  code: [32m'INVALID_TRADE_TRAIT'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mrejects unsupported wanted trait lucky without persisting a row
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'2cea8386-fd0a-4cf3-a28b-3c7779649865'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m27[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstderr[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mrejects unsupported wanted trait shadow without persisting a row
+[22m[39m{
+  event: [32m'api_request_failed'[39m,
+  requestId: [32m'4ea5aa81-7aa6-472c-93f2-3593be33cfa8'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/wanted'[39m,
+  status: [33m400[39m,
+  durationMs: [33m0[39m,
+  code: [32m'INVALID_TRADE_TRAIT'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mrejects unsupported wanted trait shadow without persisting a row
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'adaca5d1-d12f-4903-be26-e13c822934e8'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m20[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstderr[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mrejects unsupported wanted trait purified without persisting a row
+[22m[39m{
+  event: [32m'api_request_failed'[39m,
+  requestId: [32m'0242f7d8-b8f4-4a34-a8e1-6d259b926290'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/wanted'[39m,
+  status: [33m400[39m,
+  durationMs: [33m0[39m,
+  code: [32m'INVALID_TRADE_TRAIT'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mrejects unsupported wanted trait purified without persisting a row
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'8e5828ac-d35d-4dcc-8d48-d4b1d68917ce'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m20[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstderr[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mrejects unsupported wanted trait party without persisting a row
+[22m[39m{
+  event: [32m'api_request_failed'[39m,
+  requestId: [32m'dd94dba8-dd68-4b56-a5ce-47a37f9f1a6d'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/wanted'[39m,
+  status: [33m400[39m,
+  durationMs: [33m1[39m,
+  code: [32m'INVALID_TRADE_TRAIT'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mrejects unsupported wanted trait party without persisting a row
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'2ad7aebe-900a-4d49-9879-154e6f5d81c3'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m22[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstderr[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mrejects unsupported wanted trait null without persisting a row
+[22m[39m{
+  event: [32m'api_request_failed'[39m,
+  requestId: [32m'145aa56d-eb9b-4973-b054-9a7b373adcf5'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/wanted'[39m,
+  status: [33m400[39m,
+  durationMs: [33m1[39m,
+  code: [32m'INVALID_TRADE_TRAIT'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mrejects unsupported wanted trait null without persisting a row
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'ffb72a35-d62d-4068-81d1-2aad051a2032'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m26[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstderr[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mrejects wanted and offered traits that are not released for the selected form
+[22m[39m{
+  event: [32m'api_request_failed'[39m,
+  requestId: [32m'91896a4c-f241-4d4a-a3c2-01833c40b24a'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/wanted'[39m,
+  status: [33m422[39m,
+  durationMs: [33m0[39m,
+  code: [32m'TRAIT_NOT_AVAILABLE'[39m
+}
+
+[90mstderr[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mrejects wanted and offered traits that are not released for the selected form
+[22m[39m{
+  event: [32m'api_request_failed'[39m,
+  requestId: [32m'0dbb6223-707d-42d2-9940-d16771baff47'[39m,
+  method: [32m'POST'[39m,
+  path: [32m'/api/v1/trades'[39m,
+  status: [33m422[39m,
+  durationMs: [33m1[39m,
+  code: [32m'TRAIT_NOT_AVAILABLE'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mrejects wanted and offered traits that are not released for the selected form
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'c9809287-830f-41f2-a78d-9e81a516d7b1'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m25[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mrejects an active xxl request when that size is already collected
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'14f2d5c7-e563-4e13-9da8-81a690b4d1ec'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/collection'[39m,
+  status: [33m200[39m,
+  durationMs: [33m2[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstderr[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mrejects an active xxl request when that size is already collected
+[22m[39m{
+  event: [32m'api_request_failed'[39m,
+  requestId: [32m'752ac667-d8bd-4e97-a8d9-eefeae128a63'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/wanted'[39m,
+  status: [33m409[39m,
+  durationMs: [33m2[39m,
+  code: [32m'SIZE_ALREADY_OWNED'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mrejects an active xxl request when that size is already collected
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'1988728f-9ffc-463c-9ea2-fce090037399'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m20[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mrejects an active xxs request when that size is already collected
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'001d2954-4653-443c-b83a-7882c925cea1'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/collection'[39m,
+  status: [33m200[39m,
+  durationMs: [33m1[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstderr[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mrejects an active xxs request when that size is already collected
+[22m[39m{
+  event: [32m'api_request_failed'[39m,
+  requestId: [32m'cfd489c2-fd30-4d62-87b2-04018a28f80c'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/wanted'[39m,
+  status: [33m409[39m,
+  durationMs: [33m1[39m,
+  code: [32m'SIZE_ALREADY_OWNED'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mrejects an active xxs request when that size is already collected
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'6756750f-59f5-435a-b0a3-ac5ab4260655'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m21[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mclears an active xxl request when that size is marked collected
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'63803a43-8f83-4993-8e57-e128c1ce035d'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/wanted'[39m,
+  status: [33m200[39m,
+  durationMs: [33m2[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mclears an active xxl request when that size is marked collected
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'4c51733e-e483-4b8a-9a11-44c1018c8eb5'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m27[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mclears an active xxl request when that size is marked collected
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'45ef216a-7375-4306-a87b-e6335fa9458c'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/collection'[39m,
+  status: [33m200[39m,
+  durationMs: [33m1[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mclears an active xxl request when that size is marked collected
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'5530c526-66cf-4e8d-ae02-f062acdce50a'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m24[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mclears an active xxs request when that size is marked collected
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'fb1461f1-fae7-450d-b1fc-51ec43edc6b9'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/wanted'[39m,
+  status: [33m200[39m,
+  durationMs: [33m2[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mclears an active xxs request when that size is marked collected
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'91a67f32-3731-444b-8d96-ab05edcb2e26'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m25[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mclears an active xxs request when that size is marked collected
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'ca087693-8a3e-44b1-bbe9-9b0b11d469d1'[39m,
+  method: [32m'PUT'[39m,
+  path: [32m'/api/v1/collection'[39m,
+  status: [33m200[39m,
+  durationMs: [33m2[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mclears an active xxs request when that size is marked collected
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'f3888bd4-adf8-4ef6-b2f9-8984ffc1cbbd'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m23[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2maccepts normal and combined special offers, including costume, in bootstrap
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'2e105c7a-7e94-4034-a145-76ee38c17d54'[39m,
+  method: [32m'POST'[39m,
+  path: [32m'/api/v1/trades'[39m,
+  status: [33m201[39m,
+  durationMs: [33m1[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2maccepts normal and combined special offers, including costume, in bootstrap
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'c91056c0-9c05-4c41-9db1-4e9dd3484913'[39m,
+  method: [32m'POST'[39m,
+  path: [32m'/api/v1/trades'[39m,
+  status: [33m201[39m,
+  durationMs: [33m1[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2maccepts normal and combined special offers, including costume, in bootstrap
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'a66167ea-b3b3-4626-a25b-00a1df27c01f'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m22[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstderr[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mrejects forbidden or unsupported offer trait normal
+[22m[39m{
+  event: [32m'api_request_failed'[39m,
+  requestId: [32m'24179daa-534a-438e-b8aa-27ad21cb4e94'[39m,
+  method: [32m'POST'[39m,
+  path: [32m'/api/v1/trades'[39m,
+  status: [33m400[39m,
+  durationMs: [33m0[39m,
+  code: [32m'INVALID_TRAITS'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mrejects forbidden or unsupported offer trait normal
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'341114df-9068-4196-a0f6-3da20e022f6d'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m22[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstderr[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mrejects forbidden or unsupported offer trait hundo
+[22m[39m{
+  event: [32m'api_request_failed'[39m,
+  requestId: [32m'b85c1bdf-5f62-487e-8564-77c86696f321'[39m,
+  method: [32m'POST'[39m,
+  path: [32m'/api/v1/trades'[39m,
+  status: [33m400[39m,
+  durationMs: [33m0[39m,
+  code: [32m'INVALID_TRAITS'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mrejects forbidden or unsupported offer trait hundo
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'29ed6876-1bec-43a7-b864-71d4d524bd99'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m20[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstderr[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mrejects forbidden or unsupported offer trait lucky
+[22m[39m{
+  event: [32m'api_request_failed'[39m,
+  requestId: [32m'7e671b91-8b92-404d-8988-f63cc3d9d162'[39m,
+  method: [32m'POST'[39m,
+  path: [32m'/api/v1/trades'[39m,
+  status: [33m400[39m,
+  durationMs: [33m0[39m,
+  code: [32m'INVALID_TRAITS'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mrejects forbidden or unsupported offer trait lucky
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'a1908775-99b2-406d-8f59-0d28715a4e32'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m24[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstderr[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mrejects forbidden or unsupported offer trait shadow
+[22m[39m{
+  event: [32m'api_request_failed'[39m,
+  requestId: [32m'89cf261b-4c1d-4426-b1b0-e228267cfb0f'[39m,
+  method: [32m'POST'[39m,
+  path: [32m'/api/v1/trades'[39m,
+  status: [33m400[39m,
+  durationMs: [33m1[39m,
+  code: [32m'INVALID_TRAITS'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mrejects forbidden or unsupported offer trait shadow
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'e544c413-0e4a-41d2-bd9b-b1edd16f4fb5'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m24[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstderr[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mrejects forbidden or unsupported offer trait purified
+[22m[39m{
+  event: [32m'api_request_failed'[39m,
+  requestId: [32m'6e873248-9c16-47f2-96ee-cb234cfef02f'[39m,
+  method: [32m'POST'[39m,
+  path: [32m'/api/v1/trades'[39m,
+  status: [33m400[39m,
+  durationMs: [33m0[39m,
+  code: [32m'INVALID_TRAITS'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mrejects forbidden or unsupported offer trait purified
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'c65f1fe4-6181-4a2c-b166-3a0d96137753'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m22[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstderr[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mrejects forbidden or unsupported offer trait party
+[22m[39m{
+  event: [32m'api_request_failed'[39m,
+  requestId: [32m'55933c57-3efd-4b15-b80f-b7336fccea4c'[39m,
+  method: [32m'POST'[39m,
+  path: [32m'/api/v1/trades'[39m,
+  status: [33m400[39m,
+  durationMs: [33m0[39m,
+  code: [32m'INVALID_TRAITS'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mrejects forbidden or unsupported offer trait party
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'438ba57a-8a4b-4c2d-bc1d-7431a0feac22'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m21[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstderr[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mrejects a malformed offer trait list
+[22m[39m{
+  event: [32m'api_request_failed'[39m,
+  requestId: [32m'b96615c7-2d6b-41b4-aa34-2912d4ed531f'[39m,
+  method: [32m'POST'[39m,
+  path: [32m'/api/v1/trades'[39m,
+  status: [33m400[39m,
+  durationMs: [33m1[39m,
+  code: [32m'INVALID_TRAITS'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mtrade requests and specimens[2m > [22m[2mrejects a malformed offer trait list
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'dd1b76de-f8dd-433a-bcd2-2a47f105ec16'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m23[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mauthoritative CSV import[2m > [22m[2mallows cleanup removals when a formerly collected category is now ineligible
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'2c2a5fcc-9b15-475e-8b5d-13ff3bb3e493'[39m,
+  method: [32m'POST'[39m,
+  path: [32m'/api/v1/imports/preview'[39m,
+  status: [33m200[39m,
+  durationMs: [33m28[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mauthoritative CSV import[2m > [22m[2mallows cleanup removals when a formerly collected category is now ineligible
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'bc2e7819-db3e-45e5-89a8-99bb3d89d8fb'[39m,
+  method: [32m'POST'[39m,
+  path: [32m'/api/v1/imports/import:8edf2e0f-414a-4d72-bc52-c920424bde93/apply'[39m,
+  status: [33m200[39m,
+  durationMs: [33m22[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mauthoritative CSV import[2m > [22m[2mallows cleanup removals when a formerly collected category is now ineligible
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'f998a913-e2de-4302-85fc-a9f997122922'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m22[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mauthoritative CSV import[2m > [22m[2mpreviews without collection writes, then atomically creates backup and mutation
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'e734d632-449b-45b7-be66-e3652988db8d'[39m,
+  method: [32m'POST'[39m,
+  path: [32m'/api/v1/imports/preview'[39m,
+  status: [33m200[39m,
+  durationMs: [33m22[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mauthoritative CSV import[2m > [22m[2mpreviews without collection writes, then atomically creates backup and mutation
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'18fb303a-05c5-4396-b149-a9fd09f0a9ba'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m21[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mauthoritative CSV import[2m > [22m[2mpreviews without collection writes, then atomically creates backup and mutation
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'56002468-f953-429e-9203-aab437b531e8'[39m,
+  method: [32m'POST'[39m,
+  path: [32m'/api/v1/imports/import:40bbe2a1-2d58-4bf9-ab5d-7ec29bcb8fdc/apply'[39m,
+  status: [33m200[39m,
+  durationMs: [33m21[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mauthoritative CSV import[2m > [22m[2mpreviews without collection writes, then atomically creates backup and mutation
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'f35c7cd9-0192-4e83-b703-be0f68eefb09'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m19[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mauthoritative CSV import[2m > [22m[2mapplies a 138-cell import with a bounded D1 query count
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'8b10a746-3a11-4ed8-a2c6-f8b8f90b992f'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m24[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mauthoritative CSV import[2m > [22m[2mapplies a 138-cell import with a bounded D1 query count
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'66b162bf-52fd-47f5-a933-4476ea216dba'[39m,
+  method: [32m'POST'[39m,
+  path: [32m'/api/v1/imports/preview'[39m,
+  status: [33m200[39m,
+  durationMs: [33m27[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mauthoritative CSV import[2m > [22m[2mapplies a 138-cell import with a bounded D1 query count
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'bfd74a15-d405-4b8d-8bea-75f279e77df2'[39m,
+  method: [32m'POST'[39m,
+  path: [32m'/api/v1/imports/import:43273423-f0c9-4e15-8d5f-09f6aeaab2f0/apply'[39m,
+  status: [33m200[39m,
+  durationMs: [33m30[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mauthoritative CSV import[2m > [22m[2mapplies a 138-cell import with a bounded D1 query count
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'67c99266-ac66-4cde-869b-1ab445e4126f'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m20[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mauthoritative CSV import[2m > [22m[2mapplies a complete collection export containing thousands of changed cells
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'cecc4cdb-e111-49a5-b413-6563eb2ae716'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m22[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mauthoritative CSV import[2m > [22m[2mapplies a complete collection export containing thousands of changed cells
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'a09923a2-147b-4740-8166-4aaab874b503'[39m,
+  method: [32m'POST'[39m,
+  path: [32m'/api/v1/imports/preview'[39m,
+  status: [33m200[39m,
+  durationMs: [33m52[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mauthoritative CSV import[2m > [22m[2mapplies a complete collection export containing thousands of changed cells
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'ccfa76fc-a29a-46f8-951e-443bfab93d18'[39m,
+  method: [32m'POST'[39m,
+  path: [32m'/api/v1/imports/import:e731936d-9d0e-4660-b5de-8f226bb50ea8/apply'[39m,
+  status: [33m200[39m,
+  durationMs: [33m20050[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mauthoritative CSV import[2m > [22m[2mapplies a complete collection export containing thousands of changed cells
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'c5677a99-f83f-4c97-907b-bde284cd5c16'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m50[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mauthoritative CSV import[2m > [22m[2mclaims a no-change import exactly once under concurrent apply requests
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'acd24d6f-f69a-4f5b-9245-75ef25cba50f'[39m,
+  method: [32m'POST'[39m,
+  path: [32m'/api/v1/imports/preview'[39m,
+  status: [33m200[39m,
+  durationMs: [33m28[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mauthoritative CSV import[2m > [22m[2mclaims a no-change import exactly once under concurrent apply requests
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'28759ba8-8ca4-4a13-82f3-c1658bb3891a'[39m,
+  method: [32m'POST'[39m,
+  path: [32m'/api/v1/imports/import:2ab59163-3b9d-4efb-bef0-3c59110865db/apply'[39m,
+  status: [33m200[39m,
+  durationMs: [33m34[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+[90mstderr[2m | tests/worker/api.test.ts[2m > [22m[2mauthoritative CSV import[2m > [22m[2mclaims a no-change import exactly once under concurrent apply requests
+[22m[39m{
+  event: [32m'api_request_failed'[39m,
+  requestId: [32m'983eacaf-742e-4de9-b797-4cc118be335e'[39m,
+  method: [32m'POST'[39m,
+  path: [32m'/api/v1/imports/import:2ab59163-3b9d-4efb-bef0-3c59110865db/apply'[39m,
+  status: [33m409[39m,
+  durationMs: [33m0[39m,
+  code: [32m'IMPORT_ALREADY_USED'[39m
+}
+
+[90mstdout[2m | tests/worker/api.test.ts[2m > [22m[2mauthoritative CSV import[2m > [22m[2mclaims a no-change import exactly once under concurrent apply requests
+[22m[39m{
+  event: [32m'api_request'[39m,
+  requestId: [32m'4de2d308-22af-4ba6-9dab-363058ffba71'[39m,
+  method: [32m'GET'[39m,
+  path: [32m'/api/v1/bootstrap'[39m,
+  status: [33m200[39m,
+  durationMs: [33m32[39m,
+  environment: [32m'production'[39m,
+  gitSha: [32m'development'[39m
+}
+
+ [32m✓[39m tests/worker/api.test.ts [2m([22m[2m40 tests[22m[2m)[22m[33m 22899[2mms[22m[39m
+     [33m[2m✓[22m[39m applies a complete collection export containing thousands of changed cells [33m 20226[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m40 passed[39m[22m[90m (40)[39m
+[2m   Start at [22m 23:56:16
+[2m   Duration [22m 24.32s[2m (transform 73ms, setup 105ms, import 23ms, tests 22.90s, environment 0ms)[22m
+
+$ node scripts/validation/validate-pokemon-data.mjs
+Pokémon data valid: 1269 forms, 10 costumes, 73 transformations.
+$ node scripts/validation/verify-sprites.mjs && node scripts/validation/verify-catalog-generation.mjs
+Manifest valid: schema v2, catalog 2026-08-24.1, 1025 National Dex representatives, 1269 total forms, 1915 unique sprite references.
+Local artwork checks passed. Run with --network to verify pinned Archives thumbnails.
+Catalog generation verified: immutable overwrite refusal passed and catalog.v1.json, CHANGE_REPORT_2026-08-24.md, 0011_catalog_forms_regions_home_artwork.sql exactly match a fresh temporary regeneration.
+$ tsc -b && vite build && pnpm run bundle:report
+vite v8.2.1 building dexly_companion environment for production...
+[2Ktransforming...✓ 11 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/dexly_companion/.vite/manifest.json   0.15 kB │ gzip:  0.11 kB
+dist/dexly_companion/wrangler.json         2.00 kB │ gzip:  0.99 kB
+dist/dexly_companion/index.js             62.79 kB │ gzip: 15.79 kB
+
+✓ built in 48ms
+vite v8.2.1 building client environment for production...
+[2Ktransforming...✓ 94 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/client/.assetsignore                             0.02 kB
+dist/client/cody/index.html                           2.54 kB │ gzip:   0.85 kB
+dist/client/index.html                                5.61 kB │ gzip:   2.04 kB
+dist/client/assets/DexRoute-BNEqRHCG.css              9.89 kB │ gzip:   2.34 kB
+dist/client/assets/DetailSheet-CCCeSRjM.css          16.94 kB │ gzip:   3.60 kB
+dist/client/assets/SearchLab-ByLSvdkH.css            39.28 kB │ gzip:   6.64 kB
+dist/client/assets/owner-DJfkRF3S.css                89.96 kB │ gzip:  17.67 kB
+dist/client/assets/app-DktaVM58.css                  90.78 kB │ gzip:  18.32 kB
+dist/client/assets/ownerApi-DlveqyjC.js               0.35 kB │ gzip:   0.23 kB
+dist/client/assets/capabilities-CSaV0LGf.js           0.64 kB │ gzip:   0.32 kB
+dist/client/assets/regionMedals-llMGnYUa.js           1.36 kB │ gzip:   0.70 kB
+dist/client/assets/OwnerAccessDialog-DhYtFWkA.js      1.75 kB │ gzip:   0.85 kB
+dist/client/assets/region-medals.v1-Cdn3XPRU.js       6.49 kB │ gzip:   1.50 kB
+dist/client/assets/DetailSheet-D_8ZpL5U.js            8.65 kB │ gzip:   3.15 kB
+dist/client/assets/discordShare-6zPr9k6Q.js          12.08 kB │ gzip:   5.15 kB
+dist/client/assets/DexRoute-3rCXQ5SS.js              15.71 kB │ gzip:   5.16 kB
+dist/client/assets/DataPage-DtUewE0A.js              20.60 kB │ gzip:   6.30 kB
+dist/client/assets/SearchLab-IkOUEjQf.js             25.76 kB │ gzip:   7.46 kB
+dist/client/assets/domain-Ba_Sgqka.js                34.62 kB │ gzip:  10.47 kB
+dist/client/assets/owner-BCimgWVd.js                237.67 kB │ gzip:  73.79 kB
+dist/client/assets/app-CdwHvNgZ.js                1,313.74 kB │ gzip: 112.74 kB
+
+✓ built in 730ms
+[plugin builtin:vite-reporter]
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+$ node scripts/release/report-bundle.mjs
+{
+  "generatedAt": "2026-10-02T04:56:50.031Z",
+  "chunks": 18,
+  "javascriptChunks": 13,
+  "cssChunks": 5,
+  "initialJavaScriptBytes": 1366956,
+  "initialJavaScriptGzipBytes": 129123,
+  "totalJavaScriptBytes": 1679476,
+  "totalJavaScriptGzipBytes": 226273,
+  "initialCssBytes": 90781,
+  "initialCssGzipBytes": 18215,
+  "totalCssBytes": 246863,
+  "totalCssGzipBytes": 48411,
+  "files": [
+    {
+      "name": "DataPage-DtUewE0A.js",
+      "type": "js",
+      "initial": false,
+      "bytes": 20600,
+      "gzipBytes": 6288
+    },
+    {
+      "name": "DetailSheet-CCCeSRjM.css",
+      "type": "css",
+      "initial": false,
+      "bytes": 16946,
+      "gzipBytes": 3595
+    },
+    {
+      "name": "DetailSheet-D_8ZpL5U.js",
+      "type": "js",
+      "initial": false,
+      "bytes": 8651,
+      "gzipBytes": 3148
+    },
+    {
+      "name": "DexRoute-3rCXQ5SS.js",
+      "type": "js",
+      "initial": false,
+      "bytes": 15713,
+      "gzipBytes": 5131
+    },
+    {
+      "name": "DexRoute-BNEqRHCG.css",
+      "type": "css",
+      "initial": false,
+      "bytes": 9892,
+      "gzipBytes": 2351
+    },
+    {
+      "name": "OwnerAccessDialog-DhYtFWkA.js",
+      "type": "js",
+      "initial": false,
+      "bytes": 1755,
+      "gzipBytes": 850
+    },
+    {
+      "name": "SearchLab-ByLSvdkH.css",
+      "type": "css",
+      "initial": false,
+      "bytes": 39284,
+      "gzipBytes": 6624
+    },
+    {
+      "name": "SearchLab-IkOUEjQf.js",
+      "type": "js",
+      "initial": false,
+      "bytes": 25764,
+      "gzipBytes": 7458
+    },
+    {
+      "name": "app-CdwHvNgZ.js",
+      "type": "js",
+      "initial": true,
+      "bytes": 1313747,
+      "gzipBytes": 112092
+    },
+    {
+      "name": "app-DktaVM58.css",
+      "type": "css",
+      "initial": true,
+      "bytes": 90781,
+      "gzipBytes": 18215
+    },
+    {
+      "name": "capabilities-CSaV0LGf.js",
+      "type": "js",
+      "initial": false,
+      "bytes": 647,
+      "gzipBytes": 324
+    },
+    {
+      "name": "discordShare-6zPr9k6Q.js",
+      "type": "js",
+      "initial": true,
+      "bytes": 12088,
+      "gzipBytes": 5136
+    },
+    {
+      "name": "domain-Ba_Sgqka.js",
+      "type": "js",
+      "initial": true,
+      "bytes": 34627,
+      "gzipBytes": 10391
+    },
+    {
+      "name": "owner-BCimgWVd.js",
+      "type": "js",
+      "initial": false,
+      "bytes": 237673,
+      "gzipBytes": 73005
+    },
+    {
+      "name": "owner-DJfkRF3S.css",
+      "type": "css",
+      "initial": false,
+      "bytes": 89960,
+      "gzipBytes": 17626
+    },
+    {
+      "name": "ownerApi-DlveqyjC.js",
+      "type": "js",
+      "initial": false,
+      "bytes": 357,
+      "gzipBytes": 239
+    },
+    {
+      "name": "region-medals.v1-Cdn3XPRU.js",
+      "type": "js",
+      "initial": true,
+      "bytes": 6494,
+      "gzipBytes": 1504
+    },
+    {
+      "name": "regionMedals-llMGnYUa.js",
+      "type": "js",
+      "initial": false,
+      "bytes": 1360,
+      "gzipBytes": 707
+    }
+  ]
+}
+$ playwright test
+[WebServer] [plugin builtin:vite-reporter]
+[WebServer] (!) Some chunks are larger than 500 kB after minification. Consider:
+[WebServer] - Using dynamic import() to code-split the application
+[WebServer] - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+[WebServer] - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+
+Running 265 tests using 4 workers
+
+  ✓    2 [mobile-chromium] › tests/e2e/accessibility.spec.ts:14:3 › home has no serious automatically detectable accessibility violations (1.0s)
+  ✓    3 [mobile-chromium] › tests/e2e/accessibility.spec.ts:14:3 › dex has no serious automatically detectable accessibility violations (1.1s)
+  ✓    4 [mobile-chromium] › tests/e2e/accessibility.spec.ts:14:3 › dex?r=kanto has no serious automatically detectable accessibility violations (1.3s)
+  ✓    5 [mobile-chromium] › tests/e2e/accessibility.spec.ts:14:3 › search has no serious automatically detectable accessibility violations (794ms)
+  ✓    6 [mobile-chromium] › tests/e2e/accessibility.spec.ts:14:3 › search?section=recommended-searches has no serious automatically detectable accessibility violations (859ms)
+  ✓    7 [mobile-chromium] › tests/e2e/accessibility.spec.ts:14:3 › settings has no serious automatically detectable accessibility violations (865ms)
+  ✓    9 [mobile-chromium] › tests/e2e/accessibility.spec.ts:28:1 › the Progress grid is a single tab stop with arrow-key movement (384ms)
+  ✓    1 [mobile-chromium] › tests/e2e/accessibility.spec.ts:14:3 › progress has no serious automatically detectable accessibility violations (2.5s)
+  ✓    8 [mobile-chromium] › tests/e2e/accessibility.spec.ts:14:3 › about has no serious automatically detectable accessibility violations (763ms)
+  ✓   11 [mobile-chromium] › tests/e2e/app.spec.ts:91:1 › almost-complete cards show missing categories and open details without modifying ownership (861ms)
+  ✓   12 [mobile-chromium] › tests/e2e/app.spec.ts:126:1 › medal partners fill with the earned tier and weekly artwork disappears for old entries (989ms)
+  ✓   15 [mobile-chromium] › tests/e2e/app.spec.ts:228:1 › first-run parade is static and full colour with reduced motion in both themes (545ms)
+  ✓   14 [mobile-chromium] › tests/e2e/app.spec.ts:196:1 › first-run backup action focuses the existing reviewed import and restores the dashboard (914ms)
+  ✓   13 [mobile-chromium] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order (1.5s)
+  ✓   16 [mobile-chromium] › tests/e2e/app.spec.ts:244:1 › the first marked catch switches Home to the dashboard and removing it restores onboarding (668ms)
+  ✓   18 [mobile-chromium] › tests/e2e/app.spec.ts:271:1 › viewing details never changes collection state (574ms)
+  ✓   17 [mobile-chromium] › tests/e2e/app.spec.ts:257:1 › marks a Pokémon from the Dex grid and keeps it after reload (774ms)
+  ✓   20 [mobile-chromium] › tests/e2e/app.spec.ts:300:1 › the National Dex grid is paged instead of one endless list (516ms)
+  ✓   21 [mobile-chromium] › tests/e2e/app.spec.ts:308:1 › the footer links to sources and credits (444ms)
+  ✓   22 [mobile-chromium] › tests/e2e/app.spec.ts:315:1 › Search Lab keeps Cody’s eight recommendations in order (314ms)
+  ✓   10 [mobile-chromium] › tests/e2e/app.spec.ts:32:1 › returning Home has recent artwork, medal partners and an accessible responsive heatmap (3.5s)
+  ✓   23 [mobile-chromium] › tests/e2e/app.spec.ts:330:1 › Discord output stays within the message limit (320ms)
+  ✓   24 [mobile-chromium] › tests/e2e/app.spec.ts:338:1 › builder composes an exact query without touching the collection (306ms)
+  -   27 [mobile-chromium] › tests/e2e/app.spec.ts:403:1 › Progress fits the window with equal-width category columns
+  ✓   28 [mobile-chromium] › tests/e2e/app.spec.ts:416:1 › a name in the grid opens details without changing the collection (419ms)
+  ✓   25 [mobile-chromium] › tests/e2e/app.spec.ts:347:1 › dragging down a grid column fills a range in one save and can be undone (823ms)
+  ✓   26 [mobile-chromium] › tests/e2e/app.spec.ts:369:1 › the grid marks cells by click and keyboard and updates the search string (1.3s)
+  ✓   29 [mobile-chromium] › tests/e2e/app.spec.ts:426:1 › the Home dashboard shows rings, the region heatmap and activity (675ms)
+  ✓   19 [mobile-chromium] › tests/e2e/app.spec.ts:280:1 › the Pokédex shelf opens a region device with a working scanner (2.4s)
+  ✓   31 [mobile-chromium] › tests/e2e/app.spec.ts:479:1 › the collection downloads as the community spreadsheet (325ms)
+  ✓   30 [mobile-chromium] › tests/e2e/app.spec.ts:444:1 › rows pasted from the community spreadsheet are reviewed, then added (967ms)
+  ✓   33 [mobile-chromium] › tests/e2e/app.spec.ts:503:1 › a compare link shows who can help whom (264ms)
+  ✓   32 [mobile-chromium] › tests/e2e/app.spec.ts:489:1 › medals, poster and compare link are available on Home (513ms)
+  ✓   36 [mobile-chromium] › tests/e2e/app.spec.ts:538:1 › bulk region setup asks before changing anything (410ms)
+  ✓   34 [mobile-chromium] › tests/e2e/app.spec.ts:513:1 › a compare link is shown for manual copy when the clipboard is unavailable (515ms)
+  ✓   35 [mobile-chromium] › tests/e2e/app.spec.ts:528:1 › quick jump opens a Pokémon from anywhere (499ms)
+  ✓   37 [mobile-chromium] › tests/e2e/app.spec.ts:546:1 › retired and unknown routes fall back to Home (361ms)
+  ✓   40 [mobile-chromium] › tests/e2e/catalog-feedback-app.spec.ts:86:1 › L2 alternate form context and clipboard-denied fallback stay inside the details sheet (711ms)
+  ✓   38 [mobile-chromium] › tests/e2e/app.spec.ts:553:1 › no horizontal overflow on any destination (778ms)
+  ✓   39 [mobile-chromium] › tests/e2e/catalog-feedback-app.spec.ts:42:1 › L2 details report copies the edited draft exactly, stays local and supports keyboard access (1.2s)
+  ✓   43 [mobile-chromium] › tests/e2e/catalog-feedback-app.spec.ts:177:1 › 300 skipped cells render one editable report grouped by category without losing cells (755ms)
+  ✓   41 [mobile-chromium] › tests/e2e/catalog-feedback-app.spec.ts:111:1 › L2 Sources report and Dex scanner report remain accessible in both themes (1.8s)
+  ✓   44 [mobile-chromium] › tests/e2e/catalog-feedback-app.spec.ts:206:1 › L2 freshness appears on both Home states and the Dex shelf, with the stale phone budget intact (846ms)
+  ✓   42 [mobile-chromium] › tests/e2e/catalog-feedback-app.spec.ts:140:1 › L3 skipped cells offer the L2 report with the skipped category and preserve reviewed import (1.7s)
+  ✓   47 [mobile-chromium] › tests/e2e/data-safety-app.spec.ts:110:3 › F1 csv export clears the reminder without changing the collection (542ms)
+  ✓   46 [mobile-chromium] › tests/e2e/data-safety-app.spec.ts:89:1 › F1 a small changed collection waits seven days and an unchanged export never nags (1.0s)
+  ✓   45 [mobile-chromium] › tests/e2e/data-safety-app.spec.ts:59:1 › F1 backup threshold, dismissal, reload and JSON export preserve the collection (1.4s)
+  ✓   48 [mobile-chromium] › tests/e2e/data-safety-app.spec.ts:110:3 › F1 xlsx export clears the reminder without changing the collection (588ms)
+  ✓   49 [mobile-chromium] › tests/e2e/data-safety-app.spec.ts:126:1 › F1 failed export leaves the reminder and collection intact (511ms)
+  ✓   51 [mobile-chromium] › tests/e2e/data-safety-app.spec.ts:164:3 › F1 persistence no is harmless and displays no (493ms)
+  ✓   52 [mobile-chromium] › tests/e2e/data-safety-app.spec.ts:164:3 › F1 persistence error is harmless and displays no (506ms)
+  ✓   53 [mobile-chromium] › tests/e2e/data-safety-app.spec.ts:164:3 › F1 persistence unsupported is harmless and displays no (475ms)
+  ✓   50 [mobile-chromium] › tests/e2e/data-safety-app.spec.ts:141:1 › F1 persistence is requested once at the tenth entry and Settings reports the grant (719ms)
+  ✓   54 [mobile-chromium] › tests/e2e/data-safety-app.spec.ts:182:1 › F1 iPhone install hint dismisses durably and never writes a collection (496ms)
+  ✓   55 [mobile-chromium] › tests/e2e/data-safety-app.spec.ts:198:3 › F1 standalone navigator hides installation hints and links (525ms)
+  ✓   56 [mobile-chromium] › tests/e2e/data-safety-app.spec.ts:198:3 › F1 standalone display-mode hides installation hints and links (517ms)
+  ✓   60 [mobile-chromium] › tests/e2e/f2-app.spec.ts:123:1 › F2 a fast phone drag saves one range with recovery and Undo (874ms)
+  ✓   59 [mobile-chromium] › tests/e2e/f2-app.spec.ts:89:1 › F2 comparison and the 700px boundary preserve data, single tab stop and details (1.8s)
+  ✓   61 [mobile-chromium] › tests/e2e/f2-app.spec.ts:171:1 › F2 interrupted and second-pointer gestures never save; touch names still scroll (1.3s)
+  ✓   62 [mobile-chromium] › tests/e2e/f2-app.spec.ts:233:1 › F2 a failed drag save leaves the collection and toggle appearance unchanged (728ms)
+  ✓   64 [mobile-chromium] › tests/e2e/f2-app.spec.ts:305:1 › F2 social metadata matches the served 1200x630 PNG and Settings describes drag-fill (310ms)
+  ✓   65 [mobile-chromium] › tests/e2e/navigation.app.spec.ts:4:1 › Dex cue is confined to empty Home and runs once per tab session (933ms)
+  ✓   66 [mobile-chromium] › tests/e2e/navigation.app.spec.ts:40:1 › blocked session storage cannot break navigation or replay the Dex cue (632ms)
+  ✓   58 [mobile-chromium] › tests/e2e/f2-app.spec.ts:30:1 › F2 phone categories, artwork, 44px targets, filters and search stay in sync (4.8s)
+  ✓   67 [mobile-chromium] › tests/e2e/navigation.app.spec.ts:58:1 › returning Home never advertises the first-run Dex cue (475ms)
+  ✓   69 [mobile-chromium] › tests/e2e/navigation.app.spec.ts:123:1 › a hidden Dex link does not consume its first-visit cue (385ms)
+  ✓   63 [mobile-chromium] › tests/e2e/f2-app.spec.ts:258:1 › F2 forms, long names, paging and both themes remain usable at 390px (3.3s)
+  ✓   70 [mobile-chromium] › tests/e2e/navigation.app.spec.ts:133:1 › phone dialogs and actionable toasts stay above the navigation (674ms)
+  ✓   71 [desktop-chromium] › tests/e2e/accessibility.spec.ts:14:3 › home has no serious automatically detectable accessibility violations (1.1s)
+  ✓   68 [mobile-chromium] › tests/e2e/navigation.app.spec.ts:72:1 › phone destinations, keyboard access and Menu remain usable across the 700px boundary (2.9s)
+  ✓   72 [desktop-chromium] › tests/e2e/accessibility.spec.ts:14:3 › dex has no serious automatically detectable accessibility violations (1.1s)
+  ✓   73 [desktop-chromium] › tests/e2e/accessibility.spec.ts:14:3 › dex?r=kanto has no serious automatically detectable accessibility violations (1.2s)
+  ✓   74 [desktop-chromium] › tests/e2e/accessibility.spec.ts:14:3 › search has no serious automatically detectable accessibility violations (855ms)
+  ✓   76 [desktop-chromium] › tests/e2e/accessibility.spec.ts:14:3 › search?section=recommended-searches has no serious automatically detectable accessibility violations (826ms)
+  ✓   77 [desktop-chromium] › tests/e2e/accessibility.spec.ts:14:3 › settings has no serious automatically detectable accessibility violations (863ms)
+  ✓   78 [desktop-chromium] › tests/e2e/accessibility.spec.ts:14:3 › about has no serious automatically detectable accessibility violations (750ms)
+  ✓   79 [desktop-chromium] › tests/e2e/accessibility.spec.ts:28:1 › the Progress grid is a single tab stop with arrow-key movement (549ms)
+  ✓   57 [mobile-chromium] › tests/e2e/data-safety-app.spec.ts:225:1 › F1 Home stays within the phone budget with notices, with accessible controls in both themes (10.6s)
+  ✓   81 [desktop-chromium] › tests/e2e/app.spec.ts:91:1 › almost-complete cards show missing categories and open details without modifying ownership (823ms)
+  ✓   82 [desktop-chromium] › tests/e2e/app.spec.ts:126:1 › medal partners fill with the earned tier and weekly artwork disappears for old entries (1.1s)
+  ✓   83 [desktop-chromium] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order (1.1s)
+  ✓   85 [desktop-chromium] › tests/e2e/app.spec.ts:228:1 › first-run parade is static and full colour with reduced motion in both themes (593ms)
+  ✓   80 [desktop-chromium] › tests/e2e/app.spec.ts:32:1 › returning Home has recent artwork, medal partners and an accessible responsive heatmap (2.7s)
+  ✓   84 [desktop-chromium] › tests/e2e/app.spec.ts:196:1 › first-run backup action focuses the existing reviewed import and restores the dashboard (918ms)
+  ✓   86 [desktop-chromium] › tests/e2e/app.spec.ts:244:1 › the first marked catch switches Home to the dashboard and removing it restores onboarding (640ms)
+  ✓   88 [desktop-chromium] › tests/e2e/app.spec.ts:271:1 › viewing details never changes collection state (747ms)
+  ✓   87 [desktop-chromium] › tests/e2e/app.spec.ts:257:1 › marks a Pokémon from the Dex grid and keeps it after reload (891ms)
+  ✓   91 [desktop-chromium] › tests/e2e/app.spec.ts:308:1 › the footer links to sources and credits (450ms)
+  ✓   90 [desktop-chromium] › tests/e2e/app.spec.ts:300:1 › the National Dex grid is paged instead of one endless list (644ms)
+  ✓   92 [desktop-chromium] › tests/e2e/app.spec.ts:315:1 › Search Lab keeps Cody’s eight recommendations in order (343ms)
+  ✓   93 [desktop-chromium] › tests/e2e/app.spec.ts:330:1 › Discord output stays within the message limit (333ms)
+  ✓   94 [desktop-chromium] › tests/e2e/app.spec.ts:338:1 › builder composes an exact query without touching the collection (323ms)
+  ✓   75 [desktop-chromium] › tests/e2e/accessibility.spec.ts:14:3 › progress has no serious automatically detectable accessibility violations (6.6s)
+  ✓   97 [desktop-chromium] › tests/e2e/app.spec.ts:403:1 › Progress fits the window with equal-width category columns (497ms)
+  ✓   89 [desktop-chromium] › tests/e2e/app.spec.ts:280:1 › the Pokédex shelf opens a region device with a working scanner (2.1s)
+  ✓   95 [desktop-chromium] › tests/e2e/app.spec.ts:347:1 › dragging down a grid column fills a range in one save and can be undone (1.3s)
+  ✓   98 [desktop-chromium] › tests/e2e/app.spec.ts:416:1 › a name in the grid opens details without changing the collection (686ms)
+  ✓  101 [desktop-chromium] › tests/e2e/app.spec.ts:479:1 › the collection downloads as the community spreadsheet (360ms)
+  ✓   99 [desktop-chromium] › tests/e2e/app.spec.ts:426:1 › the Home dashboard shows rings, the region heatmap and activity (1.0s)
+  ✓   96 [desktop-chromium] › tests/e2e/app.spec.ts:369:1 › the grid marks cells by click and keyboard and updates the search string (1.6s)
+  ✓  103 [desktop-chromium] › tests/e2e/app.spec.ts:503:1 › a compare link shows who can help whom (298ms)
+  ✓  102 [desktop-chromium] › tests/e2e/app.spec.ts:489:1 › medals, poster and compare link are available on Home (558ms)
+  ✓  104 [desktop-chromium] › tests/e2e/app.spec.ts:513:1 › a compare link is shown for manual copy when the clipboard is unavailable (573ms)
+  ✓  100 [desktop-chromium] › tests/e2e/app.spec.ts:444:1 › rows pasted from the community spreadsheet are reviewed, then added (1.1s)
+  ✓  106 [desktop-chromium] › tests/e2e/app.spec.ts:538:1 › bulk region setup asks before changing anything (411ms)
+  ✓  105 [desktop-chromium] › tests/e2e/app.spec.ts:528:1 › quick jump opens a Pokémon from anywhere (659ms)
+  ✓  107 [desktop-chromium] › tests/e2e/app.spec.ts:546:1 › retired and unknown routes fall back to Home (429ms)
+  ✓  108 [desktop-chromium] › tests/e2e/app.spec.ts:553:1 › no horizontal overflow on any destination (838ms)
+  ✓  110 [desktop-chromium] › tests/e2e/catalog-feedback-app.spec.ts:86:1 › L2 alternate form context and clipboard-denied fallback stay inside the details sheet (1.0s)
+  ✓  112 [desktop-chromium] › tests/e2e/catalog-feedback-app.spec.ts:140:1 › L3 skipped cells offer the L2 report with the skipped category and preserve reviewed import (1.1s)
+  ✓  109 [desktop-chromium] › tests/e2e/catalog-feedback-app.spec.ts:42:1 › L2 details report copies the edited draft exactly, stays local and supports keyboard access (1.7s)
+  ✓  113 [desktop-chromium] › tests/e2e/catalog-feedback-app.spec.ts:177:1 › 300 skipped cells render one editable report grouped by category without losing cells (776ms)
+  ✓  111 [desktop-chromium] › tests/e2e/catalog-feedback-app.spec.ts:111:1 › L2 Sources report and Dex scanner report remain accessible in both themes (1.9s)
+  ✓  117 [desktop-chromium] › tests/e2e/data-safety-app.spec.ts:110:3 › F1 csv export clears the reminder without changing the collection (590ms)
+  ✓  114 [desktop-chromium] › tests/e2e/catalog-feedback-app.spec.ts:206:1 › L2 freshness appears on both Home states and the Dex shelf, with the stale phone budget intact (967ms)
+  ✓  116 [desktop-chromium] › tests/e2e/data-safety-app.spec.ts:89:1 › F1 a small changed collection waits seven days and an unchanged export never nags (943ms)
+  ✓  115 [desktop-chromium] › tests/e2e/data-safety-app.spec.ts:59:1 › F1 backup threshold, dismissal, reload and JSON export preserve the collection (1.5s)
+  ✓  119 [desktop-chromium] › tests/e2e/data-safety-app.spec.ts:126:1 › F1 failed export leaves the reminder and collection intact (540ms)
+  ✓  118 [desktop-chromium] › tests/e2e/data-safety-app.spec.ts:110:3 › F1 xlsx export clears the reminder without changing the collection (627ms)
+  ✓  120 [desktop-chromium] › tests/e2e/data-safety-app.spec.ts:141:1 › F1 persistence is requested once at the tenth entry and Settings reports the grant (774ms)
+  ✓  121 [desktop-chromium] › tests/e2e/data-safety-app.spec.ts:164:3 › F1 persistence no is harmless and displays no (620ms)
+  ✓  122 [desktop-chromium] › tests/e2e/data-safety-app.spec.ts:164:3 › F1 persistence error is harmless and displays no (612ms)
+  ✓  123 [desktop-chromium] › tests/e2e/data-safety-app.spec.ts:164:3 › F1 persistence unsupported is harmless and displays no (598ms)
+  ✓  124 [desktop-chromium] › tests/e2e/data-safety-app.spec.ts:182:1 › F1 iPhone install hint dismisses durably and never writes a collection (665ms)
+  ✓  126 [desktop-chromium] › tests/e2e/data-safety-app.spec.ts:198:3 › F1 standalone display-mode hides installation hints and links (657ms)
+  ✓  125 [desktop-chromium] › tests/e2e/data-safety-app.spec.ts:198:3 › F1 standalone navigator hides installation hints and links (692ms)
+  ✓  130 [desktop-chromium] › tests/e2e/f2-app.spec.ts:123:1 › F2 a fast phone drag saves one range with recovery and Undo (831ms)
+  ✓  129 [desktop-chromium] › tests/e2e/f2-app.spec.ts:89:1 › F2 comparison and the 700px boundary preserve data, single tab stop and details (1.5s)
+  ✓  131 [desktop-chromium] › tests/e2e/f2-app.spec.ts:171:1 › F2 interrupted and second-pointer gestures never save; touch names still scroll (1.1s)
+  ✓  132 [desktop-chromium] › tests/e2e/f2-app.spec.ts:233:1 › F2 a failed drag save leaves the collection and toggle appearance unchanged (724ms)
+  ✓  134 [desktop-chromium] › tests/e2e/f2-app.spec.ts:305:1 › F2 social metadata matches the served 1200x630 PNG and Settings describes drag-fill (317ms)
+  ✓  135 [desktop-chromium] › tests/e2e/navigation.app.spec.ts:4:1 › Dex cue is confined to empty Home and runs once per tab session (929ms)
+  ✓  128 [desktop-chromium] › tests/e2e/f2-app.spec.ts:30:1 › F2 phone categories, artwork, 44px targets, filters and search stay in sync (4.2s)
+  ✓  136 [desktop-chromium] › tests/e2e/navigation.app.spec.ts:40:1 › blocked session storage cannot break navigation or replay the Dex cue (696ms)
+  ✓  137 [desktop-chromium] › tests/e2e/navigation.app.spec.ts:58:1 › returning Home never advertises the first-run Dex cue (484ms)
+  ✓  139 [desktop-chromium] › tests/e2e/navigation.app.spec.ts:123:1 › a hidden Dex link does not consume its first-visit cue (441ms)
+  ✓  133 [desktop-chromium] › tests/e2e/f2-app.spec.ts:258:1 › F2 forms, long names, paging and both themes remain usable at 390px (3.3s)
+  ✓  140 [desktop-chromium] › tests/e2e/navigation.app.spec.ts:133:1 › phone dialogs and actionable toasts stay above the navigation (703ms)
+  ✓  138 [desktop-chromium] › tests/e2e/navigation.app.spec.ts:72:1 › phone destinations, keyboard access and Menu remain usable across the 700px boundary (2.9s)
+  ✓  142 [mobile-webkit] › tests/e2e/app.spec.ts:91:1 › almost-complete cards show missing categories and open details without modifying ownership (2.0s)
+  ✓  143 [mobile-webkit] › tests/e2e/app.spec.ts:126:1 › medal partners fill with the earned tier and weekly artwork disappears for old entries (1.6s)
+  ✓  144 [mobile-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order (1.7s)
+  ✓  127 [desktop-chromium] › tests/e2e/data-safety-app.spec.ts:225:1 › F1 Home stays within the phone budget with notices, with accessible controls in both themes (10.8s)
+  ✓  141 [mobile-webkit] › tests/e2e/app.spec.ts:32:1 › returning Home has recent artwork, medal partners and an accessible responsive heatmap (4.8s)
+  ✓  146 [mobile-webkit] › tests/e2e/app.spec.ts:228:1 › first-run parade is static and full colour with reduced motion in both themes (1.2s)
+  ✓  145 [mobile-webkit] › tests/e2e/app.spec.ts:196:1 › first-run backup action focuses the existing reviewed import and restores the dashboard (1.8s)
+  ✓  147 [mobile-webkit] › tests/e2e/app.spec.ts:244:1 › the first marked catch switches Home to the dashboard and removing it restores onboarding (2.1s)
+  ✓  149 [mobile-webkit] › tests/e2e/app.spec.ts:271:1 › viewing details never changes collection state (1.9s)
+  ✓  148 [mobile-webkit] › tests/e2e/app.spec.ts:257:1 › marks a Pokémon from the Dex grid and keeps it after reload (2.3s)
+  ✓  153 [mobile-webkit] › tests/e2e/app.spec.ts:315:1 › Search Lab keeps Cody’s eight recommendations in order (763ms)
+  ✓  152 [mobile-webkit] › tests/e2e/app.spec.ts:308:1 › the footer links to sources and credits (1.0s)
+  ✓  154 [mobile-webkit] › tests/e2e/app.spec.ts:330:1 › Discord output stays within the message limit (806ms)
+  ✓  151 [mobile-webkit] › tests/e2e/app.spec.ts:300:1 › the National Dex grid is paged instead of one endless list (1.9s)
+  ✓  155 [mobile-webkit] › tests/e2e/app.spec.ts:338:1 › builder composes an exact query without touching the collection (777ms)
+  -  158 [mobile-webkit] › tests/e2e/app.spec.ts:403:1 › Progress fits the window with equal-width category columns
+  ✓  156 [mobile-webkit] › tests/e2e/app.spec.ts:347:1 › dragging down a grid column fills a range in one save and can be undone (1.4s)
+  ✓  150 [mobile-webkit] › tests/e2e/app.spec.ts:280:1 › the Pokédex shelf opens a region device with a working scanner (4.8s)
+  ✓  159 [mobile-webkit] › tests/e2e/app.spec.ts:416:1 › a name in the grid opens details without changing the collection (1.0s)
+  ✓  157 [mobile-webkit] › tests/e2e/app.spec.ts:369:1 › the grid marks cells by click and keyboard and updates the search string (2.1s)
+  ✓  162 [mobile-webkit] › tests/e2e/app.spec.ts:479:1 › the collection downloads as the community spreadsheet (715ms)
+  ✓  164 [mobile-webkit] › tests/e2e/app.spec.ts:503:1 › a compare link shows who can help whom (559ms)
+  ✓  160 [mobile-webkit] › tests/e2e/app.spec.ts:426:1 › the Home dashboard shows rings, the region heatmap and activity (1.7s)
+  ✓  161 [mobile-webkit] › tests/e2e/app.spec.ts:444:1 › rows pasted from the community spreadsheet are reviewed, then added (1.8s)
+  ✓  167 [mobile-webkit] › tests/e2e/app.spec.ts:538:1 › bulk region setup asks before changing anything (729ms)
+  ✓  163 [mobile-webkit] › tests/e2e/app.spec.ts:489:1 › medals, poster and compare link are available on Home (1.7s)
+  ✓  166 [mobile-webkit] › tests/e2e/app.spec.ts:528:1 › quick jump opens a Pokémon from anywhere (1.3s)
+  ✓  165 [mobile-webkit] › tests/e2e/app.spec.ts:513:1 › a compare link is shown for manual copy when the clipboard is unavailable (1.7s)
+  ✓  168 [mobile-webkit] › tests/e2e/app.spec.ts:546:1 › retired and unknown routes fall back to Home (841ms)
+  ✓  169 [mobile-webkit] › tests/e2e/app.spec.ts:553:1 › no horizontal overflow on any destination (1.9s)
+  ✓  171 [mobile-webkit] › tests/e2e/catalog-feedback-app.spec.ts:86:1 › L2 alternate form context and clipboard-denied fallback stay inside the details sheet (2.1s)
+  ✓  170 [mobile-webkit] › tests/e2e/catalog-feedback-app.spec.ts:42:1 › L2 details report copies the edited draft exactly, stays local and supports keyboard access (2.6s)
+  ✓  174 [mobile-webkit] › tests/e2e/catalog-feedback-app.spec.ts:177:1 › 300 skipped cells render one editable report grouped by category without losing cells (1.3s)
+  ✓  173 [mobile-webkit] › tests/e2e/catalog-feedback-app.spec.ts:140:1 › L3 skipped cells offer the L2 report with the skipped category and preserve reviewed import (2.2s)
+  ✓  175 [mobile-webkit] › tests/e2e/catalog-feedback-app.spec.ts:206:1 › L2 freshness appears on both Home states and the Dex shelf, with the stale phone budget intact (2.4s)
+  ✓  172 [mobile-webkit] › tests/e2e/catalog-feedback-app.spec.ts:111:1 › L2 Sources report and Dex scanner report remain accessible in both themes (4.8s)
+  ✓  177 [mobile-webkit] › tests/e2e/data-safety-app.spec.ts:89:1 › F1 a small changed collection waits seven days and an unchanged export never nags (2.3s)
+  ✓  178 [mobile-webkit] › tests/e2e/data-safety-app.spec.ts:110:3 › F1 csv export clears the reminder without changing the collection (1.5s)
+  ✓  176 [mobile-webkit] › tests/e2e/data-safety-app.spec.ts:59:1 › F1 backup threshold, dismissal, reload and JSON export preserve the collection (2.8s)
+  ✓  179 [mobile-webkit] › tests/e2e/data-safety-app.spec.ts:110:3 › F1 xlsx export clears the reminder without changing the collection (1.5s)
+  ✓  180 [mobile-webkit] › tests/e2e/data-safety-app.spec.ts:126:1 › F1 failed export leaves the reminder and collection intact (1.4s)
+  ✓  182 [mobile-webkit] › tests/e2e/data-safety-app.spec.ts:164:3 › F1 persistence no is harmless and displays no (1.2s)
+  ✓  181 [mobile-webkit] › tests/e2e/data-safety-app.spec.ts:141:1 › F1 persistence is requested once at the tenth entry and Settings reports the grant (1.6s)
+  ✓  183 [mobile-webkit] › tests/e2e/data-safety-app.spec.ts:164:3 › F1 persistence error is harmless and displays no (1.3s)
+  ✓  184 [mobile-webkit] › tests/e2e/data-safety-app.spec.ts:164:3 › F1 persistence unsupported is harmless and displays no (1.3s)
+  ✓  185 [mobile-webkit] › tests/e2e/data-safety-app.spec.ts:182:1 › F1 iPhone install hint dismisses durably and never writes a collection (1.3s)
+  ✓  186 [mobile-webkit] › tests/e2e/data-safety-app.spec.ts:198:3 › F1 standalone navigator hides installation hints and links (1.2s)
+  ✓  187 [mobile-webkit] › tests/e2e/data-safety-app.spec.ts:198:3 › F1 standalone display-mode hides installation hints and links (1.2s)
+  ✓  191 [mobile-webkit] › tests/e2e/f2-app.spec.ts:123:1 › F2 a fast phone drag saves one range with recovery and Undo (1.4s)
+  ✓  190 [mobile-webkit] › tests/e2e/f2-app.spec.ts:89:1 › F2 comparison and the 700px boundary preserve data, single tab stop and details (2.9s)
+  ✘  192 [mobile-webkit] › tests/e2e/f2-app.spec.ts:171:1 › F2 interrupted and second-pointer gestures never save; touch names still scroll (1.8s)
+  ✓  193 [mobile-webkit] › tests/e2e/f2-app.spec.ts:233:1 › F2 a failed drag save leaves the collection and toggle appearance unchanged (1.2s)
+  ✓  195 [mobile-webkit] › tests/e2e/f2-app.spec.ts:305:1 › F2 social metadata matches the served 1200x630 PNG and Settings describes drag-fill (581ms)
+  ✓  189 [mobile-webkit] › tests/e2e/f2-app.spec.ts:30:1 › F2 phone categories, artwork, 44px targets, filters and search stay in sync (5.9s)
+  ✓  194 [mobile-webkit] › tests/e2e/f2-app.spec.ts:258:1 › F2 forms, long names, paging and both themes remain usable at 390px (5.2s)
+  ✓  197 [mobile-webkit] › tests/e2e/navigation.app.spec.ts:40:1 › blocked session storage cannot break navigation or replay the Dex cue (3.6s)
+  ✓  196 [mobile-webkit] › tests/e2e/navigation.app.spec.ts:4:1 › Dex cue is confined to empty Home and runs once per tab session (5.2s)
+  ✓  198 [mobile-webkit] › tests/e2e/navigation.app.spec.ts:58:1 › returning Home never advertises the first-run Dex cue (1.6s)
+  ✓  200 [mobile-webkit] › tests/e2e/navigation.app.spec.ts:123:1 › a hidden Dex link does not consume its first-visit cue (1.1s)
+  ✓  201 [mobile-webkit] › tests/e2e/navigation.app.spec.ts:133:1 › phone dialogs and actionable toasts stay above the navigation (1.6s)
+  ✓  199 [mobile-webkit] › tests/e2e/navigation.app.spec.ts:72:1 › phone destinations, keyboard access and Menu remain usable across the 700px boundary (4.2s)
+  ✓  203 [desktop-webkit] › tests/e2e/app.spec.ts:91:1 › almost-complete cards show missing categories and open details without modifying ownership (1.6s)
+  ✓  202 [desktop-webkit] › tests/e2e/app.spec.ts:32:1 › returning Home has recent artwork, medal partners and an accessible responsive heatmap (4.0s)
+  ✓  204 [desktop-webkit] › tests/e2e/app.spec.ts:126:1 › medal partners fill with the earned tier and weekly artwork disappears for old entries (2.2s)
+  ✓  205 [desktop-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order (2.4s)
+  ✓  188 [mobile-webkit] › tests/e2e/data-safety-app.spec.ts:225:1 › F1 Home stays within the phone budget with notices, with accessible controls in both themes (18.1s)
+  ✓  207 [desktop-webkit] › tests/e2e/app.spec.ts:228:1 › first-run parade is static and full colour with reduced motion in both themes (1.3s)
+  ✓  206 [desktop-webkit] › tests/e2e/app.spec.ts:196:1 › first-run backup action focuses the existing reviewed import and restores the dashboard (2.3s)
+  ✓  208 [desktop-webkit] › tests/e2e/app.spec.ts:244:1 › the first marked catch switches Home to the dashboard and removing it restores onboarding (2.4s)
+  ✓  209 [desktop-webkit] › tests/e2e/app.spec.ts:271:1 › viewing details never changes collection state (2.3s)
+  ✓  211 [desktop-webkit] › tests/e2e/app.spec.ts:257:1 › marks a Pokémon from the Dex grid and keeps it after reload (3.0s)
+  ✓  213 [desktop-webkit] › tests/e2e/app.spec.ts:308:1 › the footer links to sources and credits (1.6s)
+  ✓  212 [desktop-webkit] › tests/e2e/app.spec.ts:300:1 › the National Dex grid is paged instead of one endless list (2.5s)
+  ✓  214 [desktop-webkit] › tests/e2e/app.spec.ts:315:1 › Search Lab keeps Cody’s eight recommendations in order (864ms)
+  ✓  215 [desktop-webkit] › tests/e2e/app.spec.ts:330:1 › Discord output stays within the message limit (824ms)
+  ✓  216 [desktop-webkit] › tests/e2e/app.spec.ts:338:1 › builder composes an exact query without touching the collection (818ms)
+  ✓  219 [desktop-webkit] › tests/e2e/app.spec.ts:403:1 › Progress fits the window with equal-width category columns (977ms)
+  ✓  217 [desktop-webkit] › tests/e2e/app.spec.ts:347:1 › dragging down a grid column fills a range in one save and can be undone (2.1s)
+  ✓  210 [desktop-webkit] › tests/e2e/app.spec.ts:280:1 › the Pokédex shelf opens a region device with a working scanner (6.6s)
+  ✓  218 [desktop-webkit] › tests/e2e/app.spec.ts:369:1 › the grid marks cells by click and keyboard and updates the search string (2.8s)
+  ✓  220 [desktop-webkit] › tests/e2e/app.spec.ts:416:1 › a name in the grid opens details without changing the collection (1.6s)
+  ✓  223 [desktop-webkit] › tests/e2e/app.spec.ts:479:1 › the collection downloads as the community spreadsheet (866ms)
+  ✓  222 [desktop-webkit] › tests/e2e/app.spec.ts:444:1 › rows pasted from the community spreadsheet are reviewed, then added (2.0s)
+  ✓  221 [desktop-webkit] › tests/e2e/app.spec.ts:426:1 › the Home dashboard shows rings, the region heatmap and activity (2.5s)
+  ✓  225 [desktop-webkit] › tests/e2e/app.spec.ts:503:1 › a compare link shows who can help whom (721ms)
+  ✓  228 [desktop-webkit] › tests/e2e/app.spec.ts:538:1 › bulk region setup asks before changing anything (951ms)
+  ✓  224 [desktop-webkit] › tests/e2e/app.spec.ts:489:1 › medals, poster and compare link are available on Home (2.7s)
+  ✓  227 [desktop-webkit] › tests/e2e/app.spec.ts:528:1 › quick jump opens a Pokémon from anywhere (1.9s)
+  ✓  229 [desktop-webkit] › tests/e2e/app.spec.ts:546:1 › retired and unknown routes fall back to Home (988ms)
+  ✓  226 [desktop-webkit] › tests/e2e/app.spec.ts:513:1 › a compare link is shown for manual copy when the clipboard is unavailable (2.8s)
+  ✓  230 [desktop-webkit] › tests/e2e/app.spec.ts:553:1 › no horizontal overflow on any destination (2.0s)
+  ✓  232 [desktop-webkit] › tests/e2e/catalog-feedback-app.spec.ts:86:1 › L2 alternate form context and clipboard-denied fallback stay inside the details sheet (2.2s)
+  ✓  231 [desktop-webkit] › tests/e2e/catalog-feedback-app.spec.ts:42:1 › L2 details report copies the edited draft exactly, stays local and supports keyboard access (3.1s)
+  ✓  235 [desktop-webkit] › tests/e2e/catalog-feedback-app.spec.ts:177:1 › 300 skipped cells render one editable report grouped by category without losing cells (1.6s)
+  ✓  234 [desktop-webkit] › tests/e2e/catalog-feedback-app.spec.ts:140:1 › L3 skipped cells offer the L2 report with the skipped category and preserve reviewed import (2.6s)
+  ✓  236 [desktop-webkit] › tests/e2e/catalog-feedback-app.spec.ts:206:1 › L2 freshness appears on both Home states and the Dex shelf, with the stale phone budget intact (2.3s)
+  ✓  233 [desktop-webkit] › tests/e2e/catalog-feedback-app.spec.ts:111:1 › L2 Sources report and Dex scanner report remain accessible in both themes (5.2s)
+  ✓  238 [desktop-webkit] › tests/e2e/data-safety-app.spec.ts:89:1 › F1 a small changed collection waits seven days and an unchanged export never nags (2.2s)
+  ✓  239 [desktop-webkit] › tests/e2e/data-safety-app.spec.ts:110:3 › F1 csv export clears the reminder without changing the collection (1.8s)
+  ✓  237 [desktop-webkit] › tests/e2e/data-safety-app.spec.ts:59:1 › F1 backup threshold, dismissal, reload and JSON export preserve the collection (3.3s)
+  ✓  240 [desktop-webkit] › tests/e2e/data-safety-app.spec.ts:110:3 › F1 xlsx export clears the reminder without changing the collection (1.7s)
+  ✓  241 [desktop-webkit] › tests/e2e/data-safety-app.spec.ts:126:1 › F1 failed export leaves the reminder and collection intact (2.0s)
+  ✓  243 [desktop-webkit] › tests/e2e/data-safety-app.spec.ts:164:3 › F1 persistence no is harmless and displays no (1.2s)
+  ✓  244 [desktop-webkit] › tests/e2e/data-safety-app.spec.ts:164:3 › F1 persistence error is harmless and displays no (1.1s)
+  ✓  242 [desktop-webkit] › tests/e2e/data-safety-app.spec.ts:141:1 › F1 persistence is requested once at the tenth entry and Settings reports the grant (1.8s)
+  ✓  245 [desktop-webkit] › tests/e2e/data-safety-app.spec.ts:164:3 › F1 persistence unsupported is harmless and displays no (1.1s)
+  ✓  247 [desktop-webkit] › tests/e2e/data-safety-app.spec.ts:198:3 › F1 standalone navigator hides installation hints and links (1.3s)
+  ✓  246 [desktop-webkit] › tests/e2e/data-safety-app.spec.ts:182:1 › F1 iPhone install hint dismisses durably and never writes a collection (1.6s)
+  ✓  248 [desktop-webkit] › tests/e2e/data-safety-app.spec.ts:198:3 › F1 standalone display-mode hides installation hints and links (1.3s)
+  ✓  252 [desktop-webkit] › tests/e2e/f2-app.spec.ts:123:1 › F2 a fast phone drag saves one range with recovery and Undo (1.4s)
+  ✓  251 [desktop-webkit] › tests/e2e/f2-app.spec.ts:89:1 › F2 comparison and the 700px boundary preserve data, single tab stop and details (2.7s)
+  ✓  253 [desktop-webkit] › tests/e2e/f2-app.spec.ts:171:1 › F2 interrupted and second-pointer gestures never save; touch names still scroll (1.4s)
+  ✓  254 [desktop-webkit] › tests/e2e/f2-app.spec.ts:233:1 › F2 a failed drag save leaves the collection and toggle appearance unchanged (1.2s)
+  ✓  256 [desktop-webkit] › tests/e2e/f2-app.spec.ts:305:1 › F2 social metadata matches the served 1200x630 PNG and Settings describes drag-fill (672ms)
+  ✓  250 [desktop-webkit] › tests/e2e/f2-app.spec.ts:30:1 › F2 phone categories, artwork, 44px targets, filters and search stay in sync (5.9s)
+  ✓  257 [desktop-webkit] › tests/e2e/navigation.app.spec.ts:4:1 › Dex cue is confined to empty Home and runs once per tab session (3.3s)
+  ✓  255 [desktop-webkit] › tests/e2e/f2-app.spec.ts:258:1 › F2 forms, long names, paging and both themes remain usable at 390px (5.0s)
+  ✓  258 [desktop-webkit] › tests/e2e/navigation.app.spec.ts:40:1 › blocked session storage cannot break navigation or replay the Dex cue (2.3s)
+  ✓  259 [desktop-webkit] › tests/e2e/navigation.app.spec.ts:58:1 › returning Home never advertises the first-run Dex cue (1.3s)
+  ✓  261 [desktop-webkit] › tests/e2e/navigation.app.spec.ts:123:1 › a hidden Dex link does not consume its first-visit cue (1.1s)
+  ✓  262 [desktop-webkit] › tests/e2e/navigation.app.spec.ts:133:1 › phone dialogs and actionable toasts stay above the navigation (1.4s)
+  ✓  263 [pwa-chromium] › tests/e2e/pwa.spec.ts:3:1 › standalone phone navigation respects safe areas and rotation (1.7s)
+  ✓  260 [desktop-webkit] › tests/e2e/navigation.app.spec.ts:72:1 › phone destinations, keyboard access and Menu remain usable across the 700px boundary (4.1s)
+  ✓  264 [pwa-chromium] › tests/e2e/pwa.spec.ts:59:1 › installs offline support without caching private routes (938ms)
+  ✓  265 [pwa-chromium] › tests/e2e/pwa.spec.ts:93:1 › a waiting update is only applied when the person accepts it (1.9s)
+  ✓  249 [desktop-webkit] › tests/e2e/data-safety-app.spec.ts:225:1 › F1 Home stays within the phone budget with notices, with accessible controls in both themes (17.5s)
+
+
+  1) [mobile-webkit] › tests/e2e/f2-app.spec.ts:171:1 › F2 interrupted and second-pointer gestures never save; touch names still scroll
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "none"
+    Received: "manipulation"
+
+      203 |       .first()
+      204 |       .evaluate((el) => getComputedStyle(el).touchAction),
+    > 205 |   ).toBe('none');
+          |     ^
+      206 |   expect(
+      207 |     await page
+      208 |       .locator('.grid-name')
+        at /root/catchgrid-l4-20261001/repo/tests/e2e/f2-app.spec.ts:205:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/f2-app-F2-interrupted-and--9ba13-ve-touch-names-still-scroll-mobile-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/f2-app-F2-interrupted-and--9ba13-ve-touch-names-still-scroll-mobile-webkit/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/f2-app-F2-interrupted-and--9ba13-ve-touch-names-still-scroll-mobile-webkit/trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results/f2-app-F2-interrupted-and--9ba13-ve-touch-names-still-scroll-mobile-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [mobile-webkit] › tests/e2e/f2-app.spec.ts:171:1 › F2 interrupted and second-pointer gestures never save; touch names still scroll
+  2 skipped
+  262 passed (2.0m)
+[ELIFECYCLE] Command failed with exit code 1.
+[ELIFECYCLE] Command failed with exit code 1.

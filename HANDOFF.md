@@ -1,8 +1,21 @@
 # CatchGrid current handoff
 
-Updated October 1, 2026. Start with [AGENTS.md](AGENTS.md), [README.md](README.md) and [FOLDER-GUIDE.md](FOLDER-GUIDE.md). The local owner assignment is [CODEX-PLAN.md](CODEX-PLAN.md); organization did not change its contents or authorize the next implementation phase.
+Updated October 2, 2026. Start with [AGENTS.md](AGENTS.md), [README.md](README.md) and [FOLDER-GUIDE.md](FOLDER-GUIDE.md). The local owner assignment is [CODEX-PLAN.md](CODEX-PLAN.md), which must never be committed.
 
-## October 1, 2026 — Round 3 L2 and L3 item 2 (local, awaiting Claude)
+## Live and current release status
+
+**Live remains `c49945a04d9b822e27c9a2af1cc41bcf68883d99`, Worker `0891c9e5-8a9c-4736-beae-2e796325dfef`.** Both were freshly confirmed using production health and Wrangler deployment status. The owner authorized L4 deployment, fast-forwarding main and pushing main/prism-forward. Authorization remains valid, but release is **blocked before deployment** because Codex Browser cannot verify saved browser permissions for either the local preview or production. It explicitly prohibits bypassing that check. Restore browser access before continuing the required interactive preview/live acceptance.
+
+- `a309606`: existing folder organization committed separately on `prism-forward`.
+- `3c6150f`: separate approved L2 pre-release fix; one report textarea contains every skipped cell grouped by category, while the skipped list stays plain text. The 300-cell regression passes.
+- **260 unit, 40 Worker, 263 full Linux browser tests passed**, with two existing exclusions and zero final failures/retries. Source/catalog/format/lint/type/build and both strict dry runs passed. The first full run had one existing F2 WebKit resize/touch failure, followed by a passing unchanged focused test and full rerun; retained in the release record. The 2,400px budget is unchanged and passes.
+- Production has **no pending migrations**. A D1 bookmark and explicit rollback target are recorded. No migrations were applied, no deploy/rollback occurred, main was not advanced and neither branch was pushed. Local and remote main, and remote prism-forward, remain `5f291b6` at inspection.
+- See [the L4 release record and owner checklist](docs/releases/2026-10-02-launch/RELEASE.md), [verification receipt](docs/releases/2026-10-02-launch/l4-verification.json) and [full final browser log](docs/releases/2026-10-02-launch/l4-linux-browser.txt). Resume from the record's continuation steps; recheck current live/remote/migration state and refresh the bookmark before release. Stop and ask if any migration appears. Roll back to the explicitly recorded version on any live failure.
+- L1, L2 and L3 item 2 were approved by Claude as confirmed by the owner. L3 item 1 (announcement) remains outside this assignment. Physical-device and real Discord acceptance remain pending.
+
+## October 1, 2026 — historical L2/L3 item 2 checkpoint
+
+The original local-review notes below describe the state before the owner's L4 assignment; the current status above supersedes their review/authorization holds.
 
 ### L4 step 0 — approved pre-release correction
 
@@ -21,14 +34,14 @@ Fresh checks: 260 unit and 40 Worker tests, plus 12 focused Windows Chromium des
 
 ## Current checkpoint
 
-- Checkout: `prism-forward`, HEAD `09d2cd2` (L2 and L3 item 2), based on approved L1 `8f2842e`. Existing organization work and evidence remain unstaged; this phase was committed without push, merge or deployment.
+- Checkout: `prism-forward`; application candidate `3c6150f`, based on organization `a309606`, approved L2 `09d2cd2` and L1 `8f2842e`. Release-record documentation follows separately. CODEX-PLAN.md and pre-existing research evidence remain untracked and excluded from commits.
 - F1 (`a716449`) and F2 (`d2aa25f`) were approved according to the current plan. Their local backup/install guidance and phone Progress/social-card work remain intact and undeployed.
 - L1 (`8f2842e`) completed the official-source catalog audit locally and was approved by Claude on October 1. Historical L1 checks: 257 unit, 40 Worker and 16 focused Windows browser tests, plus lint/build/catalog checks. The audit corrected Toxel and Sinistea availability; unsourced entries remain unavailable. [Audit and evidence](docs/releases/2026-10-02-launch/CATALOG-AUDIT.md).
-- Last recorded production release: `c49945a`, Worker `0891c9e5-8a9c-4736-beae-2e796325dfef`, September 28. [Production release record](docs/releases/2026-09-28-first-run-2/RELEASE.md). Organization did not verify current live state.
+- Confirmed current production release: `c49945a`, Worker `0891c9e5-8a9c-4736-beae-2e796325dfef`, originally deployed September 28. [Successful production release record](docs/releases/2026-09-28-first-run-2/RELEASE.md). L4 preparation freshly verified this state without changing it.
 
 ## Selected next work and limits
 
-L1 is approved. L2 and L3 item 2 are complete locally; stop for Claude review. L3 item 1 and L4 remain unstarted. Publishing approved local changes remains a separately authorized release with the existing gates. The old launch dates do not schedule or authorize publication.
+Restore interactive browser access, then finish the already-authorized L4 release using the release record. All required source and Linux automated gates have passed for application candidate `3c6150f`. Do not infer completed live checks from fixture tests or historical captures. The owner already authorized deploy, fast-forward and both pushes; do not request that authorization again. L3 item 1 remains unstarted.
 
 Physical iPhone Safari/Home Screen, Android Chrome, phone drag-fill/Undo, backup/restore round trips and actual Discord-card rendering remain owner acceptance items. Browser emulation and dated checks are separate from physical proof.
 
