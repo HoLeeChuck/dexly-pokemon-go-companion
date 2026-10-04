@@ -2,6 +2,20 @@
 
 Updated October 2, 2026. Start with [AGENTS.md](AGENTS.md), [README.md](README.md) and [FOLDER-GUIDE.md](FOLDER-GUIDE.md). The local owner assignment is [CODEX-PLAN.md](CODEX-PLAN.md), which must never be committed.
 
+## October 4, 2026 — LAUNCHED (2026-10-04 12:24 CDT)
+
+Owner gave the go on the Project HQ Decisions page; the PM chat ran LAUNCH-MORNING.md steps 1–8.
+
+- Source `3cdaa41` (app `4745a62`), artifact fingerprint `7a6e4a0e…` / 2,429 files, unchanged.
+- Pre-deploy live: `0891c9e5-8a9c-4736-beae-2e796325dfef` at 100%; `wrangler d1 migrations list --remote`: **No migrations to apply**.
+- D1 bookmark: `000000da-00000000-000050fa-7299e90dde9dc84c3ca0277c9ecaa064`.
+- Strict dry run: 2,433 asset files read.
+- **Deployed Worker version `b0c70140-8b84-46f8-9198-921d6106c1d6`** on dex.cjdev.app.
+- Smoke: 11/11 ok (private bootstrap 401 as expected). `/api/health`: gitSha `4745a62fc55f72dfe40deb2cf262e4692ee1b393`, version `b0c70140…`.
+- Live checks (`live-checks.mjs`, Chromium + WebKit, desktop + phone, both themes): **43/43 passed**, zero app console/CSP errors.
+- Rollback target if needed: `0891c9e5-8a9c-4736-beae-2e796325dfef`.
+- Still owner-only: physical iPhone/Android and Discord-card checks, then posting the announcement draft.
+
 ## October 4, 2026 — launch ready, waiting for the owner's go
 
 **Live is still `c49945a`, Worker `0891c9e5-8a9c-4736-beae-2e796325dfef`** (read-only check at 03:50 CDT; no pending migrations). Claude re-verified the L4 candidate overnight, without deploying, pushing or merging. Interactive WebKit checks found that first-time visitors could intermittently see the "new version is ready" bar. This is fixed in **`4745a62`**, which is the new application candidate. The rebuilt `dist/` artifact is fingerprinted, and must not be rebuilt before deploy.

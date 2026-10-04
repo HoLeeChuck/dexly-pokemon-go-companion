@@ -1,5 +1,20 @@
 # Round 3 L4 — prepared; deployment blocked
 
+## October 4, 2026 — LAUNCHED (2026-10-04 12:24 CDT)
+
+Owner gave the go on the Project HQ Decisions page; the PM chat ran LAUNCH-MORNING.md steps 1–8.
+
+- Source `3cdaa41` (app `4745a62`), artifact fingerprint `7a6e4a0e…` / 2,429 files, unchanged.
+- Pre-deploy live: `0891c9e5-8a9c-4736-beae-2e796325dfef` at 100%; `wrangler d1 migrations list --remote`: **No migrations to apply**.
+- D1 bookmark: `000000da-00000000-000050fa-7299e90dde9dc84c3ca0277c9ecaa064`.
+- Strict dry run: 2,433 asset files read.
+- **Deployed Worker version `b0c70140-8b84-46f8-9198-921d6106c1d6`** on dex.cjdev.app.
+- Smoke: 11/11 ok (private bootstrap 401 as expected). `/api/health`: gitSha `4745a62fc55f72dfe40deb2cf262e4692ee1b393`, version `b0c70140…`.
+- Live checks (`live-checks.mjs`, Chromium + WebKit, desktop + phone, both themes): **43/43 passed**, zero app console/CSP errors.
+- Rollback target if needed: `0891c9e5-8a9c-4736-beae-2e796325dfef`.
+- Still owner-only: physical iPhone/Android and Discord-card checks, then posting the announcement draft.
+
+
 Updated October 2, 2026 (America/Chicago), continuing the owner's October 1 assignment. **This candidate has not been deployed, main has not been advanced, and neither branch has been pushed.** The remaining blocker is the Codex Browser permission service, which refuses both local preview and production navigation because saved permissions cannot be verified. Required live browser acceptance cannot currently run. No release authorization is missing; the owner already authorized deployment, fast-forwarding main and both pushes.
 
 ## October 4 overnight recheck — current candidate `4745a62`
