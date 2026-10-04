@@ -6,7 +6,9 @@
   let registration;
 
   const announceUpdate = () => {
-    if (!registration?.waiting) return;
+    // A waiting worker is only an update when an older worker is still active. During a first
+    // install, WebKit can briefly report the new worker as waiting before it activates.
+    if (!registration?.waiting || !registration.active) return;
     window.dispatchEvent(
       new CustomEvent('catchgrid:update-ready', {
         detail: { registration },
