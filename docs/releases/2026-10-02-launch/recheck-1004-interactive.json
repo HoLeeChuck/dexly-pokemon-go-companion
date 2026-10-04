@@ -1,0 +1,235 @@
+{
+  "candidate": "4745a62fc55f72dfe40deb2cf262e4692ee1b393",
+  "artifactManifestSha256": "7a6e4a0e320b31bc0a6f82eb50ff7aa3fd76047be363752373bcb3bc6beaa6f4",
+  "artifactFiles": 2429,
+  "servedFrom": "local static server of dist/client applying its own _headers (CSP etc.); no Worker",
+  "ranAt": "2026-10-04T08:53:17.574Z",
+  "engines": "Playwright 1.62.1 Chromium + WebKit; desktop 1440x900 and phone 390x844 (touch); dark and light",
+  "passed": 43,
+  "total": 43,
+  "results": [
+    {
+      "name": "social card PNG is 1200x630 and OG/Twitter tags present",
+      "ok": true,
+      "detail": "1200x630"
+    },
+    {
+      "name": "chromium-desktop: first-run Home renders, freshness line, both themes",
+      "ok": true,
+      "detail": "Catalog updated 2026-09-29"
+    },
+    {
+      "name": "chromium-desktop: main tabs render (Dex, Progress, Search Lab, Settings, Sources)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "chromium-desktop: Cody's picks shows eight recommendations in order",
+      "ok": true,
+      "detail": "Trade, Megas, Tag, Evolve, Special Moves, Untagged, XXL, XXS"
+    },
+    {
+      "name": "chromium-desktop: details sheet report copies edited text exactly, Discord link, no network, no write",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "chromium-desktop: import with skipped cells: one report form, grouped, reviewed apply skips unavailable",
+      "ok": true,
+      "detail": "4 entries saved"
+    },
+    {
+      "name": "chromium-desktop: seeded Home shows backup reminder (40-species import), both themes",
+      "ok": true,
+      "detail": "banner visible; Catalog updated 2026-09-29"
+    },
+    {
+      "name": "chromium-desktop: JSON backup downloads and round-trips into a fresh browser with equal counts",
+      "ok": true,
+      "detail": "155 entries both sides; backup keys format,schemaVersion,createdAt,catalogVersion"
+    },
+    {
+      "name": "chromium-desktop: keyboard: \"/\" jumps to Pokémon search",
+      "ok": true,
+      "detail": "INPUT search jump-input"
+    },
+    {
+      "name": "chromium-desktop: private /cody entry loads its shell without script errors",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "chromium-desktop: zero console/page/CSP errors across the session",
+      "ok": true,
+      "detail": "0 errors"
+    },
+    {
+      "name": "chromium-phone: first-run Home renders, freshness line, both themes",
+      "ok": true,
+      "detail": "Catalog updated 2026-09-29"
+    },
+    {
+      "name": "chromium-phone: main tabs render (Dex, Progress, Search Lab, Settings, Sources)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "chromium-phone: Cody's picks shows eight recommendations in order",
+      "ok": true,
+      "detail": "Trade, Megas, Tag, Evolve, Special Moves, Untagged, XXL, XXS"
+    },
+    {
+      "name": "chromium-phone: details sheet report copies edited text exactly, Discord link, no network, no write",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "chromium-phone: import with skipped cells: one report form, grouped, reviewed apply skips unavailable",
+      "ok": true,
+      "detail": "4 entries saved"
+    },
+    {
+      "name": "chromium-phone: seeded Home shows backup reminder (40-species import), both themes",
+      "ok": true,
+      "detail": "banner visible; Catalog updated 2026-09-29"
+    },
+    {
+      "name": "chromium-phone: JSON backup downloads and round-trips into a fresh browser with equal counts",
+      "ok": true,
+      "detail": "155 entries both sides; backup keys format,schemaVersion,createdAt,catalogVersion"
+    },
+    {
+      "name": "chromium-phone: phone Progress drag-fill saves one range, toast, Undo restores",
+      "ok": true,
+      "detail": "6 filled, Undo back to 0"
+    },
+    {
+      "name": "chromium-phone: keyboard: \"/\" jumps to Pokémon search",
+      "ok": true,
+      "detail": "INPUT search jump-input"
+    },
+    {
+      "name": "chromium-phone: private /cody entry loads its shell without script errors",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "chromium-phone: zero console/page/CSP errors across the session",
+      "ok": true,
+      "detail": "0 errors"
+    },
+    {
+      "name": "webkit-desktop: first-run Home renders, freshness line, both themes",
+      "ok": true,
+      "detail": "Catalog updated 2026-09-29"
+    },
+    {
+      "name": "webkit-desktop: main tabs render (Dex, Progress, Search Lab, Settings, Sources)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "webkit-desktop: Cody's picks shows eight recommendations in order",
+      "ok": true,
+      "detail": "Trade, Megas, Tag, Evolve, Special Moves, Untagged, XXL, XXS"
+    },
+    {
+      "name": "webkit-desktop: details sheet report copies edited text exactly, Discord link, no network, no write",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "webkit-desktop: import with skipped cells: one report form, grouped, reviewed apply skips unavailable",
+      "ok": true,
+      "detail": "4 entries saved"
+    },
+    {
+      "name": "webkit-desktop: seeded Home shows backup reminder (40-species import), both themes",
+      "ok": true,
+      "detail": "banner visible; Catalog updated 2026-09-29"
+    },
+    {
+      "name": "webkit-desktop: JSON backup downloads and round-trips into a fresh browser with equal counts",
+      "ok": true,
+      "detail": "155 entries both sides; backup keys format,schemaVersion,createdAt,catalogVersion"
+    },
+    {
+      "name": "webkit-desktop: keyboard: \"/\" jumps to Pokémon search",
+      "ok": true,
+      "detail": "INPUT search jump-input"
+    },
+    {
+      "name": "webkit-desktop: private /cody entry loads its shell without script errors",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "webkit-desktop: zero console/page/CSP errors across the session",
+      "ok": true,
+      "detail": "12 screenshot-helper style messages excluded"
+    },
+    {
+      "name": "webkit-phone: first-run Home renders, freshness line, both themes",
+      "ok": true,
+      "detail": "Catalog updated 2026-09-29"
+    },
+    {
+      "name": "webkit-phone: main tabs render (Dex, Progress, Search Lab, Settings, Sources)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "webkit-phone: Cody's picks shows eight recommendations in order",
+      "ok": true,
+      "detail": "Trade, Megas, Tag, Evolve, Special Moves, Untagged, XXL, XXS"
+    },
+    {
+      "name": "webkit-phone: details sheet report copies edited text exactly, Discord link, no network, no write",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "webkit-phone: import with skipped cells: one report form, grouped, reviewed apply skips unavailable",
+      "ok": true,
+      "detail": "4 entries saved"
+    },
+    {
+      "name": "webkit-phone: seeded Home shows backup reminder (40-species import), both themes",
+      "ok": true,
+      "detail": "banner visible; Catalog updated 2026-09-29"
+    },
+    {
+      "name": "webkit-phone: JSON backup downloads and round-trips into a fresh browser with equal counts",
+      "ok": true,
+      "detail": "155 entries both sides; backup keys format,schemaVersion,createdAt,catalogVersion"
+    },
+    {
+      "name": "webkit-phone: phone Progress drag-fill saves one range, toast, Undo restores",
+      "ok": true,
+      "detail": "6 filled, Undo back to 0"
+    },
+    {
+      "name": "webkit-phone: keyboard: \"/\" jumps to Pokémon search",
+      "ok": true,
+      "detail": "INPUT search jump-input"
+    },
+    {
+      "name": "webkit-phone: private /cody entry loads its shell without script errors",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "webkit-phone: zero console/page/CSP errors across the session",
+      "ok": true,
+      "detail": "13 screenshot-helper style messages excluded"
+    }
+  ],
+  "firstVisitUpdateBanner": {
+    "before3c6150f": "4 of 6 fresh WebKit visits showed it",
+    "after4745a62": "0 of 6 fresh WebKit visits and 0 of 3 Chromium"
+  },
+  "notes": [
+    "Playwright WebKit screenshots inject a helper style that the strict CSP blocks; those messages are tagged and excluded. Without screenshots every route reports zero CSP violations.",
+    "Fixture/local-preview evidence only. Live production, physical devices and real Discord rendering are pending until after deploy."
+  ]
+}

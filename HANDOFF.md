@@ -2,7 +2,15 @@
 
 Updated October 2, 2026. Start with [AGENTS.md](AGENTS.md), [README.md](README.md) and [FOLDER-GUIDE.md](FOLDER-GUIDE.md). The local owner assignment is [CODEX-PLAN.md](CODEX-PLAN.md), which must never be committed.
 
-## Live and current release status
+## October 4, 2026 — launch ready, waiting for the owner's go
+
+**Live is still `c49945a`, Worker `0891c9e5-8a9c-4736-beae-2e796325dfef`** (read-only check at 03:50 CDT; no pending migrations). Claude re-verified the L4 candidate overnight, without deploying, pushing or merging. Interactive WebKit checks found that first-time visitors could intermittently see the "new version is ready" bar. This is fixed in **`4745a62`**, which is the new application candidate. The rebuilt `dist/` artifact is fingerprinted, and must not be rebuilt before deploy.
+
+- `4745a62`: 262 unit and 40 Worker tests, lint, format, catalog validators, build and strict dry run on Windows and clean Linux. Clean full Linux browser run: 263 passed, 0 failures. Interactive Chromium/WebKit desktop/phone, both themes: 43/43, zero app console/CSP errors.
+- Known: one existing WebKit tab-order test fails about 1 in 20 before and after the fix (a smooth-scroll click race in the test). Bramblin/Brambleghast debut in GO on October 13, so a catalog update is the first post-launch task. Freshness warns from about October 20.
+- **Next:** follow [LAUNCH-MORNING.md](docs/releases/2026-10-02-launch/LAUNCH-MORNING.md) once the owner says go: bookmark, migration stop, deploy, smoke/live checks, rollback target, push. Then do the phone/Discord checks and post the announcement draft (L3 item 1, a draft only, not posted).
+
+## Live and current release status (October 2 record)
 
 **Live remains `c49945a04d9b822e27c9a2af1cc41bcf68883d99`, Worker `0891c9e5-8a9c-4736-beae-2e796325dfef`.** Both were freshly confirmed using production health and Wrangler deployment status. The owner authorized L4 deployment, fast-forwarding main and pushing main/prism-forward. Authorization remains valid, but release is **blocked before deployment** because Codex Browser cannot verify saved browser permissions for either the local preview or production. It explicitly prohibits bypassing that check. Restore browser access before continuing the required interactive preview/live acceptance.
 

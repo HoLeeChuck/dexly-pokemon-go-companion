@@ -2,6 +2,7 @@
 
 | Record | Scope |
 | --- | --- |
+| [2026-10-02-launch/LAUNCH-MORNING.md](2026-10-02-launch/LAUNCH-MORNING.md) | October 4 recheck: candidate `4745a62` ready; exact launch/rollback steps, phone and Discord checks, announcement draft |
 | [2026-10-02-launch/RELEASE.md](2026-10-02-launch/RELEASE.md) | L4 candidate validated; deployment blocked by browser permission verification; owner checklist and continuation |
 | [2026-10-02-launch/CATALOG-AUDIT.md](2026-10-02-launch/CATALOG-AUDIT.md) | September 30 local L1 catalog audit; the directory name is the earlier target launch date |
 | [2026-09-28-friends/RELEASE.md](2026-09-28-friends/RELEASE.md) | Local F1/F2 review, evidence and owner acceptance checklist |

@@ -2,6 +2,16 @@
 
 Updated October 2, 2026 (America/Chicago), continuing the owner's October 1 assignment. **This candidate has not been deployed, main has not been advanced, and neither branch has been pushed.** The remaining blocker is the Codex Browser permission service, which refuses both local preview and production navigation because saved permissions cannot be verified. Required live browser acceptance cannot currently run. No release authorization is missing; the owner already authorized deployment, fast-forwarding main and both pushes.
 
+## October 4 overnight recheck — current candidate `4745a62`
+
+Claude re-verified this candidate fresh on the owner's PC on October 4, 2026, working unattended. **No deploy, push, merge, migration or announcement happened.** The browser-permission blocker no longer applies, because local Playwright Chromium/WebKit drove real interactive checks of the exact production artifact.
+
+- The recorded `3c6150f` artifact was intact (manifest `caea543b…`). Gates on `63e4df2` passed again: 260 unit, 40 Worker, source/catalog/format/lint, build and strict dry run. A fresh clean Linux browser run passed 263, with 0 failures.
+- The interactive WebKit checks found an existing bug, also live in production: a **first-time visitor could intermittently see "A new version of CatchGrid is ready"** (4 of 6 fresh WebKit visits). Fixed in **`4745a62`**, two lines plus a unit test that fails without the fix, then 0 of 9 visits. Rebuilt artifact manifest: `7a6e4a0e320b31bc0a6f82eb50ff7aa3fd76047be363752373bcb3bc6beaa6f4`, 2,429 files, embedding `4745a62`.
+- `4745a62` gates: 262 unit, 40 Worker, source/catalog/format/lint and build on Windows and clean Linux; strict dry runs passed on both. Clean full Linux browser run: **263 passed, 2 existing skips, 0 failures**. The first run had one failure in an existing WebKit test, which repeats about 1 in 20 both before and after the fix (it clicks while the card is still smooth-scrolling). See [repeat comparison](recheck-1004-linux-flake-repeat.txt). Interactive local-artifact pass: **43/43** ([summary](recheck-1004-interactive.json)).
+- Read-only production check, 03:50 CDT: still `c49945a` / `0891c9e5-8a9c-4736-beae-2e796325dfef` at 100%, no pending migrations, bookmark `000000d8-00000000-000050fa-1702ec503dbca315218fb177201acafc`.
+- **Launch steps, rollback, phone/Discord checks and the announcement draft: [LAUNCH-MORNING.md](LAUNCH-MORNING.md).** That document supersedes the continuation steps below for the commands to run; the owner gives the go in the morning.
+
 ## Source and production state
 
 | Item | Recorded value |

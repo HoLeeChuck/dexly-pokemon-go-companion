@@ -1,0 +1,179 @@
+[WebServer] [plugin builtin:vite-reporter]
+[WebServer] (!) Some chunks are larger than 500 kB after minification. Consider:
+[WebServer] - Using dynamic import() to code-split the application
+[WebServer] - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+[WebServer] - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+
+
+Running 20 tests using 4 workers
+
+[1/20] [mobile-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[2/20] [mobile-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[3/20] [mobile-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[4/20] [mobile-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[5/20] [mobile-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[6/20] [mobile-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[7/20] [mobile-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[8/20] [mobile-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[9/20] [mobile-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[10/20] [mobile-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[11/20] [desktop-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[12/20] [desktop-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[13/20] [desktop-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[14/20] [desktop-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[15/20] [desktop-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+  1) [mobile-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'Johto Pokédex' })
+    Expected: visible
+    Timeout: 7500ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 7500ms
+      - waiting for getByRole('heading', { name: 'Johto Pokédex' })
+
+
+      188 |   }
+      189 |   await page.getByRole('link', { name: 'Open the Johto Pokédex', exact: true }).click();
+    > 190 |   await expect(page.getByRole('heading', { name: 'Johto Pokédex' })).toBeVisible();
+          |                                                                      ^
+      191 |   await expect(
+      192 |     page.getByRole('button', { name: 'Toggle Normal: missing', exact: true }),
+      193 |   ).toBeVisible();
+        at /root/catchgrid-recheck-20261004-4745a62/repo/tests/e2e/app.spec.ts:190:70
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/app-first-run-Home-introdu-2582f-and-has-a-logical-tab-order-mobile-webkit-repeat4/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/app-first-run-Home-introdu-2582f-and-has-a-logical-tab-order-mobile-webkit-repeat4/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/app-first-run-Home-introdu-2582f-and-has-a-logical-tab-order-mobile-webkit-repeat4/trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results/app-first-run-Home-introdu-2582f-and-has-a-logical-tab-order-mobile-webkit-repeat4/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[16/20] [desktop-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[17/20] [desktop-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[18/20] [desktop-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[19/20] [desktop-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[20/20] [desktop-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+  2) [desktop-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'Johto Pokédex' })
+    Expected: visible
+    Timeout: 7500ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 7500ms
+      - waiting for getByRole('heading', { name: 'Johto Pokédex' })
+
+
+      188 |   }
+      189 |   await page.getByRole('link', { name: 'Open the Johto Pokédex', exact: true }).click();
+    > 190 |   await expect(page.getByRole('heading', { name: 'Johto Pokédex' })).toBeVisible();
+          |                                                                      ^
+      191 |   await expect(
+      192 |     page.getByRole('button', { name: 'Toggle Normal: missing', exact: true }),
+      193 |   ).toBeVisible();
+        at /root/catchgrid-recheck-20261004-4745a62/repo/tests/e2e/app.spec.ts:190:70
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/app-first-run-Home-introdu-2582f-and-has-a-logical-tab-order-desktop-webkit-repeat4/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/app-first-run-Home-introdu-2582f-and-has-a-logical-tab-order-desktop-webkit-repeat4/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/app-first-run-Home-introdu-2582f-and-has-a-logical-tab-order-desktop-webkit-repeat4/trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results/app-first-run-Home-introdu-2582f-and-has-a-logical-tab-order-desktop-webkit-repeat4/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  2 failed
+    [mobile-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+    [desktop-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+  18 passed (27.1s)
+[WebServer] [plugin builtin:vite-reporter]
+[WebServer] (!) Some chunks are larger than 500 kB after minification. Consider:
+[WebServer] - Using dynamic import() to code-split the application
+[WebServer] - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+[WebServer] - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+
+
+Running 20 tests using 4 workers
+
+[1/20] [mobile-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[2/20] [mobile-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[3/20] [mobile-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[4/20] [mobile-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[5/20] [mobile-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[6/20] [mobile-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[7/20] [mobile-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[8/20] [mobile-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[9/20] [mobile-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[10/20] [mobile-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[11/20] [desktop-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[12/20] [desktop-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[13/20] [desktop-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[14/20] [desktop-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+  1) [mobile-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'Johto Pokédex' })
+    Expected: visible
+    Timeout: 7500ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 7500ms
+      - waiting for getByRole('heading', { name: 'Johto Pokédex' })
+
+
+      188 |   }
+      189 |   await page.getByRole('link', { name: 'Open the Johto Pokédex', exact: true }).click();
+    > 190 |   await expect(page.getByRole('heading', { name: 'Johto Pokédex' })).toBeVisible();
+          |                                                                      ^
+      191 |   await expect(
+      192 |     page.getByRole('button', { name: 'Toggle Normal: missing', exact: true }),
+      193 |   ).toBeVisible();
+        at /root/catchgrid-recheck-20261004/repo/tests/e2e/app.spec.ts:190:70
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/app-first-run-Home-introdu-2582f-and-has-a-logical-tab-order-mobile-webkit-repeat5/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/app-first-run-Home-introdu-2582f-and-has-a-logical-tab-order-mobile-webkit-repeat5/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/app-first-run-Home-introdu-2582f-and-has-a-logical-tab-order-mobile-webkit-repeat5/trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results/app-first-run-Home-introdu-2582f-and-has-a-logical-tab-order-mobile-webkit-repeat5/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[15/20] [desktop-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[16/20] [desktop-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[17/20] [desktop-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[18/20] [desktop-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[19/20] [desktop-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[20/20] [desktop-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+  1 failed
+    [mobile-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+  19 passed (23.9s)
