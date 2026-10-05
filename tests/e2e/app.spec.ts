@@ -186,7 +186,10 @@ test('first-run Home introduces the app without empty progress and has a logical
       }),
     ).toBeFocused();
   }
-  await page.getByRole('link', { name: 'Open the Johto Pokédex', exact: true }).click();
+  // Activate Johto from the keyboard. The page scrolls smoothly, and in WebKit a pointer click
+  // right after the Tab walk could land while the card was still moving (about 1 run in 20).
+  await page.getByRole('link', { name: 'Open the Johto Pokédex', exact: true }).focus();
+  await page.keyboard.press('Enter');
   await expect(page.getByRole('heading', { name: 'Johto Pokédex' })).toBeVisible();
   await expect(
     page.getByRole('button', { name: 'Toggle Normal: missing', exact: true }),

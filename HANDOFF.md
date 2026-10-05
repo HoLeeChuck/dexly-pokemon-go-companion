@@ -2,6 +2,11 @@
 
 Updated October 2, 2026. Start with [AGENTS.md](AGENTS.md), [README.md](README.md) and [FOLDER-GUIDE.md](FOLDER-GUIDE.md). The local owner assignment is [CODEX-PLAN.md](CODEX-PLAN.md), which must never be committed.
 
+## October 4, 2026 (afternoon) — post-launch work
+
+- **WebKit tab-order flake fixed (test only).** `tests/e2e/app.spec.ts` first-run tab-order test now opens Johto from the keyboard (focus + Enter) after the Tab walk instead of a pointer click, which could land mid smooth-scroll. Clean Linux WebKit repeat of that test (mobile + desktop, 40 each, 4 workers): **before 10/80 failed (9 recovered on retry, 1 hard failure), after 80/80 passed first try.** No app code changed.
+- **Bramblin catalog update prepared, not deployed.** Branch `bramblin-2026-10-13`: one ledger entry (#946, Normal/Lucky/100%/XXL/XXS from 2026-10-13; no Shiny) plus pinned-count test updates. Brambleghast stays unreleased: no official source documents its evolution. The ledger rejects future dates, so the owner chose to deploy on October 13 (after 10 a.m. CDT) rather than add date-gated activation. Steps and pre-check results: [RUNBOOK.md](docs/releases/2026-10-13-bramblin/RUNBOOK.md). `dist/` was not rebuilt and still holds the live `4745a62` artifact.
+
 ## October 4, 2026 — LAUNCHED (2026-10-04 12:24 CDT)
 
 Owner gave the go on the Project HQ Decisions page; the PM chat ran LAUNCH-MORNING.md steps 1–8.
