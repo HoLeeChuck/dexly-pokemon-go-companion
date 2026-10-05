@@ -24,13 +24,21 @@ describe('the real launch catalog', () => {
     expect(ledger.entries.find((e) => e.dex === 848)?.date).toBe('2024-11-18');
   });
 
-  it('keeps future Bramblin and Brambleghast unavailable even though their artwork exists', () => {
-    for (const dex of [946, 947]) {
-      expect(species(dex).rules.normal).toBe('unreleased');
-      expect(species(dex).rules.shiny).toBe('unreleased');
-      expect(species(dex).rules.lucky).toBe('unreleased');
-      expect(ledger.entries.some((e) => e.dex === dex)).toBe(false);
-    }
+  it('releases Bramblin from its October 13 debut without Shiny, and keeps Brambleghast unavailable', () => {
+    expect(species(946).rules).toMatchObject({
+      normal: 'released',
+      lucky: 'released',
+      hundo: 'released',
+      xxl: 'released',
+      xxs: 'released',
+    });
+    for (const c of ['shiny', 'shadow', 'purified'] as const)
+      expect(species(946).rules[c]).not.toBe('released');
+    expect(ledger.entries.find((e) => e.dex === 946)?.date).toBe('2026-10-13');
+    expect(species(947).rules.normal).toBe('unreleased');
+    expect(species(947).rules.shiny).toBe('unreleased');
+    expect(species(947).rules.lucky).toBe('unreleased');
+    expect(ledger.entries.some((e) => e.dex === 947)).toBe(false);
   });
 
   it('includes the Sinistea and September shiny corrections, but no future Rocket debut', () => {
@@ -46,7 +54,7 @@ describe('the real launch catalog', () => {
     expect(species(866).rules.shiny).toBe('unreleased');
   });
 
-  it('imports only the four officially sourced species from the original 73', () => {
+  it('imports only the five officially sourced species from the original 73', () => {
     expect(audited).toHaveLength(73);
     const rows = [
       'Number\tPokémon\tNormal',
@@ -54,11 +62,11 @@ describe('the real launch catalog', () => {
     ].join('\n');
     const { entries, summary } = interpretSheets(readText(rows), catalog);
     expect(entries.map((e) => e.formId).sort()).toEqual(
-      [848, 854, 942, 943].map((dex) => species(dex).id).sort(),
+      [848, 854, 942, 943, 946].map((dex) => species(dex).id).sort(),
     );
-    expect(summary.notEligible).toBe(69);
+    expect(summary.notEligible).toBe(68);
     expect(summary.notTracked).toBe(0);
     expect(summary.unmatched).toHaveLength(0);
-    expect(catalog.filter((p) => p.isDefault && p.rules.normal !== 'released')).toHaveLength(69);
+    expect(catalog.filter((p) => p.isDefault && p.rules.normal !== 'released')).toHaveLength(68);
   });
 });

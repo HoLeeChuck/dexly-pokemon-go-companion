@@ -160,6 +160,13 @@
       "categories": ["shiny"],
       "source": "https://pokemongo.com/news/harvest-festival-2026",
       "note": "Shiny Hydrapple is obtainable by evolving Shiny Dipplin. Harvest Festival 2025 officially establishes the Candy and buddy-catch requirements; see the L1 audit."
+    },
+    {
+      "date": "2026-10-13",
+      "dex": 946,
+      "categories": ["normal", "lucky", "hundo", "xxl", "xxs"],
+      "source": "https://pokemongo.com/news/fall-marathon-buddy-trek-2026",
+      "note": "Bramblin debuts in Fall Marathon: Buddy Trek (October 13, 10:00 a.m. local), from GO Pass tasks, Incense and Field Research. No Shiny announced. Brambleghast stays unreleased: the post does not document its evolution."
     }
   ]
 }
