@@ -1,5 +1,20 @@
 # Bramblin catalog update — October 13, 2026
 
+## Oct 13 morning: Cody's checklist
+
+Your part takes about 2 minutes. Claude does the rest and stops on anything unexpected.
+
+1. **After 10:00 a.m. CDT on Tuesday, Oct 13**, open the **HQ · CatchGrid** chat and type **go** yourself. A "go" passed along by the PM chat doesn't count.
+2. That one "go" covers: the final checks, the deploy, the live checks, a rollback if anything fails, and committing + pushing the results (steps 1–9 below). Nothing else.
+3. Claude first re-reads the official Bramblin post. If Niantic changed the dates, or announced Shiny Bramblin or Brambleghast, Claude stops and asks you before adding anything.
+4. Claude runs the full browser test suite before deploying (about 10–15 minutes), then deploys and checks the live site (about 10 minutes).
+5. **When Claude reports done**, open https://dex.cjdev.app on your phone. Home should say **Catalog updated 2026-10-13**. Search "Bramblin": Normal should be markable, Shiny should not.
+6. If anything looks wrong, tell Claude **"roll back"**. The site goes back to today's version (`b0c70140`) in about a minute. Your saved collections are not affected.
+
+**Pre-checks already re-run on Oct 10 (23:45 CDT), branch `a4538ea`:** unit 261 passed + 1 expected failure (the ledger's "2026-10-13 is in the future" check, which clears from 7:00 p.m. CDT on Oct 12), Worker 40/40, lint, Pokémon-data validator, catalog verify, TypeScript `tsc -b`, and Windows Chromium desktop + phone: 139 passed, 1 existing skip, 0 failures. Live was `b0c70140` / `4745a62` at 100%, no pending migrations, and `dist/` still matched the launch fingerprint (`7a6e4a0e…`, 2,429 files). The official post was re-read the same night: dates unchanged, no Shiny Bramblin, no Brambleghast. The full Linux browser suite was not re-run (saved for deploy day, step 3).
+
+---
+
 Prepared October 4, 2026 by Claude on local branch `bramblin-2026-10-13` (from `prism-forward` at `258f92b`). **Nothing is deployed.** The owner chose to deploy on the debut day rather than add date-gated activation, because the release ledger rejects future dates by design.
 
 ## What changes
