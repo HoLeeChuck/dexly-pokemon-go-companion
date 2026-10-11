@@ -49,8 +49,9 @@ describe('the real launch catalog', () => {
       expect(species(dex).rules.shiny).toBe('released');
     }
     for (const dex of [644, 767, 753, 769]) {
+      // Purified follows a sourced Shadow debut, as for every Shadow species in the catalog.
       expect(species(dex).rules.shadow).toBe('released');
-      expect(species(dex).rules.purified).not.toBe('released');
+      expect(species(dex).rules.purified).toBe('released');
       expect(ledger.entries.find((e) => e.dex === dex)?.date).toBe('2026-10-02');
     }
     expect(species(944).rules.shadow).not.toBe('released');
