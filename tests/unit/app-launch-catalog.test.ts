@@ -41,15 +41,19 @@ describe('the real launch catalog', () => {
     expect(ledger.entries.some((e) => e.dex === 947)).toBe(false);
   });
 
-  it('includes the Sinistea and September shiny corrections, but no future Rocket debut', () => {
+  it('includes the Sinistea, September shiny and October 2 Rocket corrections', () => {
     for (const dex of [854, 855]) {
       expect(species(dex).rules).toMatchObject({ normal: 'released', shiny: 'released' });
     }
-    for (const dex of [840, 841, 842, 1011, 1019, 973]) {
+    for (const dex of [840, 841, 842, 1011, 1019, 973, 944]) {
       expect(species(dex).rules.shiny).toBe('released');
     }
-    expect(species(944).rules.shiny).toBe('unreleased');
-    expect(species(644).rules.shadow).not.toBe('released');
+    for (const dex of [644, 767, 753, 769]) {
+      expect(species(dex).rules.shadow).toBe('released');
+      expect(species(dex).rules.purified).not.toBe('released');
+      expect(ledger.entries.find((e) => e.dex === dex)?.date).toBe('2026-10-02');
+    }
+    expect(species(944).rules.shadow).not.toBe('released');
     expect(species(132).rules.shadow).not.toBe('released');
     expect(species(866).rules.shiny).toBe('unreleased');
   });

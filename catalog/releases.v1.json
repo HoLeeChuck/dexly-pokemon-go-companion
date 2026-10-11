@@ -162,6 +162,41 @@
       "note": "Shiny Hydrapple is obtainable by evolving Shiny Dipplin. Harvest Festival 2025 officially establishes the Candy and buddy-catch requirements; see the L1 audit."
     },
     {
+      "date": "2026-10-02",
+      "dex": 944,
+      "categories": ["shiny"],
+      "source": "https://pokemongo.com/news/harvest-festival-tgr-2026",
+      "note": "Harvest Festival: Taken Over (October 2–5, 2026): \"For the first time in Pokémon GO, you'll be able to hatch Shiny Shroodle.\" From Eggs; the post gives no distance."
+    },
+    {
+      "date": "2026-10-02",
+      "dex": 644,
+      "categories": ["shadow"],
+      "source": "https://pokemongo.com/news/harvest-festival-tgr-2026",
+      "note": "Harvest Festival: Taken Over: rescue Shadow Zekrom from Giovanni with the Super Rocket Radar from GO Pass: Harvest Festival. Shiny Shadow and Purified are not added; the post does not establish them."
+    },
+    {
+      "date": "2026-10-02",
+      "dex": 767,
+      "categories": ["shadow"],
+      "source": "https://pokemongo.com/news/harvest-festival-tgr-2026",
+      "note": "Harvest Festival: Taken Over: Team GO Rocket has turned Wimpod into a Shadow Pokémon; defeat Grunts to save it. Purified is a separate owner decision."
+    },
+    {
+      "date": "2026-10-02",
+      "dex": 753,
+      "categories": ["shadow"],
+      "source": "https://pokemongo.com/news/harvest-festival-tgr-2026",
+      "note": "Harvest Festival: Taken Over: Team GO Rocket has turned Fomantis into a Shadow Pokémon; defeat Grunts to save it. Purified is a separate owner decision."
+    },
+    {
+      "date": "2026-10-02",
+      "dex": 769,
+      "categories": ["shadow"],
+      "source": "https://pokemongo.com/news/harvest-festival-tgr-2026",
+      "note": "Harvest Festival: Taken Over: Team GO Rocket has turned Sandygast into a Shadow Pokémon; defeat Grunts to save it. Purified is a separate owner decision."
+    },
+    {
       "date": "2026-10-13",
       "dex": 946,
       "categories": ["normal", "lucky", "hundo", "xxl", "xxs"],

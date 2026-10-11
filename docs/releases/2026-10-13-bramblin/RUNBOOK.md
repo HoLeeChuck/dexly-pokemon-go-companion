@@ -6,12 +6,19 @@ Your part takes about 2 minutes. Claude does the rest and stops on anything unex
 
 1. **After 10:00 a.m. CDT on Tuesday, Oct 13**, open the **HQ · CatchGrid** chat and type **go** yourself. A "go" passed along by the PM chat doesn't count.
 2. That one "go" covers: the final checks, the deploy, the live checks, a rollback if anything fails, and committing + pushing the results (steps 1–9 below). Nothing else.
-3. Claude first re-reads the official Bramblin post. If Niantic changed the dates, or announced Shiny Bramblin or Brambleghast, Claude stops and asks you before adding anything.
+3. Claude first re-reads the two official posts. If Niantic changed the Bramblin dates, or announced Shiny Bramblin or Brambleghast, Claude stops and asks you before adding anything.
 4. Claude runs the full browser test suite before deploying (about 10–15 minutes), then deploys and checks the live site (about 10 minutes).
-5. **When Claude reports done**, open https://dex.cjdev.app on your phone. Home should say **Catalog updated 2026-10-13**. Search "Bramblin": Normal should be markable, Shiny should not.
+5. **When Claude reports done**, open https://dex.cjdev.app on your phone. Home should say **Catalog updated 2026-10-13**. Check three things:
+   - "Bramblin": Normal can be marked, Shiny can't.
+   - "Shroodle": Shiny can be marked.
+   - "Zekrom": Shadow can be marked (and the same for Wimpod, Fomantis and Sandygast).
+
+**This release has 6 catalog entries:** #946 Bramblin (new: Normal, Lucky, 100%, XXL, XXS) plus five catch-ups from the Oct 2–5 Rocket event that you OK'd on Oct 11: Shiny #944 Shroodle, and Shadow #644 Zekrom, #767 Wimpod, #753 Fomantis and #769 Sandygast. Purified versions are not included; that's a separate question for later.
 6. If anything looks wrong, tell Claude **"roll back"**. The site goes back to today's version (`b0c70140`) in about a minute. Your saved collections are not affected.
 
-**Pre-checks already re-run on Oct 10 (23:45 CDT), branch `a4538ea`:** unit 261 passed + 1 expected failure (the ledger's "2026-10-13 is in the future" check, which clears from 7:00 p.m. CDT on Oct 12), Worker 40/40, lint, Pokémon-data validator, catalog verify, TypeScript `tsc -b`, and Windows Chromium desktop + phone: 139 passed, 1 existing skip, 0 failures. Live was `b0c70140` / `4745a62` at 100%, no pending migrations, and `dist/` still matched the launch fingerprint (`7a6e4a0e…`, 2,429 files). The official post was re-read the same night: dates unchanged, no Shiny Bramblin, no Brambleghast. The full Linux browser suite was not re-run (saved for deploy day, step 3).
+**Pre-checks re-run on Oct 11 (01:12 CDT), with all 6 entries:** unit 261 passed + 1 expected failure (Bramblin's future date only; the five October 2 entries validate), Worker 40/40, lint, Prettier on the changed files, TypeScript `tsc -b`, Pokémon-data validator, catalog verify, and Windows Chromium desktop + phone: 139 passed, 1 existing skip, 0 failures.
+
+**Earlier pre-checks on Oct 10 (23:45 CDT), branch `a4538ea` (Bramblin only):** unit 261 passed + 1 expected failure (the ledger's "2026-10-13 is in the future" check, which clears from 7:00 p.m. CDT on Oct 12), Worker 40/40, lint, Pokémon-data validator, catalog verify, TypeScript `tsc -b`, and Windows Chromium desktop + phone: 139 passed, 1 existing skip, 0 failures. Live was `b0c70140` / `4745a62` at 100%, no pending migrations, and `dist/` still matched the launch fingerprint (`7a6e4a0e…`, 2,429 files). The official post was re-read the same night: dates unchanged, no Shiny Bramblin, no Brambleghast. The full Linux browser suite was not re-run (saved for deploy day, step 3).
 
 ---
 
@@ -19,8 +26,9 @@ Prepared October 4, 2026 by Claude on local branch `bramblin-2026-10-13` (from `
 
 ## What changes
 
-One release-ledger entry plus the tests that pinned the old state. No app code, migrations, artwork, schema or dependencies change.
+Six release-ledger entries plus the tests that pinned the old state. No app code, migrations, artwork, schema or dependencies change.
 
+- **Added October 11 (owner OK through the PM chat, after the polish review):** five catch-up entries dated **2026-10-02** from [Harvest Festival: Taken Over](https://pokemongo.com/news/harvest-festival-tgr-2026) (October 2, 12:00 a.m. to October 5, 8:00 p.m. local). **Shiny #944 Shroodle**: the post says that for the first time, Shiny Shroodle can be hatched from Eggs. **Shadow #644 Zekrom** (rescued from Giovanni with the GO Pass Super Rocket Radar), plus **Shadow #767 Wimpod, #753 Fomantis and #769 Sandygast** (from Grunts). Purified is not added (owner: a separate question), nor is Shiny Shadow Zekrom (not established by the post). The L1 audit had deferred these only because they were future-dated then. Test: `tests/unit/app-launch-catalog.test.ts` (the Sinistea/September test now also covers the October 2 entries).
 - `catalog/releases.v1.json`: **#946 Bramblin released 2026-10-13**: Normal, Lucky, 100%, XXL and XXS. Male/Female follow Normal automatically. **No Shiny**, Shadow or Purified (none announced).
 - **#947 Brambleghast stays unreleased.** The official post does not document its evolution. Fan sites list a 50 Candy and 20 km buddy evolution, but community sites are not accepted evidence. Add it only when an official page (pokemongo.com, niantic.helpshift.com, pokemon.com) documents it.
 - Tests: `tests/unit/app-launch-catalog.test.ts` (Bramblin released, Brambleghast not; import now accepts 5 of the original 73) and `tests/e2e/catalog-feedback-app.spec.ts` (freshness shows `2026-10-13`; stale check moved to Nov 5).
@@ -41,13 +49,13 @@ One release-ledger entry plus the tests that pinned the old state. No app code, 
 
 Use Command Prompt (`cmd`), not Windows PowerShell 5. From `D:\Projects\Pokemon\CatchGrid`:
 
-1. **Re-check the source.** Re-read the official post and confirm the event wasn't moved. Check pokemongo.com news for an official Brambleghast or Shiny Bramblin mention. If one exists, add it as its own dated entry with that link.
+1. **Re-check the source.** Re-read the official Bramblin post and confirm the event wasn't moved. Re-read the Harvest Festival: Taken Over post and confirm the five October 2 entries still match it. Check pokemongo.com news for an official Brambleghast or Shiny Bramblin mention. If one exists, add it as its own dated entry with that link.
 2. **Branch state.** `git status --short` should show only `?? CODEX-PLAN.md` and `?? evidence/`. Merge the Bramblin commit into `prism-forward` (fast-forward), and never commit CODEX-PLAN.md.
 3. **Gates.** `pnpm.cmd run test` (all 262 unit tests now pass, with no expected failure), `pnpm.cmd run lint`, `pnpm.cmd run validate:pokemon-data`, `pnpm.cmd run catalog:verify`. Then run the full browser suite on clean Linux (WSL, `git archive` snapshot, as in the L4 record). The known WebKit tab-order flake (about 1 in 20) may need one rerun; record it if so.
 4. **Build and dry run.** `pnpm.cmd run build:artifact`, then `pnpm.cmd exec wrangler deploy --dry-run --strict`.
 5. **Live state.** `pnpm.cmd exec wrangler deployments status` should show `b0c70140-8b84-46f8-9198-921d6106c1d6` at 100% (unless something shipped since). `pnpm.cmd exec wrangler d1 migrations list dexly-db --remote` should show **No migrations to apply**; if any are listed, stop. Then `pnpm.cmd run release:bookmark:production` and record the bookmark.
 6. **Deploy:** `pnpm.cmd run release:deploy:production`. Record the new version ID.
-7. **Verify:** `pnpm.cmd run release:smoke:production`, `curl -s https://dex.cjdev.app/api/health` (new gitSha and version), then the live checks: `node archive\release-work\2026-10-04-recheck\live-checks.mjs https://dex.cjdev.app archive\release-work\2026-10-13-bramblin\live-production`. In a fresh profile on dex.cjdev.app, confirm that Bramblin's Normal cell is markable, Shiny is not, Brambleghast is unavailable, and the Home freshness line reads `Catalog updated 2026-10-13`.
+7. **Verify:** `pnpm.cmd run release:smoke:production`, `curl -s https://dex.cjdev.app/api/health` (new gitSha and version), then the live checks: `node archive\release-work\2026-10-04-recheck\live-checks.mjs https://dex.cjdev.app archive\release-work\2026-10-13-bramblin\live-production`. In a fresh profile on dex.cjdev.app, confirm that Bramblin's Normal cell is markable, Shiny is not, Brambleghast is unavailable, Shroodle's Shiny and Zekrom's Shadow cells are markable, and the Home freshness line reads `Catalog updated 2026-10-13`.
 8. **On any live failure, roll back** to `b0c70140-8b84-46f8-9198-921d6106c1d6`: `pnpm.cmd run release:rollback:production b0c70140-8b84-46f8-9198-921d6106c1d6 --yes`, then smoke and health again.
 9. **Record and push** (part of the go): update HANDOFF.md and this file with real results, commit on `prism-forward`, `git checkout main && git merge --ff-only prism-forward && git push origin main prism-forward && git checkout prism-forward`.
 
