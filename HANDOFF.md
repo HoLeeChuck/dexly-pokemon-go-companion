@@ -2,6 +2,18 @@
 
 Updated October 2, 2026. Start with [AGENTS.md](AGENTS.md), [README.md](README.md) and [FOLDER-GUIDE.md](FOLDER-GUIDE.md). The local owner assignment is [CODEX-PLAN.md](CODEX-PLAN.md), which must never be committed.
 
+## Resume here (2026-10-10)
+
+- **Live:** Worker `b0c70140-8b84-46f8-9198-921d6106c1d6`, build `4745a62` (launched 2026-10-04 12:24 CDT). Rollback target `0891c9e5-8a9c-4736-beae-2e796325dfef`. `dist/` still holds the live `4745a62` artifact. Re-checked read-only on 2026-10-10 23:45 CDT: health, deployment (100%), no pending migrations, and the `dist/` fingerprint all match.
+- **Local, not pushed.** Three stacked catalog branches, each shipping only on its own debut day with Cody's own "go" typed in the CatchGrid chat (a relayed go doesn't count). No date-gated code. Before each date, the ledger test fails by design.
+  1. `bramblin-2026-10-13`: #946 Bramblin, **Tue Oct 13 after 10:00 a.m. CDT**. [RUNBOOK](docs/releases/2026-10-13-bramblin/RUNBOOK.md).
+  2. `minior-2026-10-19` (on Bramblin): #774 Minior debut, **Mon Oct 19 after 5:00 p.m. CDT**. [RUNBOOK](docs/releases/2026-10-19-minior/RUNBOOK.md).
+  3. `greavard-shiny-2026-11-01` (on Minior): Shiny #971 Greavard, **Sun Nov 1 after 10:00 a.m. CST**. [RUNBOOK](docs/releases/2026-11-01-greavard-shiny/RUNBOOK.md).
+- Oct 10 pre-checks on each branch: unit (only the expected future-date failure), Worker 40/40, lint, validators, Windows Chromium 139 passed / 1 skip / 0 failures. Full Linux browser runs are left for each deploy day.
+- **Freshness:** live warns from Tue Oct 20, 7:00 p.m. CDT (UTC Oct 21). Bramblin moves that to about Nov 3, Minior to about Nov 9, and Greavard to about Nov 22.
+- Not added (outside the ledger's scope): Dynamax Uxie/Mesprit/Azelf (Oct 24), Halloween costumes (Oct 27 / Nov 1). Shiny Gigantamax Cinderace (Oct 3) was already shown.
+- **Still pending (Cody only):** the phone and Discord check, then posting the announcement. Both are in [LAUNCH-MORNING.md](docs/releases/2026-10-02-launch/LAUNCH-MORNING.md).
+
 ## October 4, 2026 (afternoon) — post-launch work
 
 - **WebKit tab-order flake fixed (test only).** `tests/e2e/app.spec.ts` first-run tab-order test now opens Johto from the keyboard (focus + Enter) after the Tab walk instead of a pointer click, which could land mid smooth-scroll. Clean Linux WebKit repeat of that test (mobile + desktop, 40 each, 4 workers): **before 10/80 failed (9 recovered on retry, 1 hard failure), after 80/80 passed first try.** No app code changed.
