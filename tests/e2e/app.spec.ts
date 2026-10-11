@@ -506,8 +506,8 @@ test('medals, poster and compare link are available on Home', async ({ page, con
 test('a compare link shows who can help whom', async ({ page }) => {
   // Friend has registered Bulbasaur (#1) in Normal: first bit set.
   await open(page, 'compare?v=1&c=normal&d=AQ&n=Misty');
-  // L1 released Toxel and Sinistea, then Bramblin on Oct 13; compare still counts default species only.
-  await expect(page.getByRole('heading', { name: 'Misty has 1 of 957' })).toBeVisible();
+  // L1 released Toxel and Sinistea, then Bramblin (Oct 13) and Minior (Oct 19); compare still counts default species only.
+  await expect(page.getByRole('heading', { name: 'Misty has 1 of 958' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Misty could help you with 1' })).toBeVisible();
   await open(page, 'compare?v=1&c=normal&d=%3Cbad%3E');
   await expect(page.getByRole('heading', { name: /can’t be read/ })).toBeVisible();

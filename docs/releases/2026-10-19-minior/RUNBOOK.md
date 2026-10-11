@@ -1,0 +1,51 @@
+# Minior catalog update — October 19, 2026
+
+## Oct 19 evening: Cody's checklist
+
+Your part takes about 2 minutes. Claude does the rest and stops on anything unexpected.
+
+1. **After 5:00 p.m. CDT on Monday, Oct 19** (when the Orionids meteor shower starts), open the **HQ · CatchGrid** chat and type **go** yourself. A "go" passed along by the PM chat doesn't count.
+2. That one "go" covers: the final checks, the deploy, the live checks, a rollback if anything fails, and committing + pushing the results (steps 1–9 below). Nothing else.
+3. Claude first re-reads the official Minior post. If Niantic moved the shower or announced Shiny Minior, Claude stops and asks you before changing anything.
+4. **Bramblin must already be live.** This branch is built on top of it. If Bramblin hasn't shipped, Claude stops and asks.
+5. **When Claude reports done**, open https://dex.cjdev.app on your phone. Home should say **Catalog updated 2026-10-19**. Search "Minior": Normal should be markable, Shiny should not.
+6. If anything looks wrong, tell Claude **"roll back"**. The site goes back to the Bramblin version. Your saved collections are not affected.
+
+---
+
+Prepared October 10, 2026 by Claude on local branch `minior-2026-10-19`, on top of `bramblin-2026-10-13`. The owner OK'd preparing it on October 10 (through the PM chat). **Nothing is deployed or pushed.** As with Bramblin, there is no date-gated code: the release ledger rejects future dates, so this ships on the debut day.
+
+## What changes
+
+One release-ledger entry plus the tests that pinned the old state. No app code, migrations, artwork, schema or dependencies change.
+
+- `catalog/releases.v1.json`: **#774 Minior released 2026-10-19**: Normal, Lucky, 100%, XXL and XXS. **No Shiny**, Shadow or Purified (none announced). Minior is genderless.
+- The catalog has one Minior form. The post's seven core colors are what Minior shows in battle below half health, not separate catchable forms, so no forms are added.
+- Tests: `tests/unit/app-launch-catalog.test.ts` (Minior released without Shiny; import now accepts 6 of the original 73, 67 not eligible), `tests/e2e/catalog-feedback-app.spec.ts` (freshness shows `2026-10-19`; stale check moved to Nov 11) and `tests/e2e/app.spec.ts` (compare total **958**).
+- Effect: "Catalog updated" becomes **2026-10-19**. The stale warning moves from about Nov 3 (after Bramblin) to the evening of **Nov 9** (UTC Nov 10).
+
+## Source (official)
+
+- [Explore by starlight during meteor showers for a chance to encounter Minior!](https://pokemongo.com/news/minior-meteor-showers-2026). The post says Minior "will make its Pokémon GO debut". First shower: **Orionids, October 19–24, 5:00–11:59 p.m. local**; Explore by Starlight 5:00–9:00 p.m. Later showers: Leonids Nov 14–19, Geminids Dec 11–16, and others in 2027. Found in the wild in Meteor Form. Shiny Minior is not mentioned. Read on October 10, 2026.
+
+## Pre-checks done on October 10 (branch working tree)
+
+- Unit: **262 passed, 1 expected failure**: the ledger file test reports Bramblin (until Oct 13) and Minior as future dates. With the clock fixed, the ledger still fails at `2026-10-18T23:59Z` and validates cleanly at `2026-10-19T00:00Z` and `2026-10-19T22:00Z`. (The validator uses UTC days, so it passes from 7:00 p.m. CDT on Oct 18, before the debut. Deploy after 5 p.m. CDT on Oct 19 anyway.)
+- Worker 40/40, lint, Prettier on the changed files, Pokémon-data validator and catalog verify all passed.
+- Windows Chromium, desktop + phone: **139 passed, 1 existing skip, 0 failures**.
+- Full Linux browser suite: not run yet. It's saved for deploy day (step 3).
+- `dist/` was not rebuilt.
+
+## Deploy day: October 19, after 5:00 p.m. CDT (needs Cody's "go" in the CatchGrid chat)
+
+Use Command Prompt (`cmd`), not Windows PowerShell 5. From `D:\Projects\Pokemon\CatchGrid`:
+
+1. **Re-check the source.** Re-read the official post and confirm the Orionids dates haven't moved. Check pokemongo.com news for Shiny Minior. If it's announced, add it as its own dated entry with that link.
+2. **Branch state.** Bramblin must be live and recorded on `prism-forward`. Rebase this branch onto `prism-forward` (only the Minior commits should move). `git status --short` should show only `?? CODEX-PLAN.md` and `?? evidence/`. Fast-forward `prism-forward` to the Minior commit. Never commit CODEX-PLAN.md.
+3. **Gates.** `pnpm.cmd run test` (all unit tests pass now, with no expected failure), `pnpm.cmd run lint`, `pnpm.cmd run validate:pokemon-data`, `pnpm.cmd run catalog:verify`. Then the full browser suite on clean Linux (WSL, `git archive` snapshot, as in the L4 record).
+4. **Build and dry run.** `pnpm.cmd run build:artifact`, then `pnpm.cmd exec wrangler deploy --dry-run --strict`.
+5. **Live state.** `pnpm.cmd exec wrangler deployments status` should show the Bramblin version at 100% (record its ID as the rollback target). `pnpm.cmd exec wrangler d1 migrations list dexly-db --remote` should show **No migrations to apply**; if any are listed, stop. Then `pnpm.cmd run release:bookmark:production` and record the bookmark.
+6. **Deploy:** `pnpm.cmd run release:deploy:production`. Record the new version ID.
+7. **Verify:** `pnpm.cmd run release:smoke:production`, `curl -s https://dex.cjdev.app/api/health` (new gitSha and version), then `node archive\release-work\2026-10-04-recheck\live-checks.mjs https://dex.cjdev.app archive\release-work\2026-10-19-minior\live-production`. In a fresh profile, confirm that Minior's Normal cell is markable, Shiny is not, and Home reads `Catalog updated 2026-10-19`.
+8. **On any live failure, roll back** to the Bramblin version from step 5: `pnpm.cmd run release:rollback:production <bramblin-version-id> --yes`, then smoke and health again.
+9. **Record and push** (part of the go): update HANDOFF.md and this file with real results, commit on `prism-forward`, `git checkout main && git merge --ff-only prism-forward && git push origin main prism-forward && git checkout prism-forward`.

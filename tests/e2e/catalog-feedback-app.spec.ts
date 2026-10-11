@@ -206,13 +206,13 @@ test('300 skipped cells render one editable report grouped by category without l
 test('L2 freshness appears on both Home states and the Dex shelf, with the stale phone budget intact', async ({
   page,
 }, testInfo) => {
-  await page.clock.setFixedTime(new Date('2026-10-14T12:00:00Z'));
+  await page.clock.setFixedTime(new Date('2026-10-20T12:00:00Z'));
   await page.goto('/#home');
   const fresh = page.locator('.catalog-freshness');
-  await expect(fresh).toHaveText('Catalog updated 2026-10-13');
+  await expect(fresh).toHaveText('Catalog updated 2026-10-19');
   await page.goto('/#dex');
-  await expect(fresh).toHaveText('Catalog updated 2026-10-13');
-  await page.clock.setFixedTime(new Date('2026-11-05T12:00:00Z'));
+  await expect(fresh).toHaveText('Catalog updated 2026-10-19');
+  await page.clock.setFixedTime(new Date('2026-11-11T12:00:00Z'));
   await page.goto('/#home');
   await expect(fresh).toContainText('Some recent releases may be missing');
   await page.setViewportSize({ width: 390, height: 844 });

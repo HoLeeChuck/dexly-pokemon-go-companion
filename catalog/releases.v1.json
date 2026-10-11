@@ -230,6 +230,13 @@
       "categories": ["normal", "lucky", "hundo", "xxl", "xxs"],
       "source": "https://pokemongo.com/news/fall-marathon-buddy-trek-2026",
       "note": "Bramblin debuts in Fall Marathon: Buddy Trek (October 13, 10:00 a.m. local), from GO Pass tasks, Incense and Field Research. No Shiny announced. Brambleghast stays unreleased: the post does not document its evolution."
+    },
+    {
+      "date": "2026-10-19",
+      "dex": 774,
+      "categories": ["normal", "lucky", "hundo", "xxl", "xxs"],
+      "source": "https://pokemongo.com/news/minior-meteor-showers-2026",
+      "note": "Minior debuts in the wild during the Orionids meteor shower (October 19–24, 5:00–11:59 p.m. local), in Meteor Form. No Shiny announced. Core colors are battle appearances, not separate catalog forms."
     }
   ]
 }

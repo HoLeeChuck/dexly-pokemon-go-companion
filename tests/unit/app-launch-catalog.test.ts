@@ -41,6 +41,19 @@ describe('the real launch catalog', () => {
     expect(ledger.entries.some((e) => e.dex === 947)).toBe(false);
   });
 
+  it('releases Minior from its October 19 meteor-shower debut without Shiny', () => {
+    expect(species(774).rules).toMatchObject({
+      normal: 'released',
+      lucky: 'released',
+      hundo: 'released',
+      xxl: 'released',
+      xxs: 'released',
+    });
+    for (const c of ['shiny', 'shadow', 'purified'] as const)
+      expect(species(774).rules[c]).not.toBe('released');
+    expect(ledger.entries.find((e) => e.dex === 774)?.date).toBe('2026-10-19');
+  });
+
   it('includes the Sinistea, September shiny and October 2 Rocket corrections', () => {
     for (const dex of [854, 855]) {
       expect(species(dex).rules).toMatchObject({ normal: 'released', shiny: 'released' });
@@ -59,7 +72,7 @@ describe('the real launch catalog', () => {
     expect(species(866).rules.shiny).toBe('unreleased');
   });
 
-  it('imports only the five officially sourced species from the original 73', () => {
+  it('imports only the six officially sourced species from the original 73', () => {
     expect(audited).toHaveLength(73);
     const rows = [
       'Number\tPokémon\tNormal',
@@ -67,12 +80,12 @@ describe('the real launch catalog', () => {
     ].join('\n');
     const { entries, summary } = interpretSheets(readText(rows), catalog);
     expect(entries.map((e) => e.formId).sort()).toEqual(
-      [848, 854, 942, 943, 946].map((dex) => species(dex).id).sort(),
+      [774, 848, 854, 942, 943, 946].map((dex) => species(dex).id).sort(),
     );
-    expect(summary.notEligible).toBe(68);
+    expect(summary.notEligible).toBe(67);
     expect(summary.notTracked).toBe(0);
     expect(summary.unmatched).toHaveLength(0);
-    expect(catalog.filter((p) => p.isDefault && p.rules.normal !== 'released')).toHaveLength(68);
+    expect(catalog.filter((p) => p.isDefault && p.rules.normal !== 'released')).toHaveLength(67);
   });
 
   it('carries October catch-ups through officially documented evolutions only', () => {
