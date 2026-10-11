@@ -126,10 +126,28 @@ describe('insights', () => {
     const kanto = medalShelf(catalog, owned, 'normal').find((m) => m.region === 'Kanto')!;
     expect(kanto).toMatchObject({
       collected: 50,
+      unavailable: 0,
       tier: 'silver',
       nextTier: 'gold',
       nextTarget: 100,
     });
+  });
+  it('counts the species a medal total includes that are not in GO yet', () => {
+    const shelf = medalShelf(catalog, new Set(), 'normal');
+    for (const m of shelf) {
+      const released = catalog.filter(
+        (p) => p.isDefault && p.region === m.region && p.rules.normal === 'released',
+      ).length;
+      expect(m.unavailable).toBe(
+        catalog.filter((p) => p.isDefault && p.region === m.region).length - released,
+      );
+    }
+    const sinnoh = shelf.find((m) => m.region === 'Sinnoh')!;
+    expect(sinnoh.unavailable).toBeGreaterThan(0);
+    expect(sinnoh.platinum - sinnoh.unavailable).toBe(
+      catalog.filter((p) => p.isDefault && p.region === 'Sinnoh' && p.rules.normal === 'released')
+        .length,
+    );
   });
   it('lists species with one or two eligible categories left', () => {
     const p = byDex(6);

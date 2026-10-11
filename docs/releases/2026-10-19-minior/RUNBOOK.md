@@ -9,7 +9,13 @@ Your part takes about 2 minutes. Claude does the rest and stops on anything unex
 3. Claude first re-reads the official Minior post. If Niantic moved the shower or announced Shiny Minior, Claude stops and asks you before changing anything.
 4. **Bramblin must already be live.** This branch is built on top of it. If Bramblin hasn't shipped, Claude stops and asks.
 5. **When Claude reports done**, open https://dex.cjdev.app on your phone. Home should say **Catalog updated 2026-10-19**. Search "Minior": Normal should be markable, Shiny should not.
-6. If anything looks wrong, tell Claude **"roll back"**. The site goes back to the Bramblin version. Your saved collections are not affected.
+6. **Also check the five small polish changes** (OK'd on Oct 11):
+   - With your phone in light mode, a private tab opens CatchGrid light. Dark mode opens it dark.
+   - The top-right search and appearance buttons show drawn icons.
+   - Dex › Kanto opens on Bulbasaur (#0001).
+   - Home medals show lines like "3 not in GO yet" (Sinnoh).
+   - The footer "Sources & credits" link is easy to tap.
+7. If anything looks wrong, tell Claude **"roll back"**. The site goes back to the Bramblin version. Your saved collections are not affected.
 
 ---
 
@@ -17,16 +23,34 @@ Prepared October 10, 2026 by Claude on local branch `minior-2026-10-19`, on top 
 
 ## What changes
 
-One release-ledger entry plus the tests that pinned the old state. No app code, migrations, artwork, schema or dependencies change.
+The catalog part is one release-ledger entry plus the tests that pinned the old state. The small app polish riding along is listed in its own section below. No migrations, artwork, schema or dependencies change.
 
 - `catalog/releases.v1.json`: **#774 Minior released 2026-10-19**: Normal, Lucky, 100%, XXL and XXS. **No Shiny**, Shadow or Purified (none announced). Minior is genderless.
 - The catalog has one Minior form. The post's seven core colors are what Minior shows in battle below half health, not separate catchable forms, so no forms are added.
 - Tests: `tests/unit/app-launch-catalog.test.ts` (Minior released without Shiny; import now accepts 6 of the original 73, 67 not eligible), `tests/e2e/catalog-feedback-app.spec.ts` (freshness shows `2026-10-19`; stale check moved to Nov 11) and `tests/e2e/app.spec.ts` (compare total **958**).
 - Effect: "Catalog updated" becomes **2026-10-19**. The stale warning moves from about Nov 3 (after Bramblin) to the evening of **Nov 9** (UTC Nov 10).
 
+## Polish riding along (owner OK through the PM chat, October 11)
+
+From [the polish review](../../POLISH-REVIEW.md). These are small app changes in a separate commit after the Minior catalog commit. No storage, backup, import, catalog data, migration or dependency changes.
+
+- **Appearance follows the device on first visit.** `public/prism-bootstrap.js` uses `prefers-color-scheme` until the person picks a theme. A saved choice still wins. `app/main.js` now names the toggle correctly on load (it used to always say "Switch to light appearance"), and the Settings copy no longer says "Dark by default".
+- **Medal note.** `medalShelf` (`app/insights.js`) returns `unavailable`: the default species in the region whose category isn't released. Each medal with any shows "N not in GO yet" on its own line (`.medal-unavailable`). The total and thresholds are unchanged (the S version, not a recount). Phone medal cards lose 2px of vertical padding to keep the 2,400px phone Home limit: returning Home measured 2,377px in a local capture, and the budget tests pass.
+- **Header icons.** `index.html` uses drawn SVGs (the tab-bar search path, plus a half-filled circle) instead of the `⌕`/`◐` characters. CSS is in `app/features.css` (`.header-icon`).
+- **Phone tap targets.** The footer "Sources & credits" link gets 15px inline padding (a 44px tap area with no layout shift). `.evolve-option` labels (the Settings silhouettes checkbox, and the Search Lab options) are at least 44px tall, with checkboxes that can't shrink. The Search Lab "Storage filters" summary is at least 44px.
+- **Kanto starts at #0001.** The default selection in `app/main.js` is Bulbasaur, not Charizard.
+- Tests: new `tests/e2e/polish-app.spec.ts` (light/dark first visit and saved choice, Bulbasaur start, medal note, SVG icons, 44px phone targets). `tests/unit/app-features.test.ts` covers `unavailable`. `tests/e2e/catalog-feedback-app.spec.ts` now expects the scanner report to start at #1 Bulbasaur, then #2 Ivysaur.
+- After screenshots: `docs/shots/polish-2026-10-11/after-phone-light-medals.png` and `after-phone-light-system-01-home-first-run.png`.
+- Not covered before deploy day: WebKit (the new spec also runs there in the full Linux suite, step 3) and real phones.
+
 ## Source (official)
 
 - [Explore by starlight during meteor showers for a chance to encounter Minior!](https://pokemongo.com/news/minior-meteor-showers-2026). The post says Minior "will make its Pokémon GO debut". First shower: **Orionids, October 19–24, 5:00–11:59 p.m. local**; Explore by Starlight 5:00–9:00 p.m. Later showers: Leonids Nov 14–19, Geminids Dec 11–16, and others in 2027. Found in the wild in Meteor Form. Shiny Minior is not mentioned. Read on October 10, 2026.
+
+## Pre-checks re-run on October 11, 01:22 CDT (Minior + polish, on Bramblin's six entries)
+
+- Unit: **263 passed, 1 expected failure** (Bramblin's and Minior's future dates). Worker 40/40, lint, Prettier on the changed files, TypeScript `tsc -b`, Pokémon-data validator and catalog verify all passed.
+- Windows Chromium, desktop + phone: **150 passed, 2 skips, 0 failures** (the second skip is the phone-only tap-target test on desktop). One intermediate focused run had a single failure in "retired and unknown routes fall back to Home" (`main` briefly empty). It passed in the next two runs, unchanged; recorded as an intermittent result, with no root cause claimed.
 
 ## Pre-checks done on October 10 (branch working tree)
 

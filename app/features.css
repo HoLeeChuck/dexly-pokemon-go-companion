@@ -61,11 +61,27 @@
 }
 
 /* Quick jump */
-.jump-toggle {
+.jump-toggle,
+.theme-toggle {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   white-space: nowrap;
+}
+/* Same stroke style as the phone tab icons. */
+.header-icon {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.header-icon-fill {
+  fill: currentColor;
 }
 .jump-toggle kbd {
   font:

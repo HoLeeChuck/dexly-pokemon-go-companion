@@ -10,12 +10,15 @@ export function medalShelf(catalog, owned, category) {
     const species = catalog.filter((p) => p.isDefault && p.region === region.label);
     const thresholds = region.categoryThresholds[category] ?? region.thresholds;
     const collected = species.filter((p) => owned.has(`${p.id}:${category}`)).length;
+    // The platinum total is every species in the region; say how many can't be caught yet.
+    const unavailable = species.filter((p) => p.rules?.[category] !== 'released').length;
     const tier = [...TIERS].reverse().find((t) => collected >= thresholds[t]) ?? 'none';
     const nextTier = TIERS.find((t) => collected < thresholds[t]);
     return {
       region: region.label,
       mark: region.mark,
       collected,
+      unavailable,
       tier,
       nextTier,
       nextTarget: nextTier ? thresholds[nextTier] : null,

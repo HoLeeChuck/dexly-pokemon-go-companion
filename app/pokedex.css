@@ -857,6 +857,8 @@ footer a {
 }
 footer a {
   color: inherit;
+  /* Inline padding grows the tap area to 44px without moving the footer's lines. */
+  padding-block: 15px;
 }
 
 /* ── Motion ── */

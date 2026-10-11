@@ -591,6 +591,11 @@ main {
   font-size: 19px;
   margin-bottom: 15px;
 }
+.term-section > summary {
+  cursor: pointer;
+  min-height: 44px;
+  align-content: center;
+}
 .term-buttons {
   display: flex;
   gap: 8px;
@@ -1265,10 +1270,12 @@ dialog .specimen-stage img {
   display: flex;
   align-items: center;
   gap: 12px;
+  min-height: 44px;
   margin: 24px 0 12px;
   font-size: 15px;
 }
 .evolve-option input {
+  flex: none;
   width: 22px;
   height: 22px;
   accent-color: var(--violet);

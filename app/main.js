@@ -187,7 +187,7 @@ try {
 const state = {
   route: routeFromHash(),
   category: 'normal',
-  selected: 'form-0006-standard',
+  selected: 'form-0001-standard',
   region: 'All regions',
   form: 'species',
   evolve: false,
@@ -348,7 +348,7 @@ function medals() {
       // Hisui's first partners include Cyndaquil; its regional showcase is evolved species.
       const number = m.region === 'Hisui' ? 155 : deviceFor(m.region).showcase[0];
       const partner = species.find((p) => p.n === number);
-      return `<div class="medal ${m.tier}" data-key="medal-${m.region}"><span class="medal-mark" aria-hidden="true"><img src="${escape(partner.art)}" alt="" width="40" height="40" loading="lazy"></span><strong>${m.region}</strong><small>${m.tier === 'none' ? 'No medal yet' : m.tier[0].toUpperCase() + m.tier.slice(1)} · ${m.collected}/${m.platinum}</small><small>${m.nextTier ? `${m.nextTarget - m.collected} to ${m.nextTier}` : 'Platinum complete'}</small></div>`;
+      return `<div class="medal ${m.tier}" data-key="medal-${m.region}"><span class="medal-mark" aria-hidden="true"><img src="${escape(partner.art)}" alt="" width="40" height="40" loading="lazy"></span><strong>${m.region}</strong><small>${m.tier === 'none' ? 'No medal yet' : m.tier[0].toUpperCase() + m.tier.slice(1)} · ${m.collected}/${m.platinum}</small><small>${m.nextTier ? `${m.nextTarget - m.collected} to ${m.nextTier}` : 'Platinum complete'}</small>${m.unavailable ? `<small class="medal-unavailable">${m.unavailable} not in GO yet</small>` : ''}</div>`;
     })
     .join('')}</div></section>`;
 }
@@ -904,7 +904,7 @@ function settings() {
     species.filter((p) => p.region === region && p.rules.normal === 'released').length,
   ]);
   const review = snapshots.find((s) => s.id === state.reviewSnapshot);
-  return `<div class="settings-layout">${storageSafetyMarkup()}<section><h2>Appearance</h2><p>Dark by default. Your choices are remembered on this browser.</p><button class="secondary" data-theme>Switch light / dark ◐</button><fieldset class="accent-picker"><legend>Accent color</legend>${ACCENTS.map(([id, name]) => `<button class="accent-swatch accent-${id}" data-accent="${id}" aria-pressed="${accent === id}"><span aria-hidden="true"></span>${name}</button>`).join('')}</fieldset><label class="evolve-option"><input type="checkbox" data-silhouettes ${pref('silhouettes', 'on') === 'on' ? 'checked' : ''}> Show missing Pokémon as silhouettes in the Dex</label></section><section><h2>Trainer name</h2><p>Optional. Signs your posters, recap cards and compare links. Stays on this browser.</p><label class="sr-only" for="trainer-name">Trainer name</label><input class="search-input" id="trainer-name" maxlength="24" value="${escape(trainer())}" placeholder="Your trainer name"></section><section><h2>Export collection</h2><p>The spreadsheet matches the community Pokédex list: one tab per region with gender, Shiny, 100%, Lucky, XXL, XXS, Shadow and Purified, plus trade search strings. JSON is a complete CatchGrid backup.</p><button class="primary" data-export="xlsx">Download spreadsheet (.xlsx)</button><button class="secondary" data-export="json">Download JSON backup</button><button class="secondary" data-export="csv">Download CSV</button></section><section><h2>Import collection</h2><p>Choose the community spreadsheet (.xlsx, from Google Sheets: File › Download › Microsoft Excel), a CatchGrid backup or a CSV. Spreadsheet imports only add; nothing you’ve registered is removed. You review everything before it’s saved.</p><label class="secondary">Choose spreadsheet, backup or CSV<input id="import-file" type="file" accept=".xlsx,.json,.csv,.tsv,.txt" /></label><details class="paste-rows"><summary>Or paste rows from your spreadsheet</summary><label for="paste-rows" class="sr-only">Rows copied from your spreadsheet</label><textarea id="paste-rows" rows="5" placeholder="Copy rows from the sheet (Number, Pokémon, gender, Shiny, 100%, …) and paste them here"></textarea><button class="secondary" data-paste-review>Review pasted rows</button></details><div id="import-review" role="status">${importReviewMarkup()}</div></section><section><h2>Recovery snapshots</h2><p>CatchGrid keeps up to five automatic copies on this browser before big changes. Restoring saves your current collection as a new snapshot first.</p>${
+  return `<div class="settings-layout">${storageSafetyMarkup()}<section><h2>Appearance</h2><p>Follows your device’s light or dark setting until you choose. Your choices are remembered on this browser.</p><button class="secondary" data-theme>Switch light / dark ◐</button><fieldset class="accent-picker"><legend>Accent color</legend>${ACCENTS.map(([id, name]) => `<button class="accent-swatch accent-${id}" data-accent="${id}" aria-pressed="${accent === id}"><span aria-hidden="true"></span>${name}</button>`).join('')}</fieldset><label class="evolve-option"><input type="checkbox" data-silhouettes ${pref('silhouettes', 'on') === 'on' ? 'checked' : ''}> Show missing Pokémon as silhouettes in the Dex</label></section><section><h2>Trainer name</h2><p>Optional. Signs your posters, recap cards and compare links. Stays on this browser.</p><label class="sr-only" for="trainer-name">Trainer name</label><input class="search-input" id="trainer-name" maxlength="24" value="${escape(trainer())}" placeholder="Your trainer name"></section><section><h2>Export collection</h2><p>The spreadsheet matches the community Pokédex list: one tab per region with gender, Shiny, 100%, Lucky, XXL, XXS, Shadow and Purified, plus trade search strings. JSON is a complete CatchGrid backup.</p><button class="primary" data-export="xlsx">Download spreadsheet (.xlsx)</button><button class="secondary" data-export="json">Download JSON backup</button><button class="secondary" data-export="csv">Download CSV</button></section><section><h2>Import collection</h2><p>Choose the community spreadsheet (.xlsx, from Google Sheets: File › Download › Microsoft Excel), a CatchGrid backup or a CSV. Spreadsheet imports only add; nothing you’ve registered is removed. You review everything before it’s saved.</p><label class="secondary">Choose spreadsheet, backup or CSV<input id="import-file" type="file" accept=".xlsx,.json,.csv,.tsv,.txt" /></label><details class="paste-rows"><summary>Or paste rows from your spreadsheet</summary><label for="paste-rows" class="sr-only">Rows copied from your spreadsheet</label><textarea id="paste-rows" rows="5" placeholder="Copy rows from the sheet (Number, Pokémon, gender, Shiny, 100%, …) and paste them here"></textarea><button class="secondary" data-paste-review>Review pasted rows</button></details><div id="import-review" role="status">${importReviewMarkup()}</div></section><section><h2>Recovery snapshots</h2><p>CatchGrid keeps up to five automatic copies on this browser before big changes. Restoring saves your current collection as a new snapshot first.</p>${
     snapshots.length
       ? `<ul class="snapshot-list">${snapshots
           .map(
@@ -979,12 +979,16 @@ function compose() {
   state.preset = 'missing';
   navigate('search');
 }
+function syncThemeLabel() {
+  const dark = document.documentElement.dataset.theme !== 'light';
+  document
+    .querySelector('.theme-toggle')
+    ?.setAttribute('aria-label', `Switch to ${dark ? 'light' : 'dark'} appearance`);
+}
 function applyTheme(dark) {
   document.documentElement.dataset.theme = dark ? 'dark' : 'light';
   setPref('appearance', dark ? 'dark' : 'light');
-  document
-    .querySelector('.theme-toggle')
-    .setAttribute('aria-label', `Switch to ${dark ? 'light' : 'dark'} appearance`);
+  syncThemeLabel();
 }
 function select(n) {
   const source = document.querySelector(`[data-quick="${n}"] img, [data-pokemon="${n}"] img`);
@@ -1921,4 +1925,6 @@ if (import.meta.env.DEV) {
     return { count: owned.size };
   };
 }
+// The bootstrap may have chosen light from the device setting; keep the toggle's name honest.
+syncThemeLabel();
 render();

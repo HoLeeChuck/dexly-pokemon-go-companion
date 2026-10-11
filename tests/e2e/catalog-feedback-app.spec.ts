@@ -128,13 +128,13 @@ test('L2 Sources report and Dex scanner report remain accessible in both themes'
   await page.goto('/#dex?r=kanto');
   const report = page.locator('.hud-readout .entry-report');
   await report.locator('summary').click();
-  await expect(report.getByLabel('Report message')).toHaveValue(/Pokémon: #6 Charizard/);
+  await expect(report.getByLabel('Report message')).toHaveValue(/Pokémon: #1 Bulbasaur/);
   await report.getByLabel('Report message').fill('My draft');
   await page.getByRole('button', { name: 'Toggle Normal: missing', exact: true }).click();
   await expect(report.getByLabel('Report message')).toHaveValue('My draft');
   await page.getByRole('button', { name: 'Inspect next Pokémon' }).click();
   await page.locator('.hud-readout .entry-report summary').click();
-  await expect(page.getByLabel('Report message')).toHaveValue(/Pokémon: #7 Squirtle/);
+  await expect(page.getByLabel('Report message')).toHaveValue(/Pokémon: #2 Ivysaur/);
 });
 
 test('L3 skipped cells offer the L2 report with the skipped category and preserve reviewed import', async ({

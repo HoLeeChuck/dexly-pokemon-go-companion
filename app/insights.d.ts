@@ -4,6 +4,8 @@ export interface Medal {
   region: string;
   mark: string;
   collected: number;
+  /** Species in the region whose category is not released in GO; the platinum total includes them. */
+  unavailable: number;
   tier: Tier;
   nextTier?: Exclude<Tier, 'none'>;
   nextTarget: number | null;
