@@ -47,6 +47,12 @@ From [the polish review](../../POLISH-REVIEW.md). These are small app changes in
 
 - [Explore by starlight during meteor showers for a chance to encounter Minior!](https://pokemongo.com/news/minior-meteor-showers-2026). The post says Minior "will make its Pokémon GO debut". First shower: **Orionids, October 19–24, 5:00–11:59 p.m. local**; Explore by Starlight 5:00–9:00 p.m. Later showers: Leonids Nov 14–19, Geminids Dec 11–16, and others in 2027. Found in the wild in Meteor Form. Shiny Minior is not mentioned. Read on October 10, 2026.
 
+## Pre-checks re-run on October 12, 00:12 CDT (with the header fit fix, on Bramblin + pill fix)
+
+- **Header fit fix added** (`fix: keep the landscape header clear of the right safe area`, owner OK on Oct 12). The October 11 pre-checks below used `test:e2e:chromium`, which leaves out the `pwa-chromium` project. That project caught the drawn header icons pushing the appearance button to 801px at 844×390 with 47px safe-area insets (the limit is 797px). With 16px icons, a 4px gap and 9px side padding on the icon-only button, it's at 783px (782px before the icons).
+- Unit: **294 passed, 1 expected failure** (Bramblin's and Minior's future dates). Worker 40/40, lint, Prettier, TypeScript `tsc -b`, Pokémon-data validator and catalog verify all passed.
+- Windows Chromium desktop + phone **+ PWA: 155 passed, 2 skips, 0 failures**. The pill fix from Bramblin is underneath, so its `encoding-app` check runs here too.
+
 ## Pre-checks re-run on October 11, 01:22 CDT (Minior + polish, on Bramblin's six entries)
 
 - Unit: **263 passed, 1 expected failure** (Bramblin's and Minior's future dates). Worker 40/40, lint, Prettier on the changed files, TypeScript `tsc -b`, Pokémon-data validator and catalog verify all passed.
