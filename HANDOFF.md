@@ -2,6 +2,8 @@
 
 Updated October 2, 2026. Start with [AGENTS.md](AGENTS.md), [README.md](README.md) and [FOLDER-GUIDE.md](FOLDER-GUIDE.md). The local owner assignment is [CODEX-PLAN.md](CODEX-PLAN.md), which must never be committed.
 
+**New chat for the Oct 13 Bramblin release? Start with [docs/CHAT-HANDOFF.md](docs/CHAT-HANDOFF.md)** (Oct 12: branch stack, Tuesday steps, pre-checks including `pwa-chromium`).
+
 ## Resume here (2026-10-11)
 
 - **Live:** Worker `b0c70140-8b84-46f8-9198-921d6106c1d6`, build `4745a62` (launched 2026-10-04 12:24 CDT). Rollback target `0891c9e5-8a9c-4736-beae-2e796325dfef`. `dist/` still holds the live `4745a62` artifact. Re-checked read-only on 2026-10-10 23:45 CDT: health, deployment (100%), no pending migrations, and the `dist/` fingerprint all match.
