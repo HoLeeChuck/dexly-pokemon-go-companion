@@ -66,14 +66,14 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 4px;
   white-space: nowrap;
 }
 /* Same stroke style as the phone tab icons. */
 .header-icon {
   flex: none;
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.8;
@@ -645,4 +645,11 @@
 }
 main:focus {
   outline: none;
+}
+/* Icon-only appearance button (label hidden below 1100px): keep the header as narrow as the
+   old text glyph so landscape phones stay clear of the safe area. */
+@media (max-width: 1100px) {
+  .theme-toggle {
+    padding-inline: 9px;
+  }
 }
