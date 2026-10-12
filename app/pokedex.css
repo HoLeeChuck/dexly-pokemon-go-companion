@@ -1,4 +1,4 @@
-/* PokÃ©dex: device shelf, scanner HUD, paged grid, and Sources & credits. */
+/* Pokédex: device shelf, scanner HUD, paged grid, and Sources & credits. */
 
 .mono,
 .hud-number,
@@ -13,7 +13,7 @@
   letter-spacing: 0.06em;
 }
 
-/* â”€â”€ Device lens: a nod to the classic PokÃ©dex's big glass eye â”€â”€ */
+/* ── Device lens: a nod to the classic Pokédex's big glass eye ── */
 .device-lens {
   --size: 52px;
   position: relative;
@@ -61,7 +61,7 @@
   background: #66bb6a;
 }
 
-/* â”€â”€ Shelf â”€â”€ */
+/* ── Shelf ── */
 .shelf-head {
   display: flex;
   flex-wrap: wrap;
@@ -222,7 +222,7 @@
   height: 92px;
 }
 
-/* â”€â”€ Open device â”€â”€ */
+/* ── Open device ── */
 .device {
   --radius: 32px;
   padding: 18px;
@@ -343,7 +343,7 @@
   margin-left: auto;
 }
 
-/* â”€â”€ Scanner HUD â”€â”€ */
+/* ── Scanner HUD ── */
 /* Stage and readout share one window-sized row; the readout scrolls inside it. */
 .hud {
   display: grid;
@@ -374,7 +374,7 @@
       color-mix(in srgb, var(--type-b) 34%, var(--bg))
     );
 }
-/* A soft floor under the PokÃ©mon, like the PokÃ©mon GO encounter view. */
+/* A soft floor under the Pokémon, like the Pokémon GO encounter view. */
 .hud-stage::after {
   content: '';
   position: absolute;
@@ -470,7 +470,7 @@
   color: var(--ink);
 }
 .hud-stage.registered .hud-status::before {
-  content: 'â— ';
+  content: '● ';
   color: #66bb6a;
 }
 .hud-scan {
@@ -649,7 +649,7 @@
   background: var(--tint);
 }
 
-/* â”€â”€ Dial â”€â”€ */
+/* ── Dial ── */
 .dial {
   grid-column: 1 / -1;
   display: grid;
@@ -744,7 +744,7 @@
   accent-color: var(--hue);
 }
 
-/* â”€â”€ Paged grid â”€â”€ */
+/* ── Paged grid ── */
 .dex-grid-view {
   padding: 0 4px 4px;
 }
@@ -772,7 +772,7 @@
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
 }
 
-/* â”€â”€ Progress: keep the details panel in view while the page scrolls â”€â”€ */
+/* ── Progress: keep the details panel in view while the page scrolls ── */
 @media (min-width: 801px) {
   .workspace > .specimen {
     position: sticky;
@@ -783,7 +783,7 @@
   }
 }
 
-/* â”€â”€ Sources & credits â”€â”€ */
+/* ── Sources & credits ── */
 .about-layout {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -859,7 +859,7 @@ footer a {
   color: inherit;
 }
 
-/* â”€â”€ Motion â”€â”€ */
+/* ── Motion ── */
 @keyframes hud-float {
   50% {
     translate: 0 -10px;
@@ -902,7 +902,7 @@ footer a {
   }
 }
 
-/* â”€â”€ Small screens â”€â”€ */
+/* ── Small screens ── */
 @media (max-width: 900px) {
   .hud {
     grid-template-columns: minmax(0, 1fr);
