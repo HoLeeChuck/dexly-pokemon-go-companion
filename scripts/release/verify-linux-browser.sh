@@ -17,6 +17,6 @@ cd "$taskroot/repo"
 printf 'Evidence directory: %s\n' "$taskroot"
 node --version
 pnpm --version
-pnpm install --frozen-lockfile --offline 2>&1 | tee "$taskroot/install.log"
+pnpm install --frozen-lockfile 2>&1 | tee "$taskroot/install.log"
 PORT="$port" node -e 'const net=require("net");const s=net.createServer();s.on("error",()=>process.exit(1));s.listen(Number(process.env.PORT),"127.0.0.1",()=>s.close());'
 CI=1 PLAYWRIGHT_PORT="$port" pnpm run test:e2e 2>&1 | tee "$taskroot/browser.log"

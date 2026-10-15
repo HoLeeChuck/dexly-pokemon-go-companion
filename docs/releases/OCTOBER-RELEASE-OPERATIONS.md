@@ -27,7 +27,7 @@ git diff --check
 
 No expected future-date failure is allowed on deploy day. `validate:source` includes binding types/check, lint, formatting, unit/Worker tests and both catalog validators. Keep generated evidence below ignored `archive/` or use focused formatting if untracked capture/report artifacts are present; never conceal a tracked formatting failure.
 
-Run all five browser projects, including **PWA and both WebKit projects**, from a fresh tracked-source archive. This helper uses the existing Linux Node runtime, pnpm cache and Playwright browsers. Override `CATCHGRID_NODE_BIN` if that runtime has moved; do not copy secrets or Windows `node_modules` into Linux.
+Run all five browser projects, including **PWA and both WebKit projects**, from a fresh tracked-source archive. This helper uses the existing Linux Node runtime and Playwright browsers, installing exact lockfile dependencies and reusing pnpm's cache where available. Override `CATCHGRID_NODE_BIN` if that runtime has moved; do not copy secrets or Windows `node_modules` into Linux.
 
 ```bat
 git archive --format=tar -o archive/release-work/deploy-source.tar HEAD
