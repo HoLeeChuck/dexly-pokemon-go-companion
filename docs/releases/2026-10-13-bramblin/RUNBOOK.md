@@ -1,5 +1,7 @@
 # Bramblin catalog update — October 13, 2026
 
+> Superseded October 15: use [BRAMBLIN-GO-2026-10-15.md](../BRAMBLIN-GO-2026-10-15.md) and [OCTOBER-RELEASE-OPERATIONS.md](../OCTOBER-RELEASE-OPERATIONS.md) from `bramblin-2026-10-15` in the isolated worktree. The candidate has ten ledger records beyond `prism-forward`; the six-record counts and earlier go procedures below are historical. No push or deploy occurred during prep.
+
 ## Oct 13 morning: Cody's checklist
 
 Your part takes about 2 minutes. Claude does the rest and stops on anything unexpected.

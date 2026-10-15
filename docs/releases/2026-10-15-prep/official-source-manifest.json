@@ -1,0 +1,524 @@
+{
+  "sweepStart": "2026-09-29",
+  "sweepThrough": "2026-10-15",
+  "reason": "Newest prism-forward ledger date; Bramblin candidate newest date is October 13. Deferred items also rechecked.",
+  "pages": [
+    {
+      "url": "https://pokemongo.com/news/into-the-wild-2026",
+      "finalUrl": "https://pokemongo.com/news/into-the-wild-2026",
+      "status": 200,
+      "title": "It’s time to head back Into the Wild for a Steel- and Dragon-type adventure! — Pokémon GO",
+      "publicationDates": [
+        "datePublished\":\"2026-10-14T17:00:00.000Z",
+        "dateModified\":\"2026-10-14T13:27:23.848Z"
+      ],
+      "sha256": "3f7e993af90615eb00a42dfd542822f4dc7ebef2d99c33a0c0191aef630f962a",
+      "checkedAt": "2026-10-15T05:54:32.683Z",
+      "file": "into-the-wild-2026.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/chandelure-super-mega-raid-day-2026",
+      "finalUrl": "https://pokemongo.com/news/chandelure-super-mega-raid-day-2026",
+      "status": 200,
+      "title": "A haunting glow awaits with the Chandelure Super Mega Raid Day! — Pokémon GO",
+      "publicationDates": [
+        "datePublished\":\"2026-10-13T20:00:00.000Z",
+        "dateModified\":\"2026-10-08T22:54:34.287Z"
+      ],
+      "sha256": "5fb12904aac76673b86f99a65f906441ef57409a0f31e16cfcaf715ddf8466de",
+      "checkedAt": "2026-10-15T05:54:32.746Z",
+      "file": "chandelure-super-mega-raid-day-2026.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/pgo-gameplay-update-oct-2026",
+      "finalUrl": "https://pokemongo.com/news/pgo-gameplay-update-oct-2026",
+      "status": 200,
+      "title": "Pokémon GO Gameplay and Quality-of-Life Updates",
+      "publicationDates": [
+        "datePublished\":\"2026-10-08T18:50:02.647Z",
+        "dateModified\":\"2026-10-08T18:50:02.647Z"
+      ],
+      "sha256": "52ffd05daaad2252b71a54d5310abd0d0cba45bacef165aea35b06bcf29c3234",
+      "checkedAt": "2026-10-15T05:54:32.679Z",
+      "file": "pgo-gameplay-update-oct-2026.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/halloween-part-2-2026",
+      "finalUrl": "https://pokemongo.com/news/halloween-part-2-2026",
+      "status": 200,
+      "title": "Mega Sableye powers up and Shiny Greavard makes its Pokémon GO debut during Halloween 2026 Part II!",
+      "publicationDates": [
+        "datePublished\":\"2026-10-08T17:00:00.000Z",
+        "dateModified\":\"2026-10-01T16:45:29.211Z"
+      ],
+      "sha256": "125b7222aa8c3b91aabfb6a7b87a8bc46250fa047cd3d4f5d176ffd030c45ca2",
+      "checkedAt": "2026-10-15T05:54:32.697Z",
+      "file": "halloween-part-2-2026.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/event-singapore-30th-anniversary-2026",
+      "finalUrl": "https://pokemongo.com/news/event-singapore-30th-anniversary-2026",
+      "status": 200,
+      "title": "PokéXciting! lands at Changi Airport and Jewel — get ready, Singapore! — Pokémon GO",
+      "publicationDates": [
+        "datePublished\":\"2026-10-07T04:00:00.000Z",
+        "dateModified\":\"2026-10-06T02:53:12.338Z"
+      ],
+      "sha256": "2576eb291af593577abc9a8e183d44249d91a010d03e273bc78cc656b409a113",
+      "checkedAt": "2026-10-15T05:54:32.887Z",
+      "file": "event-singapore-30th-anniversary-2026.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/halloween-part-1-2026",
+      "finalUrl": "https://pokemongo.com/news/halloween-part-1-2026",
+      "status": 200,
+      "title": "Trick or Treat with costumed Pikachu, Zubat, and Sinistea during Halloween 2026 Part I! — Pokémon GO",
+      "publicationDates": [
+        "datePublished\":\"2026-10-05T17:00:00.000Z",
+        "dateModified\":\"2026-09-30T19:39:07.223Z"
+      ],
+      "sha256": "b9a8fd4cdc4424e013beea305309fb3756b8317cf98da19cae2b3ea1e95f7c66",
+      "checkedAt": "2026-10-15T05:54:32.866Z",
+      "file": "halloween-part-1-2026.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/pokemon-night-out-twitch-drops2026",
+      "finalUrl": "https://pokemongo.com/news/pokemon-night-out-twitch-drops2026",
+      "status": 200,
+      "title": "Get codes for exclusive Timed Research during the Pokémon Night Out Twitch broadcast! — Pokémon GO",
+      "publicationDates": [
+        "datePublished\":\"2026-10-02T13:17:50.439Z",
+        "dateModified\":\"2026-10-10T02:43:34.660Z"
+      ],
+      "sha256": "b833b29b681d7b212efa70faac19417426fc26eea36a03ca4c8dff7d4e79be81",
+      "checkedAt": "2026-10-15T05:54:32.888Z",
+      "file": "pokemon-night-out-twitch-drops2026.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/city-safari-boston-rescheduled",
+      "finalUrl": "https://pokemongo.com/news/city-safari-boston-rescheduled",
+      "status": 200,
+      "title": "Pokémon GO City Safari: Boston Update",
+      "publicationDates": [
+        "datePublished\":\"2026-10-01T22:31:42.203Z",
+        "dateModified\":\"2026-10-01T22:31:42.203Z"
+      ],
+      "sha256": "2f06afbe3e2990635de9d08f56f7813e8a23e66a954dec3c72e18786a4f08278",
+      "checkedAt": "2026-10-15T05:54:32.939Z",
+      "file": "city-safari-boston-rescheduled.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/dynamax-uxie-mesprit-azelf-max-battle-day-2026",
+      "finalUrl": "https://pokemongo.com/news/dynamax-uxie-mesprit-azelf-max-battle-day-2026",
+      "status": 200,
+      "title": "Rising from the forgotten tides, Uxie, Mesprit, and Azelf make their Dynamax debut! — Pokémon GO",
+      "publicationDates": [
+        "datePublished\":\"2026-10-01T20:00:00.000Z",
+        "dateModified\":\"2026-09-30T21:20:23.257Z"
+      ],
+      "sha256": "fb6ff8a2276b677e2ce8ac8a11327494714c4e45978976143d13f8187d7521de",
+      "checkedAt": "2026-10-15T05:54:33.163Z",
+      "file": "dynamax-uxie-mesprit-azelf-max-battle-day-2026.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/minior-meteor-showers-2026",
+      "finalUrl": "https://pokemongo.com/news/minior-meteor-showers-2026",
+      "status": 200,
+      "title": "Explore by starlight during meteor showers for a chance to encounter Minior! — Pokémon GO",
+      "publicationDates": [
+        "datePublished\":\"2026-10-01T17:00:00.000Z",
+        "dateModified\":\"2026-10-01T17:14:12.386Z"
+      ],
+      "sha256": "43a79243b3e120642a83ed9bc8b185fd8221e2b2de47e49520be146752bdca27",
+      "checkedAt": "2026-10-15T05:54:33.230Z",
+      "file": "minior-meteor-showers-2026.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/tcg-30th-celebration-event",
+      "finalUrl": "https://pokemongo.com/news/tcg-30th-celebration-event",
+      "status": 200,
+      "title": "Pokémon TCG 30th Celebration Event — Pokémon GO",
+      "publicationDates": [
+        "datePublished\":\"2026-09-27T20:00:00.000Z",
+        "dateModified\":\"2026-09-25T18:49:41.881Z"
+      ],
+      "sha256": "612ecf227874dd354ab8c12500a4b90b4915dc82c7c26ca4b1631d5711692ae5",
+      "checkedAt": "2026-10-15T05:54:33.191Z",
+      "file": "tcg-30th-celebration-event.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/festival-of-lights-2026",
+      "finalUrl": "https://pokemongo.com/news/festival-of-lights-2026",
+      "status": 200,
+      "title": "Celebrate the Festival of Lights with the return of Pikachu wearing a saree and Pikachu wearing a kurta! — Pokémon GO",
+      "publicationDates": [
+        "datePublished\":\"2026-09-25T10:30:00.000Z",
+        "dateModified\":\"2026-09-25T05:56:51.294Z"
+      ],
+      "sha256": "e7d1b9de6210c5ad496d8e3ba999a1f81a776d21330ef10ecfb79d0c287c3a23",
+      "checkedAt": "2026-10-15T05:54:33.164Z",
+      "file": "festival-of-lights-2026.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/sandile-hatch-day-2026",
+      "finalUrl": "https://pokemongo.com/news/sandile-hatch-day-2026",
+      "status": 200,
+      "title": "Dig in during Sandile Hatch Day! — Pokémon GO",
+      "publicationDates": [
+        "datePublished\":\"2026-09-24T17:00:00.000Z",
+        "dateModified\":\"2026-09-11T17:59:02.449Z"
+      ],
+      "sha256": "54cd1cc1335a16522011b98f577247518c9b6f85a9febf96071f186b81ffecb7",
+      "checkedAt": "2026-10-15T05:54:34.350Z",
+      "file": "sandile-hatch-day-2026.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/city-safari-boston-update",
+      "finalUrl": "https://pokemongo.com/news/city-safari-boston-update",
+      "status": 200,
+      "title": "Event Update: City Safari Boston — Pokémon GO",
+      "publicationDates": [
+        "datePublished\":\"2026-09-24T13:00:00.000Z",
+        "dateModified\":\"2026-09-24T04:05:51.342Z"
+      ],
+      "sha256": "c20245f2f2f5517d6235b742c96041333b96dde8a96ccc806803b5a5f4ccb662",
+      "checkedAt": "2026-10-15T05:54:34.470Z",
+      "file": "city-safari-boston-update.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/pokemon-x-adidas-2026",
+      "finalUrl": "https://pokemongo.com/news/pokemon-x-adidas-2026",
+      "status": 200,
+      "title": "Avatar items from the adidas | Pokémon collection are coming to Pokémon GO!",
+      "publicationDates": [
+        "datePublished\":\"2026-09-24T08:00:00.000Z",
+        "dateModified\":\"2026-09-25T21:12:55.234Z"
+      ],
+      "sha256": "54b0681fdb701b5ec3d7988512c9e96e41deaf126e38ff763b38982e32cc3c64",
+      "checkedAt": "2026-10-15T05:54:34.467Z",
+      "file": "pokemon-x-adidas-2026.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/save-the-date-go-tour-2027",
+      "finalUrl": "https://pokemongo.com/news/save-the-date-go-tour-2027",
+      "status": 200,
+      "title": "Save the Date: Pokémon GO Tour 2027",
+      "publicationDates": [
+        "datePublished\":\"2026-09-23T23:00:00.000Z",
+        "dateModified\":\"2026-09-23T17:41:48.544Z"
+      ],
+      "sha256": "c8d272b3706ad422fbde6b98291aaee2e45102ca579abd9ec1784b3acfb6d3c5",
+      "checkedAt": "2026-10-15T05:54:33.407Z",
+      "file": "save-the-date-go-tour-2027.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/fall-marathon-buddy-trek-2026",
+      "finalUrl": "https://pokemongo.com/news/fall-marathon-buddy-trek-2026",
+      "status": 200,
+      "title": "Fall Marathon: Buddy Trek will bring Bramblin’s Pokémon GO debut!",
+      "publicationDates": [
+        "datePublished\":\"2026-09-23T19:59:00.000Z",
+        "dateModified\":\"2026-09-22T17:01:37.857Z"
+      ],
+      "sha256": "969550f4e64d3c9fa1defcdb985fad57f6bdfd1d516b3ef397bda24ceab1f7d2",
+      "checkedAt": "2026-10-15T05:54:34.588Z",
+      "file": "fall-marathon-buddy-trek-2026.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/apac-mall-exploration-2026",
+      "finalUrl": "https://pokemongo.com/news/apac-mall-exploration-2026",
+      "status": 200,
+      "title": "Pokémon GO joins Pokémon 30th Anniversary Mall Exploration!",
+      "publicationDates": [
+        "datePublished\":\"2026-09-23T02:00:00.000Z",
+        "dateModified\":\"2026-10-14T02:15:31.355Z"
+      ],
+      "sha256": "00c65b8ac61917bd5a3675d58c0747ebd9f9495dd3ed5bdf8464c7c1f2b810dd",
+      "checkedAt": "2026-10-15T05:54:34.649Z",
+      "file": "apac-mall-exploration-2026.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/go-pass-october-2026",
+      "finalUrl": "https://pokemongo.com/news/go-pass-october-2026",
+      "status": 200,
+      "title": "Kyogre makes waves and the Lucky Trinket returns in GO Pass: October! — Pokémon GO",
+      "publicationDates": [
+        "datePublished\":\"2026-09-22T17:00:00.000Z",
+        "dateModified\":\"2026-10-07T16:51:28.254Z"
+      ],
+      "sha256": "7e1d7785c8e2ea3c90f7c345d940b7dd96aa65f673ae603bee5980ccf0f58d5c",
+      "checkedAt": "2026-10-15T05:54:34.648Z",
+      "file": "go-pass-october-2026.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/world-space-week-2026",
+      "finalUrl": "https://pokemongo.com/news/world-space-week-2026",
+      "status": 200,
+      "title": "Blast off with Astronaut Pikachu during World Space Week! — Pokémon GO",
+      "publicationDates": [
+        "datePublished\":\"2026-09-21T14:00:00.000Z",
+        "dateModified\":\"2026-09-18T16:48:18.389Z"
+      ],
+      "sha256": "c0185285cd4b6727998a30641833769b38cbab1289ec6eaf04390e006382c326",
+      "checkedAt": "2026-10-15T05:54:34.618Z",
+      "file": "world-space-week-2026.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/pokemongo-iitdelhi-2026",
+      "finalUrl": "https://pokemongo.com/news/pokemongo-iitdelhi-2026",
+      "status": 200,
+      "title": "Pokémon GO is coming to IIT-Delhi for Rendezvous 2026!",
+      "publicationDates": [
+        "datePublished\":\"2026-09-21T10:30:00.000Z",
+        "dateModified\":\"2026-09-21T10:54:19.948Z"
+      ],
+      "sha256": "b2727049437586a08ea32339c5c94927473d91c828a5ed921ab30d281ae7ddc6",
+      "checkedAt": "2026-10-15T05:54:34.941Z",
+      "file": "pokemongo-iitdelhi-2026.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/european-space-agency-event",
+      "finalUrl": "https://pokemongo.com/news/european-space-agency-event",
+      "status": 200,
+      "title": "Pokémon GO partners with the European Space Agency",
+      "publicationDates": [
+        "datePublished\":\"2026-09-19T18:09:01.050Z",
+        "dateModified\":\"2026-09-19T18:09:01.050Z"
+      ],
+      "sha256": "0d3710cfcf0aee2b4c222ca37ae99ed81370728d874512e5addad75913c8dbde",
+      "checkedAt": "2026-10-15T05:54:34.759Z",
+      "file": "european-space-agency-event.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/city-safari-brisbane-know-before-you-go",
+      "finalUrl": "https://pokemongo.com/news/city-safari-brisbane-know-before-you-go",
+      "status": 200,
+      "title": "Pokémon GO City Safari: Brisbane – Know Before You GO!",
+      "publicationDates": [
+        "datePublished\":\"2026-09-16T03:30:17.065Z",
+        "dateModified\":\"2026-10-06T17:04:21.538Z"
+      ],
+      "sha256": "8bf21f01ada09c04af020d5ce488eaf1377515e7d89b683ced2f71589249cef8",
+      "checkedAt": "2026-10-15T05:54:34.784Z",
+      "file": "city-safari-brisbane-know-before-you-go.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/communityday-october-2026-zorua",
+      "finalUrl": "https://pokemongo.com/news/communityday-october-2026-zorua",
+      "status": 200,
+      "title": "October 2026 Community Day: Zorua — Pokémon GO",
+      "publicationDates": [
+        "datePublished\":\"2026-09-15T17:00:00.000Z",
+        "dateModified\":\"2026-10-08T19:59:38.618Z"
+      ],
+      "sha256": "c2798716fc1f74ed036e152a3f38898a88b46a952c56fc79ccb761e8ec0f0378",
+      "checkedAt": "2026-10-15T05:54:34.785Z",
+      "file": "communityday-october-2026-zorua.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/choose-your-path-twilight-trails-2026",
+      "finalUrl": "https://pokemongo.com/news/choose-your-path-twilight-trails-2026",
+      "status": 200,
+      "title": "Blaze your own trail with new Timed Research during Twilight Trails! — Pokémon GO",
+      "publicationDates": [
+        "datePublished\":\"2026-09-14T20:00:00.000Z",
+        "dateModified\":\"2026-09-09T20:43:11.766Z"
+      ],
+      "sha256": "361b6ac8219466202df0bfa875012010d5ceabbdef25f3a8646e88ff0ca85999",
+      "checkedAt": "2026-10-15T05:54:35.097Z",
+      "file": "choose-your-path-twilight-trails-2026.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/city-safaris-europe-2026",
+      "finalUrl": "https://pokemongo.com/news/city-safaris-europe-2026",
+      "status": 200,
+      "title": "Pokémon GO City Safaris in Europe: Venues and Activities",
+      "publicationDates": [
+        "datePublished\":\"2026-09-14T13:40:12.812Z",
+        "dateModified\":\"2026-09-14T13:40:12.812Z"
+      ],
+      "sha256": "2660c8ca44d537946d2398f2808cfa235f263fe2ce36bdd55aac3aaffbe5c066",
+      "checkedAt": "2026-10-15T05:54:35.091Z",
+      "file": "city-safaris-europe-2026.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/patterns-of-the-wild-2026",
+      "finalUrl": "https://pokemongo.com/news/patterns-of-the-wild-2026",
+      "status": 200,
+      "title": "Patterns of the Wild brings Pikachu wearing a batik shirt with a Special Background! — Pokémon GO",
+      "publicationDates": [
+        "datePublished\":\"2026-09-11T11:00:00.000Z",
+        "dateModified\":\"2026-09-16T06:44:21.508Z"
+      ],
+      "sha256": "38dec0d792376f9b9e0228477feea08c5ff41b66c7aa38faca601348c76a5627",
+      "checkedAt": "2026-10-15T05:54:35.137Z",
+      "file": "patterns-of-the-wild-2026.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/boston-city-safari-know-before-you-go",
+      "finalUrl": "https://pokemongo.com/news/boston-city-safari-know-before-you-go",
+      "status": 200,
+      "title": "Pokémon GO City Safari: Boston – Know Before You GO!",
+      "publicationDates": [
+        "datePublished\":\"2026-09-10T16:50:29.059Z",
+        "dateModified\":\"2026-10-06T21:50:45.323Z"
+      ],
+      "sha256": "b20abc05436cd859c94da017e585ed23dcc274b0d252c36499f5358a31e2418d",
+      "checkedAt": "2026-10-15T05:54:35.237Z",
+      "file": "boston-city-safari-know-before-you-go.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/gigantamax-cinderace-max-battle-day-2026",
+      "finalUrl": "https://pokemongo.com/news/gigantamax-cinderace-max-battle-day-2026",
+      "status": 200,
+      "title": "Fireball of fury as Gigantamax Cinderace storms into Max Battle Day! — Pokémon GO",
+      "publicationDates": [
+        "datePublished\":\"2026-09-09T17:00:00.000Z",
+        "dateModified\":\"2026-09-03T18:42:20.609Z"
+      ],
+      "sha256": "c7c8a69d4127a3b167f90581140d731115144ae5f8dab385b3da8748c48574bf",
+      "checkedAt": "2026-10-15T05:54:35.360Z",
+      "file": "gigantamax-cinderace-max-battle-day-2026.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/gowildarea-sendai-ticket-update",
+      "finalUrl": "https://pokemongo.com/news/gowildarea-sendai-ticket-update",
+      "status": 200,
+      "title": "Ticketing Update: Pokémon GO Wild Area: Sendai • Tohoku",
+      "publicationDates": [
+        "datePublished\":\"2026-09-07T23:00:00.000Z",
+        "dateModified\":\"2026-09-10T23:21:05.873Z"
+      ],
+      "sha256": "ab18e3a3b5ef3c77feb1344ac4a0fe4c9381233274bc6c28cc5dbc9cf5416e1e",
+      "checkedAt": "2026-10-15T05:54:35.385Z",
+      "file": "gowildarea-sendai-ticket-update.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/fashion-week-taken-over-by-TGR",
+      "finalUrl": "https://pokemongo.com/news/fashion-week-taken-over-by-TGR",
+      "status": 200,
+      "title": "Team GO Rocket and Giovanni return. Give it your all and rescue Shadow Palkia during Fashion Week: Taken Over! — Pokémon GO",
+      "publicationDates": [
+        "datePublished\":\"2025-01-14T20:00:00.000Z",
+        "dateModified\":\"2025-02-04T20:47:00.000Z"
+      ],
+      "sha256": "34c606c26ee831b2f3e9d5516105616f2b1779ff64a9418789c170ff5b0e99b9",
+      "checkedAt": "2026-10-15T05:54:35.565Z",
+      "file": "fashion-week-taken-over-by-TGR.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/Pokemon-TCG-Crossover-Event",
+      "finalUrl": "https://pokemongo.com/news/Pokemon-TCG-Crossover-Event",
+      "status": 200,
+      "title": "Celebrate the Pokémon TCG: Pokémon GO expansion with our Pokémon TCG Crossover Event!",
+      "publicationDates": [
+        "datePublished\":\"2022-06-06T13:15:00.000Z",
+        "dateModified\":\"2022-06-16T04:43:00.000Z"
+      ],
+      "sha256": "310eae654b6cc58ead5cca4b9c78c4a283c692d8b603e3fa0b8607e9fe555a93",
+      "checkedAt": "2026-10-15T05:54:35.454Z",
+      "file": "Pokemon-TCG-Crossover-Event.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/water-festival-2023",
+      "finalUrl": "https://pokemongo.com/news/water-festival-2023",
+      "status": 200,
+      "title": "Dive into Water Festival: Beach Week! — Pokémon GO",
+      "publicationDates": [
+        "datePublished\":\"2023-05-30T13:00:00.000Z",
+        "dateModified\":\"2023-05-30T13:00:00.000Z"
+      ],
+      "sha256": "821cd1585eaa7a69ceb38979d97b547c09395ddbf2723bc81f143752fd70c2f0",
+      "checkedAt": "2026-10-15T05:54:35.791Z",
+      "file": "water-festival-2023.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/lush-jungle-event",
+      "finalUrl": "https://pokemongo.com/news/lush-jungle-event",
+      "status": 200,
+      "title": "Pokémon GO’s Lush Jungle event features Cottonee, Fomantis, Tapu Lele, a weekend park spotlight, and more!",
+      "publicationDates": [
+        "datePublished\":\"2022-03-17T20:00:00.000Z",
+        "dateModified\":\"2022-03-17T21:11:00.000Z"
+      ],
+      "sha256": "f399f1598fb5664c9ae060584d38134f25861d1f31920517f52ab8a9bab1a19b",
+      "checkedAt": "2026-10-15T05:54:35.781Z",
+      "file": "lush-jungle-event.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/halloween-part-1-2023",
+      "finalUrl": "https://pokemongo.com/news/halloween-part-1-2023",
+      "status": 200,
+      "title": "Celebrate the beginning of a Halloween adventure with Greavard during Pokémon GO Halloween 2023 Part I!",
+      "publicationDates": [
+        "datePublished\":\"2023-10-13T17:00:00.000Z",
+        "dateModified\":\"2023-10-18T20:49:00.000Z"
+      ],
+      "sha256": "a9bb0777f386893c4d8a28b72201c2edc9c526635ab389f29a585cf37901a6dc",
+      "checkedAt": "2026-10-15T05:54:35.893Z",
+      "file": "halloween-part-1-2023.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/save-the-date-s24",
+      "finalUrl": "https://pokemongo.com/news/save-the-date-s24",
+      "status": 200,
+      "title": "Save the dates for next Season’s Community Days! — Pokémon GO",
+      "publicationDates": [
+        "datePublished\":\"2026-08-10T17:00:00.000Z",
+        "dateModified\":\"2026-08-07T21:28:23.764Z"
+      ],
+      "sha256": "4899962483651f2c71adad5dfc3837fc0ea70435b6364b641818f96492ee07c4",
+      "checkedAt": "2026-10-15T05:54:35.890Z",
+      "file": "save-the-date-s24.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/harvest-festival-2026",
+      "finalUrl": "https://pokemongo.com/news/harvest-festival-2026",
+      "status": 200,
+      "title": "Enjoy a bountiful Harvest Festival event with Shiny Applin’s Pokémon GO debut!",
+      "publicationDates": [
+        "datePublished\":\"2026-09-07T17:00:00.000Z",
+        "dateModified\":\"2026-08-27T16:48:39.494Z"
+      ],
+      "sha256": "8fb2b72c071359b00e92f1565710a2ac45922b71b084cf28796a0ddd9c8c4037",
+      "checkedAt": "2026-10-15T05:54:36.080Z",
+      "file": "harvest-festival-2026.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/harvest-festival-tgr-2026",
+      "finalUrl": "https://pokemongo.com/news/harvest-festival-tgr-2026",
+      "status": 200,
+      "title": "Rescue Shadow Zekrom during Harvest Festival: Taken Over! — Pokémon GO",
+      "publicationDates": [
+        "datePublished\":\"2026-09-07T20:00:00.000Z",
+        "dateModified\":\"2026-09-03T16:12:03.643Z"
+      ],
+      "sha256": "5aa9396f9dec6ac4ea26bf24290858a4c90c9557c3ce5bb33b8b1a527d414528",
+      "checkedAt": "2026-10-15T05:54:36.039Z",
+      "file": "harvest-festival-tgr-2026.txt"
+    },
+    {
+      "url": "https://pokemongo.com/news/pokemon-horizons-celebration-event-2026",
+      "finalUrl": "https://pokemongo.com/news/pokemon-horizons-celebration-event-2026",
+      "status": 200,
+      "title": "The “Pokémon Horizons: The Series” Celebration Event returns! — Pokémon GO",
+      "publicationDates": [
+        "datePublished\":\"2026-09-02T13:00:00.000Z",
+        "dateModified\":\"2026-09-17T22:11:04.348Z"
+      ],
+      "sha256": "3eb8aced2a165a0320525ab4cdba59849c3f88e15fbecd662c9b7f556d8249ff",
+      "checkedAt": "2026-10-15T05:54:36.171Z",
+      "file": "pokemon-horizons-celebration-event-2026.txt"
+    },
+    {
+      "url": "https://pokemongo.com/seasons/twilight-trails",
+      "finalUrl": "https://pokemongo.com/seasons/twilight-trails",
+      "status": 200,
+      "title": "Welcome to Pokémon GO: Twilight Trails",
+      "publicationDates": [],
+      "sha256": "6ebae29dd2d9380777f4939910cfee1f47629c64a5cdc54923989d5a836086ed",
+      "checkedAt": "2026-10-15T05:54:36.157Z",
+      "file": "twilight-trails.txt"
+    }
+  ]
+}

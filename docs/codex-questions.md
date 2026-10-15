@@ -1,5 +1,9 @@
 # Codex questions: Round 3
 
+## October 15, 2026 follow-up
+
+Every item marked future-dated in this historical audit has been rechecked in the [official news sweep](releases/OFFICIAL-NEWS-SWEEP-2026-10-15.md). Bramblin and the October 2 catch-ups are prepared locally, with additional supported evolution inferences and Cinderace provenance. Minior and Greavard remain scheduled; Mega Chandelure and newly clarified Houndstone evolution evidence need future scoped follow-up. Unsupported costumes, Dynamax identities, backgrounds and event items are recorded explicitly in that sweep. The current go checklists supersede historical authorization and blocker statements below. This does not claim a fresh re-audit of all 67 unsourced species.
+
 ## L4 browser access blocker — October 2, 2026
 
 The owner already authorized release, main fast-forward and both pushes. Source gates, full Linux browser suites and strict dry runs pass for candidate `3c6150f`; production has no pending migrations. Codex Browser refuses both local preview and production navigation because saved browser permissions could not be verified, and explicitly prohibits bypassing the check. The owner was asked to restore browser access and confirm when it works. Required interactive preview/live checks, deployment and branch publication remain pending. See [the release record](releases/2026-10-02-launch/RELEASE.md). No renewed deployment authorization is needed.

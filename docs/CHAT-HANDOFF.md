@@ -1,5 +1,13 @@
 # CatchGrid chat handoff — October 12, 2026, 00:17 CDT
 
+## October 15, 2026 continuation (supersedes the historical instructions below)
+
+Work in `D:\Temp\catchgrid-bramblin-2026-10-15`, on `bramblin-2026-10-15` for the overdue release. Read [the prep report](BRAMBLIN-PREP-REPORT-2026-10-15.md), [Bramblin go checklist](releases/BRAMBLIN-GO-2026-10-15.md), [official sweep](releases/OFFICIAL-NEWS-SWEEP-2026-10-15.md), and [shared release operations](releases/OCTOBER-RELEASE-OPERATIONS.md). The report is also copied into the original checkout for discovery. Preserve that checkout's untracked leftovers and live artifact.
+
+The candidate carries ten ledger records beyond `prism-forward`: nine availability records and one provenance-only Shiny Gigantamax Cinderace record. Bramblin's date is still October 13, so the displayed catalog date is October 13. Minior and Greavard retain their dates and separate go checklists. Local prep is not permission to publish, deploy, message HQ or post announcements. Cody's fresh release go is still required. Do not execute the old chat-management or messaging instructions below without authorization.
+
+The October 4 production health identity was rechecked on October 15; remote migrations and current deployment state must be checked during the authorized release. Current validation is documented in the report, including full Linux browser coverage and the Windows WebKit screenshot limitation. Historical paths and counts below are retained as evidence, not current commands.
+
 Written by the outgoing worker chat ("HQ · CatchGrid") for a fresh Claude chat that will run **Tuesday's Bramblin release**. Read this, then [AGENTS.md](../AGENTS.md), the "Resume here" section of [HANDOFF.md](../HANDOFF.md), [WORKERS.md](file:///D:/Projects/Project%20HQ/WORKERS.md) (Project HQ contract), and the [Bramblin RUNBOOK](releases/2026-10-13-bramblin/RUNBOOK.md).
 
 ## Who you are

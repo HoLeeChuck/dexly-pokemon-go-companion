@@ -1,5 +1,17 @@
 # CatchGrid current handoff
 
+## Resume here: October 15, 2026 prep
+
+The current release candidate is `bramblin-2026-10-15` in `D:\Temp\catchgrid-bramblin-2026-10-15`. The original checkout, its live artifact, and its untracked brief, plan, screenshots and evidence are preserved. This prep authorizes no push or deploy. Start with [Bramblin go checklist](docs/releases/BRAMBLIN-GO-2026-10-15.md), [official sweep](docs/releases/OFFICIAL-NEWS-SWEEP-2026-10-15.md) and [shared release operations](docs/releases/OCTOBER-RELEASE-OPERATIONS.md). The completed prep report is `docs/BRAMBLIN-PREP-REPORT-2026-10-15.md`.
+
+- The six original ledger records and REGISTERED dot fix are retained. Four records add supported Shiny Grafaiai and Shadow/Purified Golisopod/Palossand evolution inferences, plus provenance for already-enabled Shiny Gigantamax Cinderace. No new model, migration, artwork or private catalog changes.
+- Current availability gates: 295 unit tests and 40 Worker tests pass. Full Linux browser coverage passes 267 tests with two existing skips. Actual built-artifact desktop/phone checks pass in Chromium and Linux WebKit, both themes. Build and strict deployment dry run pass. These are local results, not a release or physical-device acceptance.
+- Public health still reports the October 4 build `4745a62` and Worker `b0c70140-8b84-46f8-9198-921d6106c1d6`. D1 migration and deployment status must be refreshed after release authorization; neither was changed in this prep.
+- Minior stays scheduled for October 19 after 17:00 CDT. Shiny Greavard stays scheduled for November 1 after 10:00 CST. Use the new [Minior](docs/releases/MINIOR-GO-2026-10-19.md) and [Greavard](docs/releases/GREAVARD-GO-2026-11-01.md) checklists, which supersede historical runbook procedures. Future ledger dates remain intentionally rejected before their release dates.
+- The sweep also flags October 31 Mega Chandelure and an officially documented Greavard-to-Houndstone evolution for a scoped future catalog decision. Do not infer that future branches automatically cover every later announcement. Post-November-1 polish stays deferred.
+
+Everything below is historical context. Earlier go statements, paths and unqualified release-ready claims do not authorize this release.
+
 Updated October 2, 2026. Start with [AGENTS.md](AGENTS.md), [README.md](README.md) and [FOLDER-GUIDE.md](FOLDER-GUIDE.md). The local owner assignment is [CODEX-PLAN.md](CODEX-PLAN.md), which must never be committed.
 
 **New chat for the Oct 13 Bramblin release? Start with [docs/CHAT-HANDOFF.md](docs/CHAT-HANDOFF.md)** (Oct 12: branch stack, Tuesday steps, pre-checks including `pwa-chromium`).
