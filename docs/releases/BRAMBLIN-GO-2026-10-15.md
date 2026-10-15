@@ -19,3 +19,7 @@ Official release sources: [Buddy Trek](https://pokemongo.com/news/fall-marathon-
 - This worktree's `node_modules` was damaged (missing Vite client files, so Vitest could not start). It was reinstalled from the frozen lockfile offline; the broken copy was moved to `D:\Temp\catchgrid-bramblin-node_modules.broken-2026-10-15` (safe to delete). `dist/` was not touched.
 - Official Buddy Trek page re-read in a browser: Bramblin has no Shiny marker and Brambleghast is not mentioned. Leek Duck and Serebii report Brambleghast by evolution (50 Candy, 20 km buddy walk). Brambleghast stays unavailable in this release; Cody decides whether to add it with labelled community sources in the Minior release.
 - This worktree, its evidence archive and the reviewed `dist/` live only in `D:\Temp`. Release before any temp cleanup.
+
+## Released October 15, 2026, 17:01 CDT
+
+Deployed `0270b8a` as Worker `8fea498e-a753-41b3-82dd-80be37e300c3` on Cody's typed go. Predecessor and rollback target `b0c70140-8b84-46f8-9198-921d6106c1d6`. D1 bookmark `000000e1-00000000-00005105-31bfd04ef189efb7b3f34aaf582e78bc`; no migrations. All local gates, the Linux browser suite (267/2 skips/0 failed), smoke (11 checks) and live catalog checks (Chromium and WebKit, 0 failed checks) passed. Live WebKit logs a pre-existing style-src CSP console message (CSP/HTML unchanged since `4745a62`); tracked as a follow-up. Cody does the phone/Discord check and any announcement himself.
