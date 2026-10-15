@@ -229,7 +229,18 @@
       "dex": 946,
       "categories": ["normal", "lucky", "hundo", "xxl", "xxs"],
       "source": "https://pokemongo.com/news/fall-marathon-buddy-trek-2026",
-      "note": "Bramblin debuts in Fall Marathon: Buddy Trek (October 13, 10:00 a.m. local), from GO Pass tasks, Incense and Field Research. No Shiny announced. Brambleghast stays unreleased: the post does not document its evolution."
+      "note": "Bramblin debuts in Fall Marathon: Buddy Trek (October 13, 10:00 a.m. local), from GO Pass tasks, Incense and Field Research. No Shiny announced. Brambleghast is recorded in its own entry (#947), from community sources."
+    },
+    {
+      "date": "2026-10-13",
+      "dex": 947,
+      "categories": ["normal", "lucky", "hundo", "xxl", "xxs"],
+      "source": "https://pokemongo.com/news/fall-marathon-buddy-trek-2026",
+      "communitySources": [
+        "https://leekduck.com/events/fall-marathon-buddy-trek-2026/",
+        "https://serebii.net/pokemongo/events/fallmarathon:buddytrek.shtml"
+      ],
+      "note": "Brambleghast follows the dated Bramblin debut by evolution (50 Bramblin Candy; walk 20 km as buddy), as reported by the community references Leek Duck and Serebii. The official source above is the Bramblin base-species page; Niantic's page does not mention Brambleghast, so this is not an official Niantic announcement. Added on Cody's 2026-10-15 decision with community sources. Categories mirror Bramblin's; no Shiny. Rechecked 2026-10-15."
     },
     {
       "date": "2026-10-19",

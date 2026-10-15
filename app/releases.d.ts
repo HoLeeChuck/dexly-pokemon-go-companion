@@ -5,6 +5,8 @@ export interface LedgerEntry {
   categories: string[];
   status?: 'released' | 'unreleased' | 'ineligible';
   source: string;
+  /** Optional community references (any https host), listed as community, not official. */
+  communitySources?: string[];
   note?: string;
 }
 export interface LedgerForm {

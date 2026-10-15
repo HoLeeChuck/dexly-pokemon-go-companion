@@ -80,6 +80,12 @@ describe('validateLedger', () => {
     ['a future date', entry({ date: '2026-10-01' }), /in the future/],
     ['a malformed date', entry({ date: '20/09/2026' }), /YYYY-MM-DD/],
     ['a community source', entry({ source: 'https://leekduck.com/events/x' }), /source must be/],
+    [
+      'a non-https community reference',
+      entry({ communitySources: ['http://leekduck.com/events/x'] }),
+      /communitySources must be/,
+    ],
+    ['an empty community list', entry({ communitySources: [] }), /communitySources must be/],
     ['an http link', entry({ source: 'http://pokemongo.com/news/x' }), /source must be/],
     ['an unknown Pokémon', entry({ dex: 9999 }), /no catalog form/],
     ['an unknown form', entry({ dex: undefined, formId: 'form-9999-x' }), /no catalog form/],
@@ -88,6 +94,10 @@ describe('validateLedger', () => {
     ['a bad status', entry({ status: 'maybe' as never }), /status must be/],
   ])('rejects %s', (_, bad, message) => {
     expect(problems(bad).join(' ')).toMatch(message);
+  });
+
+  it('accepts community references beside the official source', () => {
+    expect(problems(entry({ communitySources: ['https://leekduck.com/events/x/'] }))).toEqual([]);
   });
 
   it('rejects duplicate entries for the same day and category', () => {
@@ -217,5 +227,13 @@ describe('ledger metadata', () => {
     expect(ledgerUpdatedAt(l)).toBe('2026-09-20');
     expect(ledgerUpdatedAt(ledger())).toBeNull();
     expect(ledgerSources(l).every((s) => s.kind === 'official')).toBe(true);
+  });
+
+  it('lists community references as secondary sources, never official', () => {
+    const l = ledger(entry({ communitySources: ['https://leekduck.com/events/x/'] }));
+    expect(ledgerSources(l).map((s) => [s.kind, s.url])).toEqual([
+      ['official', 'https://pokemongo.com/news/example'],
+      ['secondary', 'https://leekduck.com/events/x/'],
+    ]);
   });
 });

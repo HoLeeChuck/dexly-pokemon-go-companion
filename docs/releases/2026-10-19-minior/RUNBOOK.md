@@ -12,7 +12,7 @@ Your part takes about 2 minutes. Claude does the rest and stops on anything unex
 2. That one "go" covers: the final checks, the deploy, the live checks, a rollback if anything fails, and committing + pushing the results (steps 1–9 below). Nothing else.
 3. Claude first re-reads the official Minior post. If Niantic moved the shower or announced Shiny Minior, Claude stops and asks you before changing anything.
 4. **Bramblin must already be live.** This branch is built on top of it. If Bramblin hasn't shipped, Claude stops and asks.
-5. **When Claude reports done**, open https://dex.cjdev.app on your phone. Home should say **Catalog updated 2026-10-19**. Search "Minior": Normal should be markable, Shiny should not.
+5. **When Claude reports done**, open https://dex.cjdev.app on your phone. Home should say **Catalog updated 2026-10-19**. Search "Minior": Normal should be markable, Shiny should not. Search "Brambleghast": Normal markable, Shiny not.
 6. **Also check the five small polish changes** (OK'd on Oct 11):
    - With your phone in light mode, a private tab opens CatchGrid light. Dark mode opens it dark.
    - The top-right search and appearance buttons show drawn icons.
@@ -30,8 +30,9 @@ Prepared October 10, 2026 by Claude on local branch `minior-2026-10-19`, on top 
 The catalog part is one release-ledger entry plus the tests that pinned the old state. The small app polish riding along is listed in its own section below. No migrations, artwork, schema or dependencies change.
 
 - `catalog/releases.v1.json`: **#774 Minior released 2026-10-19**: Normal, Lucky, 100%, XXL and XXS. **No Shiny**, Shadow or Purified (none announced). Minior is genderless.
+- `catalog/releases.v1.json`: **#947 Brambleghast released 2026-10-13** (obtainable by evolving Bramblin: 50 Candy, walk 20 km as buddy): Normal, Lucky, 100%, XXL and XXS, mirroring Bramblin. **No Shiny**, Shadow or Purified. This is added on Cody's 2026-10-15 decision with **community sources**: Niantic's Buddy Trek page does not mention Brambleghast. The record's `source` stays the official Bramblin page; the new optional `communitySources` field carries [Leek Duck](https://leekduck.com/events/fall-marathon-buddy-trek-2026/) and [Serebii](https://serebii.net/pokemongo/events/fallmarathon:buddytrek.shtml), which Sources & credits lists under Community references (never as official). `app/releases.js` validates the field (https links) and `catalog/README.md` documents it. Bramblin's own note now points to this entry instead of saying Brambleghast stays unreleased. Backups of the pre-change tips: `backup/minior-before-brambleghast-2026-10-15`, `backup/greavard-before-brambleghast-2026-10-15`.
 - The catalog keeps one default Minior representative. The October 15 source recheck says core colors debut across different showers; the first color and all-seven availability are not established. No color forms are added in this approved scope. The earlier claim that the colors were merely battle states was too broad.
-- Tests: `tests/unit/app-launch-catalog.test.ts` (Minior released without Shiny; import now accepts 6 of the original 73, 67 not eligible), `tests/e2e/catalog-feedback-app.spec.ts` (freshness shows `2026-10-19`; stale check moved to Nov 11) and `tests/e2e/app.spec.ts` (compare total **958**).
+- Tests: `tests/unit/app-launch-catalog.test.ts` (Minior released without Shiny; import now accepts 7 of the original 73 with Brambleghast, 66 not eligible), `tests/e2e/catalog-feedback-app.spec.ts` (freshness shows `2026-10-19`; stale check moved to Nov 11) and `tests/e2e/app.spec.ts` (compare total **958**).
 - Effect: "Catalog updated" becomes **2026-10-19**. The stale warning moves from about Nov 3 (after Bramblin) to the evening of **Nov 9** (UTC Nov 10).
 
 ## Polish riding along (owner OK through the PM chat, October 11)
@@ -74,7 +75,7 @@ From [the polish review](../../POLISH-REVIEW.md). These are small app changes in
 
 Use Command Prompt (`cmd`), not Windows PowerShell 5. From `D:\Projects\Pokemon\CatchGrid`:
 
-1. **Re-check the source.** Re-read the official post and confirm the Orionids dates haven't moved. Check pokemongo.com news for Shiny Minior. If it's announced, add it as its own dated entry with that link.
+1. **Re-check the source.** Re-read the official post and confirm the Orionids dates haven't moved. Check pokemongo.com news for Shiny Minior. If it's announced, add it as its own dated entry with that link. Also re-read the official Buddy Trek page and news for Brambleghast: if Niantic now documents (or contradicts) the evolution, update the #947 record and tell Cody.
 2. **Branch state.** Bramblin must be live and recorded on `prism-forward`. Rebase this branch onto `prism-forward` (only the Minior commits should move). `git status --short` should show only `?? CODEX-PLAN.md` and `?? evidence/`. Fast-forward `prism-forward` to the Minior commit. Never commit CODEX-PLAN.md.
 3. **Gates.** `pnpm.cmd run test` (all unit tests pass now, with no expected failure), `pnpm.cmd run lint`, `pnpm.cmd run validate:pokemon-data`, `pnpm.cmd run catalog:verify`. Then the full browser suite on clean Linux (WSL, `git archive` snapshot, as in the L4 record).
 4. **Build and dry run.** `pnpm.cmd run build:artifact`, then `pnpm.cmd exec wrangler deploy --dry-run --strict`.

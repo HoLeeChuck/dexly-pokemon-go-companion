@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import source from '../../catalog/catalog.v1.json';
 import ledger from '../../catalog/releases.v1.json';
-import { catalog } from '../../app/catalog.js';
+import { catalog, catalogSources } from '../../app/catalog.js';
 import { interpretSheets, readText } from '../../app/sheet.js';
 
 const species = (dex: number) => catalog.find((p) => p.isDefault && p.n === dex)!;
@@ -24,7 +24,7 @@ describe('the real launch catalog', () => {
     expect(ledger.entries.find((e) => e.dex === 848)?.date).toBe('2024-11-18');
   });
 
-  it('releases Bramblin from its October 13 debut without Shiny, and keeps Brambleghast unavailable', () => {
+  it('releases Bramblin from its October 13 debut without Shiny', () => {
     expect(species(946).rules).toMatchObject({
       normal: 'released',
       lucky: 'released',
@@ -35,10 +35,35 @@ describe('the real launch catalog', () => {
     for (const c of ['shiny', 'shadow', 'purified'] as const)
       expect(species(946).rules[c]).not.toBe('released');
     expect(ledger.entries.find((e) => e.dex === 946)?.date).toBe('2026-10-13');
-    expect(species(947).rules.normal).toBe('unreleased');
-    expect(species(947).rules.shiny).toBe('unreleased');
-    expect(species(947).rules.lucky).toBe('unreleased');
-    expect(ledger.entries.some((e) => e.dex === 947)).toBe(false);
+  });
+
+  it('releases Brambleghast by evolution on community sources, labelled as such, without Shiny', () => {
+    expect(species(947).rules).toMatchObject({
+      normal: 'released',
+      lucky: 'released',
+      hundo: 'released',
+      xxl: 'released',
+      xxs: 'released',
+    });
+    for (const c of ['shiny', 'shadow', 'purified'] as const)
+      expect(species(947).rules[c]).not.toBe('released');
+    const record = ledger.entries.find((e) => e.dex === 947) as {
+      date: string;
+      source: string;
+      communitySources?: string[];
+      note: string;
+    };
+    expect(record.date).toBe('2026-10-13');
+    // The official link is the Bramblin base-species page; the evolution rests on community pages.
+    expect(record.source).toBe('https://pokemongo.com/news/fall-marathon-buddy-trek-2026');
+    expect(record.communitySources).toEqual([
+      'https://leekduck.com/events/fall-marathon-buddy-trek-2026/',
+      'https://serebii.net/pokemongo/events/fallmarathon:buddytrek.shtml',
+    ]);
+    expect(record.note).toMatch(/does not mention Brambleghast/);
+    expect(record.note).toMatch(/Cody's 2026-10-15 decision/);
+    const community = catalogSources.filter((s) => s.kind === 'secondary').map((s) => s.url);
+    for (const url of record.communitySources!) expect(community).toContain(url);
   });
 
   it('releases Minior from its October 19 meteor-shower debut without Shiny', () => {
@@ -72,7 +97,7 @@ describe('the real launch catalog', () => {
     expect(species(866).rules.shiny).toBe('unreleased');
   });
 
-  it('imports only the six officially sourced species from the original 73', () => {
+  it('imports only the seven sourced species from the original 73', () => {
     expect(audited).toHaveLength(73);
     const rows = [
       'Number\tPokémon\tNormal',
@@ -80,12 +105,12 @@ describe('the real launch catalog', () => {
     ].join('\n');
     const { entries, summary } = interpretSheets(readText(rows), catalog);
     expect(entries.map((e) => e.formId).sort()).toEqual(
-      [774, 848, 854, 942, 943, 946].map((dex) => species(dex).id).sort(),
+      [774, 848, 854, 942, 943, 946, 947].map((dex) => species(dex).id).sort(),
     );
-    expect(summary.notEligible).toBe(67);
+    expect(summary.notEligible).toBe(66);
     expect(summary.notTracked).toBe(0);
     expect(summary.unmatched).toHaveLength(0);
-    expect(catalog.filter((p) => p.isDefault && p.rules.normal !== 'released')).toHaveLength(67);
+    expect(catalog.filter((p) => p.isDefault && p.rules.normal !== 'released')).toHaveLength(66);
   });
 
   it('carries October catch-ups through officially documented evolutions only', () => {

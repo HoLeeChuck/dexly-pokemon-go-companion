@@ -65,7 +65,8 @@ for (const engineName of engines) {
         const checks = [
           ['Bramblin', 'normal', true],
           ['Bramblin', 'shiny', false],
-          ['Brambleghast', 'normal', false],
+          ['Brambleghast', 'normal', stage !== 'bramblin'],
+          ['Brambleghast', 'shiny', false],
           ['Shroodle', 'shiny', true],
           ['Grafaiai', 'shiny', true],
           ...['Zekrom', 'Wimpod', 'Fomantis', 'Sandygast', 'Golisopod', 'Palossand'].flatMap(

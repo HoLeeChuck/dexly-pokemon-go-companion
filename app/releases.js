@@ -56,6 +56,13 @@ const isOfficial = (url) => {
     return false;
   }
 };
+const isHttps = (url) => {
+  try {
+    return new URL(url).protocol === 'https:';
+  } catch {
+    return false;
+  }
+};
 const targets = (entry, forms) =>
   entry.formId
     ? forms.filter((p) => p.formId === entry.formId)
@@ -67,6 +74,12 @@ function checkDateAndSource(entry, at, todayKey, errors) {
   else if (entry.date > todayKey) errors.push(`${at}: date ${entry.date} is in the future.`);
   if (!isOfficial(entry?.source))
     errors.push(`${at}: source must be an https link on ${OFFICIAL_HOSTS.join(', ')}.`);
+  // Optional community references: shown as such, never a substitute for the official `source`.
+  if (entry?.communitySources !== undefined) {
+    const list = entry.communitySources;
+    if (!Array.isArray(list) || !list.length || !list.every(isHttps))
+      errors.push(`${at}: communitySources must be a list of https links.`);
+  }
 }
 
 /** Problems with the ledger, as readable messages. An empty list means it is valid. */
@@ -203,13 +216,19 @@ function artworkAssets(base, artwork) {
   };
 }
 
-/** The ledger's official links, in the catalog's source format, for Sources & credits. */
+/**
+ * The ledger's links, in the catalog's source format, for Sources & credits: each entry's
+ * official link, plus any `communitySources` labelled as community (secondary) references.
+ */
 export function ledgerSources(ledger) {
-  return [...(ledger?.forms ?? []), ...(ledger?.entries ?? [])].map((entry, i) => ({
-    key: `release-ledger-${i}`,
-    kind: 'official',
-    url: entry.source,
-  }));
+  return [...(ledger?.forms ?? []), ...(ledger?.entries ?? [])].flatMap((entry, i) => [
+    { key: `release-ledger-${i}`, kind: 'official', url: entry.source },
+    ...(entry.communitySources ?? []).map((url, j) => ({
+      key: `release-ledger-${i}-community-${j}`,
+      kind: 'secondary',
+      url,
+    })),
+  ]);
 }
 
 /** The newest entry or form date, or null when the ledger is empty. */

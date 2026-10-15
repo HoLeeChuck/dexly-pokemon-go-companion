@@ -32,6 +32,7 @@ When Niantic announces a debut (a new species, a Shiny, a Shadow, …), add one 
 - `dex` for the default species, or `formId` (for example `form-0052-galar`) for one form.
 - `categories`: any of `normal`, `shiny`, `lucky`, `hundo`, `xxl`, `xxs`, `shadow`, `purified`. Male and Female follow Normal and `genders.v1.json` automatically.
 - `source`: an official https link (pokemongo.com, niantic.helpshift.com, nianticlabs.com, pokemon.com). Community sites are not accepted here.
+- `communitySources` (optional): a list of https links to community references (Leek Duck, Serebii, …) for a record Niantic has not announced directly, such as an evolution inferred from a sourced base species. They never replace `source`; the app lists them under Community references in Sources & credits, and the `note` must say the record is community-sourced.
 - `status` (optional): `released` by default; `unreleased` or `ineligible` corrects an earlier mistake. When entries disagree, the newest date wins.
 
 `pnpm test` validates the ledger (tests/unit/app-releases.test.ts) and fails on a bad date, a non-official source, an unknown Pokémon or category, or a duplicate. Deploying publishes the change to everyone; each person’s collection is kept as is, and newly released cells simply become markable. The private `/cody` cloud catalog is still updated through migrations.
