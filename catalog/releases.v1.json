@@ -197,6 +197,34 @@
       "note": "Harvest Festival: Taken Over: Team GO Rocket has turned Sandygast into a Shadow Pokémon; defeat Grunts to save it. Purified follows the Shadow debut, as for every Shadow species in the catalog."
     },
     {
+      "date": "2026-10-02",
+      "dex": 945,
+      "categories": ["shiny"],
+      "source": "https://pokemongo.com/news/harvest-festival-tgr-2026",
+      "note": "Shiny Grafaiai follows the dated Shiny Shroodle debut by evolution, using the same sourced-evolution rule as Shiny Polteageist and the Applin family. The official evolution (50 Shroodle Candy) is documented at https://pokemongo.com/news/fashion-week-taken-over-by-TGR. This is a supported evolution inference, not a direct Grafaiai announcement. Rechecked 2026-10-15."
+    },
+    {
+      "date": "2026-10-02",
+      "dex": 768,
+      "categories": ["shadow", "purified"],
+      "source": "https://pokemongo.com/news/harvest-festival-tgr-2026",
+      "note": "Shadow Golisopod follows the dated Shadow Wimpod debut and its officially documented 400 Candy evolution at https://pokemongo.com/news/Pokemon-TCG-Crossover-Event. Purified follows the catalog's paired Shadow rule. This is a sourced evolution inference; the takeover post names Wimpod directly. Rechecked 2026-10-15."
+    },
+    {
+      "date": "2026-10-02",
+      "dex": 770,
+      "categories": ["shadow", "purified"],
+      "source": "https://pokemongo.com/news/harvest-festival-tgr-2026",
+      "note": "Shadow Palossand follows the dated Shadow Sandygast debut and its officially documented 50 Candy evolution at https://pokemongo.com/news/water-festival-2023. Purified follows the catalog's paired Shadow rule. This is a sourced evolution inference; the takeover post names Sandygast directly. Rechecked 2026-10-15."
+    },
+    {
+      "date": "2026-10-03",
+      "formId": "form-0815-gigantamax",
+      "categories": ["shiny"],
+      "source": "https://pokemongo.com/news/gigantamax-cinderace-max-battle-day-2026",
+      "note": "Shiny Gigantamax Cinderace debuted during Max Battle Day, October 3, 2026, 2:00-5:00 p.m. local time. The existing catalog already enables this category; this entry records its official debut date and provenance without changing availability. Rechecked 2026-10-15."
+    },
+    {
       "date": "2026-10-13",
       "dex": 946,
       "categories": ["normal", "lucky", "hundo", "xxl", "xxs"],

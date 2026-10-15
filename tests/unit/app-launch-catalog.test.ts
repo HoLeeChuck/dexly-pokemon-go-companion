@@ -74,4 +74,31 @@ describe('the real launch catalog', () => {
     expect(summary.unmatched).toHaveLength(0);
     expect(catalog.filter((p) => p.isDefault && p.rules.normal !== 'released')).toHaveLength(68);
   });
+
+  it('carries October catch-ups through officially documented evolutions only', () => {
+    expect(species(945).rules.shiny).toBe('released');
+    expect(ledger.entries.find((e) => e.dex === 945)?.date).toBe('2026-10-02');
+    for (const dex of [768, 770]) {
+      expect(species(dex).rules).toMatchObject({ shadow: 'released', purified: 'released' });
+      expect(ledger.entries.find((e) => e.dex === dex)?.date).toBe('2026-10-02');
+    }
+    // Lurantis needs an official GO evolution source, not just a shared event list.
+    expect(species(754).rules.shadow).not.toBe('released');
+    expect(species(754).rules.purified).not.toBe('released');
+    expect(species(945).rules.shadow).not.toBe('released');
+    expect(species(132).rules.shadow).not.toBe('released');
+  });
+
+  it('dates the existing Gigantamax Cinderace shiny without widening form categories', () => {
+    const cinderace = catalog.find((p) => p.id === 'form-0815-gigantamax')!;
+    expect(cinderace.rules).toMatchObject({
+      normal: 'released',
+      shiny: 'released',
+      shadow: 'ineligible',
+      purified: 'ineligible',
+    });
+    expect(ledger.entries.find((e) => 'formId' in e && e.formId === cinderace.id)?.date).toBe(
+      '2026-10-03',
+    );
+  });
 });
