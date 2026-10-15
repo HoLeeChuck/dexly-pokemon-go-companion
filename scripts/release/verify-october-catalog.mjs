@@ -52,6 +52,9 @@ for (const engineName of engines) {
               await expect(page.locator('main')).toContainText(`Catalog updated ${dates[stage]}`);
             if (route === 'progress')
               await page.getByLabel('Search Pokémon', { exact: true }).fill('Bramblin');
+            await page.evaluate(() =>
+              document.documentElement.scrollTo({ top: 0, behavior: 'instant' }),
+            );
             await page.screenshot({
               path: resolve(output, `${engineName}-${size}-${theme}-${route}.png`),
               fullPage: true,
@@ -102,7 +105,9 @@ for (const engineName of engines) {
             .evaluate((el) => getComputedStyle(el, '::before').content),
         ).toBe('"● "');
         await page.locator('.hud-readout h3').click();
-        await page.locator('.hud-stage').scrollIntoViewIfNeeded();
+        await page.evaluate(() =>
+          document.documentElement.scrollTo({ top: 0, behavior: 'instant' }),
+        );
         await page.screenshot({
           path: resolve(output, `${engineName}-${size}-registered-bramblin.png`),
           fullPage: true,

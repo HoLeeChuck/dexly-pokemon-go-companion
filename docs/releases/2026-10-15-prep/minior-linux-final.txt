@@ -1,0 +1,357 @@
+Evidence directory: /tmp/catchgrid-browser-LPjZiK
+v24.19.0
+11.21.0
+✓ Lockfile passes supply-chain policies (verified 16d ago)
+Lockfile is up to date, resolution step is skipped
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Packages: +220
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Packages are copied from the content-addressable store to the virtual store.
+  Content-addressable store is at: /tmp/.pnpm-store/v11
+  Virtual store is at:             node_modules/.pnpm
+Progress: resolved 220, reused 0, downloaded 185, added 185
+Progress: resolved 220, reused 0, downloaded 214, added 214
+Progress: resolved 220, reused 0, downloaded 220, added 220, done
+.../node_modules/workerd postinstall$ node install.js
+.../esbuild@0.28.2/node_modules/esbuild postinstall$ node install.js
+.../esbuild@0.28.1/node_modules/esbuild postinstall$ node install.js
+.../node_modules/workerd postinstall: Done
+.../esbuild@0.28.2/node_modules/esbuild postinstall: Done
+.../esbuild@0.28.1/node_modules/esbuild postinstall: Done
+
+dependencies:
++ react 19.2.8
++ react-dom 19.2.8
+
+devDependencies:
++ @axe-core/playwright 4.12.1
++ @cloudflare/vite-plugin 1.51.2
++ @cloudflare/vitest-pool-workers 0.21.0
++ @eslint/js 10.0.1
++ @playwright/test 1.62.1
++ @types/node 22.20.1
++ @types/react 19.2.18
++ @types/react-dom 19.2.4
++ @vitejs/plugin-react 6.0.5
++ eslint 10.8.1
++ eslint-plugin-react-hooks 7.1.1
++ eslint-plugin-react-refresh 0.5.4
++ globals 17.9.0
++ prettier 3.9.6
++ typescript 6.0.3
++ typescript-eslint 8.67.0
++ vite 8.2.1
++ vitest 4.1.10
++ wrangler 4.120.1
+
+Done in 4.3s using pnpm v11.21.0
+✓ Lockfile passes supply-chain policies (verified 16d ago)
+Lockfile is up to date, resolution step is skipped
+Already up to date
+
+Done in 2.6s using pnpm v11.21.0
+$ playwright test
+[WebServer] [plugin builtin:vite-reporter] 
+[WebServer] (!) Some chunks are larger than 500 kB after minification. Consider:
+[WebServer] - Using dynamic import() to code-split the application
+[WebServer] - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+[WebServer] - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+
+
+Running 293 tests using 4 workers
+
+[1/293] [mobile-chromium] › tests/e2e/accessibility.spec.ts:14:3 › dex has no serious automatically detectable accessibility violations
+[2/293] [mobile-chromium] › tests/e2e/accessibility.spec.ts:14:3 › progress has no serious automatically detectable accessibility violations
+[3/293] [mobile-chromium] › tests/e2e/accessibility.spec.ts:14:3 › dex?r=kanto has no serious automatically detectable accessibility violations
+[4/293] [mobile-chromium] › tests/e2e/accessibility.spec.ts:14:3 › home has no serious automatically detectable accessibility violations
+[5/293] [mobile-chromium] › tests/e2e/accessibility.spec.ts:14:3 › search has no serious automatically detectable accessibility violations
+[6/293] [mobile-chromium] › tests/e2e/accessibility.spec.ts:14:3 › search?section=recommended-searches has no serious automatically detectable accessibility violations
+[7/293] [mobile-chromium] › tests/e2e/accessibility.spec.ts:14:3 › settings has no serious automatically detectable accessibility violations
+[8/293] [mobile-chromium] › tests/e2e/accessibility.spec.ts:14:3 › about has no serious automatically detectable accessibility violations
+[9/293] [mobile-chromium] › tests/e2e/accessibility.spec.ts:28:1 › the Progress grid is a single tab stop with arrow-key movement
+[10/293] [mobile-chromium] › tests/e2e/app.spec.ts:32:1 › returning Home has recent artwork, medal partners and an accessible responsive heatmap
+[11/293] [mobile-chromium] › tests/e2e/app.spec.ts:91:1 › almost-complete cards show missing categories and open details without modifying ownership
+[12/293] [mobile-chromium] › tests/e2e/app.spec.ts:126:1 › medal partners fill with the earned tier and weekly artwork disappears for old entries
+[13/293] [mobile-chromium] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[14/293] [mobile-chromium] › tests/e2e/app.spec.ts:199:1 › first-run backup action focuses the existing reviewed import and restores the dashboard
+[15/293] [mobile-chromium] › tests/e2e/app.spec.ts:231:1 › first-run parade is static and full colour with reduced motion in both themes
+[16/293] [mobile-chromium] › tests/e2e/app.spec.ts:247:1 › the first marked catch switches Home to the dashboard and removing it restores onboarding
+[17/293] [mobile-chromium] › tests/e2e/app.spec.ts:260:1 › marks a Pokémon from the Dex grid and keeps it after reload
+[18/293] [mobile-chromium] › tests/e2e/app.spec.ts:274:1 › viewing details never changes collection state
+[19/293] [mobile-chromium] › tests/e2e/app.spec.ts:283:1 › the Pokédex shelf opens a region device with a working scanner
+[20/293] [mobile-chromium] › tests/e2e/app.spec.ts:303:1 › the National Dex grid is paged instead of one endless list
+[21/293] [mobile-chromium] › tests/e2e/app.spec.ts:311:1 › the footer links to sources and credits
+[22/293] [mobile-chromium] › tests/e2e/app.spec.ts:318:1 › Search Lab keeps Cody’s eight recommendations in order
+[23/293] [mobile-chromium] › tests/e2e/app.spec.ts:333:1 › Discord output stays within the message limit
+[24/293] [mobile-chromium] › tests/e2e/app.spec.ts:341:1 › builder composes an exact query without touching the collection
+[25/293] [mobile-chromium] › tests/e2e/app.spec.ts:350:1 › dragging down a grid column fills a range in one save and can be undone
+[26/293] [mobile-chromium] › tests/e2e/app.spec.ts:372:1 › the grid marks cells by click and keyboard and updates the search string
+[27/293] [mobile-chromium] › tests/e2e/app.spec.ts:406:1 › Progress fits the window with equal-width category columns
+[28/293] [mobile-chromium] › tests/e2e/app.spec.ts:419:1 › a name in the grid opens details without changing the collection
+[29/293] [mobile-chromium] › tests/e2e/app.spec.ts:429:1 › the Home dashboard shows rings, the region heatmap and activity
+[30/293] [mobile-chromium] › tests/e2e/app.spec.ts:447:1 › rows pasted from the community spreadsheet are reviewed, then added
+[31/293] [mobile-chromium] › tests/e2e/app.spec.ts:482:1 › the collection downloads as the community spreadsheet
+[32/293] [mobile-chromium] › tests/e2e/app.spec.ts:492:1 › medals, poster and compare link are available on Home
+[33/293] [mobile-chromium] › tests/e2e/app.spec.ts:506:1 › a compare link shows who can help whom
+[34/293] [mobile-chromium] › tests/e2e/app.spec.ts:516:1 › a compare link is shown for manual copy when the clipboard is unavailable
+[35/293] [mobile-chromium] › tests/e2e/app.spec.ts:531:1 › quick jump opens a Pokémon from anywhere
+[36/293] [mobile-chromium] › tests/e2e/app.spec.ts:541:1 › bulk region setup asks before changing anything
+[37/293] [mobile-chromium] › tests/e2e/app.spec.ts:549:1 › retired and unknown routes fall back to Home
+[38/293] [mobile-chromium] › tests/e2e/app.spec.ts:556:1 › no horizontal overflow on any destination
+[39/293] [mobile-chromium] › tests/e2e/catalog-feedback-app.spec.ts:42:1 › L2 details report copies the edited draft exactly, stays local and supports keyboard access
+[40/293] [mobile-chromium] › tests/e2e/catalog-feedback-app.spec.ts:86:1 › L2 alternate form context and clipboard-denied fallback stay inside the details sheet
+[41/293] [mobile-chromium] › tests/e2e/catalog-feedback-app.spec.ts:111:1 › L2 Sources report and Dex scanner report remain accessible in both themes
+[42/293] [mobile-chromium] › tests/e2e/catalog-feedback-app.spec.ts:140:1 › L3 skipped cells offer the L2 report with the skipped category and preserve reviewed import
+[43/293] [mobile-chromium] › tests/e2e/catalog-feedback-app.spec.ts:177:1 › 300 skipped cells render one editable report grouped by category without losing cells
+[44/293] [mobile-chromium] › tests/e2e/catalog-feedback-app.spec.ts:206:1 › L2 freshness appears on both Home states and the Dex shelf, with the stale phone budget intact
+[45/293] [mobile-chromium] › tests/e2e/data-safety-app.spec.ts:59:1 › F1 backup threshold, dismissal, reload and JSON export preserve the collection
+[46/293] [mobile-chromium] › tests/e2e/data-safety-app.spec.ts:89:1 › F1 a small changed collection waits seven days and an unchanged export never nags
+[47/293] [mobile-chromium] › tests/e2e/data-safety-app.spec.ts:110:3 › F1 csv export clears the reminder without changing the collection
+[48/293] [mobile-chromium] › tests/e2e/data-safety-app.spec.ts:110:3 › F1 xlsx export clears the reminder without changing the collection
+[49/293] [mobile-chromium] › tests/e2e/data-safety-app.spec.ts:126:1 › F1 failed export leaves the reminder and collection intact
+[50/293] [mobile-chromium] › tests/e2e/data-safety-app.spec.ts:141:1 › F1 persistence is requested once at the tenth entry and Settings reports the grant
+[51/293] [mobile-chromium] › tests/e2e/data-safety-app.spec.ts:164:3 › F1 persistence no is harmless and displays no
+[52/293] [mobile-chromium] › tests/e2e/data-safety-app.spec.ts:164:3 › F1 persistence error is harmless and displays no
+[53/293] [mobile-chromium] › tests/e2e/data-safety-app.spec.ts:164:3 › F1 persistence unsupported is harmless and displays no
+[54/293] [mobile-chromium] › tests/e2e/data-safety-app.spec.ts:182:1 › F1 iPhone install hint dismisses durably and never writes a collection
+[55/293] [mobile-chromium] › tests/e2e/data-safety-app.spec.ts:198:3 › F1 standalone navigator hides installation hints and links
+[56/293] [mobile-chromium] › tests/e2e/data-safety-app.spec.ts:198:3 › F1 standalone display-mode hides installation hints and links
+[57/293] [mobile-chromium] › tests/e2e/data-safety-app.spec.ts:225:1 › F1 Home stays within the phone budget with notices, with accessible controls in both themes
+[58/293] [mobile-chromium] › tests/e2e/encoding-app.spec.ts:4:1 › a registered scanner entry shows a clean status dot
+[59/293] [mobile-chromium] › tests/e2e/f2-app.spec.ts:30:1 › F2 phone categories, artwork, 44px targets, filters and search stay in sync
+[60/293] [mobile-chromium] › tests/e2e/f2-app.spec.ts:89:1 › F2 comparison and the 700px boundary preserve data, single tab stop and details
+[61/293] [mobile-chromium] › tests/e2e/f2-app.spec.ts:123:1 › F2 a fast phone drag saves one range with recovery and Undo
+[62/293] [mobile-chromium] › tests/e2e/f2-app.spec.ts:171:1 › F2 interrupted and second-pointer gestures never save; touch names still scroll
+[63/293] [mobile-chromium] › tests/e2e/f2-app.spec.ts:233:1 › F2 a failed drag save leaves the collection and toggle appearance unchanged
+[64/293] [mobile-chromium] › tests/e2e/f2-app.spec.ts:258:1 › F2 forms, long names, paging and both themes remain usable at 390px
+[65/293] [mobile-chromium] › tests/e2e/f2-app.spec.ts:305:1 › F2 social metadata matches the served 1200x630 PNG and Settings describes drag-fill
+[66/293] [mobile-chromium] › tests/e2e/navigation.app.spec.ts:4:1 › Dex cue is confined to empty Home and runs once per tab session
+[67/293] [mobile-chromium] › tests/e2e/navigation.app.spec.ts:40:1 › blocked session storage cannot break navigation or replay the Dex cue
+[68/293] [mobile-chromium] › tests/e2e/navigation.app.spec.ts:58:1 › returning Home never advertises the first-run Dex cue
+[69/293] [mobile-chromium] › tests/e2e/navigation.app.spec.ts:72:1 › phone destinations, keyboard access and Menu remain usable across the 700px boundary
+[70/293] [mobile-chromium] › tests/e2e/navigation.app.spec.ts:123:1 › a hidden Dex link does not consume its first-visit cue
+[71/293] [mobile-chromium] › tests/e2e/navigation.app.spec.ts:133:1 › phone dialogs and actionable toasts stay above the navigation
+[72/293] [mobile-chromium] › tests/e2e/polish-app.spec.ts:21:3 › first visit on a light-mode device › follows the device setting until the person chooses
+[73/293] [mobile-chromium] › tests/e2e/polish-app.spec.ts:35:1 › a dark-mode device still opens dark
+[74/293] [mobile-chromium] › tests/e2e/polish-app.spec.ts:44:1 › the Kanto scanner opens on Bulbasaur
+[75/293] [mobile-chromium] › tests/e2e/polish-app.spec.ts:50:1 › medals say how many species in their total are not in GO yet
+[76/293] [mobile-chromium] › tests/e2e/polish-app.spec.ts:64:1 › header icons are drawn, not text characters
+[77/293] [mobile-chromium] › tests/e2e/polish-app.spec.ts:73:1 › small phone controls have 44px tap areas
+[78/293] [desktop-chromium] › tests/e2e/accessibility.spec.ts:14:3 › home has no serious automatically detectable accessibility violations
+[79/293] [desktop-chromium] › tests/e2e/accessibility.spec.ts:14:3 › dex has no serious automatically detectable accessibility violations
+[80/293] [desktop-chromium] › tests/e2e/accessibility.spec.ts:14:3 › dex?r=kanto has no serious automatically detectable accessibility violations
+[81/293] [desktop-chromium] › tests/e2e/accessibility.spec.ts:14:3 › progress has no serious automatically detectable accessibility violations
+[82/293] [desktop-chromium] › tests/e2e/accessibility.spec.ts:14:3 › search has no serious automatically detectable accessibility violations
+[83/293] [desktop-chromium] › tests/e2e/accessibility.spec.ts:14:3 › search?section=recommended-searches has no serious automatically detectable accessibility violations
+[84/293] [desktop-chromium] › tests/e2e/accessibility.spec.ts:14:3 › settings has no serious automatically detectable accessibility violations
+[85/293] [desktop-chromium] › tests/e2e/accessibility.spec.ts:28:1 › the Progress grid is a single tab stop with arrow-key movement
+[86/293] [desktop-chromium] › tests/e2e/accessibility.spec.ts:14:3 › about has no serious automatically detectable accessibility violations
+[87/293] [desktop-chromium] › tests/e2e/app.spec.ts:32:1 › returning Home has recent artwork, medal partners and an accessible responsive heatmap
+[88/293] [desktop-chromium] › tests/e2e/app.spec.ts:91:1 › almost-complete cards show missing categories and open details without modifying ownership
+[89/293] [desktop-chromium] › tests/e2e/app.spec.ts:126:1 › medal partners fill with the earned tier and weekly artwork disappears for old entries
+[90/293] [desktop-chromium] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[91/293] [desktop-chromium] › tests/e2e/app.spec.ts:199:1 › first-run backup action focuses the existing reviewed import and restores the dashboard
+[92/293] [desktop-chromium] › tests/e2e/app.spec.ts:231:1 › first-run parade is static and full colour with reduced motion in both themes
+[93/293] [desktop-chromium] › tests/e2e/app.spec.ts:247:1 › the first marked catch switches Home to the dashboard and removing it restores onboarding
+[94/293] [desktop-chromium] › tests/e2e/app.spec.ts:260:1 › marks a Pokémon from the Dex grid and keeps it after reload
+[95/293] [desktop-chromium] › tests/e2e/app.spec.ts:274:1 › viewing details never changes collection state
+[96/293] [desktop-chromium] › tests/e2e/app.spec.ts:283:1 › the Pokédex shelf opens a region device with a working scanner
+[97/293] [desktop-chromium] › tests/e2e/app.spec.ts:303:1 › the National Dex grid is paged instead of one endless list
+[98/293] [desktop-chromium] › tests/e2e/app.spec.ts:311:1 › the footer links to sources and credits
+[99/293] [desktop-chromium] › tests/e2e/app.spec.ts:318:1 › Search Lab keeps Cody’s eight recommendations in order
+[100/293] [desktop-chromium] › tests/e2e/app.spec.ts:333:1 › Discord output stays within the message limit
+[101/293] [desktop-chromium] › tests/e2e/app.spec.ts:341:1 › builder composes an exact query without touching the collection
+[102/293] [desktop-chromium] › tests/e2e/app.spec.ts:350:1 › dragging down a grid column fills a range in one save and can be undone
+[103/293] [desktop-chromium] › tests/e2e/app.spec.ts:372:1 › the grid marks cells by click and keyboard and updates the search string
+[104/293] [desktop-chromium] › tests/e2e/app.spec.ts:406:1 › Progress fits the window with equal-width category columns
+[105/293] [desktop-chromium] › tests/e2e/app.spec.ts:419:1 › a name in the grid opens details without changing the collection
+[106/293] [desktop-chromium] › tests/e2e/app.spec.ts:429:1 › the Home dashboard shows rings, the region heatmap and activity
+[107/293] [desktop-chromium] › tests/e2e/app.spec.ts:447:1 › rows pasted from the community spreadsheet are reviewed, then added
+[108/293] [desktop-chromium] › tests/e2e/app.spec.ts:482:1 › the collection downloads as the community spreadsheet
+[109/293] [desktop-chromium] › tests/e2e/app.spec.ts:492:1 › medals, poster and compare link are available on Home
+[110/293] [desktop-chromium] › tests/e2e/app.spec.ts:506:1 › a compare link shows who can help whom
+[111/293] [desktop-chromium] › tests/e2e/app.spec.ts:516:1 › a compare link is shown for manual copy when the clipboard is unavailable
+[112/293] [desktop-chromium] › tests/e2e/app.spec.ts:531:1 › quick jump opens a Pokémon from anywhere
+[113/293] [desktop-chromium] › tests/e2e/app.spec.ts:541:1 › bulk region setup asks before changing anything
+[114/293] [desktop-chromium] › tests/e2e/app.spec.ts:549:1 › retired and unknown routes fall back to Home
+[115/293] [desktop-chromium] › tests/e2e/app.spec.ts:556:1 › no horizontal overflow on any destination
+[116/293] [desktop-chromium] › tests/e2e/catalog-feedback-app.spec.ts:42:1 › L2 details report copies the edited draft exactly, stays local and supports keyboard access
+[117/293] [desktop-chromium] › tests/e2e/catalog-feedback-app.spec.ts:86:1 › L2 alternate form context and clipboard-denied fallback stay inside the details sheet
+[118/293] [desktop-chromium] › tests/e2e/catalog-feedback-app.spec.ts:111:1 › L2 Sources report and Dex scanner report remain accessible in both themes
+[119/293] [desktop-chromium] › tests/e2e/catalog-feedback-app.spec.ts:140:1 › L3 skipped cells offer the L2 report with the skipped category and preserve reviewed import
+[120/293] [desktop-chromium] › tests/e2e/catalog-feedback-app.spec.ts:177:1 › 300 skipped cells render one editable report grouped by category without losing cells
+[121/293] [desktop-chromium] › tests/e2e/catalog-feedback-app.spec.ts:206:1 › L2 freshness appears on both Home states and the Dex shelf, with the stale phone budget intact
+[122/293] [desktop-chromium] › tests/e2e/data-safety-app.spec.ts:59:1 › F1 backup threshold, dismissal, reload and JSON export preserve the collection
+[123/293] [desktop-chromium] › tests/e2e/data-safety-app.spec.ts:89:1 › F1 a small changed collection waits seven days and an unchanged export never nags
+[124/293] [desktop-chromium] › tests/e2e/data-safety-app.spec.ts:110:3 › F1 csv export clears the reminder without changing the collection
+[125/293] [desktop-chromium] › tests/e2e/data-safety-app.spec.ts:110:3 › F1 xlsx export clears the reminder without changing the collection
+[126/293] [desktop-chromium] › tests/e2e/data-safety-app.spec.ts:126:1 › F1 failed export leaves the reminder and collection intact
+[127/293] [desktop-chromium] › tests/e2e/data-safety-app.spec.ts:141:1 › F1 persistence is requested once at the tenth entry and Settings reports the grant
+[128/293] [desktop-chromium] › tests/e2e/data-safety-app.spec.ts:164:3 › F1 persistence no is harmless and displays no
+[129/293] [desktop-chromium] › tests/e2e/data-safety-app.spec.ts:164:3 › F1 persistence error is harmless and displays no
+[130/293] [desktop-chromium] › tests/e2e/data-safety-app.spec.ts:164:3 › F1 persistence unsupported is harmless and displays no
+[131/293] [desktop-chromium] › tests/e2e/data-safety-app.spec.ts:182:1 › F1 iPhone install hint dismisses durably and never writes a collection
+[132/293] [desktop-chromium] › tests/e2e/data-safety-app.spec.ts:198:3 › F1 standalone navigator hides installation hints and links
+[133/293] [desktop-chromium] › tests/e2e/data-safety-app.spec.ts:198:3 › F1 standalone display-mode hides installation hints and links
+[134/293] [desktop-chromium] › tests/e2e/data-safety-app.spec.ts:225:1 › F1 Home stays within the phone budget with notices, with accessible controls in both themes
+[135/293] [desktop-chromium] › tests/e2e/encoding-app.spec.ts:4:1 › a registered scanner entry shows a clean status dot
+[136/293] [desktop-chromium] › tests/e2e/f2-app.spec.ts:30:1 › F2 phone categories, artwork, 44px targets, filters and search stay in sync
+[137/293] [desktop-chromium] › tests/e2e/f2-app.spec.ts:89:1 › F2 comparison and the 700px boundary preserve data, single tab stop and details
+[138/293] [desktop-chromium] › tests/e2e/f2-app.spec.ts:123:1 › F2 a fast phone drag saves one range with recovery and Undo
+[139/293] [desktop-chromium] › tests/e2e/f2-app.spec.ts:171:1 › F2 interrupted and second-pointer gestures never save; touch names still scroll
+[140/293] [desktop-chromium] › tests/e2e/f2-app.spec.ts:233:1 › F2 a failed drag save leaves the collection and toggle appearance unchanged
+[141/293] [desktop-chromium] › tests/e2e/f2-app.spec.ts:258:1 › F2 forms, long names, paging and both themes remain usable at 390px
+[142/293] [desktop-chromium] › tests/e2e/f2-app.spec.ts:305:1 › F2 social metadata matches the served 1200x630 PNG and Settings describes drag-fill
+[143/293] [desktop-chromium] › tests/e2e/navigation.app.spec.ts:4:1 › Dex cue is confined to empty Home and runs once per tab session
+[144/293] [desktop-chromium] › tests/e2e/navigation.app.spec.ts:40:1 › blocked session storage cannot break navigation or replay the Dex cue
+[145/293] [desktop-chromium] › tests/e2e/navigation.app.spec.ts:58:1 › returning Home never advertises the first-run Dex cue
+[146/293] [desktop-chromium] › tests/e2e/navigation.app.spec.ts:72:1 › phone destinations, keyboard access and Menu remain usable across the 700px boundary
+[147/293] [desktop-chromium] › tests/e2e/navigation.app.spec.ts:123:1 › a hidden Dex link does not consume its first-visit cue
+[148/293] [desktop-chromium] › tests/e2e/navigation.app.spec.ts:133:1 › phone dialogs and actionable toasts stay above the navigation
+[149/293] [desktop-chromium] › tests/e2e/polish-app.spec.ts:21:3 › first visit on a light-mode device › follows the device setting until the person chooses
+[150/293] [desktop-chromium] › tests/e2e/polish-app.spec.ts:35:1 › a dark-mode device still opens dark
+[151/293] [desktop-chromium] › tests/e2e/polish-app.spec.ts:44:1 › the Kanto scanner opens on Bulbasaur
+[152/293] [desktop-chromium] › tests/e2e/polish-app.spec.ts:50:1 › medals say how many species in their total are not in GO yet
+[153/293] [desktop-chromium] › tests/e2e/polish-app.spec.ts:64:1 › header icons are drawn, not text characters
+[154/293] [desktop-chromium] › tests/e2e/polish-app.spec.ts:73:1 › small phone controls have 44px tap areas
+[155/293] [mobile-webkit] › tests/e2e/app.spec.ts:32:1 › returning Home has recent artwork, medal partners and an accessible responsive heatmap
+[156/293] [mobile-webkit] › tests/e2e/app.spec.ts:91:1 › almost-complete cards show missing categories and open details without modifying ownership
+[157/293] [mobile-webkit] › tests/e2e/app.spec.ts:126:1 › medal partners fill with the earned tier and weekly artwork disappears for old entries
+[158/293] [mobile-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[159/293] [mobile-webkit] › tests/e2e/app.spec.ts:231:1 › first-run parade is static and full colour with reduced motion in both themes
+[160/293] [mobile-webkit] › tests/e2e/app.spec.ts:199:1 › first-run backup action focuses the existing reviewed import and restores the dashboard
+[161/293] [mobile-webkit] › tests/e2e/app.spec.ts:247:1 › the first marked catch switches Home to the dashboard and removing it restores onboarding
+[162/293] [mobile-webkit] › tests/e2e/app.spec.ts:260:1 › marks a Pokémon from the Dex grid and keeps it after reload
+[163/293] [mobile-webkit] › tests/e2e/app.spec.ts:274:1 › viewing details never changes collection state
+[164/293] [mobile-webkit] › tests/e2e/app.spec.ts:283:1 › the Pokédex shelf opens a region device with a working scanner
+[165/293] [mobile-webkit] › tests/e2e/app.spec.ts:303:1 › the National Dex grid is paged instead of one endless list
+[166/293] [mobile-webkit] › tests/e2e/app.spec.ts:311:1 › the footer links to sources and credits
+[167/293] [mobile-webkit] › tests/e2e/app.spec.ts:318:1 › Search Lab keeps Cody’s eight recommendations in order
+[168/293] [mobile-webkit] › tests/e2e/app.spec.ts:333:1 › Discord output stays within the message limit
+[169/293] [mobile-webkit] › tests/e2e/app.spec.ts:341:1 › builder composes an exact query without touching the collection
+[170/293] [mobile-webkit] › tests/e2e/app.spec.ts:350:1 › dragging down a grid column fills a range in one save and can be undone
+[171/293] [mobile-webkit] › tests/e2e/app.spec.ts:372:1 › the grid marks cells by click and keyboard and updates the search string
+[172/293] [mobile-webkit] › tests/e2e/app.spec.ts:406:1 › Progress fits the window with equal-width category columns
+[173/293] [mobile-webkit] › tests/e2e/app.spec.ts:419:1 › a name in the grid opens details without changing the collection
+[174/293] [mobile-webkit] › tests/e2e/app.spec.ts:429:1 › the Home dashboard shows rings, the region heatmap and activity
+[175/293] [mobile-webkit] › tests/e2e/app.spec.ts:447:1 › rows pasted from the community spreadsheet are reviewed, then added
+[176/293] [mobile-webkit] › tests/e2e/app.spec.ts:482:1 › the collection downloads as the community spreadsheet
+[177/293] [mobile-webkit] › tests/e2e/app.spec.ts:492:1 › medals, poster and compare link are available on Home
+[178/293] [mobile-webkit] › tests/e2e/app.spec.ts:506:1 › a compare link shows who can help whom
+[179/293] [mobile-webkit] › tests/e2e/app.spec.ts:516:1 › a compare link is shown for manual copy when the clipboard is unavailable
+[180/293] [mobile-webkit] › tests/e2e/app.spec.ts:531:1 › quick jump opens a Pokémon from anywhere
+[181/293] [mobile-webkit] › tests/e2e/app.spec.ts:541:1 › bulk region setup asks before changing anything
+[182/293] [mobile-webkit] › tests/e2e/app.spec.ts:549:1 › retired and unknown routes fall back to Home
+[183/293] [mobile-webkit] › tests/e2e/app.spec.ts:556:1 › no horizontal overflow on any destination
+[184/293] [mobile-webkit] › tests/e2e/catalog-feedback-app.spec.ts:42:1 › L2 details report copies the edited draft exactly, stays local and supports keyboard access
+[185/293] [mobile-webkit] › tests/e2e/catalog-feedback-app.spec.ts:86:1 › L2 alternate form context and clipboard-denied fallback stay inside the details sheet
+[186/293] [mobile-webkit] › tests/e2e/catalog-feedback-app.spec.ts:111:1 › L2 Sources report and Dex scanner report remain accessible in both themes
+[187/293] [mobile-webkit] › tests/e2e/catalog-feedback-app.spec.ts:140:1 › L3 skipped cells offer the L2 report with the skipped category and preserve reviewed import
+[188/293] [mobile-webkit] › tests/e2e/catalog-feedback-app.spec.ts:177:1 › 300 skipped cells render one editable report grouped by category without losing cells
+[189/293] [mobile-webkit] › tests/e2e/catalog-feedback-app.spec.ts:206:1 › L2 freshness appears on both Home states and the Dex shelf, with the stale phone budget intact
+[190/293] [mobile-webkit] › tests/e2e/data-safety-app.spec.ts:59:1 › F1 backup threshold, dismissal, reload and JSON export preserve the collection
+[191/293] [mobile-webkit] › tests/e2e/data-safety-app.spec.ts:89:1 › F1 a small changed collection waits seven days and an unchanged export never nags
+[192/293] [mobile-webkit] › tests/e2e/data-safety-app.spec.ts:110:3 › F1 csv export clears the reminder without changing the collection
+[193/293] [mobile-webkit] › tests/e2e/data-safety-app.spec.ts:110:3 › F1 xlsx export clears the reminder without changing the collection
+[194/293] [mobile-webkit] › tests/e2e/data-safety-app.spec.ts:126:1 › F1 failed export leaves the reminder and collection intact
+[195/293] [mobile-webkit] › tests/e2e/data-safety-app.spec.ts:141:1 › F1 persistence is requested once at the tenth entry and Settings reports the grant
+[196/293] [mobile-webkit] › tests/e2e/data-safety-app.spec.ts:164:3 › F1 persistence no is harmless and displays no
+[197/293] [mobile-webkit] › tests/e2e/data-safety-app.spec.ts:164:3 › F1 persistence error is harmless and displays no
+[198/293] [mobile-webkit] › tests/e2e/data-safety-app.spec.ts:164:3 › F1 persistence unsupported is harmless and displays no
+[199/293] [mobile-webkit] › tests/e2e/data-safety-app.spec.ts:182:1 › F1 iPhone install hint dismisses durably and never writes a collection
+[200/293] [mobile-webkit] › tests/e2e/data-safety-app.spec.ts:198:3 › F1 standalone navigator hides installation hints and links
+[201/293] [mobile-webkit] › tests/e2e/data-safety-app.spec.ts:198:3 › F1 standalone display-mode hides installation hints and links
+[202/293] [mobile-webkit] › tests/e2e/data-safety-app.spec.ts:225:1 › F1 Home stays within the phone budget with notices, with accessible controls in both themes
+[203/293] [mobile-webkit] › tests/e2e/encoding-app.spec.ts:4:1 › a registered scanner entry shows a clean status dot
+[204/293] [mobile-webkit] › tests/e2e/f2-app.spec.ts:30:1 › F2 phone categories, artwork, 44px targets, filters and search stay in sync
+[205/293] [mobile-webkit] › tests/e2e/f2-app.spec.ts:89:1 › F2 comparison and the 700px boundary preserve data, single tab stop and details
+[206/293] [mobile-webkit] › tests/e2e/f2-app.spec.ts:123:1 › F2 a fast phone drag saves one range with recovery and Undo
+[207/293] [mobile-webkit] › tests/e2e/f2-app.spec.ts:171:1 › F2 interrupted and second-pointer gestures never save; touch names still scroll
+[208/293] [mobile-webkit] › tests/e2e/f2-app.spec.ts:233:1 › F2 a failed drag save leaves the collection and toggle appearance unchanged
+[209/293] [mobile-webkit] › tests/e2e/f2-app.spec.ts:258:1 › F2 forms, long names, paging and both themes remain usable at 390px
+[210/293] [mobile-webkit] › tests/e2e/f2-app.spec.ts:305:1 › F2 social metadata matches the served 1200x630 PNG and Settings describes drag-fill
+[211/293] [mobile-webkit] › tests/e2e/navigation.app.spec.ts:4:1 › Dex cue is confined to empty Home and runs once per tab session
+[212/293] [mobile-webkit] › tests/e2e/navigation.app.spec.ts:40:1 › blocked session storage cannot break navigation or replay the Dex cue
+[213/293] [mobile-webkit] › tests/e2e/navigation.app.spec.ts:58:1 › returning Home never advertises the first-run Dex cue
+[214/293] [mobile-webkit] › tests/e2e/navigation.app.spec.ts:72:1 › phone destinations, keyboard access and Menu remain usable across the 700px boundary
+[215/293] [mobile-webkit] › tests/e2e/navigation.app.spec.ts:123:1 › a hidden Dex link does not consume its first-visit cue
+[216/293] [mobile-webkit] › tests/e2e/navigation.app.spec.ts:133:1 › phone dialogs and actionable toasts stay above the navigation
+[217/293] [mobile-webkit] › tests/e2e/polish-app.spec.ts:21:3 › first visit on a light-mode device › follows the device setting until the person chooses
+[218/293] [mobile-webkit] › tests/e2e/polish-app.spec.ts:35:1 › a dark-mode device still opens dark
+[219/293] [mobile-webkit] › tests/e2e/polish-app.spec.ts:44:1 › the Kanto scanner opens on Bulbasaur
+[220/293] [mobile-webkit] › tests/e2e/polish-app.spec.ts:50:1 › medals say how many species in their total are not in GO yet
+[221/293] [mobile-webkit] › tests/e2e/polish-app.spec.ts:64:1 › header icons are drawn, not text characters
+[222/293] [mobile-webkit] › tests/e2e/polish-app.spec.ts:73:1 › small phone controls have 44px tap areas
+[223/293] [desktop-webkit] › tests/e2e/app.spec.ts:32:1 › returning Home has recent artwork, medal partners and an accessible responsive heatmap
+[224/293] [desktop-webkit] › tests/e2e/app.spec.ts:91:1 › almost-complete cards show missing categories and open details without modifying ownership
+[225/293] [desktop-webkit] › tests/e2e/app.spec.ts:126:1 › medal partners fill with the earned tier and weekly artwork disappears for old entries
+[226/293] [desktop-webkit] › tests/e2e/app.spec.ts:157:1 › first-run Home introduces the app without empty progress and has a logical tab order
+[227/293] [desktop-webkit] › tests/e2e/app.spec.ts:199:1 › first-run backup action focuses the existing reviewed import and restores the dashboard
+[228/293] [desktop-webkit] › tests/e2e/app.spec.ts:231:1 › first-run parade is static and full colour with reduced motion in both themes
+[229/293] [desktop-webkit] › tests/e2e/app.spec.ts:247:1 › the first marked catch switches Home to the dashboard and removing it restores onboarding
+[230/293] [desktop-webkit] › tests/e2e/app.spec.ts:260:1 › marks a Pokémon from the Dex grid and keeps it after reload
+[231/293] [desktop-webkit] › tests/e2e/app.spec.ts:274:1 › viewing details never changes collection state
+[232/293] [desktop-webkit] › tests/e2e/app.spec.ts:283:1 › the Pokédex shelf opens a region device with a working scanner
+[233/293] [desktop-webkit] › tests/e2e/app.spec.ts:303:1 › the National Dex grid is paged instead of one endless list
+[234/293] [desktop-webkit] › tests/e2e/app.spec.ts:311:1 › the footer links to sources and credits
+[235/293] [desktop-webkit] › tests/e2e/app.spec.ts:318:1 › Search Lab keeps Cody’s eight recommendations in order
+[236/293] [desktop-webkit] › tests/e2e/app.spec.ts:333:1 › Discord output stays within the message limit
+[237/293] [desktop-webkit] › tests/e2e/app.spec.ts:341:1 › builder composes an exact query without touching the collection
+[238/293] [desktop-webkit] › tests/e2e/app.spec.ts:350:1 › dragging down a grid column fills a range in one save and can be undone
+[239/293] [desktop-webkit] › tests/e2e/app.spec.ts:372:1 › the grid marks cells by click and keyboard and updates the search string
+[240/293] [desktop-webkit] › tests/e2e/app.spec.ts:406:1 › Progress fits the window with equal-width category columns
+[241/293] [desktop-webkit] › tests/e2e/app.spec.ts:419:1 › a name in the grid opens details without changing the collection
+[242/293] [desktop-webkit] › tests/e2e/app.spec.ts:429:1 › the Home dashboard shows rings, the region heatmap and activity
+[243/293] [desktop-webkit] › tests/e2e/app.spec.ts:447:1 › rows pasted from the community spreadsheet are reviewed, then added
+[244/293] [desktop-webkit] › tests/e2e/app.spec.ts:482:1 › the collection downloads as the community spreadsheet
+[245/293] [desktop-webkit] › tests/e2e/app.spec.ts:492:1 › medals, poster and compare link are available on Home
+[246/293] [desktop-webkit] › tests/e2e/app.spec.ts:506:1 › a compare link shows who can help whom
+[247/293] [desktop-webkit] › tests/e2e/app.spec.ts:516:1 › a compare link is shown for manual copy when the clipboard is unavailable
+[248/293] [desktop-webkit] › tests/e2e/app.spec.ts:531:1 › quick jump opens a Pokémon from anywhere
+[249/293] [desktop-webkit] › tests/e2e/app.spec.ts:541:1 › bulk region setup asks before changing anything
+[250/293] [desktop-webkit] › tests/e2e/app.spec.ts:549:1 › retired and unknown routes fall back to Home
+[251/293] [desktop-webkit] › tests/e2e/app.spec.ts:556:1 › no horizontal overflow on any destination
+[252/293] [desktop-webkit] › tests/e2e/catalog-feedback-app.spec.ts:42:1 › L2 details report copies the edited draft exactly, stays local and supports keyboard access
+[253/293] [desktop-webkit] › tests/e2e/catalog-feedback-app.spec.ts:86:1 › L2 alternate form context and clipboard-denied fallback stay inside the details sheet
+[254/293] [desktop-webkit] › tests/e2e/catalog-feedback-app.spec.ts:111:1 › L2 Sources report and Dex scanner report remain accessible in both themes
+[255/293] [desktop-webkit] › tests/e2e/catalog-feedback-app.spec.ts:140:1 › L3 skipped cells offer the L2 report with the skipped category and preserve reviewed import
+[256/293] [desktop-webkit] › tests/e2e/catalog-feedback-app.spec.ts:177:1 › 300 skipped cells render one editable report grouped by category without losing cells
+[257/293] [desktop-webkit] › tests/e2e/catalog-feedback-app.spec.ts:206:1 › L2 freshness appears on both Home states and the Dex shelf, with the stale phone budget intact
+[258/293] [desktop-webkit] › tests/e2e/data-safety-app.spec.ts:59:1 › F1 backup threshold, dismissal, reload and JSON export preserve the collection
+[259/293] [desktop-webkit] › tests/e2e/data-safety-app.spec.ts:89:1 › F1 a small changed collection waits seven days and an unchanged export never nags
+[260/293] [desktop-webkit] › tests/e2e/data-safety-app.spec.ts:110:3 › F1 csv export clears the reminder without changing the collection
+[261/293] [desktop-webkit] › tests/e2e/data-safety-app.spec.ts:110:3 › F1 xlsx export clears the reminder without changing the collection
+[262/293] [desktop-webkit] › tests/e2e/data-safety-app.spec.ts:126:1 › F1 failed export leaves the reminder and collection intact
+[263/293] [desktop-webkit] › tests/e2e/data-safety-app.spec.ts:141:1 › F1 persistence is requested once at the tenth entry and Settings reports the grant
+[264/293] [desktop-webkit] › tests/e2e/data-safety-app.spec.ts:164:3 › F1 persistence no is harmless and displays no
+[265/293] [desktop-webkit] › tests/e2e/data-safety-app.spec.ts:164:3 › F1 persistence error is harmless and displays no
+[266/293] [desktop-webkit] › tests/e2e/data-safety-app.spec.ts:164:3 › F1 persistence unsupported is harmless and displays no
+[267/293] [desktop-webkit] › tests/e2e/data-safety-app.spec.ts:182:1 › F1 iPhone install hint dismisses durably and never writes a collection
+[268/293] [desktop-webkit] › tests/e2e/data-safety-app.spec.ts:198:3 › F1 standalone navigator hides installation hints and links
+[269/293] [desktop-webkit] › tests/e2e/data-safety-app.spec.ts:198:3 › F1 standalone display-mode hides installation hints and links
+[270/293] [desktop-webkit] › tests/e2e/data-safety-app.spec.ts:225:1 › F1 Home stays within the phone budget with notices, with accessible controls in both themes
+[271/293] [desktop-webkit] › tests/e2e/encoding-app.spec.ts:4:1 › a registered scanner entry shows a clean status dot
+[272/293] [desktop-webkit] › tests/e2e/f2-app.spec.ts:30:1 › F2 phone categories, artwork, 44px targets, filters and search stay in sync
+[273/293] [desktop-webkit] › tests/e2e/f2-app.spec.ts:89:1 › F2 comparison and the 700px boundary preserve data, single tab stop and details
+[274/293] [desktop-webkit] › tests/e2e/f2-app.spec.ts:123:1 › F2 a fast phone drag saves one range with recovery and Undo
+[275/293] [desktop-webkit] › tests/e2e/f2-app.spec.ts:171:1 › F2 interrupted and second-pointer gestures never save; touch names still scroll
+[276/293] [desktop-webkit] › tests/e2e/f2-app.spec.ts:233:1 › F2 a failed drag save leaves the collection and toggle appearance unchanged
+[277/293] [desktop-webkit] › tests/e2e/f2-app.spec.ts:258:1 › F2 forms, long names, paging and both themes remain usable at 390px
+[278/293] [desktop-webkit] › tests/e2e/f2-app.spec.ts:305:1 › F2 social metadata matches the served 1200x630 PNG and Settings describes drag-fill
+[279/293] [desktop-webkit] › tests/e2e/navigation.app.spec.ts:4:1 › Dex cue is confined to empty Home and runs once per tab session
+[280/293] [desktop-webkit] › tests/e2e/navigation.app.spec.ts:40:1 › blocked session storage cannot break navigation or replay the Dex cue
+[281/293] [desktop-webkit] › tests/e2e/navigation.app.spec.ts:58:1 › returning Home never advertises the first-run Dex cue
+[282/293] [desktop-webkit] › tests/e2e/navigation.app.spec.ts:72:1 › phone destinations, keyboard access and Menu remain usable across the 700px boundary
+[283/293] [desktop-webkit] › tests/e2e/navigation.app.spec.ts:123:1 › a hidden Dex link does not consume its first-visit cue
+[284/293] [desktop-webkit] › tests/e2e/navigation.app.spec.ts:133:1 › phone dialogs and actionable toasts stay above the navigation
+[285/293] [desktop-webkit] › tests/e2e/polish-app.spec.ts:21:3 › first visit on a light-mode device › follows the device setting until the person chooses
+[286/293] [desktop-webkit] › tests/e2e/polish-app.spec.ts:35:1 › a dark-mode device still opens dark
+[287/293] [desktop-webkit] › tests/e2e/polish-app.spec.ts:44:1 › the Kanto scanner opens on Bulbasaur
+[288/293] [desktop-webkit] › tests/e2e/polish-app.spec.ts:50:1 › medals say how many species in their total are not in GO yet
+[289/293] [desktop-webkit] › tests/e2e/polish-app.spec.ts:64:1 › header icons are drawn, not text characters
+[290/293] [desktop-webkit] › tests/e2e/polish-app.spec.ts:73:1 › small phone controls have 44px tap areas
+[291/293] [pwa-chromium] › tests/e2e/pwa.spec.ts:3:1 › standalone phone navigation respects safe areas and rotation
+[292/293] [pwa-chromium] › tests/e2e/pwa.spec.ts:59:1 › installs offline support without caching private routes
+[293/293] [pwa-chromium] › tests/e2e/pwa.spec.ts:93:1 › a waiting update is only applied when the person accepts it
+  4 skipped
+  289 passed (4.1m)

@@ -1,0 +1,1072 @@
+{
+  "base": "http://127.0.0.1:5404",
+  "stage": "greavard",
+  "checkedAt": "2026-10-15T06:13:27.217Z",
+  "results": [
+    {
+      "engineName": "chromium",
+      "size": "desktop",
+      "theme": "dark",
+      "route": "home",
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "desktop",
+      "theme": "dark",
+      "route": "dex",
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "desktop",
+      "theme": "dark",
+      "route": "progress",
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "desktop",
+      "theme": "dark",
+      "route": "search",
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "desktop",
+      "theme": "dark",
+      "route": "settings",
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "desktop",
+      "theme": "dark",
+      "route": "about",
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "desktop",
+      "theme": "light",
+      "route": "home",
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "desktop",
+      "theme": "light",
+      "route": "dex",
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "desktop",
+      "theme": "light",
+      "route": "progress",
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "desktop",
+      "theme": "light",
+      "route": "search",
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "desktop",
+      "theme": "light",
+      "route": "settings",
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "desktop",
+      "theme": "light",
+      "route": "about",
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "desktop",
+      "name": "Bramblin",
+      "category": "normal",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "desktop",
+      "name": "Bramblin",
+      "category": "shiny",
+      "enabled": false,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "desktop",
+      "name": "Brambleghast",
+      "category": "normal",
+      "enabled": false,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "desktop",
+      "name": "Shroodle",
+      "category": "shiny",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "desktop",
+      "name": "Grafaiai",
+      "category": "shiny",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "desktop",
+      "name": "Zekrom",
+      "category": "shadow",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "desktop",
+      "name": "Zekrom",
+      "category": "purified",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "desktop",
+      "name": "Wimpod",
+      "category": "shadow",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "desktop",
+      "name": "Wimpod",
+      "category": "purified",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "desktop",
+      "name": "Fomantis",
+      "category": "shadow",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "desktop",
+      "name": "Fomantis",
+      "category": "purified",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "desktop",
+      "name": "Sandygast",
+      "category": "shadow",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "desktop",
+      "name": "Sandygast",
+      "category": "purified",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "desktop",
+      "name": "Golisopod",
+      "category": "shadow",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "desktop",
+      "name": "Golisopod",
+      "category": "purified",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "desktop",
+      "name": "Palossand",
+      "category": "shadow",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "desktop",
+      "name": "Palossand",
+      "category": "purified",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "desktop",
+      "name": "Lurantis",
+      "category": "shadow",
+      "enabled": false,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "desktop",
+      "name": "Minior",
+      "category": "normal",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "desktop",
+      "name": "Minior",
+      "category": "shiny",
+      "enabled": false,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "desktop",
+      "name": "Greavard",
+      "category": "shiny",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "desktop",
+      "name": "Houndstone",
+      "category": "shiny",
+      "enabled": false,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "desktop",
+      "check": "registered-dot",
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "phone",
+      "theme": "dark",
+      "route": "home",
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "phone",
+      "theme": "dark",
+      "route": "dex",
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "phone",
+      "theme": "dark",
+      "route": "progress",
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "phone",
+      "theme": "dark",
+      "route": "search",
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "phone",
+      "theme": "dark",
+      "route": "settings",
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "phone",
+      "theme": "dark",
+      "route": "about",
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "phone",
+      "theme": "light",
+      "route": "home",
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "phone",
+      "theme": "light",
+      "route": "dex",
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "phone",
+      "theme": "light",
+      "route": "progress",
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "phone",
+      "theme": "light",
+      "route": "search",
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "phone",
+      "theme": "light",
+      "route": "settings",
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "phone",
+      "theme": "light",
+      "route": "about",
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "phone",
+      "name": "Bramblin",
+      "category": "normal",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "phone",
+      "name": "Bramblin",
+      "category": "shiny",
+      "enabled": false,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "phone",
+      "name": "Brambleghast",
+      "category": "normal",
+      "enabled": false,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "phone",
+      "name": "Shroodle",
+      "category": "shiny",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "phone",
+      "name": "Grafaiai",
+      "category": "shiny",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "phone",
+      "name": "Zekrom",
+      "category": "shadow",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "phone",
+      "name": "Zekrom",
+      "category": "purified",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "phone",
+      "name": "Wimpod",
+      "category": "shadow",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "phone",
+      "name": "Wimpod",
+      "category": "purified",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "phone",
+      "name": "Fomantis",
+      "category": "shadow",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "phone",
+      "name": "Fomantis",
+      "category": "purified",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "phone",
+      "name": "Sandygast",
+      "category": "shadow",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "phone",
+      "name": "Sandygast",
+      "category": "purified",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "phone",
+      "name": "Golisopod",
+      "category": "shadow",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "phone",
+      "name": "Golisopod",
+      "category": "purified",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "phone",
+      "name": "Palossand",
+      "category": "shadow",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "phone",
+      "name": "Palossand",
+      "category": "purified",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "phone",
+      "name": "Lurantis",
+      "category": "shadow",
+      "enabled": false,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "phone",
+      "name": "Minior",
+      "category": "normal",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "phone",
+      "name": "Minior",
+      "category": "shiny",
+      "enabled": false,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "phone",
+      "name": "Greavard",
+      "category": "shiny",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "phone",
+      "name": "Houndstone",
+      "category": "shiny",
+      "enabled": false,
+      "passed": true
+    },
+    {
+      "engineName": "chromium",
+      "size": "phone",
+      "check": "registered-dot",
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "desktop",
+      "theme": "dark",
+      "route": "home",
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "desktop",
+      "theme": "dark",
+      "route": "dex",
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "desktop",
+      "theme": "dark",
+      "route": "progress",
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "desktop",
+      "theme": "dark",
+      "route": "search",
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "desktop",
+      "theme": "dark",
+      "route": "settings",
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "desktop",
+      "theme": "dark",
+      "route": "about",
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "desktop",
+      "theme": "light",
+      "route": "home",
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "desktop",
+      "theme": "light",
+      "route": "dex",
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "desktop",
+      "theme": "light",
+      "route": "progress",
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "desktop",
+      "theme": "light",
+      "route": "search",
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "desktop",
+      "theme": "light",
+      "route": "settings",
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "desktop",
+      "theme": "light",
+      "route": "about",
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "desktop",
+      "name": "Bramblin",
+      "category": "normal",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "desktop",
+      "name": "Bramblin",
+      "category": "shiny",
+      "enabled": false,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "desktop",
+      "name": "Brambleghast",
+      "category": "normal",
+      "enabled": false,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "desktop",
+      "name": "Shroodle",
+      "category": "shiny",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "desktop",
+      "name": "Grafaiai",
+      "category": "shiny",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "desktop",
+      "name": "Zekrom",
+      "category": "shadow",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "desktop",
+      "name": "Zekrom",
+      "category": "purified",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "desktop",
+      "name": "Wimpod",
+      "category": "shadow",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "desktop",
+      "name": "Wimpod",
+      "category": "purified",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "desktop",
+      "name": "Fomantis",
+      "category": "shadow",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "desktop",
+      "name": "Fomantis",
+      "category": "purified",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "desktop",
+      "name": "Sandygast",
+      "category": "shadow",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "desktop",
+      "name": "Sandygast",
+      "category": "purified",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "desktop",
+      "name": "Golisopod",
+      "category": "shadow",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "desktop",
+      "name": "Golisopod",
+      "category": "purified",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "desktop",
+      "name": "Palossand",
+      "category": "shadow",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "desktop",
+      "name": "Palossand",
+      "category": "purified",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "desktop",
+      "name": "Lurantis",
+      "category": "shadow",
+      "enabled": false,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "desktop",
+      "name": "Minior",
+      "category": "normal",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "desktop",
+      "name": "Minior",
+      "category": "shiny",
+      "enabled": false,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "desktop",
+      "name": "Greavard",
+      "category": "shiny",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "desktop",
+      "name": "Houndstone",
+      "category": "shiny",
+      "enabled": false,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "desktop",
+      "check": "registered-dot",
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "phone",
+      "theme": "dark",
+      "route": "home",
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "phone",
+      "theme": "dark",
+      "route": "dex",
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "phone",
+      "theme": "dark",
+      "route": "progress",
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "phone",
+      "theme": "dark",
+      "route": "search",
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "phone",
+      "theme": "dark",
+      "route": "settings",
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "phone",
+      "theme": "dark",
+      "route": "about",
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "phone",
+      "theme": "light",
+      "route": "home",
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "phone",
+      "theme": "light",
+      "route": "dex",
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "phone",
+      "theme": "light",
+      "route": "progress",
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "phone",
+      "theme": "light",
+      "route": "search",
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "phone",
+      "theme": "light",
+      "route": "settings",
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "phone",
+      "theme": "light",
+      "route": "about",
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "phone",
+      "name": "Bramblin",
+      "category": "normal",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "phone",
+      "name": "Bramblin",
+      "category": "shiny",
+      "enabled": false,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "phone",
+      "name": "Brambleghast",
+      "category": "normal",
+      "enabled": false,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "phone",
+      "name": "Shroodle",
+      "category": "shiny",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "phone",
+      "name": "Grafaiai",
+      "category": "shiny",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "phone",
+      "name": "Zekrom",
+      "category": "shadow",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "phone",
+      "name": "Zekrom",
+      "category": "purified",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "phone",
+      "name": "Wimpod",
+      "category": "shadow",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "phone",
+      "name": "Wimpod",
+      "category": "purified",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "phone",
+      "name": "Fomantis",
+      "category": "shadow",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "phone",
+      "name": "Fomantis",
+      "category": "purified",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "phone",
+      "name": "Sandygast",
+      "category": "shadow",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "phone",
+      "name": "Sandygast",
+      "category": "purified",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "phone",
+      "name": "Golisopod",
+      "category": "shadow",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "phone",
+      "name": "Golisopod",
+      "category": "purified",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "phone",
+      "name": "Palossand",
+      "category": "shadow",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "phone",
+      "name": "Palossand",
+      "category": "purified",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "phone",
+      "name": "Lurantis",
+      "category": "shadow",
+      "enabled": false,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "phone",
+      "name": "Minior",
+      "category": "normal",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "phone",
+      "name": "Minior",
+      "category": "shiny",
+      "enabled": false,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "phone",
+      "name": "Greavard",
+      "category": "shiny",
+      "enabled": true,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "phone",
+      "name": "Houndstone",
+      "category": "shiny",
+      "enabled": false,
+      "passed": true
+    },
+    {
+      "engineName": "webkit",
+      "size": "phone",
+      "check": "registered-dot",
+      "passed": true
+    }
+  ],
+  "errors": []
+}

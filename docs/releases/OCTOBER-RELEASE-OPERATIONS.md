@@ -34,9 +34,11 @@ git archive --format=tar -o archive/release-work/deploy-source.tar HEAD
 wsl.exe -d Ubuntu -- bash /mnt/d/Temp/catchgrid-bramblin-2026-10-15/scripts/release/verify-linux-browser.sh /mnt/d/Temp/catchgrid-bramblin-2026-10-15/archive/release-work/deploy-source.tar 5398
 ```
 
-The helper refuses an occupied port and retains its `/tmp/catchgrid-browser-*` evidence. Record any initial failure and rerun only when justified; never change assertions to get a pass. Browser tests build their own fixture frontend, so they do not overwrite the production `dist/client` artifact.
+The helper refuses an occupied port and retains evidence below the Linux user's `~/.cache/catchgrid-browser/run-*` (override with `CATCHGRID_BROWSER_WORKDIR`). This machine mounts `/tmp` in memory and clears it on WSL shutdown, so do not use `/tmp` for durable release evidence. Record any initial failure and rerun only when justified; never change assertions to get a pass. Browser tests build their own fixture frontend, so they do not overwrite the production `dist/client` artifact.
 
 Preview the actual production artifact on a free loopback port and run the release-specific browser check:
+
+Start `corepack.cmd pnpm exec vite preview --host 127.0.0.1 --port 5397 --strictPort --outDir dist/client` in a hidden helper with its PID recorded. Verify that port is free first. Do not substitute the browser suite's fixture server for this artifact preview.
 
 ```bat
 set CATCHGRID_CAPTURE_ENGINES=chromium
@@ -76,6 +78,8 @@ node scripts/release/verify-october-catalog.mjs https://dex.cjdev.app bramblin a
 ```
 
 Substitute the stage/output name for Minior and Greavard. Use fresh disposable browser contexts; never import into Cody's personal profile. Confirm the new SHA and Worker version, the exact checklist's catalog cells and freshness date, clean REGISTERED dot, theme/layout behavior, sources, and no app console/CSP errors. Check GET/HEAD health, readiness, catalog/version, manifest, robots, and unauthorized private API behavior via the smoke script. On a fresh live browser, also verify install/offline and explicit PWA update acceptance. A local fixture PWA test does not prove production caching.
+
+Run the live browser helper from the retained Linux candidate too, with `CATCHGRID_CAPTURE_ENGINES=chromium,webkit`, the production URL and the same release stage. The Windows Chromium-only setting above does not count as live WebKit acceptance.
 
 If any live check fails, roll back immediately to the **recorded explicit predecessor**:
 

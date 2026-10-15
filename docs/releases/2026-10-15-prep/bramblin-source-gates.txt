@@ -1,0 +1,87 @@
+$ pnpm run cf-typegen && pnpm run cf-typegen:check && pnpm run lint && pnpm run format && pnpm run test && pnpm run validate:pokemon-data && pnpm run catalog:verify
+$ wrangler types node_modules/.worker-configuration.d.ts
+
+ ⛅️ wrangler 4.120.1 (update available 4.151.0)
+───────────────────────────────────────────────
+Generating project types...
+
+interface __BaseEnv_Env {
+	DB: D1Database;
+	OWNER_AUTH_LIMITER: RateLimit;
+	OWNER_MUTATION_LIMITER: RateLimit;
+	CF_VERSION_METADATA: WorkerVersionMetadata;
+	ENVIRONMENT: "staging" | "production";
+	BUILD_SHA: "";
+	BUILD_TIME: "";
+}
+declare namespace Cloudflare {
+	interface GlobalProps {
+		mainModule: typeof import("../worker/index");
+	}
+	interface StagingEnv {
+		DB: D1Database;
+		OWNER_AUTH_LIMITER: RateLimit;
+		OWNER_MUTATION_LIMITER: RateLimit;
+		CF_VERSION_METADATA: WorkerVersionMetadata;
+		ENVIRONMENT: "staging";
+		BUILD_SHA: "";
+		BUILD_TIME: "";
+	}
+	interface Env extends __BaseEnv_Env {}
+}
+interface Env extends __BaseEnv_Env {}
+type StringifyValues<EnvType extends Record<string, unknown>> = {
+	[Binding in keyof EnvType]: EnvType[Binding] extends string ? EnvType[Binding] : string;
+};
+declare namespace NodeJS {
+	interface ProcessEnv extends StringifyValues<Pick<Cloudflare.Env, "ENVIRONMENT" | "BUILD_SHA" | "BUILD_TIME">> {}
+}
+
+Generating runtime types...
+
+Runtime types generated.
+
+
+✨ Types written to node_modules/.worker-configuration.d.ts
+
+📖 Read about runtime types
+https://developers.cloudflare.com/workers/languages/typescript/#generate-types
+📣 Remember to rerun 'wrangler types' after you change your wrangler.jsonc file.
+
+$ wrangler types node_modules/.worker-configuration.d.ts --check
+
+ ⛅️ wrangler 4.120.1 (update available 4.151.0)
+───────────────────────────────────────────────
+✨ Types at node_modules/.worker-configuration.d.ts are up to date.
+
+$ eslint .
+$ prettier --check .
+Checking formatting...
+All matched files use Prettier code style!
+$ pnpm run test:unit && pnpm run test:worker
+$ vitest run --config vitest.config.ts
+
+ RUN  v4.1.10 D:/Temp/catchgrid-bramblin-2026-10-15
+
+
+ Test Files  25 passed (25)
+      Tests  295 passed (295)
+   Start at  01:05:24
+   Duration  2.31s (transform 14.72s, setup 0ms, import 21.86s, tests 1.82s, environment 8ms)
+
+$ vitest run --config vitest.worker.config.ts
+
+ RUN  v4.1.10 D:/Temp/catchgrid-bramblin-2026-10-15
+
+
+ Test Files  1 passed (1)
+      Tests  40 passed (40)
+   Start at  01:05:32
+   Duration  57.65s (transform 195ms, setup 261ms, import 46ms, tests 52.34s, environment 1ms)
+
+$ node scripts/validation/validate-pokemon-data.mjs
+Pokémon data valid: 1269 forms, 10 costumes, 73 transformations.
+$ node scripts/validation/verify-sprites.mjs && node scripts/validation/verify-catalog-generation.mjs
+Manifest valid: schema v2, catalog 2026-08-24.1, 1025 National Dex representatives, 1269 total forms, 1915 unique sprite references.
+Local artwork checks passed. Run with --network to verify pinned Archives thumbnails.
+Catalog generation verified: immutable overwrite refusal passed and catalog.v1.json, CHANGE_REPORT_2026-08-24.md, 0011_catalog_forms_regions_home_artwork.sql exactly match a fresh temporary regeneration.

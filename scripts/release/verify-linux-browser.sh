@@ -7,7 +7,9 @@ nodebin=${CATCHGRID_NODE_BIN:-/root/catchgrid-f1/runtime/node-v24.19.0-linux-x64
 test -x "$nodebin/node"
 test -x "$nodebin/corepack"
 test -f "$archive"
-taskroot=$(mktemp -d /tmp/catchgrid-browser-XXXXXX)
+evidence_root=${CATCHGRID_BROWSER_WORKDIR:-"$HOME/.cache/catchgrid-browser"}
+mkdir -p "$evidence_root"
+taskroot=$(mktemp -d "$evidence_root/run-XXXXXX")
 mkdir "$taskroot/repo" "$taskroot/bin"
 printf '#!/bin/sh\nexec corepack pnpm "$@"\n' > "$taskroot/bin/pnpm"
 chmod +x "$taskroot/bin/pnpm"

@@ -1,0 +1,66 @@
+[
+  {
+    "name": "chromium",
+    "size": "phone",
+    "theme": "dark",
+    "contentHeight": 2390,
+    "footerTapHeight": 45,
+    "overflow": false
+  },
+  {
+    "name": "chromium",
+    "size": "phone",
+    "theme": "light",
+    "contentHeight": 2390,
+    "footerTapHeight": 45,
+    "overflow": false
+  },
+  {
+    "name": "chromium",
+    "size": "desktop",
+    "theme": "dark",
+    "contentHeight": 2032,
+    "footerTapHeight": 45,
+    "overflow": false
+  },
+  {
+    "name": "chromium",
+    "size": "desktop",
+    "theme": "light",
+    "contentHeight": 2032,
+    "footerTapHeight": 45,
+    "overflow": false
+  },
+  {
+    "name": "webkit",
+    "size": "phone",
+    "theme": "dark",
+    "contentHeight": 2390,
+    "footerTapHeight": 45,
+    "overflow": false
+  },
+  {
+    "name": "webkit",
+    "size": "phone",
+    "theme": "light",
+    "contentHeight": 2390,
+    "footerTapHeight": 45,
+    "overflow": false
+  },
+  {
+    "name": "webkit",
+    "size": "desktop",
+    "theme": "dark",
+    "contentHeight": 2033,
+    "footerTapHeight": 45,
+    "overflow": false
+  },
+  {
+    "name": "webkit",
+    "size": "desktop",
+    "theme": "light",
+    "contentHeight": 2033,
+    "footerTapHeight": 45,
+    "overflow": false
+  }
+]

@@ -1,0 +1,37 @@
+$ vitest run --config vitest.config.ts
+
+ RUN  v4.1.10 D:/Temp/catchgrid-bramblin-2026-10-15
+
+ ❯ tests/unit/app-releases.test.ts (28 tests | 1 failed) 90ms
+     × is valid: official sources, past dates, known Pokémon and categories 8ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/app-releases.test.ts > the release ledger file > is valid: official sources, past dates, known Pokémon and categories
+AssertionError: expected [ Array(1) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "entries[23] (#774): date 2026-10-19 is in the future.",
++ ]
+
+ ❯ tests/unit/app-releases.test.ts:27:47
+     25| describe('the release ledger file', () => {
+     26|   it('is valid: official sources, past dates, known Pokémon and catego…
+     27|     expect(validateLedger(ledgerFile, forms)).toEqual([]);
+       |                                               ^
+     28|   });
+     29| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 24 passed (25)
+      Tests  1 failed | 296 passed (297)
+   Start at  01:01:38
+   Duration  2.38s (transform 10.17s, setup 0ms, import 14.73s, tests 1.61s, environment 2ms)
+
+[ELIFECYCLE] Command failed with exit code 1.

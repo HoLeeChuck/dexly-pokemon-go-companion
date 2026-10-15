@@ -1,0 +1,31 @@
+{
+  "checkedAt": "2026-10-15T06:13:46.718Z",
+  "sourceSha": "0cdb381",
+  "artifact": "dist/",
+  "fileCount": 2428,
+  "clientFileCount": 2425,
+  "totalBytes": 119118183,
+  "manifestSha256": "8ae94b5e166e3a3d8ac9799fc26216ae41d1967cb79a861a21902dee38127249",
+  "criticalFiles": [
+    {
+      "path": "client/index.html",
+      "bytes": 5619,
+      "sha256": "600343e2bbcefc285f447ae3212c57572d89730a376d8e1b22a78a07b2549dec"
+    },
+    {
+      "path": "client/sw.js",
+      "bytes": 4915,
+      "sha256": "3819d1fce66f25b0621657dd8c261abd0901f42e60003d747928bb992b7ca052"
+    },
+    {
+      "path": "dexly_companion/index.js",
+      "bytes": 62793,
+      "sha256": "a9a89aed2d67caf8d9fa19c77a165556f37410f4f837a4615142eff0b9bec9fc"
+    },
+    {
+      "path": "dexly_companion/wrangler.json",
+      "bytes": 2017,
+      "sha256": "a0df71095b43c9d22986b1a9756cc9ca62f1aa78a201bbf450e695a84999e393"
+    }
+  ]
+}
