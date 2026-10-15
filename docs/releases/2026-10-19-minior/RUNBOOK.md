@@ -2,6 +2,8 @@
 
 > October 15 restack: this branch now includes the revised `bramblin-2026-10-15` candidate. Use [MINIOR-GO-2026-10-19.md](../MINIOR-GO-2026-10-19.md) and [OCTOBER-RELEASE-OPERATIONS.md](../OCTOBER-RELEASE-OPERATIONS.md) for current operations. Original tip `48d3cac` is retained at `backup/minior-before-prep-2026-10-15`. Earlier counts and base hashes below are historical. No push or deploy occurred.
 
+The October 15 full Linux rehearsal found nine failures already reproducible on the saved October 12 tip: phone Home was 2410px (2406px with notices) against its unchanged 2400px budget, the footer link was only 41px tall, and the landscape header exceeded the safe area by 3.64px. Three CSS corrections reduce phone medal block padding from 6px to 4px, increase inline footer-link block padding from 15px to 17px, and reduce the 800-1000px header gap from 12px to 8px. The assertions, fonts, layout structure, data behavior and desktop styles remain unchanged. Final results are in the prep report.
+
 ## Oct 19 evening: Cody's checklist
 
 Your part takes about 2 minutes. Claude does the rest and stops on anything unexpected.

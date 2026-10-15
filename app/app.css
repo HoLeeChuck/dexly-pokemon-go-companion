@@ -2467,7 +2467,7 @@ select:focus-visible {
 @media (800px < width < 1000px) {
   .masthead {
     /* Leave room for landscape cutouts when the full navigation is visible. */
-    column-gap: 12px;
+    column-gap: 8px;
   }
 }
 @media (width < 700px) {
