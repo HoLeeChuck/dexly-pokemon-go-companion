@@ -1,5 +1,7 @@
 # Minior catalog update — October 19, 2026
 
+> October 15 restack: this branch now includes the revised `bramblin-2026-10-15` candidate. Use [MINIOR-GO-2026-10-19.md](../MINIOR-GO-2026-10-19.md) and [OCTOBER-RELEASE-OPERATIONS.md](../OCTOBER-RELEASE-OPERATIONS.md) for current operations. Original tip `48d3cac` is retained at `backup/minior-before-prep-2026-10-15`. Earlier counts and base hashes below are historical. No push or deploy occurred.
+
 ## Oct 19 evening: Cody's checklist
 
 Your part takes about 2 minutes. Claude does the rest and stops on anything unexpected.
@@ -26,7 +28,7 @@ Prepared October 10, 2026 by Claude on local branch `minior-2026-10-19`, on top 
 The catalog part is one release-ledger entry plus the tests that pinned the old state. The small app polish riding along is listed in its own section below. No migrations, artwork, schema or dependencies change.
 
 - `catalog/releases.v1.json`: **#774 Minior released 2026-10-19**: Normal, Lucky, 100%, XXL and XXS. **No Shiny**, Shadow or Purified (none announced). Minior is genderless.
-- The catalog has one Minior form. The post's seven core colors are what Minior shows in battle below half health, not separate catchable forms, so no forms are added.
+- The catalog keeps one default Minior representative. The October 15 source recheck says core colors debut across different showers; the first color and all-seven availability are not established. No color forms are added in this approved scope. The earlier claim that the colors were merely battle states was too broad.
 - Tests: `tests/unit/app-launch-catalog.test.ts` (Minior released without Shiny; import now accepts 6 of the original 73, 67 not eligible), `tests/e2e/catalog-feedback-app.spec.ts` (freshness shows `2026-10-19`; stale check moved to Nov 11) and `tests/e2e/app.spec.ts` (compare total **958**).
 - Effect: "Catalog updated" becomes **2026-10-19**. The stale warning moves from about Nov 3 (after Bramblin) to the evening of **Nov 9** (UTC Nov 10).
 
