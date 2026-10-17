@@ -2,6 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 
 const port = Number(process.env.PLAYWRIGHT_PORT ?? 4173);
 const baseURL = `http://127.0.0.1:${port}`;
+const cspPort = Number(process.env.PLAYWRIGHT_CSP_PORT ?? port + 1);
 const browserChannel = process.env.PLAYWRIGHT_USE_SYSTEM_CHROME === '1' ? 'chrome' : undefined;
 
 export default defineConfig({
@@ -31,7 +32,7 @@ export default defineConfig({
   projects: [
     {
       name: 'mobile-chromium',
-      testMatch: /(app|accessibility)\.spec\.ts/,
+      testMatch: /(app|accessibility|csp)\.spec\.ts/,
       use: {
         ...devices['Desktop Chrome'],
         channel: browserChannel,
@@ -42,7 +43,7 @@ export default defineConfig({
     },
     {
       name: 'desktop-chromium',
-      testMatch: /(app|accessibility)\.spec\.ts/,
+      testMatch: /(app|accessibility|csp)\.spec\.ts/,
       use: {
         ...devices['Desktop Chrome'],
         channel: browserChannel,
@@ -51,17 +52,17 @@ export default defineConfig({
     },
     {
       name: 'mobile-webkit',
-      testMatch: /app\.spec\.ts/,
+      testMatch: /(app|csp)\.spec\.ts/,
       use: { ...devices['iPhone 13'], viewport: { width: 390, height: 844 } },
     },
     {
       name: 'desktop-webkit',
-      testMatch: /app\.spec\.ts/,
+      testMatch: /(app|csp)\.spec\.ts/,
       use: { ...devices['Desktop Safari'], viewport: { width: 1440, height: 900 } },
     },
     {
       name: 'pwa-chromium',
-      testMatch: /pwa\.spec\.ts/,
+      testMatch: /(pwa|csp)\.spec\.ts/,
       use: {
         ...devices['Desktop Chrome'],
         channel: browserChannel,
@@ -70,10 +71,18 @@ export default defineConfig({
       },
     },
   ],
-  webServer: {
-    command: `pnpm exec vite build --config tests/e2e/vite.config.ts && pnpm exec vite preview --config tests/e2e/vite.config.ts --host 127.0.0.1 --port ${port}`,
-    url: baseURL,
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
-  },
+  webServer: [
+    {
+      command: `pnpm exec vite build --config tests/e2e/vite.config.ts && pnpm exec vite preview --config tests/e2e/vite.config.ts --host 127.0.0.1 --port ${port}`,
+      url: baseURL,
+      reuseExistingServer: !process.env.CI,
+      timeout: 120_000,
+    },
+    {
+      command: `pnpm run cf-typegen && pnpm run build:artifact && node scripts/release/serve-csp-artifact.mjs ${cspPort}`,
+      url: `http://127.0.0.1:${cspPort}`,
+      reuseExistingServer: false,
+      timeout: 120_000,
+    },
+  ],
 });
