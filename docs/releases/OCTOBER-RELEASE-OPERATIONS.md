@@ -34,6 +34,8 @@ git archive --format=tar -o archive/release-work/deploy-source.tar HEAD
 wsl.exe -d Ubuntu -- bash /mnt/d/Temp/catchgrid-bramblin-2026-10-15/scripts/release/verify-linux-browser.sh /mnt/d/Temp/catchgrid-bramblin-2026-10-15/archive/release-work/deploy-source.tar 5398
 ```
 
+**CSP test server warning:** `playwright.config.ts` now has a second `webServer` for the production-CSP tests. It runs `cf-typegen` and `build:artifact` (**rebuilding `dist/`**) and then serves that artifact on the browser port plus one (default **5399**, never reused). Run the browser suite only from this Linux archive helper in its fresh directory, never in the release worktree after the reviewed build and dry run, because it would replace the reviewed artifact. Confirm both 5398 and 5399 are free before starting. The pinned `patches/playwright-core@1.62.1.patch` (see `patches/README.md`) applies automatically on `pnpm install --frozen-lockfile`; it stops Playwright's WebKit screenshot helper from injecting an inline `<style>` that the production CSP refuses.
+
 The helper refuses an occupied port and retains evidence below the Linux user's `~/.cache/catchgrid-browser/run-*` (override with `CATCHGRID_BROWSER_WORKDIR`). This machine mounts `/tmp` in memory and clears it on WSL shutdown, so do not use `/tmp` for durable release evidence. Record any initial failure and rerun only when justified; never change assertions to get a pass. Browser tests build their own fixture frontend, so they do not overwrite the production `dist/client` artifact.
 
 Preview the actual production artifact on a free loopback port and run the release-specific browser check:
