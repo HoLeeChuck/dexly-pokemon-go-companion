@@ -1,0 +1,25 @@
+diff --git a/lib/coreBundle.js b/lib/coreBundle.js
+index d9041dd0f009072511a7d808dec83121ff29e127..8d8eacf3c23c972255e9d838b3ec623f20ac7991 100644
+--- a/lib/coreBundle.js
++++ b/lib/coreBundle.js
+@@ -21079,11 +21079,15 @@ var init_input = __esm({
+ // packages/playwright-core/src/server/screenshotter.ts
+ function inPagePrepareForScreenshots(screenshotStyle, hideCaret, disableAnimations, syncAnimations) {
+   if (syncAnimations) {
+-    const style = document.createElement("style");
+-    style.textContent = "body {}";
+-    document.head.appendChild(style);
+-    document.documentElement.getBoundingClientRect();
+-    style.remove();
++    const sheet = new CSSStyleSheet();
++    sheet.insertRule("body {}");
++    const sheets = document.adoptedStyleSheets;
++    document.adoptedStyleSheets = [...sheets, sheet];
++    try {
++      document.documentElement.getBoundingClientRect();
++    } finally {
++      document.adoptedStyleSheets = sheets;
++    }
+   }
+   if (!screenshotStyle && !hideCaret && !disableAnimations)
+     return;

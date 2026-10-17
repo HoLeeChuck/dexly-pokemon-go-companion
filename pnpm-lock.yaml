@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  playwright-core@1.62.1: e0852ad96106c7edb10a9b67ee9f6f6a1d494fa2642a2a0f0028f1f0a3ac375b
+
 importers:
 
   .:
@@ -17,7 +20,7 @@ importers:
     devDependencies:
       '@axe-core/playwright':
         specifier: 4.12.1
-        version: 4.12.1(playwright-core@1.62.1)
+        version: 4.12.1(playwright-core@1.62.1(patch_hash=e0852ad96106c7edb10a9b67ee9f6f6a1d494fa2642a2a0f0028f1f0a3ac375b))
       '@cloudflare/vite-plugin':
         specifier: 1.51.2
         version: 1.51.2(vite@8.2.1(@types/node@22.20.1)(esbuild@0.28.2)(tsx@4.23.12))(wrangler@4.120.1)
@@ -1735,10 +1738,10 @@ packages:
 
 snapshots:
 
-  '@axe-core/playwright@4.12.1(playwright-core@1.62.1)':
+  '@axe-core/playwright@4.12.1(playwright-core@1.62.1(patch_hash=e0852ad96106c7edb10a9b67ee9f6f6a1d494fa2642a2a0f0028f1f0a3ac375b))':
     dependencies:
       axe-core: 4.12.1
-      playwright-core: 1.62.1
+      playwright-core: 1.62.1(patch_hash=e0852ad96106c7edb10a9b67ee9f6f6a1d494fa2642a2a0f0028f1f0a3ac375b)
 
   '@babel/code-frame@7.29.7':
     dependencies:
@@ -2882,11 +2885,11 @@ snapshots:
 
   picomatch@4.0.5: {}
 
-  playwright-core@1.62.1: {}
+  playwright-core@1.62.1(patch_hash=e0852ad96106c7edb10a9b67ee9f6f6a1d494fa2642a2a0f0028f1f0a3ac375b): {}
 
   playwright@1.62.1:
     dependencies:
-      playwright-core: 1.62.1
+      playwright-core: 1.62.1(patch_hash=e0852ad96106c7edb10a9b67ee9f6f6a1d494fa2642a2a0f0028f1f0a3ac375b)
     optionalDependencies:
       fsevents: 2.3.2
 
