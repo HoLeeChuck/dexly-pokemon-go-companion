@@ -60,7 +60,7 @@ corepack.cmd pnpm exec wrangler deployments status
 corepack.cmd pnpm exec wrangler d1 migrations list dexly-db --remote
 ```
 
-Verify the account, Worker `dexly-companion`, production D1 UUID `154ac34c-cdfc-4a98-a0c4-f159153a6e2e`, and predecessor at 100% traffic. Record its **exact Worker version ID** as rollback target. For Bramblin, the October 15 read-only health check still reports `b0c70140-8b84-46f8-9198-921d6106c1d6` / `4745a62`; refresh rather than assume.
+Verify the account, Worker `dexly-companion`, production D1 UUID `154ac34c-cdfc-4a98-a0c4-f159153a6e2e`, and predecessor at 100% traffic. Record its **exact Worker version ID** as rollback target. For Bramblin, the October 15 read-only health check still reported `b0c70140-8b84-46f8-9198-921d6106c1d6` / `4745a62`. **Bramblin shipped 2026-10-15 as `8fea498e-a753-41b3-82dd-80be37e300c3` / `0270b8a`; that is Minior's rollback target.** Greavard's is the Minior version recorded on October 19. Refresh rather than assume.
 
 **There are no new migrations in these candidates.** If the remote list shows anything pending, stop and investigate; do not run `deploy:production`, `release:migrate:production`, or `catalog:sync` blindly. Preserve a fresh bookmark:
 
