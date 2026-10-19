@@ -66,12 +66,22 @@ export function exportBackup() {
 export function exportCsv() {
   return '\uFEFF' + exportCollectionCsv(fullCatalog, entries(currentProfile()));
 }
+/**
+ * Revision a reviewed import must still match. A full backup restore may replace a corrupt
+ * profile (its raw payload is preserved first), so unlike merges it is allowed to start there.
+ */
+function importRevision(kind) {
+  if (kind !== 'json') return currentProfile().revision;
+  const result = loadLocalProfileResult();
+  if (result.status === 'unavailable') throw new Error(result.warnings.join(' '));
+  return result.profile.revision;
+}
 export function reviewImport(text, kind) {
   if (kind === 'json') {
     const backup = parsePortableProfileBackup(text);
     return {
       kind,
-      revision: currentProfile().revision,
+      revision: importRevision(kind),
       text,
       count: entries(backup.profile).filter((e) => e.collected).length,
       description:
@@ -115,7 +125,7 @@ export function reviewSheetImport(sheets) {
   };
 }
 export function commitImport(review) {
-  if (currentProfile().revision !== review.revision)
+  if (importRevision(review.kind) !== review.revision)
     throw new Error('The collection changed after preview. Choose the import file again.');
   if (review.kind === 'sheet')
     return setMany(

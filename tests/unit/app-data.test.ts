@@ -103,6 +103,21 @@ describe('Prism collection integration', () => {
     commitImport(reviewImport(backup, 'json'));
     expect([...collectionKeys()]).toEqual(['form-0006-standard:xxl']);
   });
+  it('restores a backup over a corrupt profile after preserving its raw data', () => {
+    toggleCollection('form-0006-standard', 'xxl');
+    const backup = exportBackup();
+    storage.setItem(LOCAL_PROFILE_STORAGE_KEY, '{"version":3}');
+    expect(() => collectionKeys()).toThrow(/corrupt/);
+    const review = reviewImport(backup, 'json');
+    expect(review.count).toBe(1);
+    expect([...commitImport(review)]).toEqual(['form-0006-standard:xxl']);
+    const preserved = [...storage.values.keys()].filter((k) => k.includes(':corrupt:'));
+    expect(preserved).toHaveLength(1);
+    expect(storage.getItem(preserved[0]!)).toContain('version');
+    // Merging a CSV still needs a readable collection.
+    storage.setItem(LOCAL_PROFILE_STORAGE_KEY, 'broken');
+    expect(() => reviewImport('dex_number,normal\n1,true', 'csv')).toThrow(/corrupt/);
+  });
   it('fails closed on corrupt storage and invalid imports', () => {
     storage.setItem(LOCAL_PROFILE_STORAGE_KEY, 'broken');
     expect(() => toggleCollection('form-0006-standard', 'normal')).toThrow();
