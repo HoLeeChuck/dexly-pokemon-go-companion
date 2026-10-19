@@ -620,6 +620,20 @@ function preserveCorruptPayload(
   now: () => Date,
 ): LocalProfileRecoveryPayload {
   const recovery: LocalProfileRecoveryPayload = { sourceKey, rawPayload, reason };
+  // Every load of a corrupt profile lands here; reuse an identical earlier copy rather than
+  // writing the whole payload again, or repeated reloads would fill the storage quota.
+  try {
+    for (const existing of storageKeys(storage)) {
+      if (!existing.startsWith(LOCAL_PROFILE_CORRUPT_PREFIX)) continue;
+      const stored = parseJson(storage.getItem(existing) ?? '').value;
+      if (isRecord(stored) && stored.sourceKey === sourceKey && stored.rawPayload === rawPayload) {
+        recovery.preservedKey = existing;
+        return recovery;
+      }
+    }
+  } catch {
+    // Fall through and try to write a fresh copy.
+  }
   const date = now();
   const key = `${LOCAL_PROFILE_CORRUPT_PREFIX}${date.getTime().toString(36)}`;
   try {

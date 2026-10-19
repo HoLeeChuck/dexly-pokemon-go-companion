@@ -214,6 +214,27 @@ describe('versioned local profiles', () => {
     expect(storage.getItem(LOCAL_PROFILE_STORAGE_KEY)).toBe('{not-json');
   });
 
+  it('keeps one preserved copy of a corrupt payload across repeated loads', () => {
+    const storage = new MemoryStorage();
+    const raw = '{"version":3,"revision":9}';
+    storage.setItem(LOCAL_PROFILE_STORAGE_KEY, raw);
+
+    let time = Date.parse('2026-08-13T12:00:00.000Z');
+    const results = [1, 2, 3, 4].map(() => loadLocalProfileResult(storage, () => new Date(time++)));
+
+    const copies = [...storage.values.keys()].filter((key) =>
+      key.startsWith(LOCAL_PROFILE_CORRUPT_PREFIX),
+    );
+    expect(copies).toHaveLength(1);
+    expect(results.every((result) => result.recovery?.preservedKey === copies[0])).toBe(true);
+
+    storage.setItem(LOCAL_PROFILE_STORAGE_KEY, '{"version":4}');
+    loadLocalProfileResult(storage, () => new Date(time++));
+    expect(
+      [...storage.values.keys()].filter((key) => key.startsWith(LOCAL_PROFILE_CORRUPT_PREFIX)),
+    ).toHaveLength(2);
+  });
+
   it('resets a corrupt profile only through an explicit recovery action', () => {
     const storage = new MemoryStorage();
     storage.setItem(LOCAL_PROFILE_STORAGE_KEY, '{not-json');
