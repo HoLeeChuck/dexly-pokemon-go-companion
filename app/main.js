@@ -1729,9 +1729,37 @@ window.addEventListener('hashchange', () => {
     select(state.selected);
   }
 });
+// Fields where "/" is text. A checkbox, radio, button or file input only has focus; it takes no
+// typed text, so "/" still opens the quick jump from there.
+const NON_TEXT_INPUTS = new Set([
+  'checkbox',
+  'radio',
+  'button',
+  'submit',
+  'reset',
+  'image',
+  'file',
+  'range',
+  'color',
+]);
+function isTypingTarget(target) {
+  if (!(target instanceof Element)) return false;
+  if (target.closest('textarea,select,[contenteditable]:not([contenteditable="false"])'))
+    return true;
+  const input = target.closest('input');
+  return Boolean(input && !NON_TEXT_INPUTS.has(input.type));
+}
 document.addEventListener('keydown', (e) => {
   const typing = e.target.closest('input,textarea,select,[contenteditable]');
-  if (e.key === '/' && !typing && !e.metaKey && !e.ctrlKey && !jumpDialog.open) {
+  if (
+    e.key === '/' &&
+    !isTypingTarget(e.target) &&
+    !e.altKey &&
+    !e.metaKey &&
+    !e.ctrlKey &&
+    !e.isComposing &&
+    !jumpDialog.open
+  ) {
     e.preventDefault();
     openJump();
     return;

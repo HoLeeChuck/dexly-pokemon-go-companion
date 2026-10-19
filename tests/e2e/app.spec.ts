@@ -565,6 +565,25 @@ test('quick jump ignores accents, spaces and punctuation; only plain digits are 
   await expect(first).toContainText('Charmander');
 });
 
+test('the / shortcut ignores Alt and still works from a checkbox', async ({ page }) => {
+  await open(page, 'settings');
+  const silhouettes = page.locator('input[data-silhouettes]');
+  await silhouettes.focus();
+  await page.keyboard.press('Alt+/');
+  await expect(page.locator('#jump-dialog')).not.toBeVisible();
+  await expect(silhouettes).toBeFocused();
+  // A checkbox takes no typed text, so "/" still opens the quick jump from it.
+  await page.keyboard.press('/');
+  await expect(page.locator('#jump-dialog')).toBeVisible();
+  await expect(page.locator('#jump-input')).toBeFocused();
+  // Typing "/" into a real text field stays text.
+  await page.keyboard.press('Escape');
+  await page.locator('#trainer-name').focus();
+  await page.keyboard.press('/');
+  await expect(page.locator('#jump-dialog')).not.toBeVisible();
+  await expect(page.locator('#trainer-name')).toHaveValue('/');
+});
+
 test('bulk region setup asks before changing anything', async ({ page }) => {
   await open(page, 'settings');
   await page.locator('[data-bulk="Hisui"][data-bulk-collected="true"]').click();
