@@ -36,6 +36,8 @@ class MemoryStorage implements LocalStorageLike {
   failGet: unknown;
   failSetKey: string | undefined;
   failSetError: unknown;
+  /** Total characters (keys plus values) the storage accepts, like a browser quota. */
+  quota = Infinity;
 
   get length(): number {
     return this.values.size;
@@ -56,6 +58,13 @@ class MemoryStorage implements LocalStorageLike {
 
   setItem(key: string, value: string): void {
     if (key === this.failSetKey) throw this.failSetError;
+    let used = key.length + value.length;
+    for (const [other, stored] of this.values) {
+      if (other !== key) used += other.length + stored.length;
+    }
+    if (used > this.quota) {
+      throw Object.assign(new Error('Quota exceeded'), { name: 'QuotaExceededError' });
+    }
     this.values.set(key, value);
   }
 }
@@ -361,6 +370,65 @@ describe('snapshots, imports, and restore', () => {
       'Checkpoint 3',
       'Checkpoint 2',
     ]);
+  });
+
+  it('drops the oldest snapshots instead of refusing every save when the quota is nearly full', () => {
+    const storage = new MemoryStorage();
+    const entries = (revision: number) =>
+      Array.from({ length: 300 }, (_, index) => ({
+        formId: `form-${index}`,
+        categoryId: 'normal' as const,
+        collected: index !== revision,
+      }));
+    const first = saveLocalProfileSafely(profile({ revision: 1, collectionEntries: entries(1) }), {
+      storage,
+      now: at(),
+    });
+    expect(first.ok).toBe(true);
+    const size = (storage.getItem(LOCAL_PROFILE_STORAGE_KEY) ?? '').length;
+    storage.quota = Math.floor(size * 3.5);
+
+    for (let revision = 2; revision <= 9; revision += 1) {
+      const saved = saveLocalProfileSafely(
+        profile({ revision, collectionEntries: entries(revision) }),
+        {
+          storage,
+          now: at(`2026-08-13T12:0${revision}:00.000Z`),
+          forceSnapshot: true,
+          snapshotReason: `Step ${revision}`,
+        },
+      );
+      expect(saved.ok, `save ${revision}`).toBe(true);
+    }
+
+    expect(loadLocalProfileResult(storage, at()).profile.revision).toBe(9);
+    const snapshots = listLocalProfileSnapshots(storage);
+    expect(snapshots.length).toBeGreaterThanOrEqual(1);
+    // The newest snapshot is the state the last save replaced.
+    expect(snapshots[0]?.profile.revision).toBe(8);
+  });
+
+  it('still fails closed when even one snapshot cannot fit', () => {
+    const storage = new MemoryStorage();
+    const big = profile({
+      revision: 1,
+      collectionEntries: Array.from({ length: 300 }, (_, index) => ({
+        formId: `form-${index}`,
+        categoryId: 'normal' as const,
+        collected: true,
+      })),
+    });
+    expect(saveLocalProfileSafely(big, { storage, now: at() }).ok).toBe(true);
+    const size = (storage.getItem(LOCAL_PROFILE_STORAGE_KEY) ?? '').length;
+    storage.quota = Math.floor(size * 1.5);
+
+    const result = saveLocalProfileSafely(
+      { ...big, revision: 2 },
+      { storage, now: at(), forceSnapshot: true },
+    );
+
+    expect(result).toMatchObject({ ok: false, error: { code: 'snapshot_failed' } });
+    expect(loadLocalProfileResult(storage, at()).profile.revision).toBe(1);
   });
 
   it('restores a valid snapshot over a corrupt primary after preserving its raw payload', () => {

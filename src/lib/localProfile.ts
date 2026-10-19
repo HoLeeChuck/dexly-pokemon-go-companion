@@ -859,6 +859,40 @@ export function listLocalProfileSnapshots(storageInput?: LocalStorageLike): Loca
   }
 }
 
+function isQuotaError(error: unknown): boolean {
+  return storageError(error, 'snapshot_failed').code === 'quota_exceeded';
+}
+
+/**
+ * Frees room by dropping the oldest recovery snapshot while more than `keep` remain. A near-full
+ * collection can hold only a few of its own copies, and without this a full browser quota would
+ * block every later save with no way to recover space from inside the app.
+ */
+function evictOldestSnapshot(storage: LocalStorageLike, keep: number): boolean {
+  const snapshots = listLocalProfileSnapshots(storage);
+  const oldest = snapshots.length > keep ? snapshots[snapshots.length - 1] : undefined;
+  if (!oldest) return false;
+  storage.removeItem(`${LOCAL_PROFILE_SNAPSHOT_PREFIX}${oldest.id}`);
+  return true;
+}
+
+/** setItem that, on a full quota, drops old snapshots (keeping `keep` of them) and retries. */
+function setItemFreeingSnapshots(
+  storage: LocalStorageLike,
+  key: string,
+  value: string,
+  keep: number,
+): void {
+  for (;;) {
+    try {
+      storage.setItem(key, value);
+      return;
+    } catch (error) {
+      if (!isQuotaError(error) || !evictOldestSnapshot(storage, keep)) throw error;
+    }
+  }
+}
+
 function rotateSnapshots(storage: LocalStorageLike): void {
   const snapshots = listLocalProfileSnapshots(storage);
   for (const snapshot of snapshots.slice(MAX_LOCAL_PROFILE_SNAPSHOTS)) {
@@ -910,7 +944,12 @@ export function createLocalProfileSnapshot(
     profile,
   };
   try {
-    storage.setItem(`${LOCAL_PROFILE_SNAPSHOT_PREFIX}${id}`, JSON.stringify(snapshot));
+    setItemFreeingSnapshots(
+      storage,
+      `${LOCAL_PROFILE_SNAPSHOT_PREFIX}${id}`,
+      JSON.stringify(snapshot),
+      0,
+    );
     rotateSnapshots(storage);
     return { ok: true, profile, snapshotId: id };
   } catch (error) {
@@ -1035,7 +1074,8 @@ export function saveLocalProfileSafely(
   }
 
   try {
-    storage.setItem(LOCAL_PROFILE_STORAGE_KEY, serialized);
+    // Keep the newest snapshot: it is the recovery copy of the state this save replaces.
+    setItemFreeingSnapshots(storage, LOCAL_PROFILE_STORAGE_KEY, serialized, 1);
   } catch (error) {
     return { ok: false, error: storageError(error, 'storage_unavailable') };
   }
