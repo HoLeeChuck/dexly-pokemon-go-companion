@@ -1207,11 +1207,16 @@ document.addEventListener('click', async (event) => {
   }
   if (probe.matches('[data-undo]') && lastBatch) {
     const batch = lastBatch;
-    lastBatch = null;
-    const result = setMany(batch, 'Before undoing a bulk change');
-    owned = result.owned;
-    render();
-    announce('Change undone.');
+    try {
+      const result = setMany(batch, 'Before undoing a bulk change');
+      lastBatch = null;
+      owned = result.owned;
+      render();
+      announce('Change undone.');
+    } catch (error) {
+      // Nothing was saved, so keep the batch and the Undo button for another try.
+      announce(error.message, { undo: true });
+    }
   }
   if (probe.matches('[data-filter]')) {
     state.filter = probe.dataset.filter;
@@ -1826,6 +1831,8 @@ document.addEventListener('change', async (event) => {
   if (t.id === 'import-file') {
     pendingImport = null;
     const file = t.files[0];
+    // Clear the input so choosing the same file again (after fixing it) still fires a change.
+    t.value = '';
     if (!file) return;
     try {
       if (file.size > 5000000) throw new Error('Choose a file smaller than 5 MB.');

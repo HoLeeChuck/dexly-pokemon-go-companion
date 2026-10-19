@@ -287,3 +287,43 @@ test('F1 Home stays within the phone budget with notices, with accessible contro
   await expect(page.locator('.install-instructions')).toHaveAttribute('open', '');
   await expect(page.locator('.install-instructions')).toContainText('Download JSON first');
 });
+
+test('F1 an Undo that cannot save keeps the change and stays retryable', async ({ page }) => {
+  await page.goto('/#settings');
+  await page.locator('[data-bulk="Kanto"][data-bulk-collected="true"]').click();
+  await page.locator('[data-bulk-confirm]').click();
+  await expect(page.locator('.toast')).toContainText('Normal entries collected');
+  const marked = await stored(page);
+  await page.evaluate(() => {
+    const original = Storage.prototype.setItem;
+    (window as unknown as { restoreStorage(): void }).restoreStorage = () => {
+      Storage.prototype.setItem = original;
+    };
+    Storage.prototype.setItem = function (name, value) {
+      if (name.startsWith('catchgrid:local-profile'))
+        throw new DOMException('Quota exceeded', 'QuotaExceededError');
+      return original.call(this, name, value);
+    };
+  });
+  const undo = page.getByRole('button', { name: 'Undo', exact: true });
+  await undo.click();
+  await expect(page.locator('.toast')).toContainText('Browser storage is full');
+  await expect(undo).toBeVisible();
+  expect(await stored(page)).toBe(marked);
+  await page.evaluate(() => (window as unknown as { restoreStorage(): void }).restoreStorage());
+  await undo.click();
+  await expect(page.locator('.toast')).toContainText('Change undone');
+  expect(await stored(page)).not.toBe(marked);
+});
+
+test('F1 the import chooser is cleared so the same file can be chosen again', async ({ page }) => {
+  await page.goto('/#settings');
+  const input = page.locator('#import-file');
+  await input.setInputFiles({
+    name: 'broken.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from('{"format":'),
+  });
+  await expect(page.locator('#import-review')).toContainText('not valid JSON');
+  await expect(input).toHaveValue('');
+});
