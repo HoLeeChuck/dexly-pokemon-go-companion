@@ -20,6 +20,7 @@ export function toggleCollection(formId: string, categoryId: CategoryId): Set<st
 export function exportBackup(): string;
 export function exportCsv(): string;
 export function reviewImport(text: string, kind: 'json' | 'csv'): ImportReview;
+export function reviewTextImport(text: string): ImportReview | SheetImportReview;
 export function commitImport(review: ImportReview): Set<string>;
 export interface CollectionChange {
   formId: string;

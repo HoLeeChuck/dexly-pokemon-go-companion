@@ -6,6 +6,7 @@ import {
   exportBackup,
   exportCsv,
   reviewImport,
+  reviewTextImport,
   commitImport,
 } from '../../app/data.js';
 import { LOCAL_PROFILE_STORAGE_KEY, loadLocalProfileResult } from '../../src/lib/localProfile';
@@ -93,6 +94,21 @@ describe('Prism collection integration', () => {
     expect(collectionKeys().size).toBe(0);
     commitImport(review);
     expect([...collectionKeys()].sort()).toEqual(expected);
+  });
+  it('routes pasted CatchGrid CSV through the CSV import, not the spreadsheet reader', () => {
+    toggleCollection('form-0004-standard', 'shiny');
+    const csv = exportCsv();
+    storage = new MemoryStorage();
+    vi.stubGlobal('localStorage', storage);
+    for (const text of [csv, csv.replace(/^\uFEFF/, ''), 'dex_number,shiny\n4,true\n']) {
+      const review = reviewTextImport(text);
+      expect(review.kind).toBe('csv');
+      expect(review.count).toBe(1);
+    }
+    // Read as sheet rows, every species would have registered Male and Normal instead.
+    expect([...commitImport(reviewTextImport(csv))]).toEqual(['form-0004-standard:shiny']);
+    const rows = 'Number,Pokémon,Gender,,Shiny\n4,Charmander,M,,Shiny\n';
+    expect(reviewTextImport(rows).kind).toBe('sheet');
   });
   it('JSON round trips and refuses a stale import preview', () => {
     toggleCollection('form-0006-standard', 'xxl');

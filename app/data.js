@@ -18,7 +18,7 @@ import {
 } from '../shared/csv';
 import { applyLocalCsvImport } from '../src/lib/localProfile';
 import { fullCatalog, catalog, catalogVersion } from './catalog';
-import { interpretSheets } from './sheet.js';
+import { interpretSheets, readText } from './sheet.js';
 
 // Same audited data contract as the existing app. Never seed demonstration ownership.
 export function currentProfile() {
@@ -123,6 +123,17 @@ export function reviewSheetImport(sheets) {
     count: adds.length,
     already: entries.length - adds.length,
   };
+}
+/**
+ * Review pasted or chosen text. CatchGrid's own CSV has form_id or dex_number headers and goes
+ * through the strict CSV import; anything else is read as community-spreadsheet rows. Reading
+ * a CatchGrid CSV as spreadsheet rows would shift every column and register the wrong categories.
+ */
+export function reviewTextImport(text) {
+  const header = text.replace(/^\uFEFF/, '').split('\n')[0];
+  return /(^|,)"?(form_id|dex_number)"?(,|$)/m.test(header)
+    ? reviewImport(text, 'csv')
+    : reviewSheetImport(readText(text));
 }
 export function commitImport(review) {
   if (importRevision(review.kind) !== review.revision)

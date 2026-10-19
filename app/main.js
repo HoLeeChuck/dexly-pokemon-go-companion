@@ -27,6 +27,7 @@ import {
   exportCsv,
   reviewImport,
   reviewSheetImport,
+  reviewTextImport,
   commitImport,
   recoverySnapshots,
   restoreSnapshot,
@@ -45,7 +46,7 @@ import {
   mostProgressCategory,
   recentlyMarked,
 } from './dashboard.js';
-import { readWorkbook, readText, collectionWorkbook } from './sheet.js';
+import { readWorkbook, collectionWorkbook } from './sheet.js';
 import { SHARE_CATEGORIES, shareLink, parseShare, compare, helpSearch } from './share.js';
 import { drawCollectionPoster, drawRecapCard, shareCanvas } from './poster.js';
 import {
@@ -1840,13 +1841,7 @@ document.addEventListener('change', async (event) => {
       if (name.endsWith('.xlsx'))
         pendingImport = reviewSheetImport(await readWorkbook(await file.arrayBuffer()));
       else if (name.endsWith('.json')) pendingImport = reviewImport(await file.text(), 'json');
-      else {
-        // CatchGrid's own CSV has form IDs; anything else is read as spreadsheet rows.
-        const text = await file.text();
-        pendingImport = /(^|,)"?(form_id|dex_number)"?(,|$)/m.test(text.split('\n')[0])
-          ? reviewImport(text, 'csv')
-          : reviewSheetImport(readText(text));
-      }
+      else pendingImport = reviewTextImport(await file.text());
       render();
     } catch (error) {
       document.querySelector('#import-review').textContent = error.message;
@@ -1880,7 +1875,7 @@ document.addEventListener('click', (event) => {
       const text = document.querySelector('#paste-rows').value;
       pendingImport = null;
       try {
-        pendingImport = reviewSheetImport(readText(text));
+        pendingImport = reviewTextImport(text);
         render();
       } catch (error) {
         document.querySelector('#import-review').textContent = error.message;
