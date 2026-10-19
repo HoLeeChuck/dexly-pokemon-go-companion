@@ -20,6 +20,7 @@ export interface SheetSummary {
     reason: 'notEligible' | 'notTracked';
   }[];
 }
+export const MAX_WORKBOOK_BYTES: number;
 export const SHEET_REGIONS: readonly (readonly [string, string])[];
 export function readWorkbook(buffer: ArrayBuffer | Uint8Array): Promise<SheetData[]>;
 export function readText(text: string): SheetData[];

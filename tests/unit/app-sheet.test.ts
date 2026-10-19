@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { deflateRawSync } from 'node:zlib';
 import { catalog } from '../../app/catalog.js';
 import {
   readWorkbook,
@@ -6,6 +7,7 @@ import {
   interpretSheets,
   writeWorkbook,
   collectionWorkbook,
+  MAX_WORKBOOK_BYTES,
 } from '../../app/sheet.js';
 
 const species = (n: number) => catalog.find((p) => p.isDefault && p.n === n)!;
@@ -263,5 +265,89 @@ describe('reading the community spreadsheet layout', () => {
     expect(sheet!.name).toBe('A & B');
     expect(sheet!.rows).toEqual([['x', 'y'], [], ['', 'z <1>']]);
     expect(sheet!.merged.has('0,1')).toBe(true);
+  });
+});
+
+describe('hostile or damaged workbooks', () => {
+  // A deflate-compressed zip, as Excel writes, so the reader's inflate path is exercised.
+  function deflatedZip(files: Record<string, Uint8Array | string>): Uint8Array {
+    const crcTable = Array.from({ length: 256 }, (_, n) => {
+      let c = n;
+      for (let k = 0; k < 8; k += 1) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+      return c >>> 0;
+    });
+    const crc32 = (bytes: Uint8Array) => {
+      let c = 0xffffffff;
+      for (const byte of bytes) c = crcTable[(c ^ byte) & 0xff]! ^ (c >>> 8);
+      return (c ^ 0xffffffff) >>> 0;
+    };
+    const parts: Buffer[] = [];
+    const central: Buffer[] = [];
+    let offset = 0;
+    for (const [path, content] of Object.entries(files)) {
+      const raw = Buffer.from(content);
+      const data = deflateRawSync(raw);
+      const name = Buffer.from(path);
+      const local = Buffer.alloc(30);
+      local.writeUInt32LE(0x04034b50, 0);
+      local.writeUInt16LE(8, 8);
+      local.writeUInt32LE(crc32(raw), 14);
+      local.writeUInt32LE(data.length, 18);
+      local.writeUInt32LE(raw.length, 22);
+      local.writeUInt16LE(name.length, 26);
+      const entry = Buffer.alloc(46);
+      entry.writeUInt32LE(0x02014b50, 0);
+      entry.writeUInt16LE(8, 10);
+      entry.writeUInt32LE(crc32(raw), 16);
+      entry.writeUInt32LE(data.length, 20);
+      entry.writeUInt32LE(raw.length, 24);
+      entry.writeUInt16LE(name.length, 28);
+      entry.writeUInt32LE(offset, 42);
+      parts.push(local, name, data);
+      central.push(entry, name);
+      offset += 30 + name.length + data.length;
+    }
+    const directory = Buffer.concat(central);
+    const end = Buffer.alloc(22);
+    end.writeUInt32LE(0x06054b50, 0);
+    end.writeUInt16LE(Object.keys(files).length, 8);
+    end.writeUInt16LE(Object.keys(files).length, 10);
+    end.writeUInt32LE(directory.length, 12);
+    end.writeUInt32LE(offset, 16);
+    return new Uint8Array(Buffer.concat([...parts, directory, end]));
+  }
+  const workbookXml =
+    '<workbook xmlns:r="r"><sheets><sheet name="Kanto" sheetId="1" r:id="rId1"/></sheets></workbook>';
+  const relsXml =
+    '<Relationships><Relationship Id="rId1" Target="worksheets/sheet1.xml"/></Relationships>';
+  const parts = (sheet: string | Uint8Array) => ({
+    'xl/workbook.xml': workbookXml,
+    'xl/_rels/workbook.xml.rels': relsXml,
+    'xl/worksheets/sheet1.xml': sheet,
+  });
+
+  it('explains a workbook whose compressed data is damaged', async () => {
+    const bytes = deflatedZip(parts('<worksheet><sheetData/></worksheet>'.repeat(50)));
+    // Overwrite the middle of the first deflate stream.
+    bytes.fill(0xff, 40, 60);
+    await expect(readWorkbook(bytes)).rejects.toThrow(/damaged/);
+  });
+
+  it('refuses a workbook that inflates far beyond a plausible size', async () => {
+    const bomb = deflatedZip(parts(new Uint8Array(MAX_WORKBOOK_BYTES + 1024 * 1024)));
+    expect(bomb.length).toBeLessThan(200_000);
+    await expect(readWorkbook(bomb)).rejects.toThrow(/too large/);
+  });
+
+  it('reads Excel error cells as empty, never as a registered mark', async () => {
+    const sheet =
+      '<worksheet><sheetData>' +
+      '<row r="1"><c r="A1" t="inlineStr"><is><t>Number</t></is></c><c r="B1" t="inlineStr"><is><t>Pokémon</t></is></c><c r="C1" t="inlineStr"><is><t>Shiny</t></is></c></row>' +
+      '<row r="2"><c r="A2"><v>1</v></c><c r="B2" t="inlineStr"><is><t>Bulbasaur</t></is></c><c r="C2" t="e"><v>#N/A</v></c></row>' +
+      '<row r="3"><c r="A3"><v>2</v></c><c r="B3" t="inlineStr"><is><t>Ivysaur</t></is></c><c r="C3" t="inlineStr"><is><t>Shiny</t></is></c></row>' +
+      '</sheetData></worksheet>';
+    const sheets = await readWorkbook(deflatedZip(parts(sheet)));
+    expect(sheets[0]!.rows[1]).toEqual(['1', 'Bulbasaur', '']);
+    expect(keys(interpretSheets(sheets, catalog).entries)).toEqual(new Set([key(2, 'shiny')]));
   });
 });

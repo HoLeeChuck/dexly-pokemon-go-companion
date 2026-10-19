@@ -60,9 +60,39 @@ const has = (value) =>
 const u16 = (b, i) => b[i] | (b[i + 1] << 8);
 const u32 = (b, i) => (b[i] | (b[i + 1] << 8) | (b[i + 2] << 16) | (b[i + 3] << 24)) >>> 0;
 
-async function inflate(bytes) {
-  const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
-  return new Uint8Array(await new Response(stream).arrayBuffer());
+// A real workbook inflates to a few MB; a hostile one can claim gigabytes from a 5 MB file.
+export const MAX_WORKBOOK_BYTES = 64 * 1024 * 1024;
+const DAMAGED = 'This workbook is damaged. Download it again, then choose the new file.';
+
+async function inflate(bytes, room) {
+  const reader = new Blob([bytes])
+    .stream()
+    .pipeThrough(new DecompressionStream('deflate-raw'))
+    .getReader();
+  const chunks = [];
+  let length = 0;
+  try {
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      length += value.length;
+      if (length > room) {
+        await reader.cancel().catch(() => {});
+        throw new Error('This workbook is too large to read. Choose a smaller export.');
+      }
+      chunks.push(value);
+    }
+  } catch (error) {
+    // Stream failures (corrupt or truncated data) carry no message the person could act on.
+    throw error.message?.includes('too large') ? error : new Error(DAMAGED);
+  }
+  const out = new Uint8Array(length);
+  let at = 0;
+  for (const chunk of chunks) {
+    out.set(chunk, at);
+    at += chunk.length;
+  }
+  return out;
 }
 
 /** The files inside a zip archive, as a map of path to bytes. */
@@ -78,9 +108,10 @@ async function unzip(buffer) {
   const count = u16(b, end + 10);
   let p = u32(b, end + 16);
   const files = new Map();
+  let total = 0;
   const decoder = new TextDecoder();
   for (let k = 0; k < count; k += 1) {
-    if (u32(b, p) !== 0x02014b50) throw new Error('The workbook is damaged.');
+    if (u32(b, p) !== 0x02014b50) throw new Error(DAMAGED);
     const method = u16(b, p + 10);
     const size = u32(b, p + 20);
     const nameLength = u16(b, p + 28);
@@ -89,7 +120,11 @@ async function unzip(buffer) {
     const name = decoder.decode(b.subarray(p + 46, p + 46 + nameLength));
     const start = local + 30 + u16(b, local + 26) + u16(b, local + 28);
     const data = b.subarray(start, start + size);
-    files.set(name, method === 8 ? await inflate(data) : data);
+    const inflated = method === 8 ? await inflate(data, MAX_WORKBOOK_BYTES - total) : data;
+    total += inflated.length;
+    if (total > MAX_WORKBOOK_BYTES)
+      throw new Error('This workbook is too large to read. Choose a smaller export.');
+    files.set(name, inflated);
     p += 46 + skip;
   }
   return files;
@@ -137,14 +172,17 @@ export async function readWorkbook(buffer) {
       const type = (c[1].match(/t="([^"]+)"/) || [])[1];
       const body = c[2] || '';
       const v = (body.match(/<v>([\s\S]*?)<\/v>/) || [])[1];
+      // Error cells (#N/A, #REF!) hold no value; they must not read as a registered mark.
       const value =
-        type === 's'
-          ? (shared[Number(v)] ?? '')
-          : type === 'inlineStr'
-            ? texts(body)
-            : v === undefined
-              ? ''
-              : unescapeXml(v);
+        type === 'e'
+          ? ''
+          : type === 's'
+            ? (shared[Number(v)] ?? '')
+            : type === 'inlineStr'
+              ? texts(body)
+              : v === undefined
+                ? ''
+                : unescapeXml(v);
       const r = rowIndex(ref);
       (rows[r] ??= [])[colIndex(ref)] = value;
     }
