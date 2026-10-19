@@ -17,6 +17,7 @@ import {
   dialWindow,
   pagesOf,
   sourceGroups,
+  searchKey,
 } from './pokedex.js';
 import {
   collectionKeys,
@@ -1589,19 +1590,25 @@ document.addEventListener('pointerup', (event) => {
 
 // Quick jump: press / anywhere (outside text fields) to open a Pokémon.
 function jumpResults(text) {
-  const q = text.trim().toLowerCase().replace(/^#/, '');
+  const raw = text.trim().replace(/^#\s*/, '');
+  const q = searchKey(raw);
   if (!q) return [];
-  const n = Number(q);
+  // Only plain digits are a Dex number ("0x10" and "1e1" are not); names match without accents or
+  // punctuation ("flabebe", "mr mime", "ho oh").
+  const byNumber = /^\d+$/.test(raw);
+  const n = Number(raw);
+  const key = (p) => nameKeys.get(p.id) ?? nameKeys.set(p.id, searchKey(p.name)).get(p.id);
   return catalog
-    .filter((p) => (Number.isInteger(n) && n > 0 ? p.n === n : p.name.toLowerCase().includes(q)))
+    .filter((p) => (byNumber ? p.n === n : key(p).includes(q)))
     .sort(
       (a, b) =>
-        Number(!a.name.toLowerCase().startsWith(q)) - Number(!b.name.toLowerCase().startsWith(q)) ||
+        Number(!key(a).startsWith(q)) - Number(!key(b).startsWith(q)) ||
         Number(!a.isDefault) - Number(!b.isDefault) ||
         a.n - b.n,
     )
     .slice(0, 8);
 }
+const nameKeys = new Map();
 function renderJump() {
   const results = jumpResults(document.querySelector('#jump-input').value);
   updateMarkup(

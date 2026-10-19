@@ -20,3 +20,4 @@ export function pagesOf<T>(items: readonly T[], size?: number, wholeUpTo?: numbe
 export function sourceGroups(
   sources: readonly { kind: string; url: string }[],
 ): Record<'official' | 'secondary' | 'asset', { url: string; host: string }[]>;
+export function searchKey(text: string): string;

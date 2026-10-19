@@ -538,6 +538,33 @@ test('quick jump opens a Pokémon from anywhere', async ({ page }) => {
   ).toBeVisible();
 });
 
+test('quick jump ignores accents, spaces and punctuation; only plain digits are a Dex number', async ({
+  page,
+}) => {
+  await open(page, 'home');
+  await page.getByRole('button', { name: 'Jump to a Pokémon' }).click();
+  const input = page.locator('#jump-input');
+  const first = page.locator('#jump-results [data-jump]').first();
+  for (const [typed, name] of [
+    ['flabebe', 'Flabébé'],
+    ['mr mime', 'Mr. Mime'],
+    ['ho oh', 'Ho-Oh'],
+    ['porygon z', 'Porygon-Z'],
+    ['farfetchd', 'Farfetch’d'],
+    ['type null', 'Type: Null'],
+  ]) {
+    await input.fill(typed);
+    await expect(first, typed).toContainText(name);
+  }
+  // Hex and exponent forms are text, not the numbers 16 and 10.
+  for (const typed of ['0x10', '1e1']) {
+    await input.fill(typed);
+    await expect(page.locator('#jump-results .annotation'), typed).toBeVisible();
+  }
+  await input.fill('#0004');
+  await expect(first).toContainText('Charmander');
+});
+
 test('bulk region setup asks before changing anything', async ({ page }) => {
   await open(page, 'settings');
   await page.locator('[data-bulk="Hisui"][data-bulk-collected="true"]').click();

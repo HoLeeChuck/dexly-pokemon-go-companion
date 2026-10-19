@@ -8,6 +8,7 @@ import {
   dialWindow,
   pagesOf,
   sourceGroups,
+  searchKey,
 } from '../../app/pokedex.js';
 import evolutions from '../../catalog/evolution-families.v1.json';
 
@@ -104,5 +105,19 @@ describe('sources and credits', () => {
     expect(groups.official.length).toBeGreaterThan(0);
     expect(new Set(all.map((s) => s.url)).size).toBe(all.length);
     expect(all.every((s) => s.url.startsWith('https://'))).toBe(true);
+  });
+});
+
+describe('searchKey', () => {
+  it('drops case, accents and punctuation but keeps the Nidoran genders apart', () => {
+    expect(searchKey('Flabébé')).toBe('flabebe');
+    expect(searchKey('Mr. Mime')).toBe(searchKey('mr mime'));
+    expect(searchKey('Ho-Oh')).toBe('hooh');
+    expect(searchKey('Nidoran♀')).not.toBe(searchKey('Nidoran♂'));
+    expect(searchKey('ｐｉｋａ')).toBe('pika');
+    expect(searchKey('  #  ')).toBe('');
+  });
+  it('matches every catalog name from its own accent-free spelling', () => {
+    for (const p of catalog) expect(searchKey(p.name)).toMatch(/^[a-z0-9]+$/);
   });
 });

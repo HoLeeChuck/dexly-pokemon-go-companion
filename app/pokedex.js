@@ -161,3 +161,18 @@ export function sourceGroups(sources) {
   }
   return groups;
 }
+
+/**
+ * The form of a name or typed text used to match the top-bar search: lower case, accents and
+ * punctuation gone, so "flabebe", "mr mime" and "ho oh" find Flabébé, Mr. Mime and Ho-Oh. The
+ * gender signs of Nidoran stay distinguishable (f and m).
+ */
+export function searchKey(text) {
+  return String(text)
+    .replace('♀', 'f')
+    .replace('♂', 'm')
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '');
+}
