@@ -1,9 +1,9 @@
 # Release and phase evidence
 
-Current local release prep (October 15, 2026, no push or deploy): [prep report](../BRAMBLIN-PREP-REPORT-2026-10-15.md), [official news sweep](OFFICIAL-NEWS-SWEEP-2026-10-15.md), and [shared worker operations](OCTOBER-RELEASE-OPERATIONS.md).
+Current local release prep (October 15, 2026, no push or deploy): [prep report](../BRAMBLIN-PREP-REPORT-2026-10-15.md), [official news sweep](OFFICIAL-NEWS-SWEEP-2026-10-15.md) (refreshed [October 21](OFFICIAL-NEWS-SWEEP-2026-10-21.md)), and [shared worker operations](OCTOBER-RELEASE-OPERATIONS.md).
 
 - [Bramblin go checklist](BRAMBLIN-GO-2026-10-15.md): overdue October 13 release plus sourced catch-ups.
-- [Minior go checklist](MINIOR-GO-2026-10-19.md): October 19 after 17:00 CDT, on the revised Bramblin base.
+- [Minior go checklist](MINIOR-GO-2026-10-19.md): refreshed for October 21 (missed October 19), deploy after Cody's go, on the revised Bramblin base.
 - [Greavard go checklist](GREAVARD-GO-2026-11-01.md): November 1 after 10:00 CST, on the revised Minior base.
 
 These checklists supersede the older branch runbook procedures. The records below remain historical.

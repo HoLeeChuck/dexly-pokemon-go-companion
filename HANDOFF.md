@@ -1,5 +1,10 @@
 # CatchGrid current handoff
 
+## Resume here: October 21, 2026 — Minior refreshed, awaiting Cody's go
+
+- The October 19 Minior release never deployed; live is still Bramblin Worker `8fea498e-a753-41b3-82dd-80be37e300c3` (`0270b8a`), which stays the rollback target. Branch `minior-2026-10-19-safety` is refreshed for **October 21** (deploy only after Cody's go). See the [Minior go checklist](docs/releases/MINIOR-GO-2026-10-19.md) and the [October 21 news sweep](docs/releases/OFFICIAL-NEWS-SWEEP-2026-10-21.md): Minior and Brambleghast details are unchanged, no new catalog entry is due, and Mega Chandelure (Oct 31) is a separate follow-up.
+- Home still reads **Catalog updated 2026-10-19**, the newest officially dated ledger entry, not the deploy date. No gate results are recorded here until they are run; see the commit that follows.
+
 ## Resume here: October 15, 2026 — Bramblin RELEASED
 
 - **Live:** Worker `8fea498e-a753-41b3-82dd-80be37e300c3`, source `0270b8a` (built 2026-10-15 21:59 UTC, deployed 22:01 UTC = 17:01 CDT) on Cody's typed go in the PL · Pokémon chat. **Rollback target:** `b0c70140-8b84-46f8-9198-921d6106c1d6` (`4745a62`). D1 bookmark before release: `000000e1-00000000-00005105-31bfd04ef189efb7b3f34aaf582e78bc`. No migrations (none pending before or after).
